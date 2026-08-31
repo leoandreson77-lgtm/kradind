@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
+import { initialPackages, type PackageData } from './packages';
 import {
   Activity,
   AlertTriangle,
@@ -160,9 +161,14 @@ const mockTreks: TrekItem[] = [
 ];
 
 export default function Admin() {
-  const [activeTab, setActiveTab] = useState<'bookings' | 'treks' | 'radar' | 'analytics'>('bookings');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'packages' | 'treks' | 'radar' | 'analytics'>('bookings');
   const [bookings, setBookings] = useState<Booking[]>(mockBookings);
   const [treks, setTreks] = useState<TrekItem[]>(mockTreks);
+  const [packages, setPackages] = useState<PackageData[]>(initialPackages);
+  const [editingPackage, setEditingPackage] = useState<PackageData | null>(null);
+  const [editPrice, setEditPrice] = useState<number>(0);
+  const [editBadge, setEditBadge] = useState<string>('');
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('All');
   const [newRadarMsg, setNewRadarMsg] = useState('');
@@ -175,6 +181,24 @@ export default function Admin() {
   function updateBookingStatus(id: string, newStatus: 'Pending' | 'Confirmed' | 'Completed') {
     setBookings((prev) =>
       prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
+    );
+  }
+
+  function handleSavePackageEdit() {
+    if (!editingPackage) return;
+    setPackages((prev) =>
+      prev.map((p) =>
+        p.id === editingPackage.id
+          ? { ...p, price: editPrice, badge: editBadge }
+          : p
+      )
+    );
+    setEditingPackage(null);
+  }
+
+  function togglePopularPackage(id: string) {
+    setPackages((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, isPopular: !p.isPopular } : p))
     );
   }
 
@@ -233,6 +257,17 @@ export default function Admin() {
               }`}
             >
               Bookings ({bookings.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('packages')}
+              className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${
+                activeTab === 'packages'
+                  ? 'bg-accent text-accent-foreground shadow'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              Packages ({packages.length})
             </button>
             <button
               type="button"
@@ -415,6 +450,151 @@ export default function Admin() {
                 </table>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* TAB 2: PACKAGES MANAGEMENT */}
+        {activeTab === 'packages' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-display text-3xl font-extrabold text-primary">Expedition Package Manager</h2>
+                <p className="mt-1 text-xs text-muted-foreground">Edit pricing, badge labels, inclusions, and popular status</p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const newPkg: PackageData = {
+                    id: `pkg-${Date.now()}`,
+                    title: 'New Himalayan Expedition',
+                    tagline: 'Exciting high-altitude pass route',
+                    badge: 'New Release',
+                    category: 'Alpine',
+                    price: 9999,
+                    duration: '4 Days',
+                    groupSize: 'Max 12',
+                    inclusions: ['Guide', 'Tents', 'Meals', 'Permits'],
+                    description: 'New curated trail.',
+                  };
+                  setPackages([...packages, newPkg]);
+                }}
+                className="flex items-center gap-2 rounded-2xl bg-accent px-5 py-2.5 text-xs font-bold text-accent-foreground shadow transition hover:bg-accent/90"
+              >
+                <Plus className="size-4" /> Add Package
+              </button>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {packages.map((pkg) => (
+                <div key={pkg.id} className="flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 shadow-sm space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="rounded-full bg-accent/15 px-3 py-1 text-[10px] font-bold text-accent">
+                        {pkg.badge}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => togglePopularPackage(pkg.id)}
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold border transition ${
+                          pkg.isPopular ? 'border-accent bg-accent text-accent-foreground' : 'border-border text-muted-foreground hover:border-primary'
+                        }`}
+                      >
+                        {pkg.isPopular ? '★ Most Popular' : '+ Mark Popular'}
+                      </button>
+                    </div>
+
+                    <h3 className="font-display text-xl font-extrabold text-primary">{pkg.title}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{pkg.tagline}</p>
+
+                    <div className="my-4 border-y border-border/60 py-3 flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Current Price</p>
+                        <p className="font-display text-2xl font-extrabold text-primary">₹{pkg.price.toLocaleString()}</p>
+                      </div>
+                      <span className="text-xs font-semibold text-muted-foreground">{pkg.duration}</span>
+                    </div>
+
+                    <p className="text-[11px] font-bold text-primary mb-2">Inclusions ({pkg.inclusions.length}):</p>
+                    <ul className="space-y-1 text-[11px] text-muted-foreground">
+                      {pkg.inclusions.slice(0, 3).map((inc) => (
+                        <li key={inc} className="flex items-center gap-1.5">
+                          <Check className="size-3 text-accent shrink-0" /> {inc}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-4 border-t border-border/60">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingPackage(pkg);
+                        setEditPrice(pkg.price);
+                        setEditBadge(pkg.badge);
+                      }}
+                      className="flex-1 rounded-xl bg-secondary py-2.5 text-xs font-bold text-primary transition hover:bg-primary hover:text-primary-foreground"
+                    >
+                      <Edit className="inline size-3.5 mr-1" /> Edit Price & Badge
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPackages(packages.filter((p) => p.id !== pkg.id))}
+                      className="grid size-9 place-items-center rounded-xl border border-destructive/30 text-destructive transition hover:bg-destructive hover:text-white"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* EDIT PACKAGE MODAL */}
+            {editingPackage && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                <div className="w-full max-w-md rounded-2xl border border-white/20 bg-primary p-6 text-white shadow-2xl">
+                  <h3 className="font-display text-xl font-extrabold">Edit Package Details</h3>
+                  <p className="mt-1 text-xs text-white/70">{editingPackage.title}</p>
+
+                  <div className="mt-6 space-y-4 text-xs font-medium">
+                    <div>
+                      <label className="block text-white/80 font-bold mb-1">Package Price (₹)</label>
+                      <input
+                        type="number"
+                        value={editPrice}
+                        onChange={(e) => setEditPrice(Number(e.target.value))}
+                        className="h-11 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-white outline-none focus:border-accent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 font-bold mb-1">Badge Tag</label>
+                      <input
+                        value={editBadge}
+                        onChange={(e) => setEditBadge(e.target.value)}
+                        className="h-11 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-white outline-none focus:border-accent"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setEditingPackage(null)}
+                      className="rounded-xl border border-white/20 px-4 py-2.5 text-xs font-bold text-white/80 hover:bg-white/10"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSavePackageEdit}
+                      className="rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-accent-foreground shadow"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

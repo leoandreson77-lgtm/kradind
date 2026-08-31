@@ -8,7 +8,7 @@ export function Header() {
 
   const navLinks = [
     { href: '/treks', label: 'Explore Treks', id: 'escapes' },
-    { href: '/#packages', label: 'Packages', id: 'packages' },
+    { href: '/packages', label: 'Packages', id: 'packages' },
     { href: '/#match', label: 'Trek Matcher', id: 'match' },
     { href: '/#radar', label: 'Trail Radar', id: 'radar' },
     { href: '/about', label: 'Our Story', id: 'about' },

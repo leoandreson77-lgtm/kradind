@@ -1,4 +1,5 @@
 import { Link } from 'wouter';
+import { Header } from '@/components/header';
 import {
   ArrowRight,
   BadgeCheck,
@@ -31,22 +32,7 @@ const values = [
 export default function About() {
   return (
     <div className="grain min-h-[100dvh] overflow-x-hidden bg-background">
-      <header className="absolute left-0 right-0 top-0 z-20 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-8">
-          <Link href="/" className="flex items-center gap-2.5" data-testid="link-about-logo">
-            <span className="grid size-9 place-items-center rounded-xl bg-accent text-accent-foreground"><TentTree className="size-5" /></span>
-            <span className="font-display text-lg font-extrabold tracking-[-.04em]">KRADIND<span className="text-accent">.</span></span>
-          </Link>
-          <nav className="hidden items-center gap-7 text-xs font-bold text-white/75 md:flex">
-            <Link href="/treks" className="hover:text-white" data-testid="link-about-nav-escapes">Find an escape</Link>
-            <Link href="/about" className="text-accent" data-testid="link-about-nav-story">Our story</Link>
-            <Link href="/contact" className="hover:text-white" data-testid="link-about-nav-contact">Talk to us</Link>
-          </nav>
-          <Link href="/treks" className="rounded-full border border-white/25 px-4 py-2.5 text-xs font-bold transition hover:bg-white hover:text-primary" data-testid="link-about-plan">
-            See the routes
-          </Link>
-        </div>
-      </header>
+      <Header />
 
       <main>
         <section className="relative flex min-h-[640px] items-end overflow-hidden bg-primary pb-16 pt-32 text-white lg:min-h-[720px] lg:pb-24">

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'wouter';
+import { Header } from '@/components/header';
 import {
   ArrowRight,
   Compass,
@@ -99,7 +100,7 @@ export default function Treks() {
   const [activeFilter, setActiveFilter] = useState('All escapes');
 
   const filteredTreks = useMemo(() => {
-    if (!treks) return [];
+    if (!treks || !Array.isArray(treks)) return [];
     return treks.filter((trek) => {
       const matchesQuery =
         !query ||
@@ -117,29 +118,10 @@ export default function Treks() {
 
   return (
     <div className="grain min-h-[100dvh] overflow-x-hidden bg-background">
-      <header className="border-b border-border/70 bg-background/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <Link href="/" className="flex items-center gap-2.5 text-primary" data-testid="link-catalogue-logo">
-            <span className="grid size-9 place-items-center rounded-xl bg-primary text-background">
-              <TentTree className="size-5" />
-            </span>
-            <span className="font-display text-lg font-extrabold tracking-[-.04em]">
-              KRADIND<span className="text-accent">.</span>
-            </span>
-          </Link>
-          <nav className="hidden items-center gap-7 text-xs font-bold text-primary/65 md:flex">
-            <Link href="/treks" className="text-accent" data-testid="link-catalogue-nav-escapes">Find an escape</Link>
-            <Link href="/about" className="hover:text-accent" data-testid="link-catalogue-nav-about">Our story</Link>
-            <Link href="/contact" className="hover:text-accent" data-testid="link-catalogue-nav-contact">Talk to us</Link>
-          </nav>
-          <Link href="/#match" className="hidden rounded-full bg-accent px-4 py-2.5 text-xs font-bold text-accent-foreground transition hover:bg-[#f47d48] sm:block" data-testid="link-catalogue-plan">
-            Find my trek
-          </Link>
-        </div>
-      </header>
+      <Header />
 
       <main>
-        <section className="bg-primary px-5 py-16 text-white lg:py-24">
+        <section className="bg-primary px-5 pb-16 pt-28 text-white lg:pb-24 lg:pt-36">
           <div className="mx-auto max-w-7xl">
             <div className="max-w-2xl reveal">
               <div className="mb-5 flex items-center gap-3 text-xs font-bold uppercase tracking-[.2em] text-accent">

@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from 'react';
 import { Link } from 'wouter';
+import { Header } from '@/components/header';
 import {
   ArrowRight,
   Check,
@@ -30,25 +31,10 @@ export default function Contact() {
 
   return (
     <div className="grain min-h-[100dvh] overflow-x-hidden bg-background">
-      <header className="border-b border-border/70 bg-background/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <Link href="/" className="flex items-center gap-2.5 text-primary" data-testid="link-contact-logo">
-            <span className="grid size-9 place-items-center rounded-xl bg-primary text-background"><TentTree className="size-5" /></span>
-            <span className="font-display text-lg font-extrabold tracking-[-.04em]">KRADIND<span className="text-accent">.</span></span>
-          </Link>
-          <nav className="hidden items-center gap-7 text-xs font-bold text-primary/65 md:flex">
-            <Link href="/treks" className="hover:text-accent" data-testid="link-contact-nav-escapes">Find an escape</Link>
-            <Link href="/about" className="hover:text-accent" data-testid="link-contact-nav-about">Our story</Link>
-            <Link href="/contact" className="text-accent" data-testid="link-contact-nav-contact">Talk to us</Link>
-          </nav>
-          <a href="tel:+919999999999" className="hidden items-center gap-2 text-xs font-bold text-primary sm:flex" data-testid="link-contact-phone-top">
-            <Phone className="size-3.5 text-accent" /> +91 99999 99999
-          </a>
-        </div>
-      </header>
+      <Header />
 
       <main>
-        <section className="bg-primary px-5 py-16 text-white lg:py-24">
+        <section className="bg-primary px-5 pb-16 pt-28 text-white lg:pb-24 lg:pt-36">
           <div className="mx-auto max-w-7xl">
             <div className="max-w-2xl reveal">
               <div className="mb-5 flex items-center gap-3 text-xs font-bold uppercase tracking-[.2em] text-accent"><span className="h-px w-8 bg-accent" /> The trip desk</div>

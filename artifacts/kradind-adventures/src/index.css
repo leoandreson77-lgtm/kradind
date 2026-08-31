@@ -290,7 +290,11 @@
 }
 @keyframes pulse-dot {
   0%, 100% { opacity: .35; transform: scale(.88); }
-  50% { opacity: 1; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(224, 93, 38, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(224, 93, 38, 0.45); }
 }
 
 .reveal { animation: rise-in .7s cubic-bezier(.2,.8,.2,1) both; }
@@ -299,8 +303,36 @@
 .reveal-delay-3 { animation-delay: .3s; }
 .drift { animation: drift 5s ease-in-out infinite; }
 .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+.glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
 .font-display { font-family: var(--app-font-serif); }
 .text-balance { text-wrap: balance; }
+
+.gradient-text {
+  background: linear-gradient(135deg, #ffffff 30%, #e05d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-accent-text {
+  background: linear-gradient(135deg, #e05d26 0%, #f39c12 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-panel {
+  background: rgba(14, 40, 36, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 .grain::after {
   content: '';
   position: fixed;
@@ -310,12 +342,13 @@
   z-index: 50;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
+
 .image-shade { position: relative; }
 .image-shade::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 42%, hsl(171 30% 10% / .82) 100%);
+  background: linear-gradient(180deg, transparent 35%, hsl(171 30% 8% / .88) 100%);
   pointer-events: none;
 }
 

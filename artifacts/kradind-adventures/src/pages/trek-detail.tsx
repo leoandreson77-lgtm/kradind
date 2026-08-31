@@ -1,5 +1,6 @@
 import { type FormEvent, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
+import { Header } from '@/components/header';
 import {
   ArrowLeft,
   ArrowRight,
@@ -114,9 +115,9 @@ export default function TrekDetail() {
   if (isError || !trek) return <TrekError onRetry={() => refetch()} />;
 
   return <div className="grain min-h-[100dvh] overflow-x-hidden bg-background">
-    <header className="border-b border-border/70 bg-background/90 backdrop-blur"><div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8"><Link href="/" className="flex items-center gap-2.5 text-primary" data-testid="link-detail-logo"><span className="grid size-9 place-items-center rounded-xl bg-primary text-background"><TentTree className="size-5" /></span><span className="font-display text-lg font-extrabold tracking-[-.04em]">KRADIND<span className="text-accent">.</span></span></Link><nav className="hidden items-center gap-7 text-xs font-bold text-primary/65 md:flex"><a href="#itinerary" className="hover:text-accent" data-testid="link-detail-itinerary">Itinerary</a><a href="#safety" className="hover:text-accent" data-testid="link-detail-safety">Safety</a><a href="#faq" className="hover:text-accent" data-testid="link-detail-faq">FAQs</a></nav><div className="flex items-center gap-2"><button type="button" onClick={() => setSaved(!saved)} className={`grid size-9 place-items-center rounded-full border transition ${saved ? 'border-accent bg-accent text-accent-foreground' : 'border-border text-primary hover:border-primary'}`} data-testid="button-save-detail"><Heart className={`size-4 ${saved ? 'fill-current' : ''}`} /></button><button type="button" onClick={() => setMenuOpen(!menuOpen)} className="grid size-9 place-items-center rounded-full border border-border text-primary md:hidden" aria-label="Toggle navigation" data-testid="button-toggle-detail-navigation">{menuOpen ? <X className="size-4" /> : <Menu className="size-4" />}</button></div></div>{menuOpen && <div className="mx-5 mb-4 grid gap-3 rounded-xl bg-secondary p-4 text-sm font-semibold text-primary md:hidden"><a href="#itinerary" onClick={() => setMenuOpen(false)} data-testid="link-mobile-detail-itinerary">Itinerary</a><a href="#safety" onClick={() => setMenuOpen(false)} data-testid="link-mobile-detail-safety">Safety</a><a href="#faq" onClick={() => setMenuOpen(false)} data-testid="link-mobile-detail-faq">FAQs</a></div>}</header>
+    <Header />
 
-    <main>
+    <main className="pt-24 lg:pt-28">
       <div className="mx-auto max-w-7xl px-5 pt-6 lg:px-8"><button type="button" onClick={() => setLocation('/')} className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground transition hover:text-primary" data-testid="button-back-discovery"><ArrowLeft className="size-4" /> All escapes</button></div>
       <section className="mx-auto grid max-w-7xl gap-7 px-5 pb-12 pt-6 lg:grid-cols-[1.25fr_.75fr] lg:px-8 lg:pb-20 lg:pt-8">
         <div>

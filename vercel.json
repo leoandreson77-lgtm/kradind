@@ -1,7 +1,6 @@
 {
-  "framework": "vite",
-  "buildCommand": "pnpm --filter @workspace/kradind-adventures run build",
-  "outputDirectory": "artifacts/kradind-adventures/dist/public",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "public",
   "rewrites": [
     {
       "source": "/(.*)",

@@ -13,6 +13,7 @@ export function Header() {
     { href: '/#radar', label: 'Trail Radar', id: 'radar' },
     { href: '/about', label: 'Our Story', id: 'about' },
     { href: '/contact', label: 'Contact Us', id: 'contact' },
+    { href: '/admin', label: 'Admin', id: 'admin' },
   ];
 
   return (

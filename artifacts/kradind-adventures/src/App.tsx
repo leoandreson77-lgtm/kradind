@@ -8,6 +8,7 @@ import TrekDetail from '@/pages/trek-detail';
 import Treks from '@/pages/treks';
 import About from '@/pages/about';
 import Contact from '@/pages/contact';
+import Admin from '@/pages/admin';
 import NotFound from '@/pages/not-found';
 import {
   Route,
@@ -29,6 +30,7 @@ function Router() {
         <Route path="/treks/:slug" component={TrekDetail} />
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
+        <Route path="/admin" component={Admin} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

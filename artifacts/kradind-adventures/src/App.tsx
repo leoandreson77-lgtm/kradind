@@ -5,6 +5,9 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import Home from '@/pages/home';
 import TrekDetail from '@/pages/trek-detail';
+import Treks from '@/pages/treks';
+import About from '@/pages/about';
+import Contact from '@/pages/contact';
 import NotFound from '@/pages/not-found';
 import {
   Route,
@@ -22,7 +25,10 @@ function Router() {
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/treks" component={Treks} />
         <Route path="/treks/:slug" component={TrekDetail} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

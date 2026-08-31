@@ -126,9 +126,10 @@ export default function Home() {
             <span className="font-display text-lg font-extrabold tracking-[-.04em]">KRADIND<span className="text-accent">.</span></span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm font-medium text-white/80 md:flex">
-            <a href="#escapes" className="transition hover:text-white" data-testid="link-nav-escapes">Find an escape</a>
+            <Link href="/treks" className="transition hover:text-white" data-testid="link-nav-escapes">Find an escape</Link>
             <a href="#match" className="transition hover:text-white" data-testid="link-nav-match">Trek matcher</a>
             <a href="#radar" className="transition hover:text-white" data-testid="link-nav-radar">Trail radar</a>
+            <Link href="/about" className="transition hover:text-white" data-testid="link-nav-about">Our story</Link>
           </nav>
           <div className="flex items-center gap-3">
             <a href="#escapes" className="hidden rounded-full border border-white/25 px-4 py-2 text-xs font-bold text-white transition hover:bg-white hover:text-primary sm:block" data-testid="link-plan-trip">Plan a trip</a>
@@ -137,7 +138,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        {menuOpen && <div className="mx-4 rounded-2xl bg-primary p-4 shadow-xl md:hidden"><div className="grid gap-3 text-sm font-semibold"><a href="#escapes" onClick={() => setMenuOpen(false)} data-testid="link-mobile-escapes">Find an escape</a><a href="#match" onClick={() => setMenuOpen(false)} data-testid="link-mobile-match">Trek matcher</a><a href="#radar" onClick={() => setMenuOpen(false)} data-testid="link-mobile-radar">Trail radar</a></div></div>}
+        {menuOpen && <div className="mx-4 rounded-2xl bg-primary p-4 shadow-xl md:hidden"><div className="grid gap-3 text-sm font-semibold"><Link href="/treks" onClick={() => setMenuOpen(false)} data-testid="link-mobile-escapes">Find an escape</Link><a href="#match" onClick={() => setMenuOpen(false)} data-testid="link-mobile-match">Trek matcher</a><a href="#radar" onClick={() => setMenuOpen(false)} data-testid="link-mobile-radar">Trail radar</a><Link href="/about" onClick={() => setMenuOpen(false)} data-testid="link-mobile-about">Our story</Link><Link href="/contact" onClick={() => setMenuOpen(false)} data-testid="link-mobile-contact">Talk to us</Link></div></div>}
       </header>
 
       <main>
@@ -219,7 +220,7 @@ export default function Home() {
       </main>
 
       <footer className="bg-[#eee6d7] py-12 text-primary">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 px-5 sm:flex-row sm:items-end lg:px-8"><div><Link href="/" className="flex items-center gap-2.5" data-testid="link-footer-logo"><span className="grid size-8 place-items-center rounded-lg bg-primary text-background"><TentTree className="size-4" /></span><span className="font-display text-lg font-extrabold">KRADIND<span className="text-accent">.</span></span></Link><p className="mt-4 max-w-xs text-xs leading-5 text-muted-foreground">Good people. Clear routes. Wild places that stay with you.</p></div><div className="flex flex-wrap gap-5 text-xs font-semibold text-primary/65"><a href="#escapes" className="hover:text-accent" data-testid="link-footer-escapes">Find an escape</a><a href="#radar" className="hover:text-accent" data-testid="link-footer-radar">Trail radar</a><a href="mailto:hello@kradind.com" className="hover:text-accent" data-testid="link-footer-contact">Talk to a human</a></div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-primary/40">{health?.status === 'ok' ? 'Trip desk online · ' : ''}© KRADIND ADVENTURES</p></div>
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 px-5 sm:flex-row sm:items-end lg:px-8"><div><Link href="/" className="flex items-center gap-2.5" data-testid="link-footer-logo"><span className="grid size-8 place-items-center rounded-lg bg-primary text-background"><TentTree className="size-4" /></span><span className="font-display text-lg font-extrabold">KRADIND<span className="text-accent">.</span></span></Link><p className="mt-4 max-w-xs text-xs leading-5 text-muted-foreground">Good people. Clear routes. Wild places that stay with you.</p></div><div className="flex flex-wrap gap-5 text-xs font-semibold text-primary/65"><Link href="/treks" className="hover:text-accent" data-testid="link-footer-escapes">Find an escape</Link><a href="#radar" className="hover:text-accent" data-testid="link-footer-radar">Trail radar</a><Link href="/contact" className="hover:text-accent" data-testid="link-footer-contact">Talk to a human</Link><Link href="/about" className="hover:text-accent" data-testid="link-footer-about">Our story</Link></div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-primary/40">{health?.status === 'ok' ? 'Trip desk online · ' : ''}© KRADIND ADVENTURES</p></div>
       </footer>
     </div>
   );

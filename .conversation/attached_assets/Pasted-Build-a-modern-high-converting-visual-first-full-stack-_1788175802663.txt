@@ -1,0 +1,58 @@
+Build a modern, high-converting, visual-first full-stack Next.js (App Router) web application for "KRADIND Adventures", a premium trekking, domestic, and international travel operator[cite: 1, 2, 3]. 
+
+### 1. Visual & UX Design Directive (Must be Stunning & Modern)
+- Design Aesthetics: Clean, sleek, modern, and adventure-focused. Use depth, glassmorphism (`backdrop-blur-md`), subtle borders (`border-white/10`), rounded corners (`rounded-2xl` / `rounded-3xl`), and layered shadows (`shadow-xl`).
+- Color Palette:
+  - Deep Forest Green (Brand Base): `#0F3A2E` / `emerald-950`[cite: 1, 2]
+  - Sunset Orange (Primary CTA & Accents): `#FF6B35` / `#FF8C42`[cite: 1, 2]
+  - Slate Neutrals: `#0F172A` (Text/Dark sections) and `#F8FAFC` (Body background)[cite: 1, 2]
+  - Alpine Teal (Monsoon/Special Accents): `#0D9488` / `teal-400`[cite: 1, 2]
+- Typography: Import Google Fonts — `Plus Jakarta Sans` for bold, premium headings and brand identity; `Inter` for crisp body copy[cite: 1, 2, 3].
+- Interactive UI Elements: Soft hover transformations (`hover:scale-[1.02] transition duration-300`), pulse indicators for live status radar[cite: 1, 2], and animated gradient highlights.
+
+---
+
+### 2. Tech Stack & Architecture Requirements
+- Framework: Next.js 14+ (App Router, TypeScript)
+- Style: Tailwind CSS + Lucide React Icons[cite: 1, 2, 3]
+- Database & ORM: Prisma ORM with SQLite (or PostgreSQL) for booking records, dynamic batch status, user queries, and live trail updates
+- Content Management (CMS): Built-in JSON-backed CMS or Sanity.io integration with API routes for managing treks, itineraries, and media
+- Search Engine Optimization (SEO):
+  - Next.js Metadata API for dynamic `<title>`, `<meta name="description">`, OpenGraph (`og:image`, `og:title`), and Twitter Cards
+  - JSON-LD Structured Data (`TouristAttraction`, `Event`, and `BreadcrumbList` schema) for rich snippet search results
+  - Dynamic `sitemap.ts` and `robots.ts` routes
+
+---
+
+### 3. Core Pages & Key Components
+
+#### A. Global Navigation & Dynamic Banners
+- Flash Sale Top-Bar: Animated gradient bar with promo code badge (e.g., `MONSOON2026`) and "Claim Offer" action[cite: 1, 2].
+- Main Header: Sticky navbar featuring custom logo styling (`KRAD` in dark green, `IND` in orange), multi-category dropdowns, Search trigger, and primary "Book Departures" button[cite: 1, 2].
+- Emergency & Trail Radar Strip: 24/7 ground support hotline, eco-policy tags, and live trail link[cite: 2].
+- Floating WhatsApp Widget: Glowing "Ask an Expert" floating action button on bottom-right[cite: 1, 2].
+
+#### B. Homepage (`/`)
+- Immersive Hero Section: Background image with gradient overlay (`linear-gradient`), compelling header ("Escape the Concrete. Explore Raw Wilderness.")[cite: 1, 2], quick category pills, and an interactive 4-field search widget (Trip Type, Destination, Month/Season)[cite: 2].
+- Interactive Trek Match Tool: A 2-step interactive quiz (Duration + Fitness Pace) that dynamically recommends the perfect route[cite: 1].
+- Weekend Summit Escapes Grid: Card components showcasing 2-3 day treks (e.g., Nag Tibba, Prashar Lake, Triund) with badges like "Friday Night Bus" or "Fast Filling"[cite: 1].
+- Seasonal Specials Grid: High-contrast dark cards showcasing monsoon and high-pass trails with original vs. discounted prices[cite: 1, 2].
+- Live Trail Radar Widget: Live updates component displaying current weather, temperatures, and open/caution badges fed from the database[cite: 1, 2].
+- Footer: Detailed 4-column footer with categories, safety guidelines, direct contact line, and legal links[cite: 1, 2].
+
+#### C. Dynamic Trek Detail Page (`/treks/[slug]`)
+- Dynamic Photo Grid Mosaic: 4-image grid gallery layout with "View All Photos" trigger modal[cite: 3].
+- Key Metrics Dashboard: Card bar showing Summit Altitude (e.g., 12,500 Ft), Duration, Difficulty, Distance, Base Camp, and Star Ratings[cite: 3].
+- Sticky Section Sub-Bar: Quick navigation jumps for Overview, Day-by-Day Itinerary, Inclusions, Safety, and FAQs[cite: 3].
+- Day-by-Day Accordion Itinerary: Expandable schedule breakdown with route metrics, meals included, and campsite stay details[cite: 3].
+- Interactive Rental Gear Locker: Checkbox component allowing users to add equipment (-10°C Down Jacket, Trekking Poles, Waterproof Shoes) to dynamically update the total price in real time[cite: 3].
+- Sticky Booking Engine Sidebar: Batch selector dropdown with remaining slot indicators, dynamic live price calculation, direct booking CTA, and WhatsApp button[cite: 3].
+
+---
+
+### 4. Step-by-Step Execution Plan
+1. Initialize Next.js App Router project with TypeScript and Tailwind CSS.
+2. Configure Prisma schema for `Trek`, `Batch`, `TrailReport`, and `Booking`.
+3. Create visually rich, reusable components (`TrekCard`, `LiveRadarWidget`, `RentalLocker`, `BookingSidebar`).
+4. Implement dynamic SEO metadata, OpenGraph images, and JSON-LD structured schema.
+5. Create API routes for fetching treks, submitting bookings, and updating live trail statuses.

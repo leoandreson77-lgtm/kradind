@@ -1,6 +1,6 @@
-# [Project name]
+# KRADIND Adventures
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A premium trekking discovery and booking experience for finding curated escapes, checking live trail conditions, and requesting a departure.
 
 ## Run & Operate
 
@@ -22,23 +22,34 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/kradind-adventures/src/pages/home.tsx` — discovery homepage and trek matcher
+- `artifacts/kradind-adventures/src/pages/trek-detail.tsx` — trek detail, itinerary, gear, and booking flow
+- `artifacts/api-server/src/lib/travel-data.ts` — curated trek and live trail data
+- `artifacts/api-server/src/routes/` — typed trek, radar, and booking endpoints
+- `lib/api-spec/openapi.yaml` — source of truth for API contracts
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The frontend is a React + Vite artifact served at `/`, while the shared Express service owns `/api`.
+- OpenAPI is the contract source; React Query hooks and Zod validators are generated from it.
+- Travel catalog and radar responses are kept in a shared server-side data module for a fast first release and easy replacement with persistent storage.
+- The booking flow validates against the API contract and returns a confirmation state without exposing payment credentials.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Browse curated Himalayan escapes and filter by category or season.
+- Use the two-step trek matcher to narrow down an adventure.
+- Open a trek detail page with gallery, metrics, itinerary, safety, FAQs, departure batches, and gear add-ons.
+- Submit a traveller booking request and view live trail radar conditions.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Brand direction: deep forest green, sunset orange, slate neutrals, alpine teal, Plus Jakarta Sans headings, and Inter body copy.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Artifact builds require the workflow-provided `PORT` and `BASE_PATH` values when invoked manually.
+- Regenerate the API client after changing `lib/api-spec/openapi.yaml`.
 
 ## Pointers
 

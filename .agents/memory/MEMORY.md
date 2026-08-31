@@ -1,0 +1,1 @@
+- [API validation version](api-validation-version.md) — generated Zod validators currently require the Zod 4 API surface.

@@ -10,6 +10,12 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: treks
+    description: Trek catalog and detail operations
+  - name: radar
+    description: Live trail condition operations
+  - name: bookings
+    description: Booking operations
 paths:
   /healthz:
     get:
@@ -24,6 +30,85 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /treks:
+    get:
+      operationId: listTreks
+      tags: [treks]
+      summary: List curated treks
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: season
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Trek catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Trek"
+  /treks/{slug}:
+    get:
+      operationId: getTrek
+      tags: [treks]
+      summary: Get a trek by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Trek detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trek"
+        "404":
+          description: Trek not found
+  /radar:
+    get:
+      operationId: getTrailRadar
+      tags: [radar]
+      summary: Get live trail conditions
+      responses:
+        "200":
+          description: Trail radar
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrailReport"
+  /bookings:
+    post:
+      operationId: createBooking
+      tags: [bookings]
+      summary: Submit a booking request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "201":
+          description: Booking request received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingConfirmation"
+        "400":
+          description: Invalid booking
 components:
   schemas:
     HealthStatus:
@@ -33,4 +118,167 @@ components:
           type: string
       required:
         - status
+    Batch:
+      type: object
+      properties:
+        id:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+        slotsLeft:
+          type: integer
+        price:
+          type: number
+      required: [id, startDate, endDate, slotsLeft, price]
+    ItineraryDay:
+      type: object
+      properties:
+        day:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        distance:
+          type: string
+        altitude:
+          type: string
+        meal:
+          type: string
+      required: [day, title, description, distance, altitude, meal]
+    Trek:
+      type: object
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+        region:
+          type: string
+        image:
+          type: string
+        gallery:
+          type: array
+          items:
+            type: string
+        tagline:
+          type: string
+        description:
+          type: string
+        duration:
+          type: string
+        difficulty:
+          type: string
+        altitude:
+          type: string
+        distance:
+          type: string
+        baseCamp:
+          type: string
+        rating:
+          type: number
+        reviewCount:
+          type: integer
+        price:
+          type: number
+        originalPrice:
+          type: number
+        badge:
+          type: ["string", "null"]
+        categories:
+          type: array
+          items:
+            type: string
+        batches:
+          type: array
+          items:
+            $ref: "#/components/schemas/Batch"
+        itinerary:
+          type: array
+          items:
+            $ref: "#/components/schemas/ItineraryDay"
+      required:
+        - id
+        - slug
+        - name
+        - location
+        - region
+        - image
+        - gallery
+        - tagline
+        - description
+        - duration
+        - difficulty
+        - altitude
+        - distance
+        - baseCamp
+        - rating
+        - reviewCount
+        - price
+        - originalPrice
+        - badge
+        - categories
+        - batches
+        - itinerary
+    TrailReport:
+      type: object
+      properties:
+        id:
+          type: integer
+        trail:
+          type: string
+        region:
+          type: string
+        status:
+          type: string
+          enum: [open, caution, closed]
+        temperature:
+          type: string
+        weather:
+          type: string
+        updatedAt:
+          type: string
+        note:
+          type: string
+      required: [id, trail, region, status, temperature, weather, updatedAt, note]
+    BookingInput:
+      type: object
+      properties:
+        trekSlug:
+          type: string
+        batchId:
+          type: integer
+        fullName:
+          type: string
+          minLength: 2
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          minLength: 7
+        travelers:
+          type: integer
+          minimum: 1
+        gear:
+          type: array
+          items:
+            type: string
+      required: [trekSlug, batchId, fullName, email, phone, travelers, gear]
+    BookingConfirmation:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        message:
+          type: string
+      required: [id, status, message]
 

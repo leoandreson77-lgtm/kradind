@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "node -e \"const fs = require('fs'); ['package-lock.json', 'yarn.lock'].forEach(f => fs.existsSync(f) && fs.unlinkSync(f));\"",
-    "build": "pnpm run typecheck && pnpm -r --if-present run build && node -e \"const fs = require('fs'); fs.cpSync('artifacts/kradind-adventures/dist/public', 'public', {recursive: true});\"",
+    "build": "pnpm --filter @workspace/kradind-adventures run build && node -e \"const fs = require('fs'); fs.cpSync('artifacts/kradind-adventures/dist/public', 'public', {recursive: true});\"",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },

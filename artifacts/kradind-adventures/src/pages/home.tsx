@@ -234,15 +234,13 @@ export default function Home() {
       <main>
         {/* HERO SECTION */}
         <section className="relative flex min-h-[780px] items-end overflow-hidden bg-primary pb-16 pt-36 text-white lg:min-h-[840px] lg:pb-24">
-          {heroTrek?.image && (
-            <img
-              src={heroTrek.image}
-              alt="Himalayan trail preview"
-              className="absolute inset-0 h-full w-full object-cover opacity-50 mix-blend-luminosity scale-105"
-            />
-          )}
+          <img
+            src={heroTrek?.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85"}
+            alt="Himalayan trail preview"
+            className="absolute inset-0 h-full w-full object-cover opacity-60 mix-blend-overlay scale-105"
+          />
 
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,hsl(188_54%_37%/.35),transparent_40%),linear-gradient(110deg,hsl(171_30%_7%/.98)_10%,hsl(171_30%_14%/.75)_55%,hsl(171_30%_8%/.6))]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,hsl(188_54%_37%/.25),transparent_50%),linear-gradient(110deg,hsl(171_30%_7%/.92)_10%,hsl(171_30%_14%/.65)_55%,hsl(171_30%_8%/.8))]" />
 
           {/* Glowing Ambient Accents */}
           <div className="absolute right-[8%] top-[22%] hidden size-64 rounded-full border border-white/10 lg:block">

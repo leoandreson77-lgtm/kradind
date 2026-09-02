@@ -49,3 +49,16 @@ Thumbs.db
 .local/
 
 .vercel
+
+# Next.js
+.next/
+out/
+
+# Environment files
+.env
+.env*.local
+.env.production
+.env.development
+
+# Temporary files
+*.tmp*

@@ -47,7 +47,7 @@ function DefaultFallback({ error, resetError }: ErrorFallbackProps) {
           running.
         </p>
         {/* Dev only: messages can carry API responses and other internals. */}
-        {import.meta.env.DEV ? (
+        {process.env.NODE_ENV !== 'production' ? (
           <pre className="mt-4 overflow-x-auto rounded-xl border border-white/15 bg-white/5 p-3 text-left text-xs text-white/65">
             {error.message || String(error)}
           </pre>

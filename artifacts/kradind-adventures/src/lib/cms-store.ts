@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { treks as defaultTreks } from "./travel-data";
 
 export interface TrekBatch {
   id: number;
@@ -15,34 +16,41 @@ export interface TrekItineraryDay {
   title: string;
   description: string;
   distance?: string;
-  altitude: string;
+  altitude?: string;
   meal?: string;
+  stay?: string;
 }
 
 export interface TrekData {
   id: number | string;
   slug: string;
   name: string;
+  category?: string;
+  categories: string[];
   location: string;
   region: string;
   image: string;
   gallery: string[];
   tagline: string;
-  description: string;
+  description?: string;
+  overview?: string;
+  highlights?: string[];
   duration: string;
-  difficulty: "Easy" | "Moderate" | "Challenging";
+  difficulty: string;
   altitude: string;
-  distance: string;
-  baseCamp: string;
+  distance?: string;
+  baseCamp?: string;
   rating: number;
   reviewCount: number;
   price: number;
   originalPrice: number;
   badge: string;
-  categories: string[];
   status: "Published" | "Draft";
   batches: TrekBatch[];
   itinerary: TrekItineraryDay[];
+  inclusions?: string[];
+  exclusions?: string[];
+  faqs?: { question: string; answer: string }[];
 }
 
 export interface TrailRadarReport {
@@ -171,219 +179,37 @@ function getInitialStore(): CMSStoreData {
         leaveNoTrace: "🌱 Leave No Trace Certified Operator",
       },
     },
-    treks: [
-      {
-        id: 1,
-        slug: "kedarkantha",
-        name: "Kedarkantha Summit Trek",
-        location: "Uttarakhand",
-        region: "Garhwal",
-        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
-        gallery: ["https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85"],
-        tagline: "Dense pine forests, snow glades, and dramatic summit ridge.",
-        description: "Kedarkantha is famous for its dramatic 360-degree summit views of Swargarohini, Bandarpoonch, and Black Peak.",
-        duration: "6D / 5N",
-        difficulty: "Moderate",
-        altitude: "12,500 Ft",
-        distance: "23 km",
-        baseCamp: "Sankri",
-        rating: 4.9,
-        reviewCount: 280,
-        price: 8999,
-        originalPrice: 10999,
-        badge: "Bestseller",
-        categories: ["Himalayas", "Summit", "Snow"],
-        status: "Published",
-        batches: [
-          { id: 101, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 6, price: 8999 },
-          { id: 102, startDate: "Jun 28", endDate: "Jul 02, 2026", slotsLeft: 12, price: 8999 },
-        ],
-        itinerary: [
-          { day: 1, title: "Drive to Sankri (6,400 ft)", description: "Scenic drive along Yamuna and Tons rivers.", altitude: "6,400 Ft" },
-          { day: 2, title: "Sankri to Juda Ka Talab", description: "Climb through pine and maple forests to a frozen lake camp.", altitude: "9,100 Ft" },
-          { day: 3, title: "Base Camp & Summit Ridge", description: "Summit push for dramatic sunrise views.", altitude: "12,500 Ft" },
-        ],
-      },
-      {
-        id: 2,
-        slug: "hampta-pass",
-        name: "Hampta Pass Crossover",
-        location: "Himachal Pradesh",
-        region: "Manali",
-        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
-        gallery: ["https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85"],
-        tagline: "A dramatic crossing from green valleys into the high desert.",
-        description: "Hampta Pass is the Himalayas in one unforgettable frame: lush meadows, glacial rivers, and a warm night at Chandratal Lake.",
-        duration: "5D / 4N",
-        difficulty: "Moderate",
-        altitude: "14,100 Ft",
-        distance: "35 km",
-        baseCamp: "Manali",
-        rating: 4.9,
-        reviewCount: 184,
-        price: 11199,
-        originalPrice: 13999,
-        badge: "Fast filling",
-        categories: ["Himalayas", "High Pass", "Monsoon"],
-        status: "Published",
-        batches: [
-          { id: 201, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 6, price: 11199 },
-          { id: 202, startDate: "Jun 28", endDate: "Jul 02, 2026", slotsLeft: 12, price: 11199 },
-        ],
-        itinerary: [
-          { day: 1, title: "Manali to Jobra & Chika", description: "Short forest trail opening into wide alpine meadows.", altitude: "10,100 Ft" },
-          { day: 2, title: "Cross Hampta Pass to Shea Goru", description: "Snowfields and 14,100 Ft pass.", altitude: "14,100 Ft" },
-        ],
-      },
-      {
-        id: 3,
-        slug: "nag-tibba",
-        name: "Nag Tibba Weekend Summit",
-        location: "Uttarakhand",
-        region: "Dehradun",
-        image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=85",
-        gallery: ["https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=85"],
-        tagline: "A first Himalayan summit, just a night bus away.",
-        description: "Walk through cedar forests, sleep under stars, and catch sunrise over five ranges.",
-        duration: "2D / 1N",
-        difficulty: "Easy",
-        altitude: "9,915 Ft",
-        distance: "16 km",
-        baseCamp: "Pantwari",
-        rating: 4.8,
-        reviewCount: 327,
-        price: 2899,
-        originalPrice: 3899,
-        badge: "Friday night bus",
-        categories: ["Weekend", "Beginner", "Himalayas"],
-        status: "Published",
-        batches: [
-          { id: 301, startDate: "Jun 06", endDate: "Jun 07, 2026", slotsLeft: 8, price: 2899 },
-        ],
-        itinerary: [
-          { day: 1, title: "Dehradun to Pantwari & Camp", description: "Forest climb into campsite.", altitude: "8,500 Ft" },
-          { day: 2, title: "Summit Sunrise & Return", description: "Catch summit sunrise and descend.", altitude: "9,915 Ft" },
-        ],
-      },
-      {
-        id: 4,
-        slug: "valley-of-flowers",
-        name: "Valley of Flowers & Hemkund",
-        location: "Uttarakhand",
-        region: "Govindghat",
-        image: "https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=1600&q=85",
-        gallery: ["https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=1600&q=85"],
-        tagline: "A living carpet of alpine blooms beneath Nanda Devi.",
-        description: "Every monsoon, the Valley of Flowers turns into a surreal high-altitude garden with 500+ wildflowers.",
-        duration: "6D / 5N",
-        difficulty: "Moderate",
-        altitude: "14,107 Ft",
-        distance: "38 km",
-        baseCamp: "Govindghat",
-        rating: 4.9,
-        reviewCount: 216,
-        price: 9999,
-        originalPrice: 12499,
-        badge: "Monsoon special",
-        categories: ["Monsoon", "Wildflowers", "Himalayas"],
-        status: "Published",
-        batches: [
-          { id: 401, startDate: "Jul 04", endDate: "Jul 09, 2026", slotsLeft: 10, price: 9999 },
-        ],
-        itinerary: [
-          { day: 1, title: "Govindghat to Ghangaria", description: "Follow the Pushpawati river.", altitude: "10,000 Ft" },
-          { day: 2, title: "Explore Valley of Flowers", description: "Full day in the blooming valley.", altitude: "12,700 Ft" },
-        ],
-      },
-      {
-        id: 5,
-        slug: "triund",
-        name: "Triund Ridge & Snowline",
-        location: "Himachal Pradesh",
-        region: "McLeod Ganj",
-        image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1400&q=85",
-        gallery: ["https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1400&q=85"],
-        tagline: "Big views, little effort, zero reason to stay in.",
-        description: "An easy weekend trek under the towering Dhauladhar mountains with panoramic sunset views.",
-        duration: "2D / 1N",
-        difficulty: "Easy",
-        altitude: "9,350 Ft",
-        distance: "14 km",
-        baseCamp: "McLeod Ganj",
-        rating: 4.7,
-        reviewCount: 403,
-        price: 1999,
-        originalPrice: 2990,
-        badge: "Easy escape",
-        categories: ["Weekend", "Beginner"],
-        status: "Published",
-        batches: [
-          { id: 501, startDate: "Jun 06", endDate: "Jun 07, 2026", slotsLeft: 18, price: 1999 },
-        ],
-        itinerary: [
-          { day: 1, title: "McLeod Ganj to Triund Top", description: "Climb through oak forests to camp.", altitude: "9,350 Ft" },
-        ],
-      },
-      {
-        id: 6,
-        slug: "kashmir-great-lakes",
-        name: "Kashmir Great Lakes",
-        location: "Kashmir",
-        region: "Sonamarg",
-        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1400&q=85",
-        gallery: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1400&q=85"],
-        tagline: "Turquoise glacial waters across seven dramatic alpine valleys.",
-        description: "Kashmir Great Lakes is renowned worldwide for its 7 emerald alpine tarns nestled under high snow-clad peaks.",
-        duration: "7D / 6N",
-        difficulty: "Challenging",
-        altitude: "13,800 Ft",
-        distance: "72 km",
-        baseCamp: "Sonamarg",
-        rating: 5.0,
-        reviewCount: 310,
-        price: 15999,
-        originalPrice: 18999,
-        badge: "Pristine",
-        categories: ["High Pass", "Himalayas"],
-        status: "Published",
-        batches: [
-          { id: 601, startDate: "Jul 11", endDate: "Jul 17, 2026", slotsLeft: 5, price: 15999 },
-        ],
-        itinerary: [
-          { day: 1, title: "Sonamarg to Nichnai", description: "Trek through silver birch woods.", altitude: "11,500 Ft" },
-        ],
-      },
-    ],
+    treks: defaultTreks as unknown as TrekData[],
     trailReports: [
       {
         id: 1,
-        trail: "Kedarkantha (Sankri)",
-        region: "Uttarakhand",
+        trail: "Chopta Tungnath Chandrashila",
+        region: "Garhwal, Uttarakhand",
         status: "open",
-        temperature: "2°C Night",
+        temperature: "7°C Summit",
         weather: "Clear Skies",
         updatedAt: "10 min ago",
-        note: "Clear skies and stable summit conditions.",
+        note: "Summit trail dry and fully open; crystal-clear Himalayan views.",
       },
       {
         id: 2,
-        trail: "Hampta Pass (Jobra)",
-        region: "Himachal Pradesh",
+        trail: "Hampta Pass Crossover",
+        region: "Manali, Himachal Pradesh",
         status: "active",
-        temperature: "8°C",
-        weather: "Monsoon Green",
+        temperature: "11°C",
+        weather: "Mild Breeze",
         updatedAt: "25 min ago",
-        note: "River crossing is clear and well-guided.",
+        note: "Pass crossover safe, glacial streams guided with safety ropes.",
       },
       {
         id: 3,
-        trail: "Pin Bhaba Pass",
-        region: "Himachal Pradesh",
-        status: "caution",
-        temperature: "1°C",
-        weather: "High Altitude Winds",
-        updatedAt: "40 min ago",
-        note: "High altitude clearance checked by trek leaders.",
+        trail: "Kheerganga Hot Springs",
+        region: "Parvati Valley, Himachal Pradesh",
+        status: "open",
+        temperature: "15°C",
+        weather: "Sunny",
+        updatedAt: "35 min ago",
+        note: "Thermal bath open, trails through Nakthan fully clear.",
       },
     ],
     bookings: [

@@ -91,11 +91,16 @@ export function HeroSearch({
                 onChange={(e) => setDestination(e.target.value)}
                 className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
               >
-                <option value="All">All Himalayan Regions</option>
-                <option value="Uttarakhand">Uttarakhand (Garhwal)</option>
-                <option value="Himachal Pradesh">Himachal Pradesh</option>
-                <option value="Kashmir">Kashmir Valley</option>
-                <option value="International">Bali & Vietnam</option>
+                <option value="All">All Regions & States</option>
+                <option value="Uttarakhand">Uttarakhand (Chopta & Nainital)</option>
+                <option value="Himachal">Himachal (Hampta & Kheerganga)</option>
+                <option value="Ladakh">Leh Ladakh (Pangong & Nubra)</option>
+                <option value="Kerala">Kerala (Munnar & Backwaters)</option>
+                <option value="Meghalaya">Meghalaya (Root Bridges & Cherrapunji)</option>
+                <option value="Rajasthan">Rajasthan (Jaipur & Jaisalmer)</option>
+                <option value="Goa">Goa (Beaches & Forts)</option>
+                <option value="Sikkim">Sikkim & Gangtok</option>
+                <option value="Assam">Assam & Kaziranga</option>
               </select>
             </div>
 
@@ -109,10 +114,11 @@ export function HeroSearch({
                 onChange={(e) => setSeason(e.target.value)}
                 className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
               >
-                <option value="All">All Months</option>
-                <option value="Monsoon">July - Aug (Monsoon Blooms)</option>
-                <option value="Autumn">Sept - Nov (Autumn Clear)</option>
-                <option value="Snow">Dec - Feb (Snow Treks)</option>
+                <option value="All">All Months / Any Time</option>
+                <option value="Weekend">Quick Weekend Breaks</option>
+                <option value="Monsoon">July - Sept (Monsoon & Blooms)</option>
+                <option value="Autumn">Oct - Nov (Clear Peaks)</option>
+                <option value="Winter">Dec - Feb (Winter & Snow)</option>
               </select>
             </div>
 
@@ -130,70 +136,89 @@ export function HeroSearch({
         </form>
 
         {/* Region Story Avatars */}
-        <div className="pt-6 flex justify-center items-center gap-6 overflow-x-auto">
+        <div className="pt-6 flex justify-center items-center gap-5 sm:gap-8 overflow-x-auto scrollbar-none">
           
           <div
             onClick={() => handleCategoryClick("Himalayas")}
-            className="flex flex-col items-center gap-2 cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
           >
-            <div className="w-14 h-14 rounded-full border-2 border-white/60 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
-                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=150&q=80"
+                src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=150&q=80"
                 alt="Himalayas"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            <span className="text-xs font-medium text-slate-200 group-hover:text-white">
-              Himalayas
-            </span>
+            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Himalayas</span>
           </div>
 
           <div
             onClick={() => handleCategoryClick("Kerala")}
-            className="flex flex-col items-center gap-2 cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
           >
-            <div className="w-14 h-14 rounded-full border-2 border-white/60 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
                 alt="Kerala"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            <span className="text-xs font-medium text-slate-200 group-hover:text-white">
-              Kerala
-            </span>
+            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Kerala</span>
           </div>
 
           <div
-            onClick={() => handleCategoryClick("Vietnam")}
-            className="flex flex-col items-center gap-2 cursor-pointer group"
+            onClick={() => handleCategoryClick("Ladakh")}
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
           >
-            <div className="w-14 h-14 rounded-full border-2 border-white/60 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
-                src="https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=150&q=80"
-                alt="Vietnam"
+                src="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=150&q=80"
+                alt="Ladakh"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            <span className="text-xs font-medium text-slate-200 group-hover:text-white">
-              Vietnam
-            </span>
+            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Ladakh</span>
           </div>
 
           <div
-            onClick={() => handleCategoryClick("Weekend")}
-            className="flex flex-col items-center gap-2 cursor-pointer group"
+            onClick={() => handleCategoryClick("Meghalaya")}
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
           >
-            <div className="w-14 h-14 rounded-full border-2 border-white/60 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
-                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=150&q=80"
-                alt="Weekend"
+                src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=150&q=80"
+                alt="Meghalaya"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            <span className="text-xs font-medium text-slate-200 group-hover:text-white">
-              Weekend
-            </span>
+            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Meghalaya</span>
+          </div>
+
+          <div
+            onClick={() => handleCategoryClick("Rajasthan")}
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
+          >
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
+              <img
+                src="https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=150&q=80"
+                alt="Rajasthan"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Rajasthan</span>
+          </div>
+
+          <div
+            onClick={() => handleCategoryClick("Goa")}
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
+          >
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
+              <img
+                src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=150&q=80"
+                alt="Goa"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
           </div>
 
         </div>

@@ -17,7 +17,8 @@ export async function GET(request: NextRequest) {
         t.name.toLowerCase().includes(search) ||
         t.location.toLowerCase().includes(search) ||
         t.region.toLowerCase().includes(search) ||
-        t.description.toLowerCase().includes(search),
+        (t.description || "").toLowerCase().includes(search) ||
+        (t.tagline || "").toLowerCase().includes(search),
     );
   }
 

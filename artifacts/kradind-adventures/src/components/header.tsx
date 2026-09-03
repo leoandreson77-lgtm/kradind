@@ -10,11 +10,11 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <Link href="/" className="brand-font text-2xl font-extrabold tracking-tight text-[#0F3A2E] flex items-center gap-2">
-          <MountainSnow className="w-7 h-7 text-[#FF6B35]" />
+        <Link href="/" className="brand-font text-xl sm:text-2xl font-extrabold tracking-tight text-[#0F3A2E] flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <MountainSnow className="w-6 h-6 sm:w-7 sm:h-7 text-[#FF6B35]" />
           <span>KRAD<span className="text-[#FF6B35]">IND</span></span>
         </Link>
 
@@ -65,29 +65,22 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           </Link>
         </nav>
 
-        {/* Right CTA */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        {/* Right CTA Actions */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <a
             href="tel:+917500222141"
-            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] border border-emerald-200 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-full transition shadow-sm group"
-            title="Call KRADIND Support"
+            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] border border-emerald-200/80 text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition shadow-sm group whitespace-nowrap"
+            title="Direct Ground Desk: +91 7500222141"
           >
-            <PhoneCall className="w-3.5 h-3.5 text-emerald-600 group-hover:rotate-12 transition-transform" />
-            <span className="hidden md:inline text-slate-500 font-medium">Call:</span>
-            <span>7500222141</span>
+            <PhoneCall className="w-3.5 h-3.5 text-emerald-600 group-hover:rotate-12 transition-transform shrink-0" />
+            <span className="hidden sm:inline text-slate-500 font-medium">Call:</span>
+            <span className="tracking-tight">7500222141</span>
           </a>
-
-          <button
-            onClick={onBookClick}
-            className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-full shadow-md transition transform hover:scale-105 active:scale-95"
-          >
-            Book Now
-          </button>
 
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-700 hover:text-[#0F3A2E]"
+            className="lg:hidden p-2 text-slate-700 hover:text-[#0F3A2E] hover:bg-slate-100 rounded-xl transition shrink-0"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

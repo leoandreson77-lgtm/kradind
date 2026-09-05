@@ -753,7 +753,7 @@ function getInitialStore(): CMSStoreData {
         discountPercent: 20,
       },
       topBar: {
-        supportPhone: "+91 98765 43210",
+        supportPhone: "+91 75002 22141",
         leaveNoTrace: "🌱 Leave No Trace Certified Operator",
       },
     },

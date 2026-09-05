@@ -70,14 +70,28 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
           
           {/* Contact Details */}
-          <div className="space-y-6">
+          <address
+            className="not-italic space-y-6"
+            itemScope
+            itemType="https://schema.org/LocalBusiness"
+          >
+            <meta itemProp="name" content="KRADIND Adventures" />
+            <meta itemProp="image" content="https://kradind.com/logo.png" />
+            <meta itemProp="priceRange" content="₹₹" />
+
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
               <div className="p-3 bg-emerald-100 text-[#0F3A2E] rounded-xl shrink-0">
                 <Phone className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="font-bold text-sm text-slate-900">Emergency Ground Desk</h3>
-                <p className="text-xs text-slate-500 mt-1">+91 98765 43210 (24/7 Helpline & WhatsApp)</p>
+                <a
+                  href="tel:+917500222141"
+                  itemProp="telephone"
+                  className="text-xs text-slate-600 hover:text-emerald-700 font-medium mt-1 block"
+                >
+                  +91 75002 22141 (24/7 Helpline & WhatsApp)
+                </a>
               </div>
             </div>
 
@@ -87,20 +101,40 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-bold text-sm text-slate-900">Email Expeditions Team</h3>
-                <p className="text-xs text-slate-500 mt-1">support@kradindadventures.com</p>
+                <a
+                  href="mailto:support@kradind.com"
+                  itemProp="email"
+                  className="text-xs text-slate-600 hover:text-emerald-700 font-medium mt-1 block"
+                >
+                  support@kradind.com
+                </a>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
+            <div
+              className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4"
+              itemProp="address"
+              itemScope
+              itemType="https://schema.org/PostalAddress"
+            >
               <div className="p-3 bg-blue-100 text-blue-700 rounded-xl shrink-0">
                 <MapPin className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-slate-900">Base Basecamp Office</h3>
-                <p className="text-xs text-slate-500 mt-1">Sankri Base Village / Dehradun Office, Uttarakhand</p>
+                <h3 className="font-bold text-sm text-slate-900">Headquarters & Basecamp Office</h3>
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                  <span itemProp="streetAddress">Rajpur Road, Jakhan</span>,{" "}
+                  <span itemProp="addressLocality">Dehradun</span>,{" "}
+                  <span itemProp="addressRegion">Uttarakhand</span>{" "}
+                  <span itemProp="postalCode">248001</span>,{" "}
+                  <span itemProp="addressCountry">India</span>
+                </p>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Expedition base operations: Sankri Village (Uttarakhand), Manali (HP) & Srinagar (J&K).
+                </p>
               </div>
             </div>
-          </div>
+          </address>
 
           {/* Form */}
           <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl">
@@ -141,7 +175,7 @@ export default function ContactPage() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 75002 22141"
                     className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-[#0F3A2E]"
                   />
                 </div>

@@ -92,26 +92,49 @@ export function Footer() {
               India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.
             </p>
 
-            <div className="space-y-2 pt-2 text-slate-300 text-xs">
+            <address
+              className="not-italic space-y-2.5 pt-2 text-slate-300 text-xs"
+              itemScope
+              itemType="https://schema.org/LocalBusiness"
+            >
+              <meta itemProp="name" content="KRADIND Adventures" />
+              <meta itemProp="priceRange" content="₹₹" />
+              <meta itemProp="image" content="https://kradind.com/logo.png" />
               <a
                 href="tel:+917500222141"
                 className="flex items-center gap-2.5 hover:text-emerald-400 transition"
+                itemProp="telephone"
               >
                 <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>+91 7500222141 (24/7 Expedition Helpline)</span>
+                <span>+91 75002 22141 (24/7 Expedition Helpline)</span>
               </a>
               <a
                 href="mailto:support@kradind.com"
                 className="flex items-center gap-2.5 hover:text-emerald-400 transition"
+                itemProp="email"
               >
                 <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>support@kradind.com</span>
               </a>
-              <div className="flex items-center gap-2.5 text-slate-400">
-                <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Dehradun • Manali • Srinagar Base Operations</span>
+              <div
+                className="flex items-start gap-2.5 text-slate-400"
+                itemProp="address"
+                itemScope
+                itemType="https://schema.org/PostalAddress"
+              >
+                <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">
+                  <span itemProp="streetAddress">Rajpur Road, Jakhan</span>,{" "}
+                  <span itemProp="addressLocality">Dehradun</span>,{" "}
+                  <span itemProp="addressRegion">Uttarakhand</span>{" "}
+                  <span itemProp="postalCode">248001</span>,{" "}
+                  <span itemProp="addressCountry">India</span>
+                  <span className="block text-[11px] text-slate-500 mt-0.5">
+                    (Base operations in Sankri Village, Manali & Srinagar)
+                  </span>
+                </span>
               </div>
-            </div>
+            </address>
           </div>
 
           {/* Quick Navigation Links */}

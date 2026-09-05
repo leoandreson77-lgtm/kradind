@@ -179,9 +179,12 @@ export default function LandingPageRoute({
     faqs: true,
   };
 
-  const whatsappHref = `https://wa.me/${page.whatsappNumber || "917500222141"}?text=${encodeURIComponent(
-    page.whatsappMessage || `Hi KRADIND! I'm interested in the ${page.title} expedition.`
-  )}`;
+  const whatsappHref =
+    page.whatsappNumber && page.whatsappNumber !== "917500222141"
+      ? `https://wa.me/${page.whatsappNumber}?text=${encodeURIComponent(
+          page.whatsappMessage || `Hi KRADIND! I'm interested in the ${page.title} expedition.`
+        )}`
+      : "https://wa.link/n3u8c0";
 
   const getHighlightIcon = (iconName?: string) => {
     switch (iconName) {

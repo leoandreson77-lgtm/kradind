@@ -4,11 +4,7 @@ import React from "react";
 import { FaWhatsapp } from "react-icons/fa";
 
 export function FloatingWhatsApp() {
-  const phoneNumber = "917500222141";
-  const defaultMessage = encodeURIComponent(
-    "Hi KRADIND Adventures! I'm interested in booking a trek and would like to know about available dates and packages.",
-  );
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
+  const whatsappUrl = "https://wa.link/n3u8c0";
 
   return (
     <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 select-none">

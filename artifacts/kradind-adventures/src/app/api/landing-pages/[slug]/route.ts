@@ -18,10 +18,15 @@ export async function GET(
 
     // Resolve featured treks details
     const featuredTreks = (store.treks || []).filter((t) =>
-      page.featuredTrekSlugs.includes(t.slug)
+      (page.featuredTrekSlugs || []).includes(t.slug)
     );
 
-    return NextResponse.json({ page, featuredTreks });
+    // Resolve other published campaigns for cross-destination exploration
+    const otherCampaigns = (store.landingPages || []).filter(
+      (p) => p.status === "Published" && p.slug.toLowerCase() !== slug.toLowerCase()
+    );
+
+    return NextResponse.json({ page, featuredTreks, otherCampaigns });
   } catch (error) {
     console.error("Error fetching landing page by slug:", error);
     return NextResponse.json({ error: "Failed to fetch landing page" }, { status: 500 });

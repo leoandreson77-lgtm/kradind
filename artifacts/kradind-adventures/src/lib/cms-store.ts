@@ -399,6 +399,329 @@ export function getDefaultLandingPages(): LandingPageData[] {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
+    {
+      id: "lp-kedarnath-tour-package",
+      slug: "kedarnath-tour-package",
+      title: "Kedarnath Tour Package – 6 Days / 5 Nights",
+      subtitle:
+        "Sacred Kedarnath Dham Pilgrimage from Delhi with private AC vehicle, Haridwar Ganga Aarti, Sonprayag transfers, comfortable stays, and complete yatra registration guidance.",
+      badge: "🕉️ SACRED DHAM PILGRIMAGE 2026 • FROM DELHI",
+      heroImage:
+        "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1920&q=85",
+      promoOffer: {
+        tag: "EARLY YATRA SPECIAL",
+        discountText: "Save Flat ₹3,000 on Private Group Bookings",
+        code: "KEDAR2026",
+        expiryDate: "2026-10-31T23:59:59.000Z",
+      },
+      highlights: [
+        {
+          title: "Private Road Transportation",
+          desc: "Dedicated sanitized AC vehicle with experienced mountain driver from Delhi pickup to drop.",
+          icon: "ShieldCheck",
+        },
+        {
+          title: "16 km Kedarnath Trek Assistance",
+          desc: "Guidance for Gaurikund-Kedarnath trek, plus optional pony, palki, and helicopter booking support.",
+          icon: "Mountain",
+        },
+        {
+          title: "Mandatory Registration Guidance",
+          desc: "Complete support for Uttarakhand Tourist Care portal registration and biometric verification.",
+          icon: "Sparkles",
+        },
+        {
+          title: "Thoughtful Buffer Itinerary",
+          desc: "Realistic driving times with rest days in Haridwar & Guptkashi instead of exhausting rushed travel.",
+          icon: "Compass",
+        },
+      ],
+      featuredTrekSlugs: ["chopta-tungnath-chandrashila", "nainital-tour-package"],
+      inclusions: [
+        "5 Nights comfortable accommodation on double/twin sharing (Haridwar, Guptkashi/Sitapur, Kedarnath)",
+        "Daily Breakfast & Dinner (wholesome pure vegetarian meals in mountain sectors)",
+        "Private AC vehicle for the entire Delhi-Haridwar-Kedarnath-Delhi circuit",
+        "All toll taxes, fuel charges, state permits, and driver allowances",
+        "Har Ki Pauri Ganga Aarti experience in Haridwar",
+        "Complete yatra registration & trek route planning assistance",
+      ],
+      exclusions: [
+        "Lunches and personal expenses / beverages",
+        "Pony, Palki, Doli, or Porter charges on the Gaurikund trek",
+        "Helicopter tickets (arranged separately on advance request)",
+        "Special / VIP Darshan puja charges and personal donations",
+      ],
+      leadFormConfig: {
+        title: "Get Kedarnath Yatra Itinerary & Quotation",
+        subtitle:
+          "Leave your WhatsApp number to receive complete day-by-day travel plan, hotel options, and group discounts.",
+        ctaText: "Get Free Kedarnath Itinerary",
+      },
+      whatsappNumber: "917500222141",
+      whatsappMessage:
+        "Hi KRADIND! I want to plan the 6 Days / 5 Nights Kedarnath Tour Package from Delhi.",
+      faqs: [
+        {
+          question: "How long is the Kedarnath trek?",
+          answer:
+            "The trek from Gaurikund to Kedarnath is approximately 16 km with a gradual uphill climb. Ponies, palkis, and helicopters are also available subject to weather and availability.",
+        },
+        {
+          question: "Is this package suitable for senior citizens?",
+          answer:
+            "Yes! The 6-day itinerary includes comfortable buffer days and private vehicle travel. We also assist with pony, palki, or helicopter bookings for senior pilgrims.",
+        },
+        {
+          question: "Is registration mandatory for Kedarnath?",
+          answer:
+            "Yes, official Uttarakhand Tourist Care registration is mandatory. Our team guides and assists you through the entire registration process.",
+        },
+      ],
+      testimonials: [
+        {
+          name: "Sunil & Meenakshi Joshi",
+          city: "Delhi NCR",
+          text: "Superbly organized! Traveling with my elderly parents, we were worried about mountain driving, but the driver was exceptionally skilled and the hotels in Guptkashi were clean and warm.",
+          rating: 5,
+          batch: "May 2025 Yatra",
+        },
+        {
+          name: "Rameshwar Aggarwal",
+          city: "Jaipur",
+          text: "Kedarnath Darshan was an unforgettable spiritual experience. The KRADIND team handled our biometric slips and registration seamlessly.",
+          rating: 5,
+          batch: "Oct 2025 Yatra",
+        },
+      ],
+      status: "Published",
+      sectionsEnabled: {
+        hero: true,
+        countdown: true,
+        highlights: true,
+        treks: true,
+        inclusions: true,
+        leadForm: true,
+        testimonials: true,
+        faqs: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "lp-char-dham-yatra-package",
+      slug: "char-dham-yatra-package",
+      title: "Char Dham Yatra Package – 12 Days / 11 Nights",
+      subtitle:
+        "Complete sacred pilgrimage to Yamunotri, Gangotri, Kedarnath, and Badrinath with private transfers, carefully selected hotels, scenic Himalayan valleys, and dedicated yatra support.",
+      badge: "🙏 THE MAHA CHAR DHAM YATRA • 4 SACRED SHRINES",
+      heroImage:
+        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85",
+      promoOffer: {
+        tag: "CHAR DHAM 2026 OPEN",
+        discountText: "Early Bird Privilege: Flat ₹5,000 Off per Family",
+        code: "CHARDHAM2026",
+        expiryDate: "2026-10-31T23:59:59.000Z",
+      },
+      highlights: [
+        {
+          title: "All 4 Sacred Dhams Covered",
+          desc: "Complete pilgrimage to Yamunotri, Gangotri, Kedarnath, and Badrinath in one harmonious route.",
+          icon: "Mountain",
+        },
+        {
+          title: "Comfortable 12-Day Buffer Plan",
+          desc: "Realistic mountain driving hours designed to give senior citizens and families ample rest and recovery.",
+          icon: "ShieldCheck",
+        },
+        {
+          title: "Private Sanitized Vehicles",
+          desc: "Dedicated AC transport for the entire circuit from Haridwar/Rishikesh with expert mountain drivers.",
+          icon: "Compass",
+        },
+        {
+          title: "Mana Village & Ganga Aarti",
+          desc: "Explore Har Ki Pauri Ganga Aarti, Devprayag sangam, Rudraprayag, and India's first village Mana.",
+          icon: "Sparkles",
+        },
+      ],
+      featuredTrekSlugs: ["chopta-tungnath-chandrashila", "hampta-pass"],
+      inclusions: [
+        "11 Nights accommodation in Barkot, Uttarkashi, Guptkashi/Sitapur, Kedarnath, and Badrinath/Joshimath",
+        "Daily Breakfast & Dinner (wholesome pure vegetarian meals at all stops)",
+        "Dedicated private vehicle for the entire 12-day circuit",
+        "Driver allowances, fuel, state road taxes, and toll/parking fees",
+        "Official Char Dham biometric and portal registration guidance",
+        "Sightseeing to Har Ki Pauri, Devprayag, Surya Kund, and Mana Village",
+      ],
+      exclusions: [
+        "Pony, Palki, Doli, and Porter charges for Yamunotri (6 km) & Kedarnath (16 km)",
+        "Helicopter tickets (arranged on advance request)",
+        "Lunch and personal laundry/beverage expenses",
+        "Special puja / VIP darshan passes and temple donations",
+      ],
+      leadFormConfig: {
+        title: "Receive 12-Day Char Dham Dossier & Pricing",
+        subtitle:
+          "Leave your details to get complete day-by-day itinerary, vehicle options (Innova / Tempo Traveller), and hotel tiers.",
+        ctaText: "Get Free Char Dham Plan",
+      },
+      whatsappNumber: "917500222141",
+      whatsappMessage:
+        "Hi KRADIND! I want to enquire about the 12 Days / 11 Nights Char Dham Yatra Package.",
+      faqs: [
+        {
+          question: "What is the order of visiting the Char Dhams?",
+          answer:
+            "The traditional clockwise circumambulation (Parikrama) starts with Yamunotri, followed by Gangotri, Kedarnath, and concludes with Badrinath.",
+        },
+        {
+          question: "How physically demanding is the 12-day tour?",
+          answer:
+            "Yamunotri involves a 6 km walk and Kedarnath an approx. 16 km walk. For both Dhams, ponies, palkis, and helicopters can be arranged for those preferring not to trek.",
+        },
+        {
+          question: "Can we start from Delhi instead of Haridwar?",
+          answer:
+            "Yes! We easily arrange private pickups and drops directly from Delhi Airport, railway station, or your home address.",
+        },
+      ],
+      testimonials: [
+        {
+          name: "Devendra & Saroj Sharma",
+          city: "Ahmedabad",
+          text: "Completing Char Dham was a lifelong dream of ours. KRADIND organized the stays so well that we never felt rushed. Badrinath and Kedarnath darshans were serene and smooth.",
+          rating: 5,
+          batch: "Char Dham May 2025",
+        },
+        {
+          name: "Kavita Singhania",
+          city: "Kolkata",
+          text: "Exceptional service! The driver was like a family member, very safe on hairpins. The food was warm, hygienic, and purely vegetarian throughout.",
+          rating: 5,
+          batch: "Char Dham Sep 2025",
+        },
+      ],
+      status: "Published",
+      sectionsEnabled: {
+        hero: true,
+        countdown: true,
+        highlights: true,
+        treks: true,
+        inclusions: true,
+        leadForm: true,
+        testimonials: true,
+        faqs: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "lp-do-dham-yatra-package",
+      slug: "do-dham-yatra-package",
+      title: "Do Dham Yatra Package – 6 Days / 5 Nights",
+      subtitle:
+        "Sacred Kedarnath & Badrinath Yatra with private vehicle, Devprayag & Rudraprayag sangams, Mana Village excursion, and carefully scheduled mountain travel from Haridwar/Rishikesh.",
+      badge: "🚩 KEDARNATH & BADRINATH • DO DHAM YATRA",
+      heroImage:
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=85",
+      promoOffer: {
+        tag: "DO DHAM SPECIAL",
+        discountText: "Save ₹2,500 on Group Bookings (4+ Pilgrims)",
+        code: "DODHAM2026",
+        expiryDate: "2026-10-31T23:59:59.000Z",
+      },
+      highlights: [
+        {
+          title: "Kedarnath & Badrinath Shrines",
+          desc: "Visit Lord Shiva's sacred Jyotirlinga and Lord Vishnu's holy abode in one comprehensive 6-day circuit.",
+          icon: "Mountain",
+        },
+        {
+          title: "Sacred River Confluences",
+          desc: "Witness the divine confluences of Devprayag (Bhagirathi & Alaknanda) and Rudraprayag (Mandakini & Alaknanda).",
+          icon: "Sparkles",
+        },
+        {
+          title: "Mana: The First Indian Village",
+          desc: "Explore Vyas Gufa, Ganesh Gufa, Bhim Pul, and Saraswati River origin near Badrinath.",
+          icon: "Compass",
+        },
+        {
+          title: "Private Sanitized Transport",
+          desc: "Travel safely in private AC vehicles with experienced Garhwal mountain drivers and 24/7 on-call coordination.",
+          icon: "ShieldCheck",
+        },
+      ],
+      featuredTrekSlugs: ["chopta-tungnath-chandrashila", "hampta-pass"],
+      inclusions: [
+        "5 Nights accommodation in Guptkashi/Sitapur, Kedarnath, Badrinath, and Haridwar/Rishikesh",
+        "Daily Breakfast and Dinner (wholesome vegetarian meals)",
+        "Private transport throughout the Haridwar-Kedarnath-Badrinath-Haridwar route",
+        "All toll, parking, driver charges, and state taxes",
+        "Complete Do Dham registration & darshan slot coordination guidance",
+      ],
+      exclusions: [
+        "Kedarnath trek pony, doli, or helicopter fares",
+        "Lunches and personal refreshments",
+        "VIP Puja passes, temple priest donations",
+        "Emergency evacuation or medical insurance",
+      ],
+      leadFormConfig: {
+        title: "Get Custom Do Dham Itinerary & Quotation",
+        subtitle:
+          "Tell us your preferred dates and group size. We'll send an instant WhatsApp quotation and itinerary.",
+        ctaText: "Get Free Do Dham Quotation",
+      },
+      whatsappNumber: "917500222141",
+      whatsappMessage:
+        "Hi KRADIND! I'm interested in the 6 Days / 5 Nights Do Dham Yatra (Kedarnath & Badrinath).",
+      faqs: [
+        {
+          question: "Which two temples are covered in Do Dham Yatra?",
+          answer:
+            "The Do Dham Yatra in Uttarakhand traditionally refers to Kedarnath Dham (Lord Shiva) and Badrinath Dham (Lord Vishnu).",
+        },
+        {
+          question: "Can Do Dham Yatra be completed in 6 days?",
+          answer:
+            "Yes, 6 Days / 5 Nights is the optimal timeframe from Haridwar/Rishikesh, allowing sufficient time for darshan at both temples without rushing the mountain roads.",
+        },
+        {
+          question: "Can we add Chopta Tungnath to this itinerary?",
+          answer:
+            "Yes! We can customize the itinerary to include Chopta and Tungnath (the highest Shiva temple in the world) by adding 1 extra night.",
+        },
+      ],
+      testimonials: [
+        {
+          name: "Rajesh & Anupama Bansal",
+          city: "Indore",
+          text: "Covering both Kedarnath and Badrinath in 6 days was seamless and spiritually uplifting. Mana village was fascinating and the hotel arrangements in Guptkashi were great.",
+          rating: 5,
+          batch: "Do Dham June 2025",
+        },
+        {
+          name: "Siddharth Nambiar",
+          city: "Bengaluru",
+          text: "The private Innova was clean and the driver was punctual and courteous throughout. Highly recommend KRADIND for Uttarakhand pilgrimages.",
+          rating: 5,
+          batch: "Do Dham Sep 2025",
+        },
+      ],
+      status: "Published",
+      sectionsEnabled: {
+        hero: true,
+        countdown: true,
+        highlights: true,
+        treks: true,
+        inclusions: true,
+        leadForm: true,
+        testimonials: true,
+        faqs: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
   ];
 }
 

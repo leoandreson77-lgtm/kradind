@@ -32,6 +32,9 @@ export const metadata: Metadata = {
   title: "KRADIND | Treks, Domestic & International Adventures",
   description:
     "Explore handpicked Himalayan treks, tropical road trips, live trail radar updates, and international backpacking circuits with KRADIND Adventures.",
+  alternates: {
+    canonical: "/",
+  },
   verification: {
     google: "T3Scitqdc9Jqk5rp2LCXSF-69t8Q-zpZlgql9ZjxpGI",
   },
@@ -65,6 +68,86 @@ export const metadata: Metadata = {
   },
 };
 
+const globalStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "TravelAgency"],
+      "@id": "https://kradind.com/#organization",
+      name: "KRADIND Adventures",
+      alternateName: ["KRADIND", "KRAD Global Travels"],
+      url: "https://kradind.com",
+      logo: {
+        "@type": "ImageObject",
+        "@id": "https://kradind.com/#logo",
+        url: "https://kradind.com/logo-emblem.png",
+        caption: "KRADIND Adventures",
+      },
+      image: "https://kradind.com/logo.png",
+      description:
+        "India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.",
+      telephone: "+917500222141",
+      email: "support@kradind.com",
+      priceRange: "₹₹",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Base Operations, Sankri Village & Dehradun Basecamp",
+        addressLocality: "Dehradun",
+        addressRegion: "Uttarakhand",
+        postalCode: "248001",
+        addressCountry: "IN",
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: 30.3165,
+        longitude: 78.0322,
+      },
+      openingHoursSpecification: {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ],
+        opens: "00:00",
+        closes: "23:59",
+      },
+      sameAs: [
+        "https://wa.link/n3u8c0",
+        "https://www.instagram.com/kradglobal/",
+        "https://www.facebook.com/share/189E2RUcH4/",
+        "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
+        "https://x.com/KradGlobalTour",
+        "https://www.threads.com/@kradglobal",
+        "https://in.pinterest.com/KradGlobalTravels/",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://kradind.com/#website",
+      url: "https://kradind.com",
+      name: "KRADIND Adventures",
+      description:
+        "Himalayan Treks, Domestic & International Adventures, Live Ground Radar",
+      publisher: {
+        "@id": "https://kradind.com/#organization",
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: "https://kradind.com/treks?q={search_term_string}",
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -80,6 +163,13 @@ export default function RootLayout({
         {/* Preconnect to external image CDN for fast mobile LCP */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        {/* Global JSON-LD Schema (Organization & WebSite with SearchAction) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(globalStructuredData),
+          }}
+        />
       </head>
       <body className="bg-slate-50 text-slate-800 antialiased font-sans relative">
         {/* Google tag (gtag.js) deferred with lazyOnload to keep mobile TBT at 0ms */}

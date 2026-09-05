@@ -72,9 +72,10 @@ const globalStructuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": ["Organization", "TravelAgency"],
+      "@type": "Organization",
       "@id": "https://kradind.com/#organization",
       name: "KRADIND Adventures",
+      legalName: "KRADIND Adventures Private Limited",
       alternateName: ["KRADIND", "KRAD Global Travels"],
       url: "https://kradind.com",
       logo: {
@@ -88,7 +89,12 @@ const globalStructuredData = {
         "India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.",
       telephone: "+917500222141",
       email: "support@kradind.com",
-      priceRange: "₹₹",
+      founder: {
+        "@type": "Person",
+        "@id": "https://kradind.com/#founder",
+        name: "Aashish Chauhan",
+        jobTitle: "Founder & Chief Expedition Director",
+      },
       address: {
         "@type": "PostalAddress",
         streetAddress: "Base Operations, Sankri Village & Dehradun Basecamp",
@@ -96,25 +102,6 @@ const globalStructuredData = {
         addressRegion: "Uttarakhand",
         postalCode: "248001",
         addressCountry: "IN",
-      },
-      geo: {
-        "@type": "GeoCoordinates",
-        latitude: 30.3165,
-        longitude: 78.0322,
-      },
-      openingHoursSpecification: {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday",
-        ],
-        opens: "00:00",
-        closes: "23:59",
       },
       sameAs: [
         "https://wa.link/n3u8c0",
@@ -125,6 +112,34 @@ const globalStructuredData = {
         "https://www.threads.com/@kradglobal",
         "https://in.pinterest.com/KradGlobalTravels/",
       ],
+    },
+    {
+      "@type": "Person",
+      "@id": "https://kradind.com/#founder",
+      name: "Aashish Chauhan",
+      jobTitle: "Founder & Chief Expedition Director",
+      worksFor: {
+        "@id": "https://kradind.com/#organization",
+      },
+      description:
+        "Himalayan mountaineer and wilderness expedition specialist leading certified high-altitude treks across India.",
+      telephone: "+917500222141",
+      email: "support@kradind.com",
+      sameAs: [
+        "https://www.instagram.com/kradglobal/",
+        "https://x.com/KradGlobalTour",
+      ],
+    },
+    {
+      "@type": "TravelAgency",
+      "@id": "https://kradind.com/#travelagency",
+      name: "KRADIND Adventures",
+      url: "https://kradind.com",
+      priceRange: "₹₹",
+      telephone: "+917500222141",
+      parentOrganization: {
+        "@id": "https://kradind.com/#organization",
+      },
     },
     {
       "@type": "WebSite",

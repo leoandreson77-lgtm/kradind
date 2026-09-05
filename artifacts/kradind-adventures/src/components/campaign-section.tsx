@@ -16,9 +16,15 @@ import {
 } from "lucide-react";
 import { LandingPageData } from "@/lib/cms-store";
 
-export function CampaignSection() {
-  const [campaigns, setCampaigns] = useState<LandingPageData[]>([]);
-  const [loading, setLoading] = useState(true);
+export function CampaignSection({
+  initialCampaigns,
+}: {
+  initialCampaigns?: LandingPageData[];
+}) {
+  const [campaigns, setCampaigns] = useState<LandingPageData[]>(
+    initialCampaigns || []
+  );
+  const [loading, setLoading] = useState(!initialCampaigns);
 
   useEffect(() => {
     async function fetchCampaigns() {
@@ -34,8 +40,10 @@ export function CampaignSection() {
         setLoading(false);
       }
     }
-    fetchCampaigns();
-  }, []);
+    if (!initialCampaigns) {
+      fetchCampaigns();
+    }
+  }, [initialCampaigns]);
 
   if (loading || campaigns.length === 0) {
     return null; // Only render when there are published campaigns

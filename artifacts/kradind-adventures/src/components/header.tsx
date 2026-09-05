@@ -44,13 +44,13 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
             {treksDropdownOpen && (
               <div className="absolute top-full left-0 w-56 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <Link href="/treks?type=Himalayas" className="block px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0F3A2E]">
+                <Link href="/treks/category/himalayas" className="block px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0F3A2E]">
                   🏔️ Himalayan Expeditions
                 </Link>
-                <Link href="/treks?type=Weekend" className="block px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0F3A2E]">
+                <Link href="/treks/category/weekend" className="block px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0F3A2E]">
                   ⛺ Weekend Treks
                 </Link>
-                <Link href="/treks?type=Monsoon" className="block px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0F3A2E]">
+                <Link href="/treks/category/monsoon" className="block px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0F3A2E]">
                   🌧️ Monsoon & Valley Blooms
                 </Link>
                 <Link href="/treks" className="block px-4 py-2 text-xs font-bold text-[#FF6B35] hover:bg-slate-50 border-t border-slate-100 mt-1">
@@ -92,7 +92,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </span>
                   </div>
                   <Link
-                    href="/treks?category=Domestic"
+                    href="/treks/category/domestic"
                     onClick={() => setDomesticDropdownOpen(false)}
                     className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
                   >
@@ -106,7 +106,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                   <div className="space-y-3">
                     <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
                       <Link
-                        href="/treks?category=Uttarakhand"
+                        href="/treks/category/uttarakhand"
                         onClick={() => setDomesticDropdownOpen(false)}
                         className="group flex items-center justify-between mb-1.5"
                       >
@@ -138,7 +138,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                         </li>
                         <li>
                           <Link
-                            href="/treks?category=Uttarakhand"
+                            href="/treks/category/uttarakhand"
                             onClick={() => setDomesticDropdownOpen(false)}
                             className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
                           >
@@ -150,7 +150,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
                     <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
                       <Link
-                        href="/treks?category=Himachal"
+                        href="/treks/category/himachal"
                         onClick={() => setDomesticDropdownOpen(false)}
                         className="group flex items-center justify-between mb-1.5"
                       >
@@ -182,7 +182,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                         </li>
                         <li>
                           <Link
-                            href="/treks?category=Himachal"
+                            href="/treks/category/himachal"
                             onClick={() => setDomesticDropdownOpen(false)}
                             className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
                           >
@@ -197,7 +197,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                   <div className="space-y-3">
                     <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-blue-200 transition">
                       <Link
-                        href="/treks?category=Ladakh"
+                        href="/treks/category/ladakh"
                         onClick={() => setDomesticDropdownOpen(false)}
                         className="group flex items-center justify-between mb-1.5"
                       >
@@ -220,7 +220,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                         </li>
                         <li>
                           <Link
-                            href="/treks?category=Ladakh"
+                            href="/treks/category/ladakh"
                             onClick={() => setDomesticDropdownOpen(false)}
                             className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
                           >
@@ -232,7 +232,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
                     <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-amber-200 transition">
                       <Link
-                        href="/treks?category=Rajasthan"
+                        href="/treks/category/rajasthan"
                         onClick={() => setDomesticDropdownOpen(false)}
                         className="group flex items-center justify-between mb-1.5"
                       >
@@ -264,7 +264,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                         </li>
                         <li>
                           <Link
-                            href="/treks?category=Rajasthan"
+                            href="/treks/category/rajasthan"
                             onClick={() => setDomesticDropdownOpen(false)}
                             className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
                           >
@@ -279,7 +279,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                   <div className="space-y-3">
                     <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-teal-200 transition">
                       <Link
-                        href="/treks?category=Kerala"
+                        href="/treks/category/kerala"
                         onClick={() => setDomesticDropdownOpen(false)}
                         className="group flex items-center justify-between mb-1.5"
                       >
@@ -302,7 +302,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                         </li>
                         <li>
                           <Link
-                            href="/treks?category=Kerala"
+                            href="/treks/category/kerala"
                             onClick={() => setDomesticDropdownOpen(false)}
                             className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
                           >
@@ -320,35 +320,35 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         <Link
-                          href="/treks?category=Meghalaya"
+                          href="/treks/category/meghalaya"
                           onClick={() => setDomesticDropdownOpen(false)}
                           className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
                         >
                           Meghalaya
                         </Link>
                         <Link
-                          href="/treks?category=Sikkim"
+                          href="/treks/category/sikkim"
                           onClick={() => setDomesticDropdownOpen(false)}
                           className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
                         >
                           Sikkim
                         </Link>
                         <Link
-                          href="/treks?category=Assam"
+                          href="/treks/category/assam"
                           onClick={() => setDomesticDropdownOpen(false)}
                           className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
                         >
                           Assam
                         </Link>
                         <Link
-                          href="/treks?category=Goa"
+                          href="/treks/category/goa"
                           onClick={() => setDomesticDropdownOpen(false)}
                           className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
                         >
                           Goa Beach
                         </Link>
                         <Link
-                          href="/treks?category=Maharashtra"
+                          href="/treks/category/maharashtra"
                           onClick={() => setDomesticDropdownOpen(false)}
                           className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
                         >
@@ -378,7 +378,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
               </div>
             </div>
 
-          <Link href="/treks?category=International" className="hover:text-[#0F3A2E] transition">
+          <Link href="/treks/category/international" className="hover:text-[#0F3A2E] transition">
             International Trips
           </Link>
           <Link href="/contact" className="hover:text-[#0F3A2E] transition">
@@ -452,56 +452,56 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             {mobileDomesticOpen && (
               <div className="pl-3 py-1 space-y-1.5 border-l-2 border-emerald-500 ml-1 text-xs">
                 <Link
-                  href="/treks?category=Uttarakhand"
+                  href="/treks/category/uttarakhand"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-slate-600 hover:text-[#0F3A2E] py-1"
                 >
                   🏔️ Uttarakhand (Chopta, Kedarkantha, Nainital)
                 </Link>
                 <Link
-                  href="/treks?category=Himachal"
+                  href="/treks/category/himachal"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-slate-600 hover:text-[#0F3A2E] py-1"
                 >
                   🌲 Himachal Pradesh (Hampta, Kheerganga)
                 </Link>
                 <Link
-                  href="/treks?category=Ladakh"
+                  href="/treks/category/ladakh"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-slate-600 hover:text-[#0F3A2E] py-1"
                 >
                   ❄️ Ladakh & Kashmir (Leh, Pangong Tso)
                 </Link>
                 <Link
-                  href="/treks?category=Rajasthan"
+                  href="/treks/category/rajasthan"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-slate-600 hover:text-[#0F3A2E] py-1"
                 >
                   🏰 Rajasthan (Jaipur, Jaisalmer Desert)
                 </Link>
                 <Link
-                  href="/treks?category=Kerala"
+                  href="/treks/category/kerala"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-slate-600 hover:text-[#0F3A2E] py-1"
                 >
                   🌴 Kerala (Munnar, Alleppey Backwaters)
                 </Link>
                 <Link
-                  href="/treks?category=Northeast"
+                  href="/treks/category/northeast"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-slate-600 hover:text-[#0F3A2E] py-1"
                 >
                   🌿 Northeast (Meghalaya, Sikkim, Assam)
                 </Link>
                 <Link
-                  href="/treks?category=Goa"
+                  href="/treks/category/goa"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-slate-600 hover:text-[#0F3A2E] py-1"
                 >
                   🌊 Goa Beaches & Maharashtra Ghats
                 </Link>
                 <Link
-                  href="/treks?category=Domestic"
+                  href="/treks/category/domestic"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block font-bold text-[#FF6B35] py-1 pt-1.5"
                 >
@@ -511,7 +511,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             )}
           </div>
           <Link
-            href="/treks?type=Weekend"
+            href="/treks/category/weekend"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-slate-700 hover:text-[#0F3A2E] py-2"
           >

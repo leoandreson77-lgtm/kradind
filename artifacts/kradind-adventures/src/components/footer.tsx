@@ -127,10 +127,10 @@ export function Footer() {
                 <Link href="/treks" className="hover:text-white transition">Himalayan Treks</Link>
               </li>
               <li>
-                <Link href="/treks?state=Uttarakhand" className="hover:text-white transition">Domestic Trips</Link>
+                <Link href="/treks/category/domestic" className="hover:text-white transition">Domestic Trips</Link>
               </li>
               <li>
-                <Link href="/treks?state=International" className="hover:text-white transition">International Trips</Link>
+                <Link href="/treks/category/international" className="hover:text-white transition">International Trips</Link>
               </li>
               <li>
                 <Link href="/about" className="hover:text-white transition">About KRADIND</Link>
@@ -148,22 +148,22 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <Link href="/treks?state=Uttarakhand" className="hover:text-white transition">Kedarkantha Summit</Link>
+                <Link href="/treks/category/uttarakhand" className="hover:text-white transition">Kedarkantha Summit</Link>
               </li>
               <li>
-                <Link href="/treks?state=Uttarakhand" className="hover:text-white transition">Chopta Tungnath Chandrashila</Link>
+                <Link href="/treks/chopta-tungnath-chandrashila" className="hover:text-white transition">Chopta Tungnath Chandrashila</Link>
               </li>
               <li>
-                <Link href="/treks?state=Himachal" className="hover:text-white transition">Hampta Pass Crossover</Link>
+                <Link href="/treks/hampta-pass" className="hover:text-white transition">Hampta Pass Crossover</Link>
               </li>
               <li>
-                <Link href="/treks?state=Ladakh" className="hover:text-white transition">Kashmir Great Lakes</Link>
+                <Link href="/treks/category/ladakh" className="hover:text-white transition">Kashmir Great Lakes</Link>
               </li>
               <li>
-                <Link href="/treks?state=Ladakh" className="hover:text-white transition">Leh Ladakh High Passes</Link>
+                <Link href="/treks/category/ladakh" className="hover:text-white transition">Leh Ladakh High Passes</Link>
               </li>
               <li>
-                <Link href="/treks?state=Rajasthan" className="hover:text-white transition">Jaisalmer Desert Safari</Link>
+                <Link href="/treks/category/rajasthan" className="hover:text-white transition">Jaisalmer Desert Safari</Link>
               </li>
             </ul>
           </div>

@@ -13,11 +13,23 @@ import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
 import { HomeSectionsConfig, TrailRadarReport } from "@/lib/cms-store";
 
-export function HomeView() {
+export function HomeView({
+  initialSections,
+  initialReports,
+  initialCampaigns,
+}: {
+  initialSections?: HomeSectionsConfig | null;
+  initialReports?: TrailRadarReport[];
+  initialCampaigns?: any[];
+}) {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedTrek, setSelectedTrek] = useState("Kedarkantha Summit Trek");
-  const [sections, setSections] = useState<HomeSectionsConfig | null>(null);
-  const [radarReports, setRadarReports] = useState<TrailRadarReport[] | undefined>(undefined);
+  const [sections, setSections] = useState<HomeSectionsConfig | null>(
+    initialSections || null
+  );
+  const [radarReports, setRadarReports] = useState<TrailRadarReport[] | undefined>(
+    initialReports
+  );
 
   useEffect(() => {
     async function loadContent() {
@@ -32,8 +44,10 @@ export function HomeView() {
         console.error("Failed to load CMS content", err);
       }
     }
-    loadContent();
-  }, []);
+    if (!initialSections) {
+      loadContent();
+    }
+  }, [initialSections]);
 
   const handleOpenBooking = (trekName?: string) => {
     if (trekName) setSelectedTrek(trekName);
@@ -54,7 +68,7 @@ export function HomeView() {
         <HeroSearch config={sections?.hero} />
 
         {/* Dynamic Campaigns & Landing Pages Section */}
-        <CampaignSection />
+        <CampaignSection initialCampaigns={initialCampaigns} />
 
         {/* 4.9+ Rated Best Treks */}
         <BestTreks onSelectTrek={(slug) => handleOpenBooking(slug)} />

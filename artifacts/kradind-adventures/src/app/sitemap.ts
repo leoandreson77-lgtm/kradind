@@ -59,5 +59,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
     console.error("Error populating landing pages in sitemap:", err);
   }
 
+  // Clean category & state routes (zero query parameters for high SEO rank)
+  const categories = [
+    "domestic",
+    "uttarakhand",
+    "himachal",
+    "ladakh",
+    "rajasthan",
+    "kerala",
+    "meghalaya",
+    "sikkim",
+    "assam",
+    "goa",
+    "maharashtra",
+    "northeast",
+    "international",
+    "weekend",
+    "himalayas",
+    "monsoon",
+  ];
+
+  categories.forEach((cat) => {
+    routes.push({
+      url: `${baseUrl}/treks/category/${cat}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.88,
+    });
+  });
+
   return routes;
 }

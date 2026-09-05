@@ -30,7 +30,7 @@ export function WeekendTreks() {
             Weekend Escapes & Short Breaks
           </h2>
         </div>
-        <Link href="/treks?category=Weekend" className="text-xs sm:text-sm font-bold text-[#0F3A2E] hover:underline flex items-center gap-1">
+        <Link href="/treks/category/weekend" className="text-xs sm:text-sm font-bold text-[#0F3A2E] hover:underline flex items-center gap-1">
           <span>View All Weekend Getaways</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>

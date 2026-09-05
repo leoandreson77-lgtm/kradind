@@ -1,4 +1,5 @@
 import { HomeView } from "@/components/home-view";
+import { readStore } from "@/lib/cms-store";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -27,5 +28,12 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomeView />;
+  const store = readStore();
+  return (
+    <HomeView
+      initialSections={store.homeSections}
+      initialReports={store.trailReports}
+      initialCampaigns={store.landingPages}
+    />
+  );
 }

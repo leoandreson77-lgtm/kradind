@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "KRADIND | Treks, Domestic & International Adventures",
   description:
     "Explore handpicked Himalayan treks, tropical road trips, live trail radar updates, and international backpacking circuits with KRADIND Adventures.",
+  verification: {
+    google: "T3Scitqdc9Jqk5rp2LCXSF-69t8Q-zpZlgql9ZjxpGI",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -45,6 +48,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <meta name="google-site-verification" content="T3Scitqdc9Jqk5rp2LCXSF-69t8Q-zpZlgql9ZjxpGI" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-icon.png" />

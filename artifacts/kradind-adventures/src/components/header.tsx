@@ -76,12 +76,11 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <a
             href="tel:+917500222141"
-            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] border border-emerald-200/80 text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition shadow-sm group whitespace-nowrap"
+            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] border border-emerald-200/80 text-xs sm:text-sm font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full transition shadow-sm group whitespace-nowrap"
             title="Direct Ground Desk: +91 7500222141"
           >
-            <PhoneCall className="w-3.5 h-3.5 text-emerald-600 group-hover:rotate-12 transition-transform shrink-0" />
-            <span className="hidden sm:inline text-slate-500 font-medium">Call:</span>
-            <span className="tracking-tight">7500222141</span>
+            <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 animate-phone-vibrate shrink-0" />
+            <span className="tracking-tight font-bold">+91 7500222141</span>
           </a>
 
           {/* Mobile menu toggle */}
@@ -102,8 +101,8 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             href="tel:+917500222141"
             className="flex items-center justify-center gap-2 bg-emerald-50 text-[#0F3A2E] border border-emerald-200 font-bold text-sm py-2.5 rounded-xl"
           >
-            <PhoneCall className="w-4 h-4 text-emerald-600" />
-            <span>Call Ground Desk: 7500222141</span>
+            <PhoneCall className="w-4 h-4 text-emerald-600 animate-phone-vibrate shrink-0" />
+            <span>+91 7500222141</span>
           </a>
           <Link
             href="/"

@@ -8,3 +8,67 @@ body {
 h1, h2, h3, h4, h5, h6, .brand-font {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
+
+@keyframes phone-vibrate {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  8%, 24%, 40%, 56% {
+    transform: rotate(-15deg) scale(1.08);
+  }
+  16%, 32%, 48%, 64% {
+    transform: rotate(15deg) scale(1.08);
+  }
+  72%, 92% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.animate-phone-vibrate {
+  animation: phone-vibrate 2s ease-in-out infinite;
+  transform-origin: center center;
+  display: inline-block;
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+}
+
+@keyframes whatsapp-pulse-ring {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6), 0 10px 25px -4px rgba(0, 0, 0, 0.28);
+  }
+  10%, 26% {
+    transform: rotate(-12deg) scale(1.08);
+    box-shadow: 0 0 0 8px rgba(37, 211, 102, 0.35), 0 14px 28px -4px rgba(0, 0, 0, 0.32);
+  }
+  18%, 34% {
+    transform: rotate(12deg) scale(1.08);
+    box-shadow: 0 0 0 14px rgba(37, 211, 102, 0.18), 0 14px 28px -4px rgba(0, 0, 0, 0.32);
+  }
+  42% {
+    transform: rotate(-4deg) scale(1.03);
+    box-shadow: 0 0 0 18px rgba(37, 211, 102, 0), 0 10px 25px -4px rgba(0, 0, 0, 0.28);
+  }
+  50% {
+    transform: rotate(0deg) scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0), 0 10px 25px -4px rgba(0, 0, 0, 0.28);
+  }
+}
+
+.animate-whatsapp-btn {
+  animation: whatsapp-pulse-ring 2.8s ease-in-out infinite;
+  transform-origin: center center;
+}

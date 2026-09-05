@@ -146,7 +146,7 @@ export default function AdminSectionsPage() {
                 })
               }
               className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold"
-              placeholder="Find Your Next Adventure..."
+              placeholder="Experience the Himalayas"
             />
           </div>
 

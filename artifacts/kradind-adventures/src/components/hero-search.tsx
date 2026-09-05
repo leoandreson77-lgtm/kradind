@@ -16,7 +16,7 @@ export function HeroSearch({
   const [season, setSeason] = useState("All");
 
   const badge = config?.badge || "Certified Himalayan Guides • Small Safe Batches";
-  const title = config?.title || "Find Your Next Adventure...";
+  const title = config?.title || "Experience the Himalayas";
   const subtitle = config?.subtitle || "Explore handpicked Himalayan treks, tropical road trips, and international backpacking circuits.";
   const bgImage = config?.bgImage || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80";
 

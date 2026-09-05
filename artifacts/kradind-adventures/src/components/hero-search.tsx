@@ -35,21 +35,22 @@ export function HeroSearch({
   };
 
   return (
-    <section className="relative text-white py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Optimized preloaded background image for mobile LCP */}
-      <Image
-        src={bgImage}
-        alt="Himalayan Adventure Trekking"
-        fill
-        priority
-        quality={75}
-        sizes="100vw"
-        className="object-cover object-center -z-10"
-      />
-      {/* Brand emerald overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0F3A2E]/85 via-[#0F3A2E]/80 to-[#0F3A2E]/90 -z-10" />
+    <section className="relative bg-[#0F3A2E] text-white py-20 sm:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Background Image & Brand Gradient Overlay */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={bgImage}
+          alt="Himalayan Adventure Trekking"
+          fill
+          priority
+          quality={85}
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F3A2E]/85 via-[#0F3A2E]/80 to-[#0F3A2E]/95" />
+      </div>
 
-      <div className="relative max-w-5xl mx-auto text-center space-y-6">
+      <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
         
         {/* Badge */}
         <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
@@ -228,6 +229,7 @@ export function HeroSearch({
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
+            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Goa</span>
           </div>
 
         </div>

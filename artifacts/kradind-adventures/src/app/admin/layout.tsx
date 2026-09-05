@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   LayoutDashboard,
   Mountain,
@@ -103,10 +104,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       
       {/* Mobile Top Navigation */}
       <div className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#0F3A2E] text-emerald-400 flex items-center justify-center font-bold text-sm">
-            K
-          </div>
+        <div className="flex items-center gap-2.5">
+          <Image
+            src="/logo-emblem.png"
+            alt="KRADIND Emblem"
+            width={32}
+            height={32}
+            className="w-7 h-7 object-contain"
+          />
           <span className="font-bold text-sm tracking-wide">KRADIND CMS</span>
         </div>
         <button
@@ -126,9 +131,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div>
           {/* Logo & Brand */}
           <div className="hidden md:flex items-center gap-3 px-6 py-5 border-b border-slate-800/80">
-            <div className="w-9 h-9 rounded-xl bg-[#0F3A2E] text-emerald-400 flex items-center justify-center font-extrabold text-base shadow-sm">
-              K
-            </div>
+            <Image
+              src="/logo-emblem.png"
+              alt="KRADIND Emblem"
+              width={40}
+              height={40}
+              className="w-10 h-10 object-contain drop-shadow-sm"
+            />
             <div>
               <div className="font-bold text-white text-sm tracking-wide">KRADIND</div>
               <div className="text-[10px] text-slate-400 flex items-center gap-1">

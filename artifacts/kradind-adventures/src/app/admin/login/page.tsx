@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, Mail, ShieldAlert, MountainSnow } from "lucide-react";
+import Image from "next/image";
+import { Eye, EyeOff, Lock, Mail, ShieldAlert } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -15,8 +16,8 @@ export default function AdminLoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg("");
     setLoading(true);
+    setErrorMsg("");
 
     try {
       const res = await fetch("/api/admin/auth", {
@@ -27,16 +28,14 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        setErrorMsg(data.error || "Authentication failed");
-        setLoading(false);
-        return;
+      if (res.ok) {
+        router.push("/admin");
+      } else {
+        setErrorMsg(data.error || "Invalid email or password");
       }
-
-      // Successful login
-      router.push("/admin");
     } catch {
-      setErrorMsg("Network error. Could not connect to authentication service.");
+      setErrorMsg("Failed to connect to authentication service");
+    } finally {
       setLoading(false);
     }
   };
@@ -46,9 +45,16 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 sm:p-8">
         
         {/* Header Branding */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#0F3A2E] text-emerald-400 border border-emerald-500/30 mb-3 shadow-lg shadow-emerald-950">
-            <MountainSnow className="w-8 h-8" />
+        <div className="text-center mb-8 flex flex-col items-center">
+          <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center p-2 mb-3 shadow-lg shadow-emerald-950/40">
+            <Image
+              src="/logo-emblem.png"
+              alt="KRADIND"
+              width={64}
+              height={64}
+              className="w-14 h-14 object-contain"
+              priority
+            />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">KRADIND Admin Portal</h1>
           <p className="text-xs text-slate-400 mt-1">Expedition Command & Content Management System</p>

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { MountainSnow, ChevronDown, Menu, X, PhoneCall } from "lucide-react";
+import Image from "next/image";
+import { ChevronDown, Menu, X, PhoneCall } from "lucide-react";
 
 export function Header({ onBookClick }: { onBookClick?: () => void }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,9 +14,15 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <Link href="/" className="brand-font text-xl sm:text-2xl font-extrabold tracking-tight text-[#0F3A2E] flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <MountainSnow className="w-6 h-6 sm:w-7 sm:h-7 text-[#FF6B35]" />
-          <span>KRAD<span className="text-[#FF6B35]">IND</span></span>
+        <Link href="/" className="flex items-center gap-2 shrink-0 group py-1">
+          <Image
+            src="/logo-horizontal.png"
+            alt="KRADIND - Explore, Trek, Travel"
+            width={195}
+            height={50}
+            className="h-9 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}

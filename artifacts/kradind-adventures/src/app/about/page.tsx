@@ -5,7 +5,7 @@ import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
-import { ShieldCheck, MountainSnow, HeartHandshake, Compass, Users } from "lucide-react";
+import { ShieldCheck, HeartHandshake, Compass, Users } from "lucide-react";
 
 export default function AboutPage() {
   const [bookingOpen, setBookingOpen] = useState(false);

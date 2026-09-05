@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "dev": "pnpm --filter @workspace/kradind-adventures run dev",
     "preinstall": "node -e \"const fs = require('fs'); ['package-lock.json', 'yarn.lock'].forEach(f => fs.existsSync(f) && fs.unlinkSync(f));\"",
     "build": "pnpm --filter @workspace/kradind-adventures run build",
     "start": "pnpm --filter @workspace/kradind-adventures run start",

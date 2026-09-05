@@ -82,6 +82,8 @@ export function Footer() {
                 alt="KRADIND"
                 width={44}
                 height={44}
+                loading="lazy"
+                quality={75}
                 className="w-10 h-10 object-contain"
               />
               <div className="flex flex-col">

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Search } from "lucide-react";
 
 export function HeroSearch({
@@ -34,12 +35,20 @@ export function HeroSearch({
   };
 
   return (
-    <section
-      className="relative bg-cover bg-center text-white py-24 px-4 sm:px-6 lg:px-8"
-      style={{
-        backgroundImage: `linear-gradient(rgba(15, 58, 46, 0.75), rgba(15, 58, 46, 0.85)), url('${bgImage}')`,
-      }}
-    >
+    <section className="relative text-white py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Optimized preloaded background image for mobile LCP */}
+      <Image
+        src={bgImage}
+        alt="Himalayan Adventure Trekking"
+        fill
+        priority
+        quality={75}
+        sizes="100vw"
+        className="object-cover object-center -z-10"
+      />
+      {/* Brand emerald overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0F3A2E]/85 via-[#0F3A2E]/80 to-[#0F3A2E]/90 -z-10" />
+
       <div className="relative max-w-5xl mx-auto text-center space-y-6">
         
         {/* Badge */}

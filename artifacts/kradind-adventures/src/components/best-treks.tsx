@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Star, MapPin, Clock, ArrowRight } from "lucide-react";
 import { treks } from "@/lib/travel-data";
 
@@ -51,10 +52,14 @@ export function BestTreks({ onSelectTrek }: { onSelectTrek?: (slug: string) => v
             >
               <div>
                 <div className="relative h-48 overflow-hidden bg-slate-100">
-                  <img
+                  <Image
                     src={trek.image}
                     alt={trek.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    loading="lazy"
+                    quality={70}
+                    className="object-cover group-hover:scale-105 transition duration-500"
                   />
                   <span className="absolute top-3 left-3 bg-[#0F3A2E]/90 backdrop-blur-md text-white font-bold text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
                     {trek.badge}

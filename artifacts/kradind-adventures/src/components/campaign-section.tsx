@@ -86,6 +86,9 @@ export function CampaignSection() {
                   src={camp.heroImage}
                   alt={camp.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  quality={70}
+                  loading="lazy"
                   className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out brightness-90"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />

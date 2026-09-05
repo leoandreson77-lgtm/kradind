@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  FaWhatsapp,
   FaInstagram,
   FaFacebookF,
   FaYoutube,
@@ -16,13 +15,6 @@ import { Phone, Mail, MapPin, ShieldCheck, HeartHandshake, Compass } from "lucid
 
 export function Footer() {
   const socialLinks = [
-    {
-      name: "WhatsApp",
-      url: "https://wa.link/n3u8c0",
-      icon: FaWhatsapp,
-      color: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
-      bg: "bg-[#25D366]/10 text-[#25D366] border-[#25D366]/30",
-    },
     {
       name: "Instagram",
       url: "https://www.instagram.com/kradglobal/",
@@ -205,19 +197,6 @@ export function Footer() {
                 );
               })}
             </div>
-
-            {/* Direct WhatsApp Pill */}
-            <div className="pt-2">
-              <a
-                href="https://wa.link/n3u8c0"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#25D366]/15 border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs font-bold transition duration-200"
-              >
-                <FaWhatsapp className="w-4 h-4" />
-                <span>Chat on WhatsApp</span>
-              </a>
-            </div>
           </div>
 
         </div>
@@ -244,7 +223,7 @@ export function Footer() {
           <div className="flex items-center gap-4">
             <Link href="/about" className="hover:text-slate-400 transition">About Us</Link>
             <span>•</span>
-            <a href="https://wa.link/n3u8c0" target="_blank" rel="noopener noreferrer" className="hover:text-slate-400 transition">Contact Support</a>
+            <Link href="/contact" className="hover:text-slate-400 transition">Contact Support</Link>
             <span>•</span>
             <Link href="/treks" className="hover:text-slate-400 transition">Expeditions</Link>
           </div>

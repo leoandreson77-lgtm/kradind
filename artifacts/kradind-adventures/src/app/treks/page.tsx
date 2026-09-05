@@ -20,14 +20,21 @@ function TreksContent() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedTrek, setSelectedTrek] = useState<TrekData>(treks[0]);
 
+  React.useEffect(() => {
+    const currentCat = searchParams.get("type") || searchParams.get("category") || "All";
+    setSelectedCategory(currentCat);
+  }, [searchParams]);
+
   const CATEGORIES = [
     { label: "All Trips", value: "All" },
-    { label: "🏔️ Himalayan Treks", value: "Himalayas" },
-    { label: "✈️ Domestic Tours", value: "Domestic" },
-    { label: "⛺ Weekend Escapes", value: "Weekend" },
-    { label: "🏖️ Beaches & Backwaters", value: "Beach" },
-    { label: "🏰 Royal Heritage", value: "Heritage" },
-    { label: "🌿 Northeast Wonders", value: "Northeast" },
+    { label: "🏔️ Uttarakhand", value: "Uttarakhand" },
+    { label: "🌲 Himachal", value: "Himachal" },
+    { label: "❄️ Ladakh & Kashmir", value: "Ladakh" },
+    { label: "🏰 Rajasthan", value: "Rajasthan" },
+    { label: "🌴 Kerala", value: "Kerala" },
+    { label: "🌿 Northeast", value: "Northeast" },
+    { label: "🌊 Goa & Coast", value: "Goa" },
+    { label: "⛺ Weekend Treks", value: "Weekend" },
   ];
 
   const filteredTreks = useMemo(() => {

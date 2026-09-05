@@ -2770,5 +2770,202 @@
       "status": "Contacted",
       "createdAt": "2026-09-02T08:37:46.656Z"
     }
+  ],
+  "landingPages": [
+    {
+      "id": "lp-kedarkantha-winter-2026",
+      "slug": "kedarkantha-winter-summit",
+      "title": "Kedarkantha Winter Summit Expedition 2026",
+      "subtitle": "Step into an ethereal winter wonderland. Experience 360° summit panoramas of 13 Himalayan giants, guaranteed fresh snow trails, luxury 4-season heated basecamps, and 100% certified mountaineers.",
+      "badge": "🔥 LIMITED 2026 WINTER DEPARTURES • 4.9★ RATED",
+      "heroImage": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85",
+      "promoOffer": {
+        "tag": "WINTER SUMMIT PASS",
+        "discountText": "Flat ₹2,500 OFF Early Bird Discount",
+        "code": "WINTER2026",
+        "expiryDate": "2026-09-20T08:16:50.834Z"
+      },
+      "highlights": [
+        {
+          "title": "12,500 ft Himalayan Summit",
+          "desc": "Unmatched 360° views of Swargarohini, Black Peak, and Bandarpoonch massifs.",
+          "icon": "Mountain"
+        },
+        {
+          "title": "Knee-Deep Fresh Snow Trail",
+          "desc": "The undisputed queen of Indian winter treks through dense snow-covered pine forests.",
+          "icon": "Snowflake"
+        },
+        {
+          "title": "Certified Mountaineering Guides",
+          "desc": "NIM / HMI certified alpine expedition leaders with pulse oximeters and medical oxygen.",
+          "icon": "ShieldCheck"
+        },
+        {
+          "title": "Wholesome Hot Mountain Feasts",
+          "desc": "3 fresh nutritious meals daily plus hot garlic soups and evening hot chocolate.",
+          "icon": "Flame"
+        }
+      ],
+      "featuredTrekSlugs": [
+        "chopta-tungnath-chandrashila",
+        "hampta-pass"
+      ],
+      "inclusions": [
+        "All accommodations in 4-season Alpine Tents (Twin/Triple Sharing) with thermal foam mats",
+        "All nutritious hot meals from Sankri basecamp to summit (Breakfast, Lunch, Evening Snacks & Dinner)",
+        "Certified Alpine Expedition Leader, Camp Cook, and local mountain support staff",
+        "Microspikes, Snow Gaiters & Trekking Poles provided on snow sections",
+        "Forest Entry Permits, Wildlife Sanctuaries & Environmental Green Fees",
+        "Medical Oxygen Cylinder, Stretcher on standby & Comprehensive First-Aid kit"
+      ],
+      "exclusions": [
+        "Transportation to/from Dehradun Railway Station (Available on request via shared cab)",
+        "Personal gear (Thermal layers, waterproof trekking shoes, personal backpack)",
+        "Emergency medical evacuation or unforeseen landslide accommodation expenses"
+      ],
+      "leadFormConfig": {
+        "title": "Claim Offer & Get Expedition Dossier",
+        "subtitle": "Leave your contact details to instantly receive detailed PDF itinerary, batch dates & gear checklist.",
+        "ctaText": "Reserve Early-Bird Slot"
+      },
+      "whatsappNumber": "917500222141",
+      "whatsappMessage": "Hi KRADIND! I want to book my slot for the Kedarkantha Winter Summit 2026 expedition.",
+      "faqs": [
+        {
+          "question": "Can beginners do the Kedarkantha Winter Trek?",
+          "answer": "Absolutely! Kedarkantha has gradual ascent gradients and is considered one of the friendliest winter snow peaks for beginners. A baseline fitness of 30-40 min brisk walking/jogging is sufficient."
+        },
+        {
+          "question": "How cold does it get at high camps?",
+          "answer": "Daytime temperatures are pleasant (8°C to 14°C) with bright sun. Night temperatures range from -2°C to -8°C. We provide sub-zero rated sleeping bags (-10°C) and high-density thermal floor insulation."
+        },
+        {
+          "question": "What equipment do I need to carry?",
+          "answer": "You only need personal clothing: waterproof trekking shoes, thermals, fleece, down feather jacket, gloves, and sunglasses. Central gear like tents, sleeping bags, gaiters, and microspikes are fully provided by KRADIND."
+        }
+      ],
+      "testimonials": [
+        {
+          "name": "Vikram Malhotra",
+          "city": "New Delhi",
+          "text": "Summit morning at 12,500 ft was pure magic! The golden sunrise hitting Swargarohini took my breath away. The safety protocols and hot food provided by KRADIND were world-class.",
+          "rating": 5,
+          "batch": "Dec 2025 Winter Batch"
+        },
+        {
+          "name": "Dr. Sneha Kulkarni",
+          "city": "Pune",
+          "text": "As a solo trekker, I felt completely safe and cared for. Our expedition lead Ashish checked our oxygen levels twice daily. Best Himalayan experience ever!",
+          "rating": 5,
+          "batch": "Jan 2026 Batch"
+        }
+      ],
+      "status": "Published",
+      "sectionsEnabled": {
+        "hero": true,
+        "countdown": true,
+        "highlights": true,
+        "treks": true,
+        "inclusions": true,
+        "leadForm": true,
+        "testimonials": true,
+        "faqs": true
+      },
+      "createdAt": "2026-09-05T08:16:50.834Z",
+      "updatedAt": "2026-09-05T08:16:50.834Z"
+    },
+    {
+      "id": "lp-kashmir-great-lakes-2026",
+      "slug": "kashmir-great-lakes",
+      "title": "Kashmir Great Lakes Alpine Odyssey 2026",
+      "subtitle": "7 High Altitude Alpine Lakes • Emerald Valleys • Gadsar Pass at 13,800 ft. Often hailed as the most beautiful alpine trek on the planet.",
+      "badge": "⭐ THE POSTCARD EXPEDITION OF INDIA • LIMITED BATCHES",
+      "heroImage": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=85",
+      "promoOffer": {
+        "tag": "SUMMER EXPEDITION SPECIAL",
+        "discountText": "Save ₹3,000 on Group Bookings (3+ Trekkers)",
+        "code": "KASHMIR2026",
+        "expiryDate": "2026-10-05T08:16:50.834Z"
+      },
+      "highlights": [
+        {
+          "title": "7 Pristine Alpine Lakes",
+          "desc": "Camp beside Vishansar, Kishansar, Gadsar, Satsar, Gangabal & Nundkol turquoise waters.",
+          "icon": "Sparkles"
+        },
+        {
+          "title": "Lush Kashmiri Valleys",
+          "desc": "Walk through carpeted meadows of wild yellow buttercups, iris blooms, and maple forests.",
+          "icon": "Compass"
+        },
+        {
+          "title": "High Mountain Passes",
+          "desc": "Conquer Nichnai Pass (13,100 ft) and the dramatic Gadsar Pass at 13,800 ft with alpine views.",
+          "icon": "Mountain"
+        },
+        {
+          "title": "Small Eco-Safe Batches",
+          "desc": "Capped strictly at 14 trekkers to protect sensitive fragile alpine ecosystems.",
+          "icon": "ShieldCheck"
+        }
+      ],
+      "featuredTrekSlugs": [
+        "leh-ladakh-tour-package",
+        "hampta-pass"
+      ],
+      "inclusions": [
+        "7 Nights camping in pristine alpine meadows in high-grade weatherproof tents",
+        "All meals prepared fresh by Kashmiri camp chefs featuring local culinary delights",
+        "Certified mountain expedition leaders and local Gujjar route experts",
+        "Horses / Mules for carrying central kitchen equipment, ration and safety gear",
+        "All army clearances, inner-line permits, and tourist entry authorizations",
+        "High altitude medical kit with portable oxygen cylinders and pulse monitors"
+      ],
+      "exclusions": [
+        "Transportation between Srinagar Airport and Sonamarg basecamp",
+        "Offloading of personal backpack (Available on advance booking)",
+        "Personal shopping or tips to pony handlers"
+      ],
+      "leadFormConfig": {
+        "title": "Check Available Kashmir 2026 Dates",
+        "subtitle": "Summer batches open between July and September only. Early reservations strongly recommended.",
+        "ctaText": "Check Batch Availability"
+      },
+      "whatsappNumber": "917500222141",
+      "whatsappMessage": "Hi KRADIND! I want to check batch availability for Kashmir Great Lakes 2026.",
+      "faqs": [
+        {
+          "question": "When is the best time to do the Kashmir Great Lakes Trek?",
+          "answer": "The ideal window is July to early September when the alpine snow melts, revealing shimmering turquoise waters and flowering meadows."
+        },
+        {
+          "question": "Is it safe to trek in Kashmir?",
+          "answer": "Yes, 100%. The KGL trail is located in a peaceful high-altitude region far from urban centers, with Army checkposts at regular intervals ensuring traveler safety."
+        }
+      ],
+      "testimonials": [
+        {
+          "name": "Aditya Roy",
+          "city": "Bengaluru",
+          "text": "Pictures simply don't do justice to the Kashmir Great Lakes. Waking up beside Vishansar lake was a dream. KRADIND's logistics and support team were unmatched!",
+          "rating": 5,
+          "batch": "August 2025 Batch"
+        }
+      ],
+      "status": "Published",
+      "sectionsEnabled": {
+        "hero": true,
+        "countdown": true,
+        "highlights": true,
+        "treks": true,
+        "inclusions": true,
+        "leadForm": true,
+        "testimonials": true,
+        "faqs": true
+      },
+      "createdAt": "2026-09-05T08:16:50.834Z",
+      "updatedAt": "2026-09-05T08:16:50.834Z"
+    }
   ]
 }

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { HeroSearch } from "@/components/hero-search";
+import { CampaignSection } from "@/components/campaign-section";
 import { BestTreks } from "@/components/best-treks";
 import { MonsoonSpecials } from "@/components/monsoon-specials";
 import { WeekendTreks } from "@/components/weekend-treks";
@@ -51,6 +52,9 @@ export function HomeView() {
       <main className="flex-1">
         {/* Hero Banner with Filter Widget */}
         <HeroSearch config={sections?.hero} />
+
+        {/* Dynamic Campaigns & Landing Pages Section */}
+        <CampaignSection />
 
         {/* 4.9+ Rated Best Treks */}
         <BestTreks onSelectTrek={(slug) => handleOpenBooking(slug)} />

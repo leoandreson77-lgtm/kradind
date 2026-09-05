@@ -17,6 +17,7 @@ import {
   ExternalLink,
   ShieldCheck,
   Inbox,
+  Sparkles,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -93,6 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { label: "Customer Leads", href: "/admin/leads", icon: Inbox },
     { label: "Treks CMS", href: "/admin/treks", icon: Mountain },
+    { label: "Landing Pages", href: "/admin/landing-pages", icon: Sparkles },
     { label: "Live Trail Radar", href: "/admin/radar", icon: Radio },
     { label: "Home Sections", href: "/admin/sections", icon: Sliders },
     { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },

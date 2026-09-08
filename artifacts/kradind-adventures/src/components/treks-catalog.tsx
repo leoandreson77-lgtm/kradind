@@ -111,7 +111,7 @@ export function TreksContent({
             Official Packages & Expeditions
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 mt-3 brand-font tracking-tight capitalize">
-            {titleOverride || (selectedCategory !== "All" ? `${selectedCategory} Treks & Tour Packages` : "Curated Indian Treks & Tour Packages")}
+            {titleOverride || (selectedCategory !== "All" ? `${selectedCategory} Treks & Tour Packages` : "Indian Treks & Tour Packages")}
           </h1>
           <p className="text-slate-600 text-sm sm:text-base mt-2 leading-relaxed">
             {subtitleOverride || "Handpicked Himalayan treks, peaceful backwaters, heritage desert tours, and Northeast escapes with certified tour leads and transparent pricing."}

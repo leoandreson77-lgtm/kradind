@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { TreksContent } from "@/components/treks-catalog";
-import { getPublishedTreks } from "@/lib/cms-store";
+import { getPublishedTreks, getTreksAsync } from "@/lib/cms-store";
 
 function formatCategoryName(slug: string): string {
   const map: Record<string, string> = {
@@ -75,14 +75,26 @@ export default async function CategoryTreksPage({
 }) {
   const { category } = await params;
   const catName = formatCategoryName(category);
-  const allPublishedTreks = getPublishedTreks();
+  let allPublishedTreks: any[] = [];
+  try {
+    const rawTreks = await getTreksAsync();
+    allPublishedTreks = (rawTreks || []).filter((t) => t.status === "Published");
+  } catch {
+    allPublishedTreks = getPublishedTreks();
+  }
 
   // Filter matching treks for schema
   const matchingTreks = allPublishedTreks.filter((t) => {
     const c = catName.toLowerCase();
+    const isDomestic = c === "domestic";
+    const isDomesticTrek =
+      (t.category || "").toLowerCase() === "domestic" ||
+      t.categories.some((cat: string) => cat.toLowerCase() === "domestic");
+
     return (
+      (isDomestic && isDomesticTrek) ||
       (t.category || "").toLowerCase().includes(c) ||
-      t.categories.some((cat) => cat.toLowerCase().includes(c)) ||
+      t.categories.some((cat: string) => cat.toLowerCase().includes(c)) ||
       t.location.toLowerCase().includes(c) ||
       t.region.toLowerCase().includes(c)
     );

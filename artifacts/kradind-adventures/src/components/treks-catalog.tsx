@@ -11,6 +11,15 @@ import { treks } from "@/lib/travel-data";
 import { TrekData } from "@/lib/cms-store";
 import { Search, Filter, Mountain, Star, ArrowRight, MapPin, Clock, Compass } from "lucide-react";
 
+function normalizeType(val?: string | null): string {
+  if (!val || val === "All") return "All";
+  const l = val.toLowerCase().trim();
+  if (l === "road trip" || l === "domestic" || l === "domestic road trip" || l === "domestic trips") {
+    return "Domestic";
+  }
+  return val;
+}
+
 export function TreksContent({
   initialCategory,
   initialTreks,
@@ -28,10 +37,15 @@ export function TreksContent({
   const router = useRouter();
   const searchParams = useSearchParams();
   const paramCategory = searchParams ? (searchParams.get("type") || searchParams.get("category")) : null;
-  const initialType = initialCategory || paramCategory || "All";
+  const paramDestination = searchParams ? searchParams.get("destination") : null;
+  const paramSearch = searchParams ? (searchParams.get("search") || searchParams.get("q")) : null;
+
+  const initialType = normalizeType(initialCategory || paramCategory || "All");
 
   const [selectedCategory, setSelectedCategory] = useState(initialType);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(
+    paramSearch || (paramDestination && paramDestination !== "All" ? paramDestination : "")
+  );
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
   const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedTrek, setSelectedTrek] = useState<TrekData>(allTreks[0] || (treks[0] as TrekData));
@@ -55,15 +69,22 @@ export function TreksContent({
 
   React.useEffect(() => {
     if (initialCategory) {
-      setSelectedCategory(initialCategory);
+      setSelectedCategory(normalizeType(initialCategory));
     } else if (paramCategory) {
-      setSelectedCategory(paramCategory);
+      setSelectedCategory(normalizeType(paramCategory));
     }
-  }, [initialCategory, paramCategory]);
+    if (paramSearch) {
+      setSearchQuery(paramSearch);
+    } else if (paramDestination && paramDestination !== "All") {
+      setSearchQuery(paramDestination);
+    }
+  }, [initialCategory, paramCategory, paramSearch, paramDestination]);
 
   const CATEGORIES = [
     { label: "All Trips", value: "All" },
-    { label: "🏔️ Uttarakhand", value: "Uttarakhand" },
+    { label: "🚗 Domestic Tours", value: "Domestic" },
+    { label: "🏔️ Himalayan Treks", value: "Himalayas" },
+    { label: "🌲 Uttarakhand", value: "Uttarakhand" },
     { label: "🌲 Himachal", value: "Himachal" },
     { label: "❄️ Ladakh & Kashmir", value: "Ladakh" },
     { label: "🏰 Rajasthan", value: "Rajasthan" },
@@ -76,20 +97,36 @@ export function TreksContent({
   const filteredTreks = useMemo(() => {
     return allTreks.filter((trek) => {
       const catLower = selectedCategory.toLowerCase();
+      const isDomesticCat =
+        catLower === "domestic" ||
+        catLower.includes("road trip") ||
+        catLower === "domestic trips";
+
+      const isDomesticTrek =
+        (trek.category || "").toLowerCase() === "domestic" ||
+        trek.categories.some((c) => c.toLowerCase() === "domestic");
+
       const matchesCategory =
         selectedCategory === "All" ||
+        (isDomesticCat && isDomesticTrek) ||
         (trek.category || "").toLowerCase().includes(catLower) ||
         trek.categories.some((c) => c.toLowerCase().includes(catLower)) ||
         trek.location.toLowerCase().includes(catLower) ||
         trek.region.toLowerCase().includes(catLower);
 
-      const queryLower = searchQuery.toLowerCase();
+      const queryLower = searchQuery.toLowerCase().trim();
+      const isDomesticQuery = queryLower === "domestic" || queryLower.includes("domestic");
+
       const matchesSearch =
-        searchQuery === "" ||
+        queryLower === "" ||
+        (isDomesticQuery && isDomesticTrek) ||
         trek.name.toLowerCase().includes(queryLower) ||
+        (trek.category || "").toLowerCase().includes(queryLower) ||
+        trek.categories.some((c) => c.toLowerCase().includes(queryLower)) ||
         trek.location.toLowerCase().includes(queryLower) ||
         trek.region.toLowerCase().includes(queryLower) ||
-        trek.tagline.toLowerCase().includes(queryLower);
+        (trek.tagline || "").toLowerCase().includes(queryLower) ||
+        (trek.overview || "").toLowerCase().includes(queryLower);
 
       const matchesDifficulty =
         selectedDifficulty === "All" ||
@@ -97,7 +134,7 @@ export function TreksContent({
 
       return matchesCategory && matchesSearch && matchesDifficulty;
     });
-  }, [selectedCategory, searchQuery, selectedDifficulty]);
+  }, [allTreks, selectedCategory, searchQuery, selectedDifficulty]);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">

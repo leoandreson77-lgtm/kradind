@@ -11,7 +11,8 @@ export function HeroSearch({
   config?: { badge?: string; title?: string; subtitle?: string; bgImage?: string };
 }) {
   const router = useRouter();
-  const [tripType, setTripType] = useState("Trek");
+  const [keyword, setKeyword] = useState("");
+  const [tripType, setTripType] = useState("All");
   const [destination, setDestination] = useState("All");
   const [season, setSeason] = useState("All");
 
@@ -23,6 +24,7 @@ export function HeroSearch({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
+    if (keyword.trim()) params.set("search", keyword.trim());
     if (tripType !== "All") params.set("type", tripType);
     if (destination !== "All") params.set("destination", destination);
     if (season !== "All") params.set("season", season);
@@ -70,11 +72,25 @@ export function HeroSearch({
         {/* Search Widget Container */}
         <form
           onSubmit={handleSearch}
-          className="mt-8 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-2xl text-slate-800 max-w-4xl mx-auto border border-white/30 text-left"
+          className="mt-8 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-2xl text-slate-800 max-w-5xl mx-auto border border-white/30 text-left"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             
-            {/* Field 1: Trip Type */}
+            {/* Field 1: Keyword Input */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Keyword / Search
+              </label>
+              <input
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="e.g. Domestic, Kerala, Chopta..."
+                className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
+              />
+            </div>
+
+            {/* Field 2: Trip Type */}
             <div>
               <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Trip Type
@@ -84,14 +100,15 @@ export function HeroSearch({
                 onChange={(e) => setTripType(e.target.value)}
                 className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
               >
-                <option value="Trek">🏔️ Trek / High Altitude</option>
-                <option value="Road Trip">🚗 Domestic Road Trip</option>
+                <option value="All">🌟 All Trips & Treks</option>
+                <option value="Domestic">🚗 Domestic Tours & Road Trips</option>
+                <option value="Trek">🏔️ Himalayan & Alpine Treks</option>
+                <option value="Weekend">⛺ Weekend Getaways</option>
                 <option value="International">✈️ International Backpacking</option>
-                <option value="Weekend">⛺ Weekend Getaway</option>
               </select>
             </div>
 
-            {/* Field 2: Destination */}
+            {/* Field 3: Destination */}
             <div>
               <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Destination
@@ -102,19 +119,20 @@ export function HeroSearch({
                 className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
               >
                 <option value="All">All Regions & States</option>
-                <option value="Uttarakhand">Uttarakhand (Chopta & Nainital)</option>
-                <option value="Himachal">Himachal (Hampta & Kheerganga)</option>
+                <option value="Uttarakhand">Uttarakhand (Chopta, Nainital & Kedarnath)</option>
+                <option value="Himachal">Himachal (Hampta & Kasol)</option>
                 <option value="Ladakh">Leh Ladakh (Pangong & Nubra)</option>
                 <option value="Kerala">Kerala (Munnar & Backwaters)</option>
-                <option value="Meghalaya">Meghalaya (Root Bridges & Cherrapunji)</option>
                 <option value="Rajasthan">Rajasthan (Jaipur & Jaisalmer)</option>
                 <option value="Goa">Goa (Beaches & Forts)</option>
+                <option value="Maharashtra">Maharashtra (Hills & Ghats)</option>
+                <option value="Meghalaya">Meghalaya (Living Roots & Cherrapunji)</option>
                 <option value="Sikkim">Sikkim & Gangtok</option>
                 <option value="Assam">Assam & Kaziranga</option>
               </select>
             </div>
 
-            {/* Field 3: Season */}
+            {/* Field 4: Season */}
             <div>
               <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Month / Season
@@ -132,7 +150,7 @@ export function HeroSearch({
               </select>
             </div>
 
-            {/* Field 4: Search Button */}
+            {/* Field 5: Search Button */}
             <div className="flex items-end">
               <button
                 type="submit"
@@ -148,6 +166,20 @@ export function HeroSearch({
         {/* Region Story Avatars */}
         <div className="pt-6 flex justify-center items-center gap-5 sm:gap-8 overflow-x-auto scrollbar-none">
           
+          <div
+            onClick={() => handleCategoryClick("Domestic")}
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
+          >
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-emerald-400 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg bg-emerald-800">
+              <img
+                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
+                alt="Domestic Tours"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <span className="text-xs font-bold text-emerald-300 group-hover:text-white">Domestic</span>
+          </div>
+
           <div
             onClick={() => handleCategoryClick("Himalayas")}
             className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"

@@ -20,7 +20,7 @@ export default function AdminRadarPage() {
 
   const fetchRadar = async () => {
     try {
-      const res = await fetch("/api/admin/radar");
+      const res = await fetch("/api/admin/radar", { cache: "no-store" });
       if (res.ok) {
         setReports(await res.json());
       }

@@ -17,7 +17,7 @@ export default function AdminSectionsPage() {
 
   const fetchSections = async () => {
     try {
-      const res = await fetch("/api/admin/sections");
+      const res = await fetch("/api/admin/sections", { cache: "no-store" });
       if (res.ok) {
         setSections(await res.json());
       }
@@ -44,9 +44,12 @@ export default function AdminSectionsPage() {
       });
 
       if (res.ok) {
+        const updated = await res.json();
+        setSections(updated);
         showToast(`${sectionKey.toUpperCase()} section updated and live on website!`);
       } else {
-        alert("Failed to save changes.");
+        const err = await res.json().catch(() => null);
+        alert(err?.error || "Failed to save changes.");
       }
     } catch {
       alert("Error saving section");

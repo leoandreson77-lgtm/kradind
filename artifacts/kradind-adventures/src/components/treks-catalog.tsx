@@ -7,18 +7,24 @@ import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
-import { treks, TrekData } from "@/lib/travel-data";
+import { treks } from "@/lib/travel-data";
+import { TrekData } from "@/lib/cms-store";
 import { Search, Filter, Mountain, Star, ArrowRight, MapPin, Clock, Compass } from "lucide-react";
 
 export function TreksContent({
   initialCategory,
+  initialTreks,
   titleOverride,
   subtitleOverride,
 }: {
   initialCategory?: string;
+  initialTreks?: TrekData[];
   titleOverride?: string;
   subtitleOverride?: string;
 }) {
+  const [allTreks, setAllTreks] = useState<TrekData[]>(
+    initialTreks && initialTreks.length > 0 ? initialTreks : (treks as TrekData[])
+  );
   const searchParams = useSearchParams();
   const paramCategory = searchParams ? (searchParams.get("type") || searchParams.get("category")) : null;
   const initialType = initialCategory || paramCategory || "All";
@@ -27,7 +33,24 @@ export function TreksContent({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [selectedTrek, setSelectedTrek] = useState<TrekData>(treks[0]);
+  const [selectedTrek, setSelectedTrek] = useState<TrekData>(allTreks[0] || (treks[0] as TrekData));
+
+  React.useEffect(() => {
+    async function loadFreshTreks() {
+      try {
+        const res = await fetch("/api/treks", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.treks && Array.isArray(data.treks) && data.treks.length > 0) {
+            setAllTreks(data.treks);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load dynamic treks:", err);
+      }
+    }
+    loadFreshTreks();
+  }, []);
 
   React.useEffect(() => {
     if (initialCategory) {
@@ -50,11 +73,11 @@ export function TreksContent({
   ];
 
   const filteredTreks = useMemo(() => {
-    return treks.filter((trek) => {
+    return allTreks.filter((trek) => {
       const catLower = selectedCategory.toLowerCase();
       const matchesCategory =
         selectedCategory === "All" ||
-        trek.category.toLowerCase().includes(catLower) ||
+        (trek.category || "").toLowerCase().includes(catLower) ||
         trek.categories.some((c) => c.toLowerCase().includes(catLower)) ||
         trek.location.toLowerCase().includes(catLower) ||
         trek.region.toLowerCase().includes(catLower);

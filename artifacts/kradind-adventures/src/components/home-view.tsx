@@ -11,16 +11,18 @@ import { WeekendTreks } from "@/components/weekend-treks";
 import { LiveRadar } from "@/components/live-radar";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
-import { HomeSectionsConfig, TrailRadarReport } from "@/lib/cms-store";
+import { HomeSectionsConfig, TrailRadarReport, TrekData } from "@/lib/cms-store";
 
 export function HomeView({
   initialSections,
   initialReports,
   initialCampaigns,
+  initialTreks,
 }: {
   initialSections?: HomeSectionsConfig | null;
   initialReports?: TrailRadarReport[];
   initialCampaigns?: any[];
+  initialTreks?: TrekData[];
 }) {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedTrek, setSelectedTrek] = useState("Kedarkantha Summit Trek");
@@ -30,24 +32,24 @@ export function HomeView({
   const [radarReports, setRadarReports] = useState<TrailRadarReport[] | undefined>(
     initialReports
   );
+  const [treks, setTreks] = useState<TrekData[]>(initialTreks || []);
 
   useEffect(() => {
     async function loadContent() {
       try {
-        const res = await fetch("/api/content");
+        const res = await fetch("/api/content", { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
           if (data.homeSections) setSections(data.homeSections);
           if (data.trailReports) setRadarReports(data.trailReports);
+          if (data.treks && Array.isArray(data.treks)) setTreks(data.treks);
         }
       } catch (err) {
         console.error("Failed to load CMS content", err);
       }
     }
-    if (!initialSections) {
-      loadContent();
-    }
-  }, [initialSections]);
+    loadContent();
+  }, []);
 
   const handleOpenBooking = (trekName?: string) => {
     if (trekName) setSelectedTrek(trekName);
@@ -71,7 +73,7 @@ export function HomeView({
         <CampaignSection initialCampaigns={initialCampaigns} />
 
         {/* 4.9+ Rated Best Treks */}
-        <BestTreks onSelectTrek={(slug) => handleOpenBooking(slug)} />
+        <BestTreks treks={treks} onSelectTrek={(slug) => handleOpenBooking(slug)} />
 
         {/* Monsoon Specials & Valley Blooms Banner */}
         <MonsoonSpecials
@@ -80,7 +82,7 @@ export function HomeView({
         />
 
         {/* Zero Work Leave Weekend Treks */}
-        <WeekendTreks />
+        <WeekendTreks treks={treks} />
 
         {/* Live Ground Radar */}
         <LiveRadar initialReports={radarReports} />

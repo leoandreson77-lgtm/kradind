@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { TopBar } from "@/components/top-bar";
@@ -34,10 +34,29 @@ export default function TrekDetailPage() {
   const slug = (params.slug as string) || "chopta-tungnath-chandrashila";
 
   // Find matching package or fallback to first one
-  const trek: TrekData =
+  const defaultTrek: TrekData =
     treks.find((t) => t.slug === slug) ||
     treks.find((t) => t.slug.includes(slug)) ||
     treks[0];
+
+  const [trek, setTrek] = useState<TrekData>(defaultTrek);
+
+  useEffect(() => {
+    async function fetchDynamicTrek() {
+      try {
+        const res = await fetch(`/api/treks/${slug}`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && !data.error) {
+            setTrek(data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic trek details:", err);
+      }
+    }
+    fetchDynamicTrek();
+  }, [slug]);
 
   const [bookingOpen, setBookingOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);

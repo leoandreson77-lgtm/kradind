@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { readStore, writeStore, LandingPageData } from "@/lib/cms-store";
 import crypto from "crypto";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const store = readStore();
-    return NextResponse.json(store.landingPages || []);
+    return NextResponse.json(store.landingPages || [], {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (error) {
     console.error("Error fetching admin landing pages:", error);
     return NextResponse.json({ error: "Failed to fetch landing pages" }, { status: 500 });

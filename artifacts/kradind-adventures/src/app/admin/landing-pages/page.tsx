@@ -116,8 +116,8 @@ export default function AdminLandingPagesPage() {
     try {
       setLoading(true);
       const [pagesRes, treksRes] = await Promise.all([
-        fetch("/api/admin/landing-pages"),
-        fetch("/api/admin/treks"),
+        fetch("/api/admin/landing-pages", { cache: "no-store" }),
+        fetch("/api/admin/treks", { cache: "no-store" }),
       ]);
 
       if (pagesRes.ok) {

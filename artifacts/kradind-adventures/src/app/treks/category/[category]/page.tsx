@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { TreksContent } from "@/components/treks-catalog";
-import { treks } from "@/lib/travel-data";
+import { getPublishedTreks } from "@/lib/cms-store";
 
 function formatCategoryName(slug: string): string {
   const map: Record<string, string> = {
@@ -65,6 +65,9 @@ export async function generateMetadata({
   };
 }
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function CategoryTreksPage({
   params,
 }: {
@@ -72,12 +75,13 @@ export default async function CategoryTreksPage({
 }) {
   const { category } = await params;
   const catName = formatCategoryName(category);
+  const allPublishedTreks = getPublishedTreks();
 
   // Filter matching treks for schema
-  const matchingTreks = treks.filter((t) => {
+  const matchingTreks = allPublishedTreks.filter((t) => {
     const c = catName.toLowerCase();
     return (
-      t.category.toLowerCase().includes(c) ||
+      (t.category || "").toLowerCase().includes(c) ||
       t.categories.some((cat) => cat.toLowerCase().includes(c)) ||
       t.location.toLowerCase().includes(c) ||
       t.region.toLowerCase().includes(c)
@@ -143,7 +147,7 @@ export default async function CategoryTreksPage({
           </div>
         }
       >
-        <TreksContent initialCategory={catName} />
+        <TreksContent initialCategory={catName} initialTreks={allPublishedTreks} />
       </Suspense>
     </>
   );

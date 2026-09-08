@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readStore } from "@/lib/cms-store";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -26,7 +29,14 @@ export async function GET(
       (p) => p.status === "Published" && p.slug.toLowerCase() !== slug.toLowerCase()
     );
 
-    return NextResponse.json({ page, featuredTreks, otherCampaigns });
+    return NextResponse.json(
+      { page, featuredTreks, otherCampaigns },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        },
+      },
+    );
   } catch (error) {
     console.error("Error fetching landing page by slug:", error);
     return NextResponse.json({ error: "Failed to fetch landing page" }, { status: 500 });

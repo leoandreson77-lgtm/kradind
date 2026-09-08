@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { readStore, writeStore, LeadRecord } from "@/lib/cms-store";
 import { getAdminSession } from "@/lib/admin-auth";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   const session = await getAdminSession(request);
   if (!session.authenticated) {
@@ -9,7 +12,11 @@ export async function GET(request: NextRequest) {
   }
 
   const store = readStore();
-  return NextResponse.json(store.leads || []);
+  return NextResponse.json(store.leads || [], {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    },
+  });
 }
 
 export async function PUT(request: NextRequest) {

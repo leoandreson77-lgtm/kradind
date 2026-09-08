@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set(SESSION_COOKIE_NAME, token, SESSION_COOKIE_OPTIONS);
     return response;
   } catch (error) {
+    console.error("Auth error:", error);
     return NextResponse.json(
       { error: "Authentication failed. Please try again." },
       { status: 500 },

@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Zap, MapPin, Clock, ArrowRight } from "lucide-react";
 import { treks } from "@/lib/travel-data";
 
-export function WeekendTreks() {
+export function WeekendTreks({ treks: treksProp }: { treks?: any[] }) {
+  const availableTreks = treksProp && treksProp.length > 0 ? treksProp : treks;
+
   const weekendSlugs = [
     "chopta-tungnath-chandrashila",
     "kheerganga-trek",
@@ -13,9 +15,18 @@ export function WeekendTreks() {
     "jaipur-tour-package",
   ];
 
-  const weekendTrips = weekendSlugs
-    .map((slug) => treks.find((t) => t.slug === slug))
+  let weekendTrips = weekendSlugs
+    .map((slug) => availableTreks.find((t: any) => t.slug === slug))
     .filter(Boolean);
+
+  if (weekendTrips.length === 0) {
+    weekendTrips = availableTreks.filter((t: any) =>
+      t.categories?.some((c: string) => c.toLowerCase() === "weekend")
+    );
+    if (weekendTrips.length === 0) {
+      weekendTrips = availableTreks.slice(0, 4);
+    }
+  }
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">

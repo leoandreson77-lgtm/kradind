@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
-import { treks } from "@/lib/travel-data";
-import { readStore } from "@/lib/cms-store";
+import { readStore, getPublishedTreks } from "@/lib/cms-store";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kradind.com";
@@ -34,8 +36,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // Dynamic trek detail routes
-  treks.forEach((trek) => {
+  // Dynamic trek detail routes from CMS store
+  const allPublishedTreks = getPublishedTreks();
+  allPublishedTreks.forEach((trek) => {
     routes.push({
       url: `${baseUrl}/treks/${trek.slug}`,
       lastModified: now,

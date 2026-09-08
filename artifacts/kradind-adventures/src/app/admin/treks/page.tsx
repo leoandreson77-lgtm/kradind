@@ -23,7 +23,7 @@ export default function AdminTreksPage() {
 
   const fetchTreks = async () => {
     try {
-      const res = await fetch("/api/admin/treks");
+      const res = await fetch("/api/admin/treks", { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         setTreks(data);

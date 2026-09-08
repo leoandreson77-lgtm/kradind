@@ -6,7 +6,15 @@ import Image from "next/image";
 import { Star, MapPin, Clock, ArrowRight } from "lucide-react";
 import { treks } from "@/lib/travel-data";
 
-export function BestTreks({ onSelectTrek }: { onSelectTrek?: (slug: string) => void }) {
+export function BestTreks({
+  treks: treksProp,
+  onSelectTrek,
+}: {
+  treks?: any[];
+  onSelectTrek?: (slug: string) => void;
+}) {
+  const availableTreks = treksProp && treksProp.length > 0 ? treksProp : treks;
+
   // Top 4 flagship expeditions: Chopta, Hampta Pass, Kheerganga, Leh Ladakh
   const featuredSlugs = [
     "chopta-tungnath-chandrashila",
@@ -15,9 +23,13 @@ export function BestTreks({ onSelectTrek }: { onSelectTrek?: (slug: string) => v
     "leh-ladakh-tour-package",
   ];
 
-  const featuredTreks = featuredSlugs
-    .map((slug) => treks.find((t) => t.slug === slug))
+  let featuredTreks = featuredSlugs
+    .map((slug) => availableTreks.find((t: any) => t.slug === slug))
     .filter(Boolean);
+
+  if (featuredTreks.length === 0) {
+    featuredTreks = availableTreks.slice(0, 4);
+  }
 
   return (
     <section id="best-treks" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">

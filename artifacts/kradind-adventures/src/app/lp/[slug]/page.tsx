@@ -79,7 +79,7 @@ export default function LandingPageRoute({
   useEffect(() => {
     async function loadPage() {
       try {
-        const res = await fetch(`/api/landing-pages/${slug}`);
+        const res = await fetch(`/api/landing-pages/${slug}`, { cache: "no-store" });
         if (!res.ok) {
           setLoading(false);
           return;

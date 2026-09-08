@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readStore, writeStore } from "@/lib/cms-store";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

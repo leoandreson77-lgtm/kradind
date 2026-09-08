@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readStore } from "@/lib/cms-store";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get("search")?.toLowerCase();
@@ -9,7 +12,7 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type");
 
   const store = readStore();
-  let results = store.treks.filter((t) => t.status === "Published");
+  let results = (store.treks || []).filter((t) => t.status === "Published");
 
   if (search) {
     results = results.filter(
@@ -42,8 +45,15 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  return NextResponse.json({
-    total: results.length,
-    treks: results,
-  });
+  return NextResponse.json(
+    {
+      total: results.length,
+      treks: results,
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    },
+  );
 }

@@ -27,13 +27,18 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function HomePage() {
   const store = readStore();
+  const publishedTreks = (store.treks || []).filter((t) => t.status === "Published");
   return (
     <HomeView
       initialSections={store.homeSections}
       initialReports={store.trailReports}
       initialCampaigns={store.landingPages}
+      initialTreks={publishedTreks}
     />
   );
 }

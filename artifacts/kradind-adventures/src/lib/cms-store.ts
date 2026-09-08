@@ -887,10 +887,35 @@ export function writeStore(data: CMSStoreData): void {
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
-    const tempFile = `${STORE_FILE}.tmp.${Date.now()}`;
-    fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), "utf8");
-    fs.renameSync(tempFile, STORE_FILE);
+    const content = JSON.stringify(data, null, 2);
+    try {
+      const tempFile = `${STORE_FILE}.tmp.${Date.now()}`;
+      fs.writeFileSync(tempFile, content, "utf8");
+      fs.renameSync(tempFile, STORE_FILE);
+    } catch {
+      // Fallback for Windows file locks or atomic rename permissions
+      fs.writeFileSync(STORE_FILE, content, "utf8");
+    }
   } catch (error) {
     console.error("Error writing CMS store:", error);
+    throw error;
   }
 }
+
+export function getStoreTreks(): TrekData[] {
+  try {
+    return readStore().treks || [];
+  } catch {
+    return defaultTreks as unknown as TrekData[];
+  }
+}
+
+export function getPublishedTreks(): TrekData[] {
+  try {
+    const all = getStoreTreks();
+    return all.filter((t) => t.status === "Published");
+  } catch {
+    return defaultTreks as unknown as TrekData[];
+  }
+}
+

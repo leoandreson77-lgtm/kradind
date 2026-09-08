@@ -3,6 +3,9 @@ import { readStore, writeStore, hashPassword, verifyPassword } from "@/lib/cms-s
 import { getAdminSession } from "@/lib/admin-auth";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const ChangePasswordSchema = z.object({
   currentPassword: z.string().min(1),
   newPassword: z.string().min(6, "New password must be at least 6 characters"),

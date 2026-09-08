@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readStore } from "@/lib/cms-store";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
   const store = readStore();
-  const trek = store.treks.find((t) => t.slug === slug);
+  const trek = (store.treks || []).find((t) => t.slug === slug);
 
   if (!trek) {
     return NextResponse.json(
@@ -16,5 +19,9 @@ export async function GET(
     );
   }
 
-  return NextResponse.json(trek);
+  return NextResponse.json(trek, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    },
+  });
 }

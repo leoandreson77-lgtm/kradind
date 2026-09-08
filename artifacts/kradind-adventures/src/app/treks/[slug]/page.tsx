@@ -7,7 +7,8 @@ import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
-import { treks, TrekData } from "@/lib/travel-data";
+import { treks } from "@/lib/travel-data";
+import { TrekData } from "@/lib/cms-store";
 import {
   Clock,
   Mountain,
@@ -27,6 +28,11 @@ import {
   HelpCircle,
   Award,
   Users,
+  Utensils,
+  Tent,
+  Milestone,
+  Car,
+  Footprints,
 } from "lucide-react";
 
 export default function TrekDetailPage() {
@@ -34,12 +40,12 @@ export default function TrekDetailPage() {
   const slug = (params.slug as string) || "chopta-tungnath-chandrashila";
 
   // Find matching package or fallback to first one
-  const defaultTrek: TrekData =
+  const defaultTrek =
     treks.find((t) => t.slug === slug) ||
     treks.find((t) => t.slug.includes(slug)) ||
     treks[0];
 
-  const [trek, setTrek] = useState<TrekData>(defaultTrek);
+  const [trek, setTrek] = useState<TrekData>(defaultTrek as unknown as TrekData);
 
   useEffect(() => {
     async function fetchDynamicTrek() {
@@ -61,6 +67,18 @@ export default function TrekDetailPage() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [activeTab, setActiveTab] = useState<"itinerary" | "highlights" | "inclusions" | "faqs">("itinerary");
+
+  const scrollToSection = (id: string, tab: "itinerary" | "highlights" | "inclusions" | "faqs") => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined") {
+      const element = document.getElementById(id);
+      if (element) {
+        const yOffset = -90;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }
+  };
 
   const whatsappMessage = encodeURIComponent(
     `Hi KRADIND Adventures! I am interested in booking or getting details for "${trek.name}" (${trek.duration}). Please share details.`
@@ -133,11 +151,11 @@ export default function TrekDetailPage() {
         {/* Left Column (Content Sections) */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Quick Navigation Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none">
+          {/* Quick Navigation Tabs - Sticky */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none sticky top-16 z-20 bg-slate-50/95 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-6 sm:px-6">
             <button
-              onClick={() => setActiveTab("itinerary")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition ${
+              onClick={() => scrollToSection("itinerary", "itinerary")}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
                 activeTab === "itinerary"
                   ? "bg-[#0F3A2E] text-white shadow-sm"
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -146,8 +164,8 @@ export default function TrekDetailPage() {
               🗓️ Detailed Itinerary ({trek.itinerary?.length || 0} Days)
             </button>
             <button
-              onClick={() => setActiveTab("highlights")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition ${
+              onClick={() => scrollToSection("highlights", "highlights")}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
                 activeTab === "highlights"
                   ? "bg-[#0F3A2E] text-white shadow-sm"
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -156,8 +174,8 @@ export default function TrekDetailPage() {
               ✨ Highlights
             </button>
             <button
-              onClick={() => setActiveTab("inclusions")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition ${
+              onClick={() => scrollToSection("inclusions", "inclusions")}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
                 activeTab === "inclusions"
                   ? "bg-[#0F3A2E] text-white shadow-sm"
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -166,8 +184,8 @@ export default function TrekDetailPage() {
               📋 Inclusions & Exclusions
             </button>
             <button
-              onClick={() => setActiveTab("faqs")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition ${
+              onClick={() => scrollToSection("faqs", "faqs")}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
                 activeTab === "faqs"
                   ? "bg-[#0F3A2E] text-white shadow-sm"
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -178,7 +196,7 @@ export default function TrekDetailPage() {
           </div>
 
           {/* Overview Section */}
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div id="overview" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
               <Sparkles className="w-5 h-5 text-[#FF6B35]" />
               <span>OVERVIEW</span>
@@ -192,8 +210,8 @@ export default function TrekDetailPage() {
           </div>
 
           {/* Highlights Section */}
-          {(activeTab === "highlights" || activeTab === "itinerary") && trek.highlights && trek.highlights.length > 0 && (
-            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          {trek.highlights && trek.highlights.length > 0 && (
+            <div id="highlights" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
                 <Star className="w-5 h-5 text-[#FF6B35]" />
                 <span>EXPEDITION HIGHLIGHTS</span>
@@ -202,7 +220,7 @@ export default function TrekDetailPage() {
                 Why You Will Love This Trip
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                {trek.highlights.map((highlight, index) => (
+                {trek.highlights.map((highlight: string, index: number) => (
                   <div
                     key={index}
                     className="flex items-start gap-2.5 bg-emerald-50/60 border border-emerald-100 p-3.5 rounded-xl text-xs sm:text-sm text-slate-800"
@@ -216,7 +234,7 @@ export default function TrekDetailPage() {
           )}
 
           {/* Itinerary Section */}
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+          <div id="itinerary" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
@@ -227,54 +245,85 @@ export default function TrekDetailPage() {
                   Tour Schedule & Route
                 </h2>
               </div>
-              <span className="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-semibold">
+              <span className="text-xs bg-emerald-50 text-[#0F3A2E] border border-emerald-200/80 px-3.5 py-1 rounded-full font-bold">
                 {trek.itinerary?.length} Days Plan
               </span>
             </div>
 
-            <div className="space-y-4 pt-2">
+            {/* Timeline track */}
+            <div className="relative pl-6 sm:pl-8 border-l-2 border-emerald-600/30 ml-3 sm:ml-4 space-y-6 pt-2">
               {trek.itinerary && trek.itinerary.length > 0 ? (
-                trek.itinerary.map((dayItem) => (
+                trek.itinerary.map((dayItem: any) => (
                   <div
                     key={dayItem.day}
-                    className="border border-slate-200 rounded-xl p-5 hover:border-emerald-300 transition bg-slate-50/40"
+                    className="relative bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden"
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-2.5">
-                        <span className="bg-[#0F3A2E] text-white text-xs font-extrabold px-3 py-1 rounded-full">
-                          Day {dayItem.day}
-                        </span>
-                        <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                          {dayItem.title}
-                        </h3>
-                      </div>
-                      {dayItem.distance && (
-                        <span className="text-xs bg-white border border-slate-200 px-2.5 py-0.5 rounded-full text-slate-500 font-medium">
-                          {dayItem.distance}
-                        </span>
-                      )}
+                    {/* Timeline Node Pin on left line */}
+                    <div className="absolute -left-[35px] sm:-left-[43px] top-5 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0F3A2E] text-white flex items-center justify-center font-black text-xs shadow-md border-2 border-white ring-2 ring-emerald-600/30">
+                      D{dayItem.day}
                     </div>
 
-                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed pl-1">
-                      {dayItem.description}
-                    </p>
-
-                    {(dayItem.meal || dayItem.stay || dayItem.altitude) && (
-                      <div className="flex flex-wrap items-center gap-4 mt-3 pt-3 border-t border-slate-200/60 text-[11px] text-slate-500">
-                        {dayItem.meal && (
-                          <span className="flex items-center gap-1">
-                            🍽️ <strong className="text-slate-700">Meals:</strong> {dayItem.meal}
+                    <div className="p-5 sm:p-6 space-y-3.5">
+                      {/* Top Header: Day Badge & Title */}
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <span className="inline-block text-[11px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
+                            Day {dayItem.day} Schedule
                           </span>
+                          <h3 className="text-base sm:text-lg font-extrabold text-slate-900 brand-font leading-snug">
+                            {dayItem.title}
+                          </h3>
+                        </div>
+
+                        {/* Metric Badges Strip */}
+                        <div className="flex flex-wrap items-center gap-2">
+                          {dayItem.duration && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200/70 text-amber-900 text-xs font-semibold shadow-xs">
+                              <Clock className="w-3.5 h-3.5 text-amber-600" />
+                              <span>{dayItem.duration}</span>
+                            </span>
+                          )}
+                          {dayItem.distance && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 border border-purple-200/70 text-purple-900 text-xs font-semibold shadow-xs">
+                              <Milestone className="w-3.5 h-3.5 text-purple-600" />
+                              <span>{dayItem.distance}</span>
+                            </span>
+                          )}
+                          {dayItem.altitude && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 border border-sky-200/70 text-sky-900 text-xs font-semibold shadow-xs">
+                              <Mountain className="w-3.5 h-3.5 text-sky-600" />
+                              <span>{dayItem.altitude}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Prose Description with clean paragraphs */}
+                      <div className="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-2.5 pt-1 border-t border-slate-100">
+                        {dayItem.description.split("\n\n").map((paragraph: string, pIdx: number) => (
+                          <p key={pIdx} className="leading-relaxed">
+                            {paragraph.trim()}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Bottom Hospitality & Night Stay Bar */}
+                    {(dayItem.meal || dayItem.stay) && (
+                      <div className="bg-slate-50/80 px-5 sm:px-6 py-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+                        {dayItem.meal && (
+                          <div className="flex items-center gap-1.5">
+                            <Utensils className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            <span className="text-slate-400 font-medium">Meals:</span>
+                            <span className="font-semibold text-slate-800">{dayItem.meal}</span>
+                          </div>
                         )}
                         {dayItem.stay && (
-                          <span className="flex items-center gap-1">
-                            🏕️ <strong className="text-slate-700">Stay:</strong> {dayItem.stay}
-                          </span>
-                        )}
-                        {dayItem.altitude && (
-                          <span className="flex items-center gap-1">
-                            🏔️ <strong className="text-slate-700">Alt:</strong> {dayItem.altitude}
-                          </span>
+                          <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
+                            <Tent className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            <span className="text-slate-400 font-medium">Overnight Stay:</span>
+                            <span className="font-semibold text-slate-800">{dayItem.stay}</span>
+                          </div>
                         )}
                       </div>
                     )}
@@ -293,7 +342,7 @@ export default function TrekDetailPage() {
                 Photo Gallery
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {trek.gallery.map((img, idx) => (
+                {trek.gallery.map((img: string, idx: number) => (
                   <div
                     key={idx}
                     className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group"
@@ -310,7 +359,7 @@ export default function TrekDetailPage() {
           )}
 
           {/* Inclusions & Exclusions */}
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+          <div id="inclusions" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 brand-font">
               Package Inclusions & Exclusions
             </h2>
@@ -323,7 +372,7 @@ export default function TrekDetailPage() {
                   What Is Included
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                  {trek.inclusions?.map((inc, i) => (
+                  {trek.inclusions?.map((inc: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-emerald-600 font-bold">✓</span>
                       <span>{inc}</span>
@@ -339,7 +388,7 @@ export default function TrekDetailPage() {
                   What Is Not Included
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                  {trek.exclusions?.map((exc, i) => (
+                  {trek.exclusions?.map((exc: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-rose-500 font-bold">✗</span>
                       <span>{exc}</span>
@@ -352,7 +401,7 @@ export default function TrekDetailPage() {
 
           {/* FAQs Accordion */}
           {trek.faqs && trek.faqs.length > 0 && (
-            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div id="faqs" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
                 <HelpCircle className="w-5 h-5 text-[#FF6B35]" />
                 <span>FREQUENTLY ASKED QUESTIONS</span>
@@ -362,7 +411,7 @@ export default function TrekDetailPage() {
               </h2>
 
               <div className="space-y-3 pt-2">
-                {trek.faqs.map((faq, i) => (
+                {trek.faqs.map((faq: any, i: number) => (
                   <div
                     key={i}
                     className="border border-slate-200 rounded-xl overflow-hidden transition"
@@ -449,7 +498,7 @@ export default function TrekDetailPage() {
             <div className="pt-4 border-t border-slate-100 space-y-3">
               <span className="text-xs font-bold text-slate-700 block">Upcoming Batches & Slots</span>
               <div className="space-y-2 text-xs">
-                {trek.batches?.map((b) => (
+                {trek.batches?.map((b: any) => (
                   <div
                     key={b.id}
                     className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-lg"

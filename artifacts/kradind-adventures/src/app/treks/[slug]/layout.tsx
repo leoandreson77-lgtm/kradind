@@ -67,7 +67,7 @@ export default async function TrekDetailLayout({
         "@type": "TouristTrip",
         "@id": `https://kradind.com/treks/${slug}#trip`,
         name: trek.name,
-        description: trek.overview || trek.description,
+        description: trek.overview || trek.tagline || "",
         touristType: ["Adventure Traveler", "Trekker", "High Altitude Hiker"],
         offers: {
           "@type": "Offer",

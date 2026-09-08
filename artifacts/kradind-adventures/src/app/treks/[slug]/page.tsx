@@ -73,7 +73,7 @@ export default function TrekDetailPage() {
     if (typeof window !== "undefined") {
       const element = document.getElementById(id);
       if (element) {
-        const yOffset = -90;
+        const yOffset = -145;
         const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
       }
@@ -151,8 +151,8 @@ export default function TrekDetailPage() {
         {/* Left Column (Content Sections) */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Quick Navigation Tabs - Sticky */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none sticky top-16 z-20 bg-slate-50/95 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-6 sm:px-6">
+          {/* Quick Navigation Tabs - Sticky below header without overlap */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 scrollbar-none sticky top-[65px] sm:top-[81px] z-30 bg-slate-50/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 shadow-xs">
             <button
               onClick={() => scrollToSection("itinerary", "itinerary")}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${

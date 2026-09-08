@@ -1,4 +1,6 @@
-export const treks = [
+import { TrekData } from "./cms-store";
+
+export const treks: TrekData[] = [
   {
     "id": 1,
     "slug": "chopta-tungnath-chandrashila",
@@ -381,22 +383,6 @@ export const treks = [
       {
         "question": "How fit should I be for Hampta Pass?",
         "answer": "You should be able to walk several kilometres for multiple consecutive days and manage uphill and downhill sections comfortably. Regular cardio and strength training before the trek is recommended."
-      },
-      {
-        "question": "2. Why Choose the Hampta Pass Trek?",
-        "answer": ""
-      },
-      {
-        "question": "3. What Makes Hampta Pass Trek Special?",
-        "answer": "4. Hampta Pass Trek Itinerary 5. Best Time for Hampta Pass Trek 6. Hampta Pass Trek Difficulty"
-      },
-      {
-        "question": "7. Who Can Do the Hampta Pass Trek?",
-        "answer": "8. Fitness Preparation 9. Packing List 10. Inclusions 11. Exclusions 12. Accommodation 13. Food 14. Safety 15. Altitude & AMS 16. Responsible Trekking Policy 17. How to Reach Manali 18. Things to Know Before Booking 19. Cancellation & Refund Policy 20. Force Majeure Policy 21. Participant Responsibility"
-      },
-      {
-        "question": "23. Why Trek with KRAD Global?",
-        "answer": "24. Book Your Hampta Pass Trek"
       }
     ],
     "overview": "Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti and Lahaul.",
@@ -508,15 +494,27 @@ export const treks = [
     ],
     "faqs": [
       {
-        "question": "Why Should You Do the Kheerganga Trek?",
-        "answer": "Kheerganga is more than just a walk to a hot spring. The trail gives you a compact introduction to the landscapes and culture of the Parvati Valley.\n\nHighlights of the Kheerganga Trek:\n• Scenic views of the Parvati Valley\n• Trek through pine, deodar and mixed Himalayan forests\n• Traditional mountain settlements such as Nakthan and Kalga\n• Beautiful Rudranag Waterfall\n• Himalayan streams and wooden bridges\n• Panoramic mountain views from the upper trail\n• Visit to Parvati Kund / Kheerganga hot water spring\n• A spiritual connection with the legends surrounding Lord Shiva\n• Opportunity to explore Kasol, Manikaran, Tosh and nearby Parvati Valley villages\n\nThe combination of forests, river landscapes, villages and the natural hot spring makes Kheerganga particularly attractive to first-time Himalayan trekkers."
+        "question": "Is the Kheerganga trek suitable for complete beginners?",
+        "answer": "Yes. The Kheerganga Trek is an easy-to-moderate trail and is one of the most accessible Himalayan weekend treks for beginners. The distance is approximately 12 km one-way from Barshaini with gradual climbing. Basic physical fitness and comfortable trekking shoes are recommended."
       },
       {
-        "question": "1. Is Kheerganga trek suitable for complete beginners?",
-        "answer": "Yes. The Kheerganga Trek is generally considered easy to moderate and is suitable for reasonably fit beginners. However, it is approximately 12 km one way with sustained uphill sections, so basic walking and cardio preparation is recommended. Beginners should preferably follow the established Nakthan–Rudranag route, start early and consider travelling with a local guide."
+        "question": "What is the best time to visit Kheerganga?",
+        "answer": "April to June and September to November offer pleasant weather, clear skies, and spectacular valley vistas. The trek also operates during winter (December to February) for snow lovers, though temperatures drop below freezing at the summit."
+      },
+      {
+        "question": "Are the Parvati Kund hot springs open for bathing?",
+        "answer": "Yes, the natural sulphur hot springs at Parvati Kund are accessible year-round and are famous for their rejuvenating warmth and panoramic Himalayan snow-peak views."
+      },
+      {
+        "question": "Is mobile network available during the trek?",
+        "answer": "Mobile connectivity (primarily BSNL, Jio, and Airtel) is generally available up to Barshaini and Nakthan village, but becomes intermittent or unavailable at the Kheerganga top camp."
+      },
+      {
+        "question": "What type of stay is provided at Kheerganga?",
+        "answer": "Comfortable alpine dome tents with warm fleece sleeping bags, insulated ground mats, and shared camp washroom facilities are provided at the meadow campsites."
       }
     ],
-    "overview": "Natural hot sulphur springs nestled high amidst pine-covered peaks of Parvati Valley.",
+    "overview": "Kheerganga is more than just a walk to a hot spring. The trail gives you a compact introduction to the majestic alpine landscapes and vibrant culture of the Parvati Valley.\n\nNestled high amidst the pine and deodar covered slopes of Himachal Pradesh at 9,700 Ft, Kheerganga is renowned for its mystical hot water springs at Parvati Kund, sweeping views of snow-dusted Himalayan ridges, and serene mountain campsites.\n\nThe trail winds past the roaring suspension bridges of Barshaini, authentic wooden hamlets like Nakthan and Kalga, and the sacred waters of Rudranag. The combination of ancient deodar forests, alpine streams, warm mountain hospitality, and therapeutic hot springs makes Kheerganga an unmissable Himalayan adventure.",
     "batches": [
       {
         "id": 31,
@@ -1744,31 +1742,31 @@ export const treks = [
     ],
     "faqs": [
       {
-        "question": "1. How many days are enough for a Leh Ladakh trip?",
+        "question": "How many days are enough for a Leh Ladakh trip?",
         "answer": "For a first Ladakh trip, 6 nights and 7 days is a practical starting point because it gives travellers time for acclimatisation and the classic Leh–Nubra–Pangong circuit. Travellers with more time can add destinations such as Turtuk, Tso Moriri or other extended routes."
       },
       {
-        "question": "2. What is the best time to visit Leh Ladakh?",
+        "question": "What is the best time to visit Leh Ladakh?",
         "answer": "The ideal month depends on your travel goals. May to September is popular for conventional sightseeing, road trips and biking, while autumn and winter offer different experiences. Ladakh Tourism currently categorises May–September as summer, September–October as autumn and November–February as winter."
       },
       {
-        "question": "3. How much does a Leh Ladakh tour package cost?",
+        "question": "How much does a Leh Ladakh tour package cost?",
         "answer": "There is no single fixed price. Your Ladakh trip cost depends on travel dates, hotel category, vehicle type, duration, number of travellers, meals and route. A customised quotation is more useful than relying on a generic \"starting from\" price."
       },
       {
-        "question": "4. Is 48 hours of acclimatisation required in Leh?",
+        "question": "Is 48 hours of acclimatisation required in Leh?",
         "answer": "The District Leh administration currently advises tourists arriving in Leh to undergo at least 48 hours of acclimatisation before travelling to higher-altitude destinations such as Khardung La and Pangong Lake."
       },
       {
-        "question": "5. Which places should I include in a first Leh Ladakh trip?",
+        "question": "Which places should I include in a first Leh Ladakh trip?",
         "answer": "For a first visit, a classic route can include Leh, Nubra Valley and Pangong Tso, with attractions such as Shanti Stupa, Leh Palace and Thiksey Monastery around Leh."
       },
       {
-        "question": "6. Is Ladakh suitable for a family holiday?",
+        "question": "Is Ladakh suitable for a family holiday?",
         "answer": "Yes, but the itinerary should be planned carefully. Families should prioritise acclimatisation, comfortable accommodation, manageable driving schedules and adequate rest. Travellers with medical concerns should seek professional medical advice before visiting high-altitude destinations."
       },
       {
-        "question": "7. Can I customise my Leh Ladakh tour package?",
+        "question": "Can I customise my Leh Ladakh tour package?",
         "answer": "Yes. A customised itinerary can be designed around your preferred duration, accommodation, vehicle and destinations. Depending on the season and current accessibility, extended trips can include places such as Turtuk, Tso Moriri, Hanle, Zanskar or Kargil."
       }
     ],
@@ -1996,31 +1994,31 @@ export const treks = [
     ],
     "faqs": [
       {
-        "question": "1. How many days are enough for a Sikkim tour?",
+        "question": "How many days are enough for a Sikkim tour?",
         "answer": "A 5–7 day Sikkim trip is suitable for many first-time travellers. Three days can work for a short Gangtok holiday, while 7–10 days gives you more time to combine North Sikkim with Pelling or Darjeeling."
       },
       {
-        "question": "2. Which is the best month to visit Sikkim?",
+        "question": "Which is the best month to visit Sikkim?",
         "answer": "March to May is popular for pleasant weather and spring landscapes, while October to mid-December is a strong period for clearer Himalayan views. Winter is better suited to travellers specifically looking for snow, while monsoon travel requires greater flexibility because heavy rainfall can affect roads."
       },
       {
-        "question": "3. Is Nathula Pass included in Sikkim tour packages?",
+        "question": "Is Nathula Pass included in Sikkim tour packages?",
         "answer": "It can be included in selected itineraries, but access is subject to permit approval, weather, road conditions and government regulations. Nathula is a restricted destination and should not be treated as guaranteed sightseeing."
       },
       {
-        "question": "4. Do I need a permit to visit Nathula Pass and Tsomgo Lake?",
+        "question": "Do I need a permit to visit Nathula Pass and Tsomgo Lake?",
         "answer": "Applicable permits are required for these restricted-area destinations. The process and eligibility can vary, so travellers should confirm the current requirements before departure."
       },
       {
-        "question": "5. Which is better for a first Sikkim trip – Gangtok or North Sikkim?",
+        "question": "Which is better for a first Sikkim trip – Gangtok or North Sikkim?",
         "answer": "They offer very different experiences. Gangtok is easier for sightseeing, restaurants and a comfortable base, while North Sikkim offers more dramatic high-altitude landscapes but involves longer and more demanding road journeys."
       },
       {
-        "question": "6. Can I customize my Sikkim tour package?",
+        "question": "Can I customize my Sikkim tour package?",
         "answer": "Yes. A customized itinerary can be created around your preferred duration, hotel category, destinations, sightseeing interests and budget."
       },
       {
-        "question": "7. Is Sikkim suitable for a family holiday?",
+        "question": "Is Sikkim suitable for a family holiday?",
         "answer": "Yes, provided the itinerary is planned around the family's comfort and age group. Families may prefer a slower route with fewer long road journeys and carefully selected high-altitude excursions."
       }
     ],
@@ -2188,31 +2186,31 @@ export const treks = [
     ],
     "faqs": [
       {
-        "question": "1. What is the best Assam tour package for first-time visitors?",
+        "question": "What is the best Assam tour package for first-time visitors?",
         "answer": "For first-time travellers, a 4–6 day Assam itinerary covering Guwahati and Kaziranga is a practical starting point. Travellers with more time can add Majuli, Jorhat or Sivasagar for a deeper cultural experience."
       },
       {
-        "question": "2. How many days are enough for an Assam trip?",
+        "question": "How many days are enough for an Assam trip?",
         "answer": "A 4–5 day Assam trip works well for Guwahati and Kaziranga. For wildlife, heritage and cultural destinations such as Majuli and Sivasagar, consider 6–10 days."
       },
       {
-        "question": "3. What is the best time to visit Assam for a wildlife trip?",
+        "question": "What is the best time to visit Assam for a wildlife trip?",
         "answer": "October to April is generally a favourable period for Assam sightseeing and wildlife-focused holidays, but park operating dates and safari availability can vary. Always confirm current conditions before travelling."
       },
       {
-        "question": "4. How much does an Assam tour package cost?",
+        "question": "How much does an Assam tour package cost?",
         "answer": "There is no single fixed price. The total depends on travel dates, hotel category, number of travellers, vehicle type, safari arrangements, duration and inclusions. A customized quotation gives a more accurate price than a generic starting fare."
       },
       {
-        "question": "5. Is Kaziranga included in Assam tour packages?",
+        "question": "Is Kaziranga included in Assam tour packages?",
         "answer": "Many Assam itineraries include Kaziranga, particularly packages designed around wildlife. However, safari charges, safari zones and safari types should be checked in the specific quotation before booking."
       },
       {
-        "question": "6. Can I combine Assam and Meghalaya in one trip?",
+        "question": "Can I combine Assam and Meghalaya in one trip?",
         "answer": "Yes. Assam + Meghalaya tour packages are popular because Guwahati can work as a convenient entry point for Northeast circuits. A combined itinerary can include Guwahati, Kaziranga, Shillong, Cherrapunji and other selected destinations depending on the number of days."
       },
       {
-        "question": "7. Is Assam suitable for a family holiday?",
+        "question": "Is Assam suitable for a family holiday?",
         "answer": "Yes. Assam can work very well for families when the itinerary is planned with sensible driving distances, comfortable accommodation and an appropriate pace. Families can combine wildlife, sightseeing, cultural experiences and relaxed travel days."
       }
     ],
@@ -2361,31 +2359,31 @@ export const treks = [
     ],
     "faqs": [
       {
-        "question": "1. How many days are enough for a Nainital trip?",
+        "question": "How many days are enough for a Nainital trip?",
         "answer": "For most travellers, 3 nights and 4 days is a comfortable duration. A 2-night weekend trip works for the major attractions, while 4–6 nights allow you to add destinations such as Bhimtal, Ranikhet or Corbett."
       },
       {
-        "question": "2. What is the best Nainital tour package for a family?",
+        "question": "What is the best Nainital tour package for a family?",
         "answer": "A 3–4 night family package with comfortable accommodation, private transportation and relaxed sightseeing is usually a practical choice. Bhimtal and Sattal can be added if you want a little more time around the lakes."
       },
       {
-        "question": "3. What is the best time to visit Nainital?",
+        "question": "What is the best time to visit Nainital?",
         "answer": "March to June is popular for pleasant summer weather, while October and November offer comfortable sightseeing conditions. Winter is suitable for travellers seeking a colder mountain experience, while monsoon travel requires more flexibility because of rainfall and road conditions."
       },
       {
-        "question": "4. How much does a Nainital tour package cost?",
+        "question": "How much does a Nainital tour package cost?",
         "answer": "The price depends on hotel category, travel dates, number of travellers, vehicle type, duration and inclusions. Current online listings show a broad range, so an exact quotation should be requested for your specific dates rather than relying on a generic package price."
       },
       {
-        "question": "5. Can I customize my Nainital tour package?",
+        "question": "Can I customize my Nainital tour package?",
         "answer": "Yes. A customized itinerary can change the hotel category, number of nights, sightseeing, vehicle type and nearby destinations. KRAD GLOBAL can structure the trip around your preferred travel pace and budget."
       },
       {
-        "question": "6. Can I combine Nainital with Jim Corbett?",
+        "question": "Can I combine Nainital with Jim Corbett?",
         "answer": "Yes. Nainital + Corbett is one of the most practical combinations for travellers who want both Himalayan scenery and wildlife. A 4-night or 5-night itinerary can usually accommodate both destinations without making the trip unnecessarily rushed."
       },
       {
-        "question": "7. Is Nainital good for a honeymoon?",
+        "question": "Is Nainital good for a honeymoon?",
         "answer": "Yes. Nainital works well for couples who want lake views, mountain weather, scenic drives and relaxed sightseeing. A 3–5 night honeymoon package can be customized around a couple-friendly hotel, private transportation and leisure time."
       }
     ],
@@ -2559,31 +2557,31 @@ export const treks = [
     ],
     "faqs": [
       {
-        "question": "1. How many days are enough for a Jaisalmer trip?",
+        "question": "How many days are enough for a Jaisalmer trip?",
         "answer": "Three days and two nights is the minimum practical duration for Jaisalmer if you want to see the major attractions and experience the desert. For a more relaxed trip, 4 days / 3 nights is a better choice."
       },
       {
-        "question": "2. What is the best time to visit Jaisalmer?",
+        "question": "What is the best time to visit Jaisalmer?",
         "answer": "October to March is generally the most comfortable period for sightseeing and desert activities. Winter is especially popular, although desert nights can be cold."
       },
       {
-        "question": "3. How much does a Jaisalmer tour package cost?",
+        "question": "How much does a Jaisalmer tour package cost?",
         "answer": "The cost depends on the hotel, number of nights, vehicle, desert camp, activities, meals and travel season. Current marketplace packages show a wide range, so travellers should compare inclusions rather than just the advertised starting price."
       },
       {
-        "question": "4. Is a desert camp included in Jaisalmer tour packages?",
+        "question": "Is a desert camp included in Jaisalmer tour packages?",
         "answer": "Many Jaisalmer packages include a desert camp, particularly itineraries designed around Sam Sand Dunes. However, the camp category, meals, camel safari and cultural programme vary by package and should be confirmed before booking."
       },
       {
-        "question": "5. Is Jaisalmer good for a family holiday?",
+        "question": "Is Jaisalmer good for a family holiday?",
         "answer": "Yes. Jaisalmer works well for families when the itinerary balances sightseeing with rest. A 3–4 night package can combine the fort, havelis, Gadisar Lake and a comfortable desert experience."
       },
       {
-        "question": "6. Can I combine Jaisalmer with Jodhpur?",
+        "question": "Can I combine Jaisalmer with Jodhpur?",
         "answer": "Yes. Jodhpur + Jaisalmer is one of the most popular Rajasthan combinations. Allow at least 4–5 days for a comfortable version of the trip."
       },
       {
-        "question": "7. Can I customize my Jaisalmer tour package?",
+        "question": "Can I customize my Jaisalmer tour package?",
         "answer": "Yes. A customized package can be designed around your travel dates, hotel category, vehicle, sightseeing preferences, desert activities, number of nights and additional Rajasthan destinations."
       }
     ],

@@ -16,6 +16,7 @@ export interface TrekItineraryDay {
   title: string;
   description: string;
   distance?: string;
+  duration?: string;
   altitude?: string;
   meal?: string;
   stay?: string;
@@ -25,6 +26,7 @@ export interface TrekData {
   id: number | string;
   slug: string;
   name: string;
+  file?: string;
   category?: string;
   categories: string[];
   location: string;
@@ -35,6 +37,7 @@ export interface TrekData {
   description?: string;
   overview?: string;
   highlights?: string[];
+  defaultHighlights?: string[];
   duration: string;
   difficulty: string;
   altitude: string;

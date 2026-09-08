@@ -55,6 +55,9 @@ export interface TrekData {
   inclusions?: string[];
   exclusions?: string[];
   faqs?: { question: string; answer: string }[];
+  travelTips?: { title: string; desc: string }[];
+  bookingPolicy?: string[];
+  costFactors?: string[];
 }
 
 export interface TrailRadarReport {

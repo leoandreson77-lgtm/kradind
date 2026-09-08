@@ -117,9 +117,9 @@ export default function TrekDetailPage() {
 
   const [bookingOpen, setBookingOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  const [activeTab, setActiveTab] = useState<"itinerary" | "highlights" | "inclusions" | "faqs">("itinerary");
+  const [activeTab, setActiveTab] = useState<"itinerary" | "highlights" | "inclusions" | "tips" | "faqs">("itinerary");
 
-  const scrollToSection = (id: string, tab: "itinerary" | "highlights" | "inclusions" | "faqs") => {
+  const scrollToSection = (id: string, tab: "itinerary" | "highlights" | "inclusions" | "tips" | "faqs") => {
     setActiveTab(tab);
     if (typeof window !== "undefined") {
       const element = document.getElementById(id);
@@ -232,8 +232,20 @@ export default function TrekDetailPage() {
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
               }`}
             >
-              📋 Inclusions & Exclusions
+              📋 Inclusions
             </button>
+            {trek.travelTips && trek.travelTips.length > 0 && (
+              <button
+                onClick={() => scrollToSection("tips", "tips")}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
+                  activeTab === "tips"
+                    ? "bg-[#0F3A2E] text-white shadow-sm"
+                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                }`}
+              >
+                💡 Travel Tips ({trek.travelTips.length})
+              </button>
+            )}
             <button
               onClick={() => scrollToSection("faqs", "faqs")}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
@@ -445,6 +457,106 @@ export default function TrekDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Essential Travel Tips & Advisory */}
+          {trek.travelTips && trek.travelTips.length > 0 && (
+            <div id="tips" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
+                    <Sparkles className="w-5 h-5 text-[#FF6B35]" />
+                    <span>ESSENTIAL TRAVEL TIPS & ADVISORY</span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 brand-font mt-1">
+                    Practical Advice for {trek.name}
+                  </h2>
+                </div>
+                <span className="hidden sm:inline-flex text-xs bg-amber-50 text-amber-900 border border-amber-200 px-3 py-1 rounded-full font-bold">
+                  {trek.travelTips.length} Expert Tips
+                </span>
+              </div>
+
+              {/* Tips Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {trek.travelTips.map((tip: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3.5 p-4 rounded-xl border border-slate-200/90 bg-gradient-to-br from-slate-50 via-white to-emerald-50/20 hover:border-emerald-300 hover:shadow-xs transition duration-200"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-[#0F3A2E] text-white flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs shadow-2xs">
+                      {idx + 1}
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-bold text-slate-900 leading-snug">
+                        {tip.title}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        {tip.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Transparent Tour Cost & Booking Guidelines Box */}
+              {(trek.costFactors?.length || trek.bookingPolicy?.length) && (
+                <div className="mt-6 rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5 sm:p-6 space-y-5">
+                  {trek.costFactors && trek.costFactors.length > 0 && (
+                    <div className="space-y-2.5">
+                      <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-xs sm:text-sm">
+                        <span className="text-base">💳</span>
+                        <span>Tour Package Cost & Customisation Factors</span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        The cost of this journey depends on more than just the number of days. Your personalised package price is tailored according to:
+                      </p>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {trek.costFactors.map((f: string, fIdx: number) => (
+                          <span
+                            key={fIdx}
+                            className="inline-flex items-center gap-1.5 text-xs bg-white text-slate-700 border border-slate-200/80 px-2.5 py-1 rounded-lg font-medium shadow-2xs"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B35]"></span>
+                            {f}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {trek.bookingPolicy && trek.bookingPolicy.length > 0 && (
+                    <div className="space-y-2.5 pt-4 border-t border-emerald-200/60">
+                      <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-xs sm:text-sm">
+                        <span className="text-base">📋</span>
+                        <span>Booking & Cancellation Guidelines</span>
+                      </div>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-600">
+                        {trek.bookingPolicy.map((pol: string, pIdx: number) => (
+                          <li key={pIdx} className="flex items-start gap-2">
+                            <span className="text-emerald-700 font-bold shrink-0 mt-0.5">•</span>
+                            <span>{pol}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-xs text-slate-500">
+                      Looking for custom dates, hotel upgrades, or private group rates?
+                    </span>
+                    <button
+                      onClick={() => setBookingOpen(true)}
+                      className="inline-flex items-center gap-2 bg-[#0F3A2E] hover:bg-[#0F3A2E]/90 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-xs cursor-pointer"
+                    >
+                      <span>Get My {trek.name.split(" ")[0]} Tour Quote</span>
+                      <span className="text-sm">→</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* FAQs Accordion */}
           {trek.faqs && trek.faqs.length > 0 && (

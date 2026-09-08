@@ -1,10 +1,17 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { FaWhatsapp } from "react-icons/fa";
 
 export function FloatingWhatsApp() {
+  const pathname = usePathname();
   const whatsappUrl = "https://wa.link/n3u8c0";
+
+  // Hide WhatsApp floating button on Admin CMS pages
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 select-none">

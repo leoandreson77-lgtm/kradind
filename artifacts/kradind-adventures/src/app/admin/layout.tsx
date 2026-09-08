@@ -105,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row text-slate-800 font-sans">
       
       {/* Mobile Top Navigation */}
-      <div className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800">
+      <div className="md:hidden sticky top-0 z-30 bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 shadow-sm">
         <div className="flex items-center gap-2.5">
           <Image
             src="/logo-emblem.png"
@@ -124,28 +124,46 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </button>
       </div>
 
-      {/* Admin Sidebar */}
+      {/* Mobile Backdrop */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-40 transition-opacity"
+        />
+      )}
+
+      {/* Admin Sidebar - Permanently FIXED on Desktop, Smooth Slide Drawer on Mobile */}
       <aside
-        className={`${
-          sidebarOpen ? "block" : "hidden"
-        } md:block w-full md:w-64 bg-slate-900 text-slate-300 shrink-0 border-r border-slate-800 flex flex-col justify-between`}
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col justify-between overflow-y-auto transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+        }`}
       >
         <div>
           {/* Logo & Brand */}
-          <div className="hidden md:flex items-center gap-3 px-6 py-5 border-b border-slate-800/80">
-            <Image
-              src="/logo-emblem.png"
-              alt="KRADIND Emblem"
-              width={40}
-              height={40}
-              className="w-10 h-10 object-contain drop-shadow-sm"
-            />
-            <div>
-              <div className="font-bold text-white text-sm tracking-wide">KRADIND</div>
-              <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" /> Admin CMS
+          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/80">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/logo-emblem.png"
+                alt="KRADIND Emblem"
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain drop-shadow-sm"
+              />
+              <div>
+                <div className="font-bold text-white text-sm tracking-wide">KRADIND</div>
+                <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400" /> Admin CMS
+                </div>
               </div>
             </div>
+
+            {/* Mobile close button inside drawer */}
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="md:hidden p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Navigation Links */}
@@ -173,10 +191,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* User Info & Footer Actions */}
-        <div className="p-4 border-t border-slate-800/80 space-y-3">
+        <div className="p-4 border-t border-slate-800/80 space-y-3 shrink-0 bg-slate-900">
           <div className="px-2">
             <div className="text-xs font-semibold text-white truncate">
-              {adminUser?.name || "Admin"}
+              {adminUser?.name || "Head of Expeditions"}
             </div>
             <div className="text-[11px] text-slate-400 truncate">
               {adminUser?.email || "admin@kradind.com"}
@@ -204,8 +222,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      {/* Main Content Area - with offset to respect fixed sidebar */}
+      <main className="flex-1 min-w-0 md:ml-64 p-4 sm:p-6 lg:p-8">
         {children}
       </main>
 

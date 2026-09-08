@@ -397,7 +397,8 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             title="Direct Ground Desk: +91 7500222141"
           >
             <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 animate-phone-vibrate shrink-0" />
-            <span className="tracking-tight font-bold">+91 7500222141</span>
+            <span className="tracking-tight font-bold hidden sm:inline">+91 7500222141</span>
+            <span className="tracking-tight font-bold sm:hidden">Call</span>
           </a>
 
           {/* Mobile menu toggle */}

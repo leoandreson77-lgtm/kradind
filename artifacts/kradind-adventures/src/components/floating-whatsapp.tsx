@@ -13,14 +13,17 @@ export function FloatingWhatsApp() {
     return null;
   }
 
-  // On Landing Pages (/lp/...), mobile already has a dedicated sticky action bar with WhatsApp & Enquire.
-  // Hide the floating widget on mobile (< lg) for /lp/ pages so it never overlaps the action bar buttons.
+  // On Landing Pages (/lp/...) and Trek Detail Pages (/treks/[slug]),
+  // mobile already has a dedicated sticky action bar with direct WhatsApp CTA.
+  // Hide the floating widget on mobile (< lg) for these pages so it never overlaps the action bar buttons.
   const isLandingPage = pathname?.startsWith("/lp");
+  const isTrekDetailPage = pathname?.startsWith("/treks/") && pathname.split("/").filter(Boolean).length >= 2;
+  const hasMobileBottomBar = isLandingPage || isTrekDetailPage;
 
   return (
     <div
       className={`fixed z-50 select-none ${
-        isLandingPage
+        hasMobileBottomBar
           ? "hidden lg:block bottom-6 right-6"
           : "bottom-5 right-5 sm:bottom-6 sm:right-6"
       }`}

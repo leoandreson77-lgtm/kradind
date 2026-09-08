@@ -188,7 +188,7 @@ export function TreksContent({
           </div>
 
           {/* Category Tabs */}
-          <div className="flex gap-2 overflow-x-auto pt-2 border-t border-slate-100 scrollbar-none">
+          <div className="flex gap-2 overflow-x-auto pt-2 border-t border-slate-100 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.value}
@@ -295,7 +295,7 @@ export function TreksContent({
               </div>
 
               {/* Price & Action */}
-              <div className="p-5 pt-0 border-t border-slate-100 mt-2 flex items-center justify-between">
+              <div className="p-4 sm:p-5 pt-0 border-t border-slate-100 mt-2 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">
                     Starting From
@@ -312,7 +312,7 @@ export function TreksContent({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <button
                     type="button"
                     data-action="quick-book"
@@ -321,7 +321,7 @@ export function TreksContent({
                       setSelectedTrek(trek);
                       setBookingOpen(true);
                     }}
-                    className="bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] font-bold text-xs px-3 py-2 rounded-xl transition relative z-10"
+                    className="bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] font-bold text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition relative z-10 whitespace-nowrap"
                   >
                     Quick Book
                   </button>
@@ -329,7 +329,7 @@ export function TreksContent({
                   <Link
                     href={`/treks/${trek.slug}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 group/btn shadow-sm relative z-10"
+                    className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-[11px] sm:text-xs px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition flex items-center gap-1 group/btn shadow-sm relative z-10 whitespace-nowrap"
                   >
                     <span>Details</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />

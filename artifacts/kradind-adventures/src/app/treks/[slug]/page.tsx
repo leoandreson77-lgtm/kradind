@@ -197,7 +197,7 @@ export default function TrekDetailPage() {
       </div>
 
       {/* Main Breakdown Layout */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 pb-24 lg:pb-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Column (Content Sections) */}
         <div className="lg:col-span-2 space-y-8">
@@ -697,6 +697,44 @@ export default function TrekDetailPage() {
         </div>
 
       </main>
+
+      {/* Mobile Sticky Booking Bar (Visible on < lg screens) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-between gap-3">
+        <div>
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+            Starting from
+          </span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-base sm:text-lg font-extrabold text-[#0F3A2E] brand-font">
+              ₹{trek.price?.toLocaleString("en-IN")}
+            </span>
+            {trek.originalPrice && (
+              <span className="text-[11px] text-slate-400 line-through">
+                ₹{trek.originalPrice.toLocaleString("en-IN")}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <a
+            href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition flex items-center justify-center shrink-0"
+            title="Chat on WhatsApp"
+          >
+            <MessageCircle className="w-4 h-4 text-emerald-600" />
+          </a>
+
+          <button
+            onClick={() => setBookingOpen(true)}
+            className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap cursor-pointer"
+          >
+            Check Dates & Book
+          </button>
+        </div>
+      </div>
 
       <Footer />
 

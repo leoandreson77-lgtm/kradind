@@ -164,7 +164,7 @@ export function HeroSearch({
         </form>
 
         {/* Region Story Avatars */}
-        <div className="pt-6 flex justify-center items-center gap-5 sm:gap-8 overflow-x-auto scrollbar-none">
+        <div className="pt-6 flex justify-start sm:justify-center items-center gap-4 sm:gap-8 overflow-x-auto scrollbar-none px-2 sm:px-0">
           
           <div
             onClick={() => handleCategoryClick("Domestic")}

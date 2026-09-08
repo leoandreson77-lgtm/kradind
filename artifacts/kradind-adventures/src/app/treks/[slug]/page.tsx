@@ -35,6 +35,57 @@ import {
   Footprints,
 } from "lucide-react";
 
+function FormattedTextBlock({ text }: { text: string }) {
+  if (!text) return null;
+
+  // Normalise any inline raw asterisks to newlines with clean bullets
+  const normalised = text
+    .replace(/:\s*\*\s*/g, ":\n• ")
+    .replace(/\s+\*\s+/g, "\n• ");
+
+  // Split into distinct blocks/paragraphs
+  const paragraphs = normalised.split(/\n\n+/);
+
+  return (
+    <div className="space-y-3 leading-relaxed">
+      {paragraphs.map((para, pIdx) => {
+        const lines = para.split("\n").map((l) => l.trim()).filter(Boolean);
+        const hasBullets = lines.some((l) => l.startsWith("•") || l.startsWith("-") || l.startsWith("*"));
+
+        if (hasBullets) {
+          return (
+            <div key={pIdx} className="space-y-1.5 my-2">
+              {lines.map((line, lIdx) => {
+                const isBullet = line.startsWith("•") || line.startsWith("-") || line.startsWith("*");
+                const cleanLine = line.replace(/^[•\-\*]\s*/, "");
+                if (isBullet) {
+                  return (
+                    <div key={lIdx} className="flex items-start gap-2.5 text-slate-700 text-xs sm:text-sm">
+                      <span className="text-[#FF6B35] font-bold text-base leading-none select-none shrink-0 mt-0.5">•</span>
+                      <span className="flex-1 leading-relaxed">{cleanLine}</span>
+                    </div>
+                  );
+                }
+                return (
+                  <p key={lIdx} className="font-semibold text-slate-900 mt-2 mb-1 text-xs sm:text-sm">
+                    {line}
+                  </p>
+                );
+              })}
+            </div>
+          );
+        }
+
+        return (
+          <p key={pIdx} className="leading-relaxed text-xs sm:text-sm text-slate-600">
+            {para.trim()}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function TrekDetailPage() {
   const params = useParams();
   const slug = (params.slug as string) || "chopta-tungnath-chandrashila";
@@ -298,13 +349,9 @@ export default function TrekDetailPage() {
                         </div>
                       </div>
 
-                      {/* Prose Description with clean paragraphs */}
-                      <div className="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-2.5 pt-1 border-t border-slate-100">
-                        {dayItem.description.split("\n\n").map((paragraph: string, pIdx: number) => (
-                          <p key={pIdx} className="leading-relaxed">
-                            {paragraph.trim()}
-                          </p>
-                        ))}
+                      {/* Prose Description with clean paragraphs & bullets */}
+                      <div className="pt-2 border-t border-slate-100">
+                        <FormattedTextBlock text={dayItem.description} />
                       </div>
                     </div>
 
@@ -429,8 +476,8 @@ export default function TrekDetailPage() {
                     </button>
 
                     {openFaqIndex === i && (
-                      <div className="px-5 pb-4 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
-                        {faq.answer}
+                      <div className="px-5 pb-4 pt-2 border-t border-slate-100 bg-slate-50/50">
+                        <FormattedTextBlock text={faq.answer} />
                       </div>
                     )}
                   </div>

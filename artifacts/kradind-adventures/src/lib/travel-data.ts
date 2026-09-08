@@ -509,7 +509,7 @@ export const treks = [
     "faqs": [
       {
         "question": "Why Should You Do the Kheerganga Trek?",
-        "answer": "Kheerganga is more than just a walk to a hot spring. The trail gives you a compact introduction to the landscapes and culture of the Parvati Valley. Highlights of the Kheerganga Trek * Scenic views of the Parvati Valley * Trek through pine, deodar and mixed Himalayan forests * Traditional mountain settlements such as Nakthan and Kalga * Beautiful Rudranag Waterfall * Himalayan streams and wooden bridges * Panoramic mountain views from the upper trail * Visit to Parvati Kund / Kheerganga hot water spring * A spiritual connection with the legends surrounding Lord Shiva * Opportunity to explore Kasol, Manikaran, Tosh and nearby Parvati Valley villages The combination of forests, river landscapes, villages and the natural hot spring makes Kheerganga particularly attractive to first-time Himalayan trekkers."
+        "answer": "Kheerganga is more than just a walk to a hot spring. The trail gives you a compact introduction to the landscapes and culture of the Parvati Valley.\n\nHighlights of the Kheerganga Trek:\n• Scenic views of the Parvati Valley\n• Trek through pine, deodar and mixed Himalayan forests\n• Traditional mountain settlements such as Nakthan and Kalga\n• Beautiful Rudranag Waterfall\n• Himalayan streams and wooden bridges\n• Panoramic mountain views from the upper trail\n• Visit to Parvati Kund / Kheerganga hot water spring\n• A spiritual connection with the legends surrounding Lord Shiva\n• Opportunity to explore Kasol, Manikaran, Tosh and nearby Parvati Valley villages\n\nThe combination of forests, river landscapes, villages and the natural hot spring makes Kheerganga particularly attractive to first-time Himalayan trekkers."
       },
       {
         "question": "1. Is Kheerganga trek suitable for complete beginners?",
@@ -601,7 +601,7 @@ export const treks = [
       {
         "day": 2,
         "title": "Munnar Local Sightseeing",
-        "description": "Start your day with breakfast and head out for a full-day Munnar sightseeing tour. Munnar is known for its rolling tea gardens, misty mountains and pleasant climate. Depending on the itinerary and local conditions, you can visit attractions such as: * Mattupetty Dam * Echo Point * Tea plantations * Tea Museum * Photo Point * Kundala Lake * Local markets * Scenic viewpoints Spend some time enjoying the views and exploring the tea-growing landscape of Munnar. Return to the hotel in the evening. Overnight Stay: Munnar Note: Entry tickets and optional activities are subject to availability and are generally payable separately unless specifically included in the package.",
+        "description": "Start your day with breakfast and head out for a full-day Munnar sightseeing tour. Munnar is known for its rolling tea gardens, misty mountains and pleasant climate. Depending on the itinerary and local conditions, you can visit attractions such as:\n• Mattupetty Dam\n• Echo Point\n• Tea plantations\n• Tea Museum\n• Photo Point\n• Kundala Lake\n• Local markets\n• Scenic viewpoints\n\nSpend some time enjoying the views and exploring the tea-growing landscape of Munnar. Return to the hotel in the evening. Overnight Stay: Munnar Note: Entry tickets and optional activities are subject to availability and are generally payable separately unless specifically included in the package.",
         "altitude": "Sea Level to 5,200 Ft",
         "meal": "Breakfast",
         "stay": "Hotel / Resort / Campsite"
@@ -619,13 +619,13 @@ export const treks = [
         "title": "Thekkady – Alleppey Houseboat",
         "description": "Enjoy breakfast and check out from your hotel before proceeding to Alleppey, also known as Alappuzha. Alleppey is famous for its network of canals, lagoons, villages and palm-fringed waterways. On arrival, board your traditional Kerala houseboat, subject to the selected package. Settle into your houseboat and enjoy a relaxing cruise through the backwaters. Watch village life unfold along the waterways while enjoying the peaceful scenery. Meals on the houseboat will be served according to the selected houseboat plan. Overnight Stay: Alleppey Houseboat Meals depend on the houseboat package selected.",
         "altitude": "Sea Level to 5,200 Ft",
-        "meal": "Breakfast, Lunch & Dinner*",
+        "meal": "Breakfast, Lunch & Dinner",
         "stay": "Hotel / Resort / Campsite"
       },
       {
         "day": 5,
         "title": "Alleppey – Kochi",
-        "description": "Wake up to the calm surroundings of Kerala's backwaters and enjoy breakfast on the houseboat. After check-out, proceed towards Kochi. On arrival, explore some of Kochi's popular attractions, subject to available time and the selected itinerary. Possible places to visit include: * Fort Kochi * Chinese Fishing Nets * Mattancherry * Jew Town * St. Francis Church * Local markets and heritage streets Kochi offers a fascinating mix of colonial history, coastal culture, art and traditional Kerala influences. Check in to your Kochi hotel and enjoy a relaxed evening. Overnight Stay: Kochi",
+        "description": "Wake up to the calm surroundings of Kerala's backwaters and enjoy breakfast on the houseboat. After check-out, proceed towards Kochi. On arrival, explore some of Kochi's popular attractions, subject to available time and the selected itinerary. Possible places to visit include:\n• Fort Kochi\n• Chinese Fishing Nets\n• Mattancherry\n• Jew Town\n• St. Francis Church\n• Local markets and heritage streets\n\nKochi offers a fascinating mix of colonial history, coastal culture, art and traditional Kerala influences. Check in to your Kochi hotel and enjoy a relaxed evening. Overnight Stay: Kochi",
         "altitude": "Sea Level to 5,200 Ft",
         "meal": "Breakfast",
         "stay": "Hotel / Resort / Campsite"
@@ -841,7 +841,7 @@ export const treks = [
       {
         "day": 2,
         "title": "Lonavala & Khandala Sightseeing – Transfer to Mahabaleshwar",
-        "description": "Start the morning with breakfast before beginning your Lonavala and Khandala sightseeing experience. Depending on the final itinerary, weather and available time, you may visit attractions such as: * Tiger's Point * Bhushi Dam * Khandala viewpoints * Rajmachi viewpoint * Karla Caves * Bhaja Caves * Local market Lonavala is known for its combination of Western Ghats scenery, historic sites and outdoor experiences. During the monsoon, the surrounding hills become particularly green and seasonal waterfalls become a major attraction. After sightseeing, continue your journey towards Mahabaleshwar. On arrival, check in at the hotel and enjoy a relaxed evening. Overnight Stay: Mahabaleshwar",
+        "description": "Start the morning with breakfast before beginning your Lonavala and Khandala sightseeing experience. Depending on the final itinerary, weather and available time, you may visit attractions such as:\n• Tiger's Point\n• Bhushi Dam\n• Khandala viewpoints\n• Rajmachi viewpoint\n• Karla Caves\n• Bhaja Caves\n• Local market Lonavala is known for its combination of Western Ghats scenery, historic sites and outdoor experiences. During the monsoon, the surrounding hills become particularly green and seasonal waterfalls become a major attraction. After sightseeing, continue your journey towards Mahabaleshwar. On arrival, check in at the hotel and enjoy a relaxed evening. Overnight Stay: Mahabaleshwar",
         "altitude": "Up to 4,700 Ft",
         "meal": "Breakfast",
         "stay": "Hotel / Resort / Campsite"
@@ -857,7 +857,7 @@ export const treks = [
       {
         "day": 4,
         "title": "Mahabaleshwar – Panchgani Excursion",
-        "description": "Enjoy breakfast and prepare for a scenic excursion to Panchgani. Situated among the Sahyadri hills, Panchgani is known for its pleasant surroundings, wide valley views and distinctive five-hill landscape. During the day's sightseeing, you can explore: * Table Land * Sydney Point * Parsi Point * Mapro Garden * Strawberry farms * Local viewpoints * Devrai Art Village, subject to itinerary Table Land is one of Panchgani's signature attractions and offers an expansive open landscape with views of the surrounding hills. Spend some relaxed time enjoying the scenery before returning to Mahabaleshwar. The evening can be kept free for shopping, café visits or simply enjoying the cool hill-station atmosphere. Overnight Stay: Mahabaleshwar",
+        "description": "Enjoy breakfast and prepare for a scenic excursion to Panchgani. Situated among the Sahyadri hills, Panchgani is known for its pleasant surroundings, wide valley views and distinctive five-hill landscape. During the day's sightseeing, you can explore:\n• Table Land\n• Sydney Point\n• Parsi Point\n• Mapro Garden\n• Strawberry farms\n• Local viewpoints\n• Devrai Art Village, subject to itinerary Table Land is one of Panchgani's signature attractions and offers an expansive open landscape with views of the surrounding hills. Spend some relaxed time enjoying the scenery before returning to Mahabaleshwar. The evening can be kept free for shopping, café visits or simply enjoying the cool hill-station atmosphere. Overnight Stay: Mahabaleshwar",
         "altitude": "Up to 4,700 Ft",
         "meal": "Breakfast",
         "stay": "Hotel / Resort / Campsite"
@@ -1034,7 +1034,7 @@ export const treks = [
       {
         "day": 2,
         "title": "North Goa Sightseeing",
-        "description": "After breakfast, begin your North Goa sightseeing tour. Explore some of the region's popular attractions and beaches, which may include: * Fort Aguada * Sinquerim Beach * Candolim Beach * Calangute Beach * Baga Beach * Anjuna Beach * Vagator Beach * Chapora Fort North Goa is ideal for travellers who enjoy a lively atmosphere, beach activities, cafés, shopping and nightlife. Spend the evening at leisure or choose an optional activity depending on your package. Overnight stay in Goa.",
+        "description": "After breakfast, begin your North Goa sightseeing tour. Explore some of the region's popular attractions and beaches, which may include:\n• Fort Aguada\n• Sinquerim Beach\n• Candolim Beach\n• Calangute Beach\n• Baga Beach\n• Anjuna Beach\n• Vagator Beach\n• Chapora Fort North Goa is ideal for travellers who enjoy a lively atmosphere, beach activities, cafés, shopping and nightlife. Spend the evening at leisure or choose an optional activity depending on your package. Overnight stay in Goa.",
         "altitude": "Sea Level",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -1042,7 +1042,7 @@ export const treks = [
       {
         "day": 3,
         "title": "South Goa Exploration",
-        "description": "After breakfast, proceed for a South Goa sightseeing experience. Depending on your selected itinerary, the day can include places such as: * Basilica of Bom Jesus * Se Cathedral * Panaji * Dona Paula * Miramar Beach * Colva Beach * Benaulim Beach * Cavelossim Beach South Goa offers a different side of the destination, with quieter beaches, heritage attractions and a more relaxed holiday atmosphere. Return to the hotel in the evening. Overnight stay in Goa.",
+        "description": "After breakfast, proceed for a South Goa sightseeing experience. Depending on your selected itinerary, the day can include places such as:\n• Basilica of Bom Jesus\n• Se Cathedral\n• Panaji\n• Dona Paula\n• Miramar Beach\n• Colva Beach\n• Benaulim Beach\n• Cavelossim Beach South Goa offers a different side of the destination, with quieter beaches, heritage attractions and a more relaxed holiday atmosphere. Return to the hotel in the evening. Overnight stay in Goa.",
         "altitude": "Sea Level",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -1050,7 +1050,7 @@ export const treks = [
       {
         "day": 4,
         "title": "Goa at Your Own Pace",
-        "description": "Enjoy breakfast and keep the day flexible. You can spend the day relaxing at your hotel, visiting a beach you missed earlier, shopping for souvenirs or choosing optional activities. Depending on availability and weather conditions, activities may include: * Water sports * Boat trips * Dolphin spotting * Sunset cruises * Scuba diving * Kayaking * Spice plantation visits * Adventure activities Optional activities are subject to availability, operating conditions and applicable charges. Overnight stay in Goa.",
+        "description": "Enjoy breakfast and keep the day flexible. You can spend the day relaxing at your hotel, visiting a beach you missed earlier, shopping for souvenirs or choosing optional activities. Depending on availability and weather conditions, activities may include:\n• Water sports\n• Boat trips\n• Dolphin spotting\n• Sunset cruises\n• Scuba diving\n• Kayaking\n• Spice plantation visits\n• Adventure activities\n\nOptional activities are subject to availability, operating conditions and applicable charges. Overnight stay in Goa.",
         "altitude": "Sea Level",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -1667,7 +1667,7 @@ export const treks = [
       {
         "day": 2,
         "title": "Leh Acclimatisation & Local Sightseeing",
-        "description": "After adequate rest, explore selected attractions around Leh. Possible visits include: * Shanti Stupa * Leh Palace * Leh Market * Hall of Fame * Shey Palace * Thiksey Monastery The exact sightseeing plan should remain flexible depending on how travellers are feeling. Overnight: Leh",
+        "description": "After adequate rest, explore selected attractions around Leh. Possible visits include:\n• Shanti Stupa\n• Leh Palace\n• Leh Market\n• Hall of Fame\n• Shey Palace\n• Thiksey Monastery The exact sightseeing plan should remain flexible depending on how travellers are feeling. Overnight: Leh",
         "altitude": "17,590 Ft (Khardung La)",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -2318,7 +2318,7 @@ export const treks = [
       {
         "day": 2,
         "title": "Nainital Sightseeing",
-        "description": "After breakfast, explore the major attractions around the town. Suggested sightseeing: * Naina Devi Temple * Naini Lake * Snow View Point * Eco Cave Gardens * Tiffin Top, subject to accessibility * Mall Road Keep the evening free for shopping and local food. Overnight: Nainital",
+        "description": "After breakfast, explore the major attractions around the town. Suggested sightseeing:\n• Naina Devi Temple\n• Naini Lake\n• Snow View Point\n• Eco Cave Gardens\n• Tiffin Top, subject to accessibility\n• Mall Road Keep the evening free for shopping and local food. Overnight: Nainital",
         "altitude": "6,837 Ft",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -2326,7 +2326,7 @@ export const treks = [
       {
         "day": 3,
         "title": "Bhimtal & Nearby Lakes",
-        "description": "After breakfast, leave for the nearby lake region. Possible stops: * Bhimtal * Sattal * Naukuchiatal Return to Nainital in the evening. Overnight: Nainital",
+        "description": "After breakfast, leave for the nearby lake region. Possible stops:\n• Bhimtal\n• Sattal\n• Naukuchiatal Return to Nainital in the evening. Overnight: Nainital",
         "altitude": "6,837 Ft",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -2512,7 +2512,7 @@ export const treks = [
       {
         "day": 1,
         "title": "Arrival in Jaisalmer & Desert Experience",
-        "description": "Arrive in Jaisalmer by flight, train or road. After check-in and some rest, head towards the Sam Sand Dunes. Evening: * Camel safari * Sunset over the dunes * Desert camp check-in * Rajasthani folk music * Traditional dinner Overnight: Desert Camp",
+        "description": "Arrive in Jaisalmer by flight, train or road. After check-in and some rest, head towards the Sam Sand Dunes. Evening activities:\n• Camel safari\n• Sunset over the dunes\n• Desert camp check-in\n• Rajasthani folk music\n• Traditional dinner Overnight: Desert Camp",
         "altitude": "Desert Terrain",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -2520,7 +2520,7 @@ export const treks = [
       {
         "day": 2,
         "title": "Jaisalmer Fort & Heritage Sightseeing",
-        "description": "After breakfast, return towards the city. Explore: * Jaisalmer Fort * Jain Temples * Patwon Ki Haveli * Nathmal Ki Haveli * Salim Singh Ki Haveli Later, spend some time exploring local markets. Overnight: Jaisalmer",
+        "description": "After breakfast, return towards the city. Explore:\n• Jaisalmer Fort\n• Jain Temples\n• Patwon Ki Haveli\n• Nathmal Ki Haveli\n• Salim Singh Ki Haveli Later, spend some time exploring local markets. Overnight: Jaisalmer",
         "altitude": "Desert Terrain",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"
@@ -2528,7 +2528,7 @@ export const treks = [
       {
         "day": 3,
         "title": "Bada Bagh, Kuldhara & Gadisar Lake",
-        "description": "After breakfast, explore selected attractions outside the main city. Suggested stops: * Bada Bagh * Kuldhara * Jaisalmer War Museum, subject to route * Gadisar Lake Return to your hotel and enjoy a relaxed evening. Overnight: Jaisalmer",
+        "description": "After breakfast, explore selected attractions outside the main city. Suggested stops:\n• Bada Bagh\n• Kuldhara\n• Jaisalmer War Museum, subject to route\n• Gadisar Lake Return to your hotel and enjoy a relaxed evening. Overnight: Jaisalmer",
         "altitude": "Desert Terrain",
         "meal": "Breakfast & Dinner",
         "stay": "Hotel / Resort / Campsite"

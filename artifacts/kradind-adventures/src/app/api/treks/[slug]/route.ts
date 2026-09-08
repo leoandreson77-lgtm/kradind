@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readStore } from "@/lib/cms-store";
+import { readStore, getTreksAsync } from "@/lib/cms-store";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -9,8 +9,15 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
-  const store = readStore();
-  const trek = (store.treks || []).find((t) => t.slug === slug);
+  let treks;
+  try {
+    treks = await getTreksAsync();
+  } catch {
+    const store = readStore();
+    treks = store.treks || [];
+  }
+
+  const trek = treks.find((t) => t.slug === slug);
 
   if (!trek) {
     return NextResponse.json(

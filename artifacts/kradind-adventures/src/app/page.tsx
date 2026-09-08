@@ -1,5 +1,11 @@
 import { HomeView } from "@/components/home-view";
-import { readStore } from "@/lib/cms-store";
+import {
+  readStore,
+  getHomeSectionsAsync,
+  getTreksAsync,
+  getTrailReportsAsync,
+  getLandingPagesAsync,
+} from "@/lib/cms-store";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -30,15 +36,37 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default function HomePage() {
-  const store = readStore();
-  const publishedTreks = (store.treks || []).filter((t) => t.status === "Published");
-  return (
-    <HomeView
-      initialSections={store.homeSections}
-      initialReports={store.trailReports}
-      initialCampaigns={store.landingPages}
-      initialTreks={publishedTreks}
-    />
-  );
+export default async function HomePage() {
+  try {
+    const [sections, treks, reports, campaigns] = await Promise.all([
+      getHomeSectionsAsync(),
+      getTreksAsync(),
+      getTrailReportsAsync(),
+      getLandingPagesAsync(),
+    ]);
+
+    const publishedTreks = (treks || []).filter((t) => t.status === "Published");
+    const publishedCampaigns = (campaigns || []).filter((c) => c.status === "Published");
+
+    return (
+      <HomeView
+        initialSections={sections}
+        initialReports={reports}
+        initialCampaigns={publishedCampaigns}
+        initialTreks={publishedTreks}
+      />
+    );
+  } catch (err) {
+    console.error("HomePage SSR load error:", err);
+    const store = readStore();
+    const publishedTreks = (store.treks || []).filter((t) => t.status === "Published");
+    return (
+      <HomeView
+        initialSections={store.homeSections}
+        initialReports={store.trailReports}
+        initialCampaigns={store.landingPages}
+        initialTreks={publishedTreks}
+      />
+    );
+  }
 }

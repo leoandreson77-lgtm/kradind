@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { treks as defaultTreks } from "./travel-data";
+import { getDb } from "./mongodb";
 
 export interface TrekBatch {
   id: number;
@@ -838,14 +839,36 @@ function getInitialStore(): CMSStoreData {
   };
 }
 
+let memoryStore: CMSStoreData | null = null;
+const TMP_STORE_FILE = path.resolve("/tmp", "cms-store.json");
+
 export function readStore(): CMSStoreData {
+  if (memoryStore) {
+    return memoryStore;
+  }
+
+  // Check /tmp first if running on serverless
+  try {
+    if (fs.existsSync(TMP_STORE_FILE)) {
+      const tmpRaw = fs.readFileSync(TMP_STORE_FILE, "utf8");
+      const parsed: CMSStoreData = JSON.parse(tmpRaw);
+      memoryStore = parsed;
+      return parsed;
+    }
+  } catch {}
+
   try {
     if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+      try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      } catch {}
     }
     if (!fs.existsSync(STORE_FILE)) {
       const initial = getInitialStore();
-      fs.writeFileSync(STORE_FILE, JSON.stringify(initial, null, 2), "utf8");
+      try {
+        fs.writeFileSync(STORE_FILE, JSON.stringify(initial, null, 2), "utf8");
+      } catch {}
+      memoryStore = initial;
       return initial;
     }
     const raw = fs.readFileSync(STORE_FILE, "utf8");
@@ -878,30 +901,44 @@ export function readStore(): CMSStoreData {
       writeStore(parsed);
     }
 
+    memoryStore = parsed;
     return parsed;
   } catch (error) {
     console.error("Error reading CMS store:", error);
-    return getInitialStore();
+    const initial = getInitialStore();
+    memoryStore = initial;
+    return initial;
   }
 }
 
 export function writeStore(data: CMSStoreData): void {
+  memoryStore = data;
+  const content = JSON.stringify(data, null, 2);
+
+  // 1. Try primary file write
   try {
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
-    const content = JSON.stringify(data, null, 2);
     try {
       const tempFile = `${STORE_FILE}.tmp.${Date.now()}`;
       fs.writeFileSync(tempFile, content, "utf8");
       fs.renameSync(tempFile, STORE_FILE);
+      return;
     } catch {
-      // Fallback for Windows file locks or atomic rename permissions
       fs.writeFileSync(STORE_FILE, content, "utf8");
+      return;
     }
-  } catch (error) {
-    console.error("Error writing CMS store:", error);
-    throw error;
+  } catch (fsErr: any) {
+    // Gracefully handle EROFS (Read-only file system on Vercel / serverless)
+    console.warn("Primary file write skipped (serverless read-only filesystem):", fsErr?.message || fsErr);
+  }
+
+  // 2. Try /tmp write for serverless lambda caching
+  try {
+    fs.writeFileSync(TMP_STORE_FILE, content, "utf8");
+  } catch (tmpErr: any) {
+    console.warn("/tmp cache write skipped:", tmpErr?.message || tmpErr);
   }
 }
 
@@ -919,6 +956,129 @@ export function getPublishedTreks(): TrekData[] {
     return all.filter((t) => t.status === "Published");
   } catch {
     return defaultTreks as unknown as TrekData[];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Asynchronous MongoDB-Backed CMS Persistence Functions
+// ---------------------------------------------------------------------------
+
+export async function getHomeSectionsAsync(): Promise<HomeSectionsConfig> {
+  try {
+    const db = await getDb();
+    const doc = await db.collection("kradind_config").findOne({ configKey: "homeSections" });
+    if (doc) {
+      const { _id, configKey, ...sections } = doc as any;
+      if (sections.hero && sections.monsoon && sections.topBar) {
+        const store = readStore();
+        store.homeSections = sections as HomeSectionsConfig;
+        return sections as HomeSectionsConfig;
+      }
+    }
+  } catch (err) {
+    console.warn("MongoDB getHomeSections error, fallback to local store:", err);
+  }
+  return readStore().homeSections;
+}
+
+export async function syncHomeSectionsToMongo(sections: HomeSectionsConfig): Promise<void> {
+  try {
+    const db = await getDb();
+    await db.collection("kradind_config").updateOne(
+      { configKey: "homeSections" },
+      { $set: { configKey: "homeSections", ...sections } },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error("Failed to sync homeSections to MongoDB:", err);
+  }
+}
+
+export async function getTreksAsync(): Promise<TrekData[]> {
+  try {
+    const db = await getDb();
+    const docs = await db.collection("kradind_treks").find({}).toArray();
+    if (docs && docs.length > 0) {
+      const cleanTreks = docs.map((doc: any) => {
+        const { _id, ...rest } = doc;
+        return rest as TrekData;
+      });
+      const store = readStore();
+      store.treks = cleanTreks;
+      return cleanTreks;
+    }
+  } catch (err) {
+    console.warn("MongoDB getTreks error, fallback to local store:", err);
+  }
+  return readStore().treks || [];
+}
+
+export async function syncTreksToMongo(treks: TrekData[]): Promise<void> {
+  try {
+    const db = await getDb();
+    const col = db.collection("kradind_treks");
+    await col.deleteMany({});
+    if (treks.length > 0) {
+      await col.insertMany(treks);
+    }
+  } catch (err) {
+    console.error("Failed to sync treks to MongoDB:", err);
+  }
+}
+
+export async function getTrailReportsAsync(): Promise<TrailRadarReport[]> {
+  try {
+    const db = await getDb();
+    const doc = await db.collection("kradind_config").findOne({ configKey: "trailReports" });
+    if (doc && Array.isArray((doc as any).reports)) {
+      const store = readStore();
+      store.trailReports = (doc as any).reports;
+      return (doc as any).reports;
+    }
+  } catch (err) {
+    console.warn("MongoDB getTrailReports error, fallback to local store:", err);
+  }
+  return readStore().trailReports || [];
+}
+
+export async function syncTrailReportsToMongo(reports: TrailRadarReport[]): Promise<void> {
+  try {
+    const db = await getDb();
+    await db.collection("kradind_config").updateOne(
+      { configKey: "trailReports" },
+      { $set: { configKey: "trailReports", reports } },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error("Failed to sync trailReports to MongoDB:", err);
+  }
+}
+
+export async function getLandingPagesAsync(): Promise<LandingPageData[]> {
+  try {
+    const db = await getDb();
+    const doc = await db.collection("kradind_config").findOne({ configKey: "landingPages" });
+    if (doc && Array.isArray((doc as any).pages)) {
+      const store = readStore();
+      store.landingPages = (doc as any).pages;
+      return (doc as any).pages;
+    }
+  } catch (err) {
+    console.warn("MongoDB getLandingPages error, fallback to local store:", err);
+  }
+  return readStore().landingPages || [];
+}
+
+export async function syncLandingPagesToMongo(pages: LandingPageData[]): Promise<void> {
+  try {
+    const db = await getDb();
+    await db.collection("kradind_config").updateOne(
+      { configKey: "landingPages" },
+      { $set: { configKey: "landingPages", pages } },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error("Failed to sync landingPages to MongoDB:", err);
   }
 }
 

@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readStore, writeStore, LandingPageData } from "@/lib/cms-store";
+import {
+  readStore,
+  writeStore,
+  LandingPageData,
+  getLandingPagesAsync,
+  syncLandingPagesToMongo,
+} from "@/lib/cms-store";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -7,15 +13,20 @@ export const revalidate = 0;
 
 export async function GET() {
   try {
-    const store = readStore();
-    return NextResponse.json(store.landingPages || [], {
+    const pages = await getLandingPagesAsync();
+    return NextResponse.json(pages || [], {
       headers: {
         "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
       },
     });
   } catch (error) {
     console.error("Error fetching admin landing pages:", error);
-    return NextResponse.json({ error: "Failed to fetch landing pages" }, { status: 500 });
+    const store = readStore();
+    return NextResponse.json(store.landingPages || [], {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   }
 }
 
@@ -28,7 +39,9 @@ export async function POST(req: NextRequest) {
     }
 
     const store = readStore();
-    const existing = (store.landingPages || []).find(
+    if (!store.landingPages) store.landingPages = [];
+
+    const existing = store.landingPages.find(
       (p) => p.slug.toLowerCase() === body.slug.toLowerCase()
     );
 
@@ -76,13 +89,14 @@ export async function POST(req: NextRequest) {
       updatedAt: new Date().toISOString(),
     };
 
-    if (!store.landingPages) store.landingPages = [];
     store.landingPages.unshift(newPage);
     writeStore(store);
 
+    await syncLandingPagesToMongo(store.landingPages);
+
     return NextResponse.json(newPage, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating landing page:", error);
-    return NextResponse.json({ error: "Failed to create landing page" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Failed to create landing page" }, { status: 500 });
   }
 }

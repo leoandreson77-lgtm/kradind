@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readStore, writeStore, TrailRadarReport } from "@/lib/cms-store";
+import {
+  readStore,
+  writeStore,
+  TrailRadarReport,
+  getTrailReportsAsync,
+  syncTrailReportsToMongo,
+} from "@/lib/cms-store";
 import { getAdminSession } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
@@ -11,12 +17,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const store = readStore();
-  return NextResponse.json(store.trailReports || [], {
-    headers: {
-      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-    },
-  });
+  try {
+    const reports = await getTrailReportsAsync();
+    return NextResponse.json(reports || [], {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
+  } catch (err) {
+    console.error("Error in GET /api/admin/radar:", err);
+    const store = readStore();
+    return NextResponse.json(store.trailReports || [], {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -32,6 +48,8 @@ export async function POST(request: NextRequest) {
     }
 
     const store = readStore();
+    if (!store.trailReports) store.trailReports = [];
+
     const newReport: TrailRadarReport = {
       id: Date.now(),
       trail: body.trail,
@@ -46,9 +64,12 @@ export async function POST(request: NextRequest) {
     store.trailReports.unshift(newReport);
     writeStore(store);
 
+    await syncTrailReportsToMongo(store.trailReports);
+
     return NextResponse.json(newReport, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Failed to add trail report" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Failed to add trail report:", error);
+    return NextResponse.json({ error: error?.message || "Failed to add trail report" }, { status: 500 });
   }
 }
 
@@ -61,6 +82,8 @@ export async function PUT(request: NextRequest) {
   try {
     const body: TrailRadarReport = await request.json();
     const store = readStore();
+    if (!store.trailReports) store.trailReports = [];
+
     const index = store.trailReports.findIndex((r) => String(r.id) === String(body.id));
 
     if (index === -1) {
@@ -74,9 +97,12 @@ export async function PUT(request: NextRequest) {
     };
     writeStore(store);
 
+    await syncTrailReportsToMongo(store.trailReports);
+
     return NextResponse.json(store.trailReports[index]);
-  } catch {
-    return NextResponse.json({ error: "Failed to update trail report" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Failed to update trail report:", error);
+    return NextResponse.json({ error: error?.message || "Failed to update trail report" }, { status: 500 });
   }
 }
 
@@ -86,21 +112,31 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
 
-  if (!id) {
-    return NextResponse.json({ error: "Missing report id" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "Missing report id" }, { status: 400 });
+    }
+
+    const store = readStore();
+    if (!store.trailReports) store.trailReports = [];
+
+    const initialLength = store.trailReports.length;
+    store.trailReports = store.trailReports.filter((r) => String(r.id) !== String(id));
+
+    if (store.trailReports.length === initialLength) {
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
+    }
+
+    writeStore(store);
+
+    await syncTrailReportsToMongo(store.trailReports);
+
+    return NextResponse.json({ success: true, message: "Trail report deleted" });
+  } catch (error: any) {
+    console.error("Failed to delete trail report:", error);
+    return NextResponse.json({ error: error?.message || "Failed to delete trail report" }, { status: 500 });
   }
-
-  const store = readStore();
-  const initialLength = store.trailReports.length;
-  store.trailReports = store.trailReports.filter((r) => String(r.id) !== String(id));
-
-  if (store.trailReports.length === initialLength) {
-    return NextResponse.json({ error: "Report not found" }, { status: 404 });
-  }
-
-  writeStore(store);
-  return NextResponse.json({ success: true, message: "Trail report deleted" });
 }

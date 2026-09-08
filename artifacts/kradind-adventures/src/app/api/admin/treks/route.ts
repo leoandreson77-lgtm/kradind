@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readStore, writeStore, TrekData } from "@/lib/cms-store";
+import { readStore, writeStore, TrekData, getTreksAsync, syncTreksToMongo } from "@/lib/cms-store";
 import { getAdminSession } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
@@ -11,12 +11,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const store = readStore();
-  return NextResponse.json(store.treks || [], {
-    headers: {
-      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-    },
-  });
+  try {
+    const treks = await getTreksAsync();
+    return NextResponse.json(treks || [], {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
+  } catch (err) {
+    console.error("Error in GET /api/admin/treks:", err);
+    const store = readStore();
+    return NextResponse.json(store.treks || [], {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -32,6 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const store = readStore();
+    if (!store.treks) store.treks = [];
 
     // Check slug uniqueness
     if (store.treks.some((t) => t.slug === body.slug)) {
@@ -48,6 +59,8 @@ export async function POST(request: NextRequest) {
       gallery: body.gallery || [body.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"],
       tagline: body.tagline || "",
       description: body.description || "",
+      overview: body.overview || "",
+      highlights: body.highlights || [],
       duration: body.duration || "5 Days",
       difficulty: (body.difficulty as "Easy" | "Moderate" | "Challenging") || "Moderate",
       altitude: body.altitude || "12,000 Ft",
@@ -66,14 +79,21 @@ export async function POST(request: NextRequest) {
       itinerary: body.itinerary || [
         { day: 1, title: "Arrival & Base Camp", description: "Team assembly and gear briefing.", altitude: "6,000 Ft" },
       ],
+      inclusions: body.inclusions || [],
+      exclusions: body.exclusions || [],
+      faqs: body.faqs || [],
     };
 
     store.treks.unshift(newTrek);
     writeStore(store);
 
+    // Sync to MongoDB
+    await syncTreksToMongo(store.treks);
+
     return NextResponse.json(newTrek, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to create trek" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Failed to create trek:", error);
+    return NextResponse.json({ error: error?.message || "Failed to create trek" }, { status: 500 });
   }
 }
 
@@ -86,6 +106,8 @@ export async function PUT(request: NextRequest) {
   try {
     const body: TrekData = await request.json();
     const store = readStore();
+    if (!store.treks) store.treks = [];
+
     const index = store.treks.findIndex((t) => String(t.id) === String(body.id));
 
     if (index === -1) {
@@ -95,9 +117,13 @@ export async function PUT(request: NextRequest) {
     store.treks[index] = { ...store.treks[index], ...body };
     writeStore(store);
 
+    // Sync to MongoDB
+    await syncTreksToMongo(store.treks);
+
     return NextResponse.json(store.treks[index]);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to update trek" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Failed to update trek:", error);
+    return NextResponse.json({ error: error?.message || "Failed to update trek" }, { status: 500 });
   }
 }
 
@@ -107,21 +133,32 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
 
-  if (!id) {
-    return NextResponse.json({ error: "Missing trek id" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "Missing trek id" }, { status: 400 });
+    }
+
+    const store = readStore();
+    if (!store.treks) store.treks = [];
+
+    const initialLength = store.treks.length;
+    store.treks = store.treks.filter((t) => String(t.id) !== String(id));
+
+    if (store.treks.length === initialLength) {
+      return NextResponse.json({ error: "Trek not found" }, { status: 404 });
+    }
+
+    writeStore(store);
+
+    // Sync to MongoDB
+    await syncTreksToMongo(store.treks);
+
+    return NextResponse.json({ success: true, message: "Trek deleted successfully" });
+  } catch (error: any) {
+    console.error("Failed to delete trek:", error);
+    return NextResponse.json({ error: error?.message || "Failed to delete trek" }, { status: 500 });
   }
-
-  const store = readStore();
-  const initialLength = store.treks.length;
-  store.treks = store.treks.filter((t) => String(t.id) !== String(id));
-
-  if (store.treks.length === initialLength) {
-    return NextResponse.json({ error: "Trek not found" }, { status: 404 });
-  }
-
-  writeStore(store);
-  return NextResponse.json({ success: true, message: "Trek deleted successfully" });
 }

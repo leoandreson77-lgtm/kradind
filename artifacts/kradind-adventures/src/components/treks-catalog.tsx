@@ -221,7 +221,7 @@ export function TreksContent({
         </div>
 
         {/* Results Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[45vh]">
           {filteredTreks.map((trek) => (
             <div
               key={trek.id}
@@ -276,18 +276,16 @@ export function TreksContent({
                   </p>
 
                   {/* Highlights Pill */}
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                      <strong>{trek.duration}</strong>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-600 pt-2 border-t border-slate-100">
+                    <span className="inline-flex items-center gap-1 bg-slate-50 border border-slate-200/80 px-2 py-0.5 rounded-md font-semibold text-slate-700">
+                      <Clock className="w-3 h-3 text-emerald-600 shrink-0" />
+                      <span>{trek.duration}</span>
                     </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Compass className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="inline-flex items-center gap-1 bg-slate-50 border border-slate-200/80 px-2 py-0.5 rounded-md font-medium text-slate-700">
+                      <Compass className="w-3 h-3 text-emerald-600 shrink-0" />
                       <span>{trek.altitude}</span>
                     </span>
-                    <span>•</span>
-                    <span className="text-slate-700 font-medium">
+                    <span className="inline-flex items-center bg-emerald-50 text-emerald-800 border border-emerald-200/60 px-2 py-0.5 rounded-md font-semibold text-[10px]">
                       {trek.difficulty}
                     </span>
                   </div>
@@ -312,7 +310,7 @@ export function TreksContent({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     data-action="quick-book"
@@ -321,7 +319,7 @@ export function TreksContent({
                       setSelectedTrek(trek);
                       setBookingOpen(true);
                     }}
-                    className="bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] font-bold text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition relative z-10 whitespace-nowrap"
+                    className="bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] font-bold text-xs px-3 sm:px-3.5 py-2 rounded-xl transition relative z-10 whitespace-nowrap min-h-[38px] flex items-center justify-center"
                   >
                     Quick Book
                   </button>
@@ -329,7 +327,7 @@ export function TreksContent({
                   <Link
                     href={`/treks/${trek.slug}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-[11px] sm:text-xs px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition flex items-center gap-1 group/btn shadow-sm relative z-10 whitespace-nowrap"
+                    className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-3.5 sm:px-4 py-2 rounded-xl transition flex items-center justify-center gap-1.5 group/btn shadow-sm relative z-10 whitespace-nowrap min-h-[38px]"
                   >
                     <span>Details</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />

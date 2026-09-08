@@ -65,7 +65,10 @@ export function MonsoonSpecials({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Meghalaya */}
-          <div className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group">
+          <Link
+            href="/treks/meghalaya-tour-package"
+            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
+          >
             <div>
               <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
                 Waterfall Paradise
@@ -82,17 +85,19 @@ export function MonsoonSpecials({
                 <span className="text-[11px] text-slate-400 line-through">₹21,499</span>
                 <span className="text-base font-extrabold text-emerald-300 ml-1">₹16,999</span>
               </div>
-              <Link
-                href="/treks/meghalaya-tour-package"
-                className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow"
+              <span
+                className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
               >
                 Claim Offer
-              </Link>
+              </span>
             </div>
-          </div>
+          </Link>
 
           {/* Card 2: Hampta Pass */}
-          <div className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group">
+          <Link
+            href="/treks/hampta-pass"
+            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
+          >
             <div>
               <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
                 Rain-Shadow Crossover
@@ -109,17 +114,19 @@ export function MonsoonSpecials({
                 <span className="text-[11px] text-slate-400 line-through">₹12,999</span>
                 <span className="text-base font-extrabold text-emerald-300 ml-1">₹9,999</span>
               </div>
-              <Link
-                href="/treks/hampta-pass"
-                className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow"
+              <span
+                className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
               >
                 Claim Offer
-              </Link>
+              </span>
             </div>
-          </div>
+          </Link>
 
           {/* Card 3: Kerala */}
-          <div className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group">
+          <Link
+            href="/treks/kerala-tour-package"
+            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
+          >
             <div>
               <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
                 Tea Hills & Backwaters
@@ -136,14 +143,13 @@ export function MonsoonSpecials({
                 <span className="text-[11px] text-slate-400 line-through">₹23,999</span>
                 <span className="text-base font-extrabold text-emerald-300 ml-1">₹18,499</span>
               </div>
-              <Link
-                href="/treks/kerala-tour-package"
-                className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow"
+              <span
+                className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
               >
                 Claim Offer
-              </Link>
+              </span>
             </div>
-          </div>
+          </Link>
 
         </div>
 

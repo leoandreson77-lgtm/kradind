@@ -58,9 +58,10 @@ export function BestTreks({
         {featuredTreks.map((trek) => {
           if (!trek) return null;
           return (
-            <div
+            <Link
               key={trek.id}
-              className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group hover:-translate-y-1"
+              href={`/treks/${trek.slug}`}
+              className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group hover:-translate-y-1 cursor-pointer"
             >
               <div>
                 <div className="relative h-48 overflow-hidden bg-slate-100">
@@ -80,7 +81,7 @@ export function BestTreks({
                     <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                     <span>{trek.rating}</span>
                   </span>
-                  <div className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <div className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] px-2.5 py-0.5 rounded-full flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-emerald-400" />
                     <span>{trek.location}</span>
                   </div>
@@ -112,14 +113,13 @@ export function BestTreks({
                   </span>
                 </div>
 
-                <Link
-                  href={`/treks/${trek.slug}`}
-                  className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm"
+                <span
+                  className="bg-[#0F3A2E] group-hover:bg-[#164e3f] text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm inline-block"
                 >
                   View Itinerary
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

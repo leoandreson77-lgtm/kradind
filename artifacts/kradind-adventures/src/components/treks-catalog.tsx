@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
@@ -25,6 +25,7 @@ export function TreksContent({
   const [allTreks, setAllTreks] = useState<TrekData[]>(
     initialTreks && initialTreks.length > 0 ? initialTreks : (treks as TrekData[])
   );
+  const router = useRouter();
   const searchParams = useSearchParams();
   const paramCategory = searchParams ? (searchParams.get("type") || searchParams.get("category")) : null;
   const initialType = initialCategory || paramCategory || "All";
@@ -187,7 +188,22 @@ export function TreksContent({
           {filteredTreks.map((trek) => (
             <div
               key={trek.id}
-              className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group hover:-translate-y-1"
+              role="link"
+              tabIndex={0}
+              onClick={(e) => {
+                const target = e.target as HTMLElement;
+                if (target.closest("button[data-action='quick-book']")) {
+                  return;
+                }
+                router.push(`/treks/${trek.slug}`);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  router.push(`/treks/${trek.slug}`);
+                }
+              }}
+              className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group hover:-translate-y-1 cursor-pointer"
             >
               <div>
                 {/* Image & Badges */}
@@ -261,18 +277,22 @@ export function TreksContent({
 
                 <div className="flex items-center gap-1.5">
                   <button
-                    onClick={() => {
+                    type="button"
+                    data-action="quick-book"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setSelectedTrek(trek);
                       setBookingOpen(true);
                     }}
-                    className="bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] font-bold text-xs px-3 py-2 rounded-xl transition"
+                    className="bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] font-bold text-xs px-3 py-2 rounded-xl transition relative z-10"
                   >
                     Quick Book
                   </button>
 
                   <Link
                     href={`/treks/${trek.slug}`}
-                    className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 group/btn shadow-sm"
+                    onClick={(e) => e.stopPropagation()}
+                    className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 group/btn shadow-sm relative z-10"
                   >
                     <span>Details</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />

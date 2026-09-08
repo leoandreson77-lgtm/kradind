@@ -52,9 +52,10 @@ export function WeekendTreks({ treks: treksProp }: { treks?: any[] }) {
         {weekendTrips.map((trek) => {
           if (!trek) return null;
           return (
-            <div
+            <Link
               key={trek.id}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition duration-300 p-5 flex flex-col justify-between group hover:-translate-y-1"
+              href={`/treks/${trek.slug}`}
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition duration-300 p-5 flex flex-col justify-between group hover:-translate-y-1 cursor-pointer"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold">
@@ -84,14 +85,13 @@ export function WeekendTreks({ treks: treksProp }: { treks?: any[] }) {
                   </span>
                 </div>
 
-                <Link
-                  href={`/treks/${trek.slug}`}
-                  className="bg-slate-900 hover:bg-[#0F3A2E] text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm"
+                <span
+                  className="bg-slate-900 group-hover:bg-[#0F3A2E] text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm inline-block"
                 >
                   View Details
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

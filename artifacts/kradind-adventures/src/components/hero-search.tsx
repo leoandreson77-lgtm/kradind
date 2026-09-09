@@ -61,12 +61,12 @@ export function HeroSearch({
   const [destination, setDestination] = useState("All");
   const [season, setSeason] = useState("All");
 
-  // Single Unified Loop System (3.5s per scene)
+  // Ultra-Smooth Unified Carousel Loop (5.0s relaxed cinematic rhythm)
   const [slideIndex, setSlideIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [loopProgress, setLoopProgress] = useState(0);
 
-  const LOOP_DURATION_MS = 3500;
+  const LOOP_DURATION_MS = 5000;
 
   useEffect(() => {
     if (!isAutoPlaying) {
@@ -74,30 +74,35 @@ export function HeroSearch({
       return;
     }
 
-    const startTime = Date.now();
+    let start = performance.now();
+    let animId: number;
 
-    const slideTimer = setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
-    }, LOOP_DURATION_MS);
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      if (elapsed >= LOOP_DURATION_MS) {
+        setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+        start = now;
+        setLoopProgress(0);
+      } else {
+        setLoopProgress(elapsed / LOOP_DURATION_MS);
+      }
+      animId = requestAnimationFrame(tick);
+    };
 
-    const progressTimer = setInterval(() => {
-      const elapsed = (Date.now() - startTime) % LOOP_DURATION_MS;
-      setLoopProgress(elapsed / LOOP_DURATION_MS);
-    }, 50);
+    animId = requestAnimationFrame(tick);
 
     return () => {
-      clearInterval(slideTimer);
-      clearInterval(progressTimer);
+      cancelAnimationFrame(animId);
     };
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, slideIndex]);
 
   const activeSlide = CAROUSEL_SLIDES[slideIndex];
 
   const handleSelectMode = (mode: AtmosphereMode) => {
-    setIsAutoPlaying(false);
     const idx = CAROUSEL_SLIDES.findIndex((s) => s.weatherMode === mode);
     if (idx !== -1) {
       setSlideIndex(idx);
+      setLoopProgress(0);
     }
   };
 
@@ -110,18 +115,18 @@ export function HeroSearch({
   const subtitle = config?.subtitle || activeSlide.tagline;
 
   const handleNextSlide = () => {
-    setIsAutoPlaying(false);
     setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+    setLoopProgress(0);
   };
 
   const handlePrevSlide = () => {
-    setIsAutoPlaying(false);
     setSlideIndex((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
+    setLoopProgress(0);
   };
 
   const handleSelectSlide = (idx: number) => {
-    setIsAutoPlaying(false);
     setSlideIndex(idx);
+    setLoopProgress(0);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -142,24 +147,34 @@ export function HeroSearch({
   return (
     <section className="relative bg-[#0F3A2E] text-white py-20 sm:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[620px] group">
       
-      {/* 1. REAL PHOTO BACKGROUND CAROUSEL WITH CROSSFADE */}
+      {/* 1. REAL PHOTO BACKGROUND CAROUSEL WITH BUTTERY SMOOTH CROSSFADE */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {CAROUSEL_SLIDES.map((slide, idx) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              slideIndex === idx ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
-            } transform transition-transform duration-[6000ms]`}
-          >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
-        ))}
+        {CAROUSEL_SLIDES.map((slide, idx) => {
+          const isActive = slideIndex === idx;
+          return (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-all ${
+                isActive
+                  ? "opacity-100 scale-100 z-1 pointer-events-auto"
+                  : "opacity-0 scale-105 z-0 pointer-events-none"
+              }`}
+              style={{
+                transitionDuration: "1600ms",
+                transitionTimingFunction: "cubic-bezier(0.25, 1, 0.5, 1)",
+                willChange: "opacity, transform",
+              }}
+            >
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="w-full h-full object-cover object-center"
+              />
+            </div>
+          );
+        })}
         {/* Soft atmospheric gradient allowing real photo details to be crisp, bright & vibrant */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-slate-950/20 to-[#0b241d]/75" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-slate-950/20 to-[#0b241d]/75 pointer-events-none" />
       </div>
 
       {/* 2. ATMOSPHERIC PARTICLES SYNCHRONIZED WITH ACTIVE REAL PHOTO */}
@@ -193,39 +208,54 @@ export function HeroSearch({
 
       <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
         
-        {/* Badge & Active Scene Pill */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-            {badge}
-          </span>
+        {/* Animated Text Container with smooth transition */}
+        <div key={activeSlide.id} className="transition-all duration-700 ease-out space-y-4 animate-in fade-in zoom-in-95">
+          {/* Badge & Active Scene Pill */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+              {badge}
+            </span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight brand-font drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
+            {title}
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-base sm:text-lg text-slate-100 max-w-2xl mx-auto font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
+            {subtitle}
+          </p>
         </div>
 
-        {/* Heading */}
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight brand-font drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
-          {title}
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-base sm:text-lg text-slate-100 max-w-2xl mx-auto font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
-          {subtitle}
-        </p>
-
-        {/* Carousel Slide Switcher Pills */}
+        {/* Carousel Slide Switcher Pills with smooth progress */}
         <div className="flex items-center justify-center gap-2 pt-1 flex-wrap">
-          {CAROUSEL_SLIDES.map((slide, idx) => (
-            <button
-              key={slide.id}
-              type="button"
-              onClick={() => handleSelectSlide(idx)}
-              className={`transition-all duration-300 rounded-full cursor-pointer px-3.5 py-1 text-xs font-semibold backdrop-blur-md border ${
-                slideIndex === idx
-                  ? "bg-white text-slate-900 border-white shadow-xl scale-105"
-                  : "bg-slate-950/60 hover:bg-slate-900/80 text-slate-200 border-white/20"
-              }`}
-            >
-              {slide.title}
-            </button>
-          ))}
+          {CAROUSEL_SLIDES.map((slide, idx) => {
+            const isActive = slideIndex === idx;
+            return (
+              <button
+                key={slide.id}
+                type="button"
+                onClick={() => handleSelectSlide(idx)}
+                className={`relative overflow-hidden transition-all duration-500 rounded-full cursor-pointer px-4 py-1.5 text-xs font-semibold backdrop-blur-md border ${
+                  isActive
+                    ? "bg-white text-slate-900 border-white shadow-xl scale-105"
+                    : "bg-slate-950/60 hover:bg-slate-900/80 text-slate-200 border-white/20 hover:border-white/40"
+                }`}
+              >
+                {/* Smooth Animated Progress Fill inside active pill */}
+                {isActive && isAutoPlaying && (
+                  <span
+                    className="absolute inset-0 bg-emerald-500/20 pointer-events-none transition-all ease-linear"
+                    style={{
+                      width: `${Math.round(loopProgress * 100)}%`,
+                    }}
+                  />
+                )}
+                <span className="relative z-10">{slide.title}</span>
+              </button>
+            );
+          })}
         </div>
         <form
           onSubmit={handleSearch}

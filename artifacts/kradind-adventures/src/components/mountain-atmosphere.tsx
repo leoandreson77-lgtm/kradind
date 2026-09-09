@@ -23,6 +23,8 @@ export function MountainAtmosphere({
   showControls = false,
 }: MountainAtmosphereProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const modeRef = useRef<AtmosphereMode>(currentMode);
+  modeRef.current = currentMode;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -155,6 +157,12 @@ export function MountainAtmosphere({
 
     let startTimestamp = performance.now();
 
+    // Smooth continuous alpha lerping for zero-flicker weather transitions
+    let snowAlpha = currentMode === "snow" ? 1 : 0;
+    let rainAlpha = currentMode === "rain" ? 1 : 0;
+    let sunriseAlpha = currentMode === "sunrise" ? 1 : 0;
+    let clearAlpha = currentMode === "clear" ? 1 : 0;
+
     // ==========================================
     // MAIN RENDERING LOOP
     // ==========================================
@@ -167,10 +175,25 @@ export function MountainAtmosphere({
       const elapsed = now - startTimestamp;
       ctx.clearRect(0, 0, width, height);
 
+      // Lerp alphas towards active mode target (approx. 800ms smooth crossfade)
+      const active = modeRef.current;
+      const targetSnow = active === "snow" ? 1 : 0;
+      const targetRain = active === "rain" ? 1 : 0;
+      const targetSunrise = active === "sunrise" ? 1 : 0;
+      const targetClear = active === "clear" ? 1 : 0;
+
+      const LERP_SPEED = 0.04;
+      snowAlpha += (targetSnow - snowAlpha) * LERP_SPEED;
+      rainAlpha += (targetRain - rainAlpha) * LERP_SPEED;
+      sunriseAlpha += (targetSunrise - sunriseAlpha) * LERP_SPEED;
+      clearAlpha += (targetClear - clearAlpha) * LERP_SPEED;
+
       // ----------------------------------------
       // A) RENDER SNOW (Barf Gir Rahi Hai - Snow Peaks)
       // ----------------------------------------
-      if (currentMode === "snow") {
+      if (snowAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = snowAlpha;
         for (let i = 0; i < snowflakes.length; i++) {
           const flake = snowflakes[i];
           flake.sway += flake.swaySpeed;
@@ -214,12 +237,15 @@ export function MountainAtmosphere({
             ctx.shadowBlur = 0;
           }
         }
+        ctx.restore();
       }
 
       // ----------------------------------------
       // B) RENDER RAIN (Barish - Stormy Mountain Clouds)
       // ----------------------------------------
-      else if (currentMode === "rain") {
+      if (rainAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = rainAlpha;
         ctx.strokeStyle = "rgba(200, 230, 255, 0.55)";
         ctx.lineCap = "round";
 
@@ -274,12 +300,15 @@ export function MountainAtmosphere({
         mistGrad.addColorStop(1, "rgba(220, 245, 255, 0.18)");
         ctx.fillStyle = mistGrad;
         ctx.fillRect(0, height - 120, width, 120);
+        ctx.restore();
       }
 
       // ----------------------------------------
       // C) RENDER OCEAN SUNRISE (Real Cinematic Golden Hour Atmosphere)
       // ----------------------------------------
-      else if (currentMode === "sunrise") {
+      if (sunriseAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = sunriseAlpha;
         // Natural camera golden hour warmth & gentle morning sunlight breathing
         const sunX = width * 0.72;
         const sunY = height * 0.42;
@@ -356,14 +385,15 @@ export function MountainAtmosphere({
           );
           ctx.stroke();
         }
+        ctx.restore();
       }
 
       // ----------------------------------------
       // D) RENDER CLEAR / TROPICAL (Mausam Saaf - Palms & Clear Valleys)
       // ----------------------------------------
-      else if (currentMode === "clear") {
-        // Gentle clear sunny day: soft golden warmth, slight floating sunlight motes
-        // Absolutely NO rain, NO snow, NO ocean water waves!
+      if (clearAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = clearAlpha;
         for (let i = 0; i < Math.min(25, sunMotes.length); i++) {
           const mote = sunMotes[i];
           mote.y += mote.speedY * 0.6;
@@ -383,6 +413,7 @@ export function MountainAtmosphere({
           ctx.fillStyle = `rgba(255, 235, 180, ${currentAlpha})`;
           ctx.fill();
         }
+        ctx.restore();
       }
 
       animId = requestAnimationFrame(render);
@@ -395,29 +426,37 @@ export function MountainAtmosphere({
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [currentMode]);
+  }, []);
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
       {/* High Performance HTML5 Particle Canvas */}
       <canvas
         ref={canvasRef}
-        className="w-full h-full block transition-opacity duration-1000"
+        className="w-full h-full block"
       />
 
-      {/* Atmospheric Ambient Mood Color Wash */}
-      {currentMode === "snow" && (
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(147,197,253,0.16),_transparent_70%)] pointer-events-none transition-all duration-700" />
-      )}
-      {currentMode === "sunrise" && (
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_73%_40%,_rgba(251,146,60,0.25),_rgba(245,158,11,0.08)_45%,_transparent_75%)] pointer-events-none transition-all duration-700" />
-      )}
-      {currentMode === "rain" && (
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/15 via-transparent to-slate-950/30 pointer-events-none transition-all duration-700" />
-      )}
-      {currentMode === "clear" && (
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(253,224,71,0.12),_transparent_65%)] pointer-events-none transition-all duration-700" />
-      )}
+      {/* Atmospheric Ambient Mood Color Wash with smooth CSS crossfade */}
+      <div
+        className={`absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(147,197,253,0.16),_transparent_70%)] pointer-events-none transition-opacity duration-1000 ${
+          currentMode === "snow" ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      <div
+        className={`absolute inset-0 bg-[radial-gradient(circle_at_73%_40%,_rgba(251,146,60,0.22),_rgba(245,158,11,0.06)_45%,_transparent_75%)] pointer-events-none transition-opacity duration-1000 ${
+          currentMode === "sunrise" ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      <div
+        className={`absolute inset-0 bg-gradient-to-b from-slate-900/15 via-transparent to-slate-950/30 pointer-events-none transition-opacity duration-1000 ${
+          currentMode === "rain" ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      <div
+        className={`absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(253,224,71,0.10),_transparent_65%)] pointer-events-none transition-opacity duration-1000 ${
+          currentMode === "clear" ? "opacity-100" : "opacity-0"
+        }`}
+      />
 
       {/* Synchronized Weather Controller Badge with Progress Indicator */}
       {showControls && (

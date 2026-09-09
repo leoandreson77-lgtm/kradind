@@ -64,7 +64,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           
           {/* Brand Info (Span 2) */}
           <div className="lg:col-span-2 space-y-4">
@@ -89,7 +89,7 @@ export function Footer() {
             </div>
 
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-              India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.
+              India&apos;s premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders under KRAD Global.
             </p>
 
             <address
@@ -97,7 +97,7 @@ export function Footer() {
               itemScope
               itemType="https://schema.org/LocalBusiness"
             >
-              <meta itemProp="name" content="KRADIND Adventures" />
+              <meta itemProp="name" content="KRADIND Adventures / KRAD Global" />
               <meta itemProp="priceRange" content="₹₹" />
               <meta itemProp="image" content="https://kradind.com/logo.png" />
               <a
@@ -106,15 +106,15 @@ export function Footer() {
                 itemProp="telephone"
               >
                 <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>+91 75002 22141 (24/7 Expedition Helpline)</span>
+                <span>+91 75002 22141 (24/7 Helpline &amp; WhatsApp)</span>
               </a>
               <a
-                href="mailto:support@kradind.com"
+                href="mailto:kradglobalind@gmail.com"
                 className="flex items-center gap-2.5 hover:text-emerald-400 transition"
                 itemProp="email"
               >
                 <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>support@kradind.com</span>
+                <span>kradglobalind@gmail.com</span>
               </a>
               <div
                 className="flex items-start gap-2.5 text-slate-400"
@@ -124,14 +124,11 @@ export function Footer() {
               >
                 <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                 <span className="leading-relaxed">
-                  <span itemProp="streetAddress">Rajpur Road, Jakhan</span>,{" "}
+                  <span itemProp="streetAddress">Hall No. H-04, 401 Pratap Palace, Indiranagar Colony</span>,{" "}
                   <span itemProp="addressLocality">Dehradun</span>,{" "}
                   <span itemProp="addressRegion">Uttarakhand</span>{" "}
                   <span itemProp="postalCode">248001</span>,{" "}
                   <span itemProp="addressCountry">India</span>
-                  <span className="block text-[11px] text-slate-500 mt-0.5">
-                    (Base operations in Sankri Village, Manali & Srinagar)
-                  </span>
                 </span>
               </div>
             </address>
@@ -167,26 +164,65 @@ export function Footer() {
           {/* Popular Destinations */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#FF6B35]">
-              Top Treks & Routes
+              Top Routes
             </h4>
             <ul className="space-y-2 text-slate-400">
               <li>
                 <Link href="/treks/category/uttarakhand" className="hover:text-white transition">Kedarkantha Summit</Link>
               </li>
               <li>
-                <Link href="/treks/chopta-tungnath-chandrashila" className="hover:text-white transition">Chopta Tungnath Chandrashila</Link>
+                <Link href="/treks/chopta-tungnath-chandrashila" className="hover:text-white transition">Chopta Tungnath</Link>
               </li>
               <li>
-                <Link href="/treks/hampta-pass" className="hover:text-white transition">Hampta Pass Crossover</Link>
+                <Link href="/treks/hampta-pass" className="hover:text-white transition">Hampta Pass</Link>
               </li>
               <li>
                 <Link href="/treks/category/ladakh" className="hover:text-white transition">Kashmir Great Lakes</Link>
               </li>
               <li>
-                <Link href="/treks/category/ladakh" className="hover:text-white transition">Leh Ladakh High Passes</Link>
+                <Link href="/treks/category/ladakh" className="hover:text-white transition">Leh Ladakh Passes</Link>
               </li>
               <li>
-                <Link href="/treks/category/rajasthan" className="hover:text-white transition">Jaisalmer Desert Safari</Link>
+                <Link href="/treks/category/rajasthan" className="hover:text-white transition">Jaisalmer Desert</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal & Policies Column */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-400">
+              Legal &amp; Policies
+            </h4>
+            <ul className="space-y-2 text-slate-400">
+              <li>
+                <Link href="/privacy-policy" className="hover:text-white transition text-emerald-300 font-semibold">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms-and-conditions" className="hover:text-white transition">
+                  Terms &amp; Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/cancellation-policy" className="hover:text-white transition">
+                  Cancellation &amp; Refund
+                </Link>
+              </li>
+              <li>
+                <Link href="/booking-policy" className="hover:text-white transition">
+                  Booking &amp; Payment
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookie-policy" className="hover:text-white transition">
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/disclaimer" className="hover:text-white transition">
+                  Disclaimers &amp; Visa
+                </Link>
               </li>
             </ul>
           </div>
@@ -198,7 +234,7 @@ export function Footer() {
                 Connect With Us
               </h4>
               <p className="text-[11px] text-slate-400 mt-1">
-                Follow our official social community for daily trail photos, expedition reels & live batch updates.
+                Follow our official social community for trail photos, expedition reels &amp; live batch updates.
               </p>
             </div>
 
@@ -240,15 +276,23 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Copyright & Disclaimer */}
-        <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-slate-500">
-          <p>© 2026 KRADIND Adventures Pvt. Ltd. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <Link href="/about" className="hover:text-slate-400 transition">About Us</Link>
+        {/* Bottom Copyright & Legal Links */}
+        <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-slate-400">
+          <p>© 2026 KRADIND Adventures / KRAD Global. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-slate-400">
+            <Link href="/privacy-policy" className="hover:text-emerald-400 transition font-medium">Privacy Policy</Link>
             <span>•</span>
-            <Link href="/contact" className="hover:text-slate-400 transition">Contact Support</Link>
+            <Link href="/terms-and-conditions" className="hover:text-emerald-400 transition">Terms</Link>
             <span>•</span>
-            <Link href="/treks" className="hover:text-slate-400 transition">Expeditions</Link>
+            <Link href="/cancellation-policy" className="hover:text-emerald-400 transition">Cancellation</Link>
+            <span>•</span>
+            <Link href="/booking-policy" className="hover:text-emerald-400 transition">Payments</Link>
+            <span>•</span>
+            <Link href="/cookie-policy" className="hover:text-emerald-400 transition">Cookies</Link>
+            <span>•</span>
+            <Link href="/disclaimer" className="hover:text-emerald-400 transition">Disclaimers</Link>
+            <span>•</span>
+            <Link href="/contact" className="hover:text-emerald-400 transition">Contact Support</Link>
           </div>
         </div>
 

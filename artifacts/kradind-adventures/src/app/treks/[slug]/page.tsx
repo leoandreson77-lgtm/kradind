@@ -140,57 +140,102 @@ export default function TrekDetailPage() {
       <TopBar />
       <Header />
 
-      {/* Hero Banner */}
-      <div
-        className="relative bg-cover bg-center py-16 sm:py-24 px-4 sm:px-8 text-white shadow-inner"
-        style={{
-          backgroundImage: `linear-gradient(rgba(11, 36, 29, 0.85), rgba(11, 36, 29, 0.92)), url('${trek.image}')`,
-        }}
-      >
-        <div className="max-w-7xl mx-auto space-y-4">
-          <Link
-            href="/treks"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-emerald-300 hover:text-white transition"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to all Treks & Packages
-          </Link>
+      {/* Hero Banner with Clear Vibrant Background & Balanced Contrast */}
+      <div className="relative overflow-hidden py-16 sm:py-24 px-4 sm:px-8 text-white min-h-[480px] sm:min-h-[520px] flex items-center shadow-lg">
+        {/* Background Image Container */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={trek.image}
+            alt={trek.name}
+            className="w-full h-full object-cover object-center scale-[1.01] transform transition-transform duration-1000"
+          />
+          {/* Directional gradient: ensures high contrast for text on the left, while fading out smoothly on the center-right so background scenery, houseboat & palms stay bright and clearly visible */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/45 to-transparent sm:w-4/5" />
+          {/* Subtle vertical vignette to anchor header and bottom stats */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30" />
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 px-3 py-1 rounded-full font-bold">
-              ⭐ {trek.rating} / 5.0 ({trek.reviewCount} Verified Reviews)
+        <div className="relative z-10 max-w-7xl mx-auto w-full space-y-5">
+          {/* Back Navigation */}
+          <div>
+            <Link
+              href="/treks"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-200 hover:text-white bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 transition-all shadow-md group"
+            >
+              <ArrowLeft className="w-4 h-4 text-emerald-400 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Back to all Treks & Packages</span>
+            </Link>
+          </div>
+
+          {/* Badges */}
+          <div className="flex flex-wrap items-center gap-2.5 text-xs">
+            <span className="inline-flex items-center gap-1.5 bg-emerald-950/75 backdrop-blur-md text-emerald-300 border border-emerald-500/40 px-3.5 py-1.5 rounded-full font-bold shadow-md">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span>{trek.rating} / 5.0</span>
+              <span className="text-emerald-400/80 font-normal">({trek.reviewCount} Verified Reviews)</span>
             </span>
-            <span className="bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-slate-200 font-medium">
-              📍 {trek.location}
+            <span className="inline-flex items-center gap-1.5 bg-slate-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full text-slate-100 border border-white/20 font-medium shadow-md">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{trek.location}</span>
             </span>
-            <span className="bg-[#FF6B35]/30 text-orange-200 border border-orange-400/40 px-3 py-1 rounded-full font-semibold">
-              {trek.badge || "Verified Tour"}
+            <span className="inline-flex items-center gap-1.5 bg-amber-600/85 backdrop-blur-md text-white border border-amber-400/40 px-3.5 py-1.5 rounded-full font-semibold shadow-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+              <span>{trek.badge || "Verified Tour"}</span>
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold brand-font text-white max-w-4xl tracking-tight leading-tight">
+          {/* Heading */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black brand-font text-white max-w-4xl tracking-tight leading-[1.12] drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
             {trek.name}
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">
+          {/* Tagline */}
+          <p className="text-slate-100 text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.85)]">
             {trek.tagline}
           </p>
 
-          <div className="flex flex-wrap gap-4 sm:gap-8 text-xs text-slate-200 pt-4 border-t border-white/15 max-w-3xl">
-            <div>
-              <span className="text-slate-400 block text-[11px] uppercase tracking-wider">Duration</span>
-              <strong className="text-white text-sm sm:text-base font-bold">{trek.duration}</strong>
-            </div>
-            <div>
-              <span className="text-slate-400 block text-[11px] uppercase tracking-wider">Max Altitude / Type</span>
-              <strong className="text-white text-sm sm:text-base font-bold">{trek.altitude}</strong>
-            </div>
-            <div>
-              <span className="text-slate-400 block text-[11px] uppercase tracking-wider">Grade</span>
-              <strong className="text-white text-sm sm:text-base font-bold">{trek.difficulty}</strong>
-            </div>
-            <div>
-              <span className="text-slate-400 block text-[11px] uppercase tracking-wider">Region</span>
-              <strong className="text-white text-sm sm:text-base font-bold">{trek.region}</strong>
+          {/* Stats Bar with Frosted Glassmorphism Card */}
+          <div className="pt-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 bg-slate-950/65 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 shadow-2xl max-w-3xl">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0 text-emerald-400 border border-white/10 shadow-inner">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">Duration</span>
+                  <strong className="text-white text-xs sm:text-sm font-bold block leading-tight">{trek.duration}</strong>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0 text-emerald-400 border border-white/10 shadow-inner">
+                  <Mountain className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">Max Altitude / Type</span>
+                  <strong className="text-white text-xs sm:text-sm font-bold block leading-tight">{trek.altitude}</strong>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0 text-amber-400 border border-white/10 shadow-inner">
+                  <Award className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">Grade</span>
+                  <strong className="text-white text-xs sm:text-sm font-bold block leading-tight">{trek.difficulty}</strong>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0 text-sky-400 border border-white/10 shadow-inner">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">Region</span>
+                  <strong className="text-white text-xs sm:text-sm font-bold block leading-tight">{trek.region}</strong>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,9 +1,54 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { MountainAtmosphere, AtmosphereMode } from "@/components/mountain-atmosphere";
+
+interface CarouselSlide {
+  id: string;
+  image: string;
+  badge: string;
+  title: string;
+  tagline: string;
+  weatherMode: AtmosphereMode;
+}
+
+const CAROUSEL_SLIDES: CarouselSlide[] = [
+  {
+    id: "ocean-sunrise",
+    image: "/ocean-sunrise.jpg", // Real ultra-photorealistic ocean sunrise photo
+    badge: "🌅 Ocean Sunrise • Goa & Kerala Sea",
+    title: "Golden Ocean Sunrise",
+    tagline: "Golden sun rising over open sea waters with shimmering wave reflections",
+    weatherMode: "sunrise", // ONLY ocean sunrise gets ocean sunrise effects!
+  },
+  {
+    id: "himalayan-snow",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=85",
+    badge: "❄️ Alpine Snow • Kedarkantha & Chopta",
+    title: "Himalayan Snow Peaks",
+    tagline: "High-altitude frosty alpine summits & certified winter mountaineering",
+    weatherMode: "snow", // ONLY snow mountains get snowfall!
+  },
+  {
+    id: "monsoon-rain",
+    image: "/monsoon-rain.jpg", // Real dramatic stormy monsoon rain clouds & misty mountains!
+    badge: "🌧️ Monsoon Rain • Storm Clouds & Falls",
+    title: "Monsoon Rain & Mist",
+    tagline: "Authentic monsoon rainfall, stormy mountain ridges & lush misty valleys",
+    weatherMode: "rain", // ONLY stormy clouds get rain! No rain on clear sunny sky!
+  },
+  {
+    id: "kerala-backwaters",
+    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=85",
+    badge: "🌴 Clear Skies • Alleppey & Munnar",
+    title: "Backwaters & Palms",
+    tagline: "Peaceful houseboat cruises, sunny palm groves & clear emerald tea gardens",
+    weatherMode: "clear", // CLEAR WEATHER! Mausam Saaf - NO rain, NO sunrise rays over palms!
+  },
+];
 
 export function HeroSearch({
   config,
@@ -16,10 +61,68 @@ export function HeroSearch({
   const [destination, setDestination] = useState("All");
   const [season, setSeason] = useState("All");
 
-  const badge = config?.badge || "Certified Himalayan Guides • Small Safe Batches";
-  const title = config?.title || "Experience the Himalayas";
-  const subtitle = config?.subtitle || "Explore handpicked Himalayan treks, tropical road trips, and international backpacking circuits.";
-  const bgImage = config?.bgImage || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80";
+  // Single Unified Loop System (3.5s per scene)
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [loopProgress, setLoopProgress] = useState(0);
+
+  const LOOP_DURATION_MS = 3500;
+
+  useEffect(() => {
+    if (!isAutoPlaying) {
+      setLoopProgress(0);
+      return;
+    }
+
+    const startTime = Date.now();
+
+    const slideTimer = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+    }, LOOP_DURATION_MS);
+
+    const progressTimer = setInterval(() => {
+      const elapsed = (Date.now() - startTime) % LOOP_DURATION_MS;
+      setLoopProgress(elapsed / LOOP_DURATION_MS);
+    }, 50);
+
+    return () => {
+      clearInterval(slideTimer);
+      clearInterval(progressTimer);
+    };
+  }, [isAutoPlaying]);
+
+  const activeSlide = CAROUSEL_SLIDES[slideIndex];
+
+  const handleSelectMode = (mode: AtmosphereMode) => {
+    setIsAutoPlaying(false);
+    const idx = CAROUSEL_SLIDES.findIndex((s) => s.weatherMode === mode);
+    if (idx !== -1) {
+      setSlideIndex(idx);
+    }
+  };
+
+  const handleToggleLoop = () => {
+    setIsAutoPlaying((prev) => !prev);
+  };
+
+  const badge = config?.badge || activeSlide.badge;
+  const title = config?.title || "Experience the Wilderness";
+  const subtitle = config?.subtitle || activeSlide.tagline;
+
+  const handleNextSlide = () => {
+    setIsAutoPlaying(false);
+    setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+  };
+
+  const handlePrevSlide = () => {
+    setIsAutoPlaying(false);
+    setSlideIndex((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
+  };
+
+  const handleSelectSlide = (idx: number) => {
+    setIsAutoPlaying(false);
+    setSlideIndex(idx);
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,39 +140,93 @@ export function HeroSearch({
   };
 
   return (
-    <section className="relative bg-[#0F3A2E] text-white py-20 sm:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background Image & Brand Gradient Overlay */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={bgImage}
-          alt="Himalayan Adventure Trekking"
-          fill
-          priority
-          quality={85}
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0F3A2E]/85 via-[#0F3A2E]/80 to-[#0F3A2E]/95" />
+    <section className="relative bg-[#0F3A2E] text-white py-20 sm:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[620px] group">
+      
+      {/* 1. REAL PHOTO BACKGROUND CAROUSEL WITH CROSSFADE */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {CAROUSEL_SLIDES.map((slide, idx) => (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              slideIndex === idx ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
+            } transform transition-transform duration-[6000ms]`}
+          >
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+        ))}
+        {/* Soft atmospheric gradient allowing real photo details to be crisp, bright & vibrant */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-slate-950/20 to-[#0b241d]/75" />
       </div>
+
+      {/* 2. ATMOSPHERIC PARTICLES SYNCHRONIZED WITH ACTIVE REAL PHOTO */}
+      <MountainAtmosphere
+        currentMode={activeSlide.weatherMode}
+        onSelectMode={handleSelectMode}
+        autoLoop={isAutoPlaying}
+        onToggleLoop={handleToggleLoop}
+        loopProgress={loopProgress}
+        showControls={true}
+      />
+
+      {/* 3. CAROUSEL PREV / NEXT ARROW BUTTONS */}
+      <button
+        type="button"
+        onClick={handlePrevSlide}
+        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/50 hover:bg-slate-950/80 backdrop-blur-md border border-white/20 text-white items-center justify-center transition shadow-xl cursor-pointer hover:scale-105 opacity-0 group-hover:opacity-100"
+        title="Previous Photo Slide"
+      >
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+
+      <button
+        type="button"
+        onClick={handleNextSlide}
+        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/50 hover:bg-slate-950/80 backdrop-blur-md border border-white/20 text-white items-center justify-center transition shadow-xl cursor-pointer hover:scale-105 opacity-0 group-hover:opacity-100"
+        title="Next Photo Slide"
+      >
+        <ChevronRight className="w-5 h-5" />
+      </button>
 
       <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
         
-        {/* Badge */}
-        <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-          {badge}
-        </span>
+        {/* Badge & Active Scene Pill */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+            {badge}
+          </span>
+        </div>
 
         {/* Heading */}
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight brand-font">
+        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight brand-font drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
           {title}
         </h1>
 
         {/* Subtitle */}
-        <p className="text-base sm:text-lg text-slate-200 max-w-2xl mx-auto font-normal">
+        <p className="text-base sm:text-lg text-slate-100 max-w-2xl mx-auto font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
           {subtitle}
         </p>
 
-        {/* Search Widget Container */}
+        {/* Carousel Slide Switcher Pills */}
+        <div className="flex items-center justify-center gap-2 pt-1 flex-wrap">
+          {CAROUSEL_SLIDES.map((slide, idx) => (
+            <button
+              key={slide.id}
+              type="button"
+              onClick={() => handleSelectSlide(idx)}
+              className={`transition-all duration-300 rounded-full cursor-pointer px-3.5 py-1 text-xs font-semibold backdrop-blur-md border ${
+                slideIndex === idx
+                  ? "bg-white text-slate-900 border-white shadow-xl scale-105"
+                  : "bg-slate-950/60 hover:bg-slate-900/80 text-slate-200 border-white/20"
+              }`}
+            >
+              {slide.title}
+            </button>
+          ))}
+        </div>
         <form
           onSubmit={handleSearch}
           className="mt-8 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-2xl text-slate-800 max-w-5xl mx-auto border border-white/30 text-left"
@@ -139,7 +296,20 @@ export function HeroSearch({
               </label>
               <select
                 value={season}
-                onChange={(e) => setSeason(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSeason(val);
+                  setIsAutoPlaying(false);
+                  if (val === "Winter") {
+                    setSlideIndex(1); // Himalayan Snow Peaks
+                  } else if (val === "Monsoon") {
+                    setSlideIndex(2); // Monsoon Rain & Stormy Mountains
+                  } else if (val === "Autumn" || val === "Weekend") {
+                    setSlideIndex(3); // Clear Backwaters & Palms
+                  } else {
+                    setSlideIndex(0); // Golden Ocean Sunrise
+                  }
+                }}
                 className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
               >
                 <option value="All">All Months / Any Time</option>

@@ -169,7 +169,7 @@ export function HeroSearch({
         autoLoop={isAutoPlaying}
         onToggleLoop={handleToggleLoop}
         loopProgress={loopProgress}
-        showControls={true}
+        showControls={false}
       />
 
       {/* 3. CAROUSEL PREV / NEXT ARROW BUTTONS */}

@@ -20,7 +20,7 @@ export function MountainAtmosphere({
   autoLoop = true,
   onToggleLoop,
   loopProgress = 0,
-  showControls = true,
+  showControls = false,
 }: MountainAtmosphereProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 

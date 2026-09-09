@@ -33,7 +33,294 @@ import {
   Milestone,
   Car,
   Footprints,
+  ArrowRight,
+  AlertTriangle,
+  Compass,
 } from "lucide-react";
+
+interface ParsedItineraryDay {
+  cleanTitle: string;
+  routeTransit: { from: string; to: string } | null;
+  duration: string;
+  distance: string;
+  altitude: string;
+  stay: string;
+  meal: string;
+  advisory: string;
+  tags: { label: string; icon: string; bg: string; text: string }[];
+  paragraphs: string[];
+}
+
+function parseItineraryDay(dayItem: any): ParsedItineraryDay {
+  const title = (dayItem.title || "").trim();
+  let duration = (dayItem.duration || "").trim();
+  let distance = (dayItem.distance || "").trim();
+  let altitude = (dayItem.altitude || "").trim();
+  let stay = (dayItem.stay || "").trim();
+  let meal = (dayItem.meal || "").trim();
+  let advisory = "";
+  let rawDesc = (dayItem.description || "").trim();
+
+  // 1. Duration extraction if embedded in raw text
+  const durMatch =
+    rawDesc.match(/(?:Trek|Drive)?\s*Duration:\s*([^\n\.\r|]+?(?:hours?|hrs?|mins?|days?|[0-9–\-]+(?:\.[0-9]+)?\s*(?:hours?|hrs?)))/i) ||
+    rawDesc.match(/(?:Trek|Drive)?\s*Duration:\s*([0-9\.\–\-\s]+(?:hours?|hrs?))/i);
+  if (durMatch && !duration) {
+    duration = durMatch[1].trim();
+  }
+  rawDesc = rawDesc.replace(/(?:Trek|Drive)?\s*Duration:\s*[^\n\.\r|]+(?:hours?|hrs?|mins?|days?)[\.\s\|]*/gi, " ");
+
+  // 2. Distance extraction if embedded in raw text
+  const distMatch =
+    rawDesc.match(/(?:Approx\.?\s*(?:Trek|Drive)?\s*Distance|Trek Distance|Drive Distance|Distance):\s*([^\n\.\r|]+?(?:km|kms|miles|m)\b)/i) ||
+    rawDesc.match(/(?:Approx\.?\s*(?:Trek|Drive)?\s*Distance|Trek Distance|Drive Distance|Distance):\s*([0-9\.\–\-\s]+(?:km|kms|m))/i);
+  if (distMatch && !distance) {
+    distance = distMatch[1].trim();
+  }
+  rawDesc = rawDesc.replace(/(?:Approx\.?\s*(?:Trek|Drive)?\s*Distance|Trek Distance|Drive Distance|Distance):\s*[^\n\.\r|]+(?:km|kms|m)[\.\s\|]*/gi, " ");
+
+  // 3. Altitude extraction if embedded in raw text
+  const altMatch = rawDesc.match(/(?:Maximum Altitude|Max Altitude|Altitude|Elevation):\s*(?:Approx\.?\s*)?([^\n\.\r|]+?(?:ft|feet|m|meters))/i);
+  if (altMatch) {
+    if (!altitude || altitude === "14,000 Ft") {
+      altitude = altMatch[1].trim();
+    }
+  }
+  rawDesc = rawDesc.replace(/(?:Maximum Altitude|Max Altitude|Altitude|Elevation):\s*(?:Approx\.?\s*)?[^\n\.\r|]+(?:ft|feet|m|meters)[\.\s\|]*/gi, " ");
+
+  // 4. Overnight stay extraction
+  const stayMatch = rawDesc.match(/(?:Overnight stay|Night stay|Stay):\s*([^\n\.\r]+)/i);
+  if (stayMatch) {
+    if (!stay) stay = stayMatch[1].trim();
+  }
+  rawDesc = rawDesc.replace(/(?:Overnight stay|Night stay|Stay):\s*[^\n\.\r]+[\.\s]*/gi, " ");
+
+  // 5. Advisory extraction
+  const advMatch = rawDesc.match(/(?:Important|Trail Note|Advisory|Please note):\s*([^\n\r]+(?:\n[^\n\r]+)*)/i);
+  if (advMatch) {
+    advisory = advMatch[1].trim();
+  }
+  rawDesc = rawDesc.replace(/(?:Important|Trail Note|Advisory|Please note):\s*[^\n\r]+(?:\n[^\n\r]+)*/gi, " ");
+
+  // 6. Clean route prefixes like "Drive: Manali – Jobra", "Trek: Jobra – Chika"
+  rawDesc = rawDesc.replace(/Drive:\s*[^\n\.\r|]+[\.\s\|]*/gi, " ");
+  rawDesc = rawDesc.replace(/Trek:\s*[^\n\.\r|]+[\.\s\|]*/gi, " ");
+
+  // Clean trailing spaces & normalize
+  rawDesc = rawDesc.replace(/\s{2,}/g, " ").trim();
+
+  // Transit route from title (e.g. "Chika to Balu Ka Ghera")
+  let routeTransit: { from: string; to: string } | null = null;
+  const transitMatch = title.match(/^(.+?)\s+(?:to|➔|->|–)\s+(.+?)(?:\s*\|.*)?$/i);
+  if (transitMatch && transitMatch[1].length < 32 && transitMatch[2].length < 32) {
+    routeTransit = { from: transitMatch[1].trim(), to: transitMatch[2].trim() };
+  }
+
+  // Auto-detect terrain / experience tags
+  const combinedLower = (title + " " + rawDesc).toLowerCase();
+  const tags: { label: string; icon: string; bg: string; text: string }[] = [];
+
+  if (combinedLower.includes("flower") || combinedLower.includes("flora") || combinedLower.includes("rhododendron")) {
+    tags.push({ label: "Alpine Wildflowers", icon: "🌸", bg: "bg-rose-50 border-rose-200/70", text: "text-rose-800" });
+  }
+  if (combinedLower.includes("stream") || combinedLower.includes("river") || combinedLower.includes("water channel") || combinedLower.includes("crossing")) {
+    tags.push({ label: "Glacial Streams", icon: "🌊", bg: "bg-cyan-50 border-cyan-200/70", text: "text-cyan-800" });
+  }
+  if (combinedLower.includes("pass") || combinedLower.includes("summit") || combinedLower.includes("peak") || combinedLower.includes("crest")) {
+    tags.push({ label: "High Mountain Pass", icon: "🏔️", bg: "bg-indigo-50 border-indigo-200/70", text: "text-indigo-800" });
+  }
+  if (combinedLower.includes("meadow") || combinedLower.includes("bugyal") || combinedLower.includes("valleys")) {
+    tags.push({ label: "Alpine Meadows", icon: "🌿", bg: "bg-emerald-50 border-emerald-200/70", text: "text-emerald-800" });
+  }
+  if (combinedLower.includes("rocky") || combinedLower.includes("boulder") || combinedLower.includes("moraine") || combinedLower.includes("terrain")) {
+    tags.push({ label: "Moraine & Boulders", icon: "🪨", bg: "bg-amber-50 border-amber-200/70", text: "text-amber-800" });
+  }
+  if (combinedLower.includes("lake") || combinedLower.includes("chandratal") || combinedLower.includes("water body")) {
+    tags.push({ label: "Glacial Lake", icon: "💎", bg: "bg-blue-50 border-blue-200/70", text: "text-blue-800" });
+  }
+  if (combinedLower.includes("drive") || combinedLower.includes("tunnel") || combinedLower.includes("roadhead")) {
+    tags.push({ label: "Mountain Transit", icon: "🚙", bg: "bg-teal-50 border-teal-200/70", text: "text-teal-800" });
+  }
+  if (combinedLower.includes("campsite") || combinedLower.includes("camp") || combinedLower.includes("tent") || combinedLower.includes("night")) {
+    tags.push({ label: "Wilderness Camp", icon: "⛺", bg: "bg-purple-50 border-purple-200/70", text: "text-purple-800" });
+  }
+
+  // Format paragraphs nicely
+  let paragraphs: string[] = [];
+  if (rawDesc.includes("\n\n")) {
+    paragraphs = rawDesc.split(/\n\n+/).map((p: string) => p.trim()).filter(Boolean);
+  } else {
+    const sentences = rawDesc.match(/[^.!?]+[.!?]+(?:\s+|$)/g) || [rawDesc];
+    if (sentences.length <= 3) {
+      paragraphs = [rawDesc];
+    } else {
+      const mid = Math.ceil(sentences.length / 2);
+      const p1 = sentences.slice(0, mid).join("").trim();
+      const p2 = sentences.slice(mid).join("").trim();
+      paragraphs = [p1, p2].filter(Boolean);
+    }
+  }
+
+  return {
+    cleanTitle: title,
+    routeTransit,
+    duration,
+    distance,
+    altitude,
+    stay,
+    meal,
+    advisory,
+    tags: tags.slice(0, 4),
+    paragraphs,
+  };
+}
+
+function ItineraryDayCard({ dayItem }: { dayItem: any }) {
+  const parsed = parseItineraryDay(dayItem);
+
+  return (
+    <div className="relative bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden">
+      {/* Timeline Node Pin on left line */}
+      <div className="absolute -left-[35px] sm:-left-[43px] top-5 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0F3A2E] text-white flex items-center justify-center font-black text-xs shadow-md border-2 border-white ring-2 ring-emerald-600/30">
+        D{dayItem.day}
+      </div>
+
+      <div className="p-5 sm:p-6 space-y-3.5">
+        {/* Top Header: Day Badge & Route Transit */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
+              <Calendar className="w-3 h-3 text-emerald-600" />
+              Day {dayItem.day} Schedule
+            </span>
+            {parsed.routeTransit && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/80">
+                <span>{parsed.routeTransit.from}</span>
+                <ArrowRight className="w-3 h-3 text-slate-400" />
+                <span className="font-bold text-slate-900">{parsed.routeTransit.to}</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-base sm:text-lg lg:text-xl font-extrabold text-slate-900 brand-font leading-snug">
+          {parsed.cleanTitle}
+        </h3>
+
+        {/* 4-Item Metric Ribbon */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 pt-1">
+          {/* Duration */}
+          <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-amber-600">Duration</span>
+              <span className="block text-xs sm:text-sm font-extrabold text-amber-950 truncate" title={parsed.duration}>
+                {parsed.duration || "Day Activity"}
+              </span>
+            </div>
+          </div>
+
+          {/* Distance */}
+          <div className="bg-purple-50/80 border border-purple-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+              <Milestone className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-purple-600">Distance</span>
+              <span className="block text-xs sm:text-sm font-extrabold text-purple-950 truncate" title={parsed.distance}>
+                {parsed.distance || "Scenic Route"}
+              </span>
+            </div>
+          </div>
+
+          {/* Altitude */}
+          <div className="bg-sky-50/80 border border-sky-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
+              <Mountain className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-sky-600">Elevation</span>
+              <span className="block text-xs sm:text-sm font-extrabold text-sky-950 truncate" title={parsed.altitude}>
+                {parsed.altitude || "Alpine Trail"}
+              </span>
+            </div>
+          </div>
+
+          {/* Meals */}
+          <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <Utensils className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-600">Meals</span>
+              <span className="block text-xs sm:text-sm font-extrabold text-emerald-950 truncate" title={parsed.meal}>
+                {parsed.meal || "Included"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Terrain & Experience Tags */}
+        {parsed.tags.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+            {parsed.tags.map((tag, tIdx) => (
+              <span
+                key={tIdx}
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${tag.bg} ${tag.text}`}
+              >
+                <span>{tag.icon}</span>
+                <span>{tag.label}</span>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Narrative Description */}
+        <div className="space-y-2.5 pt-1.5 text-slate-700 text-xs sm:text-sm leading-relaxed">
+          {parsed.paragraphs.map((para, pIdx) => (
+            <p key={pIdx} className="leading-relaxed">
+              {para}
+            </p>
+          ))}
+        </div>
+
+        {/* Advisory / Warning Callout */}
+        {parsed.advisory && (
+          <div className="mt-3 bg-amber-50/90 border border-amber-300/80 rounded-xl p-3 sm:p-3.5 flex items-start gap-2.5 text-xs text-amber-900">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="min-w-0 flex-1">
+              <span className="font-bold text-amber-950 block">Trail Advisory Note:</span>
+              <p className="mt-0.5 text-amber-800 leading-normal">{parsed.advisory}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Hospitality Bar */}
+      {(parsed.stay || parsed.meal) && (
+        <div className="bg-slate-50/90 px-5 sm:px-6 py-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+          {parsed.stay && (
+            <div className="flex items-center gap-1.5">
+              <Tent className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span className="text-slate-400 font-medium">Night Halt:</span>
+              <span className="font-semibold text-slate-800">{parsed.stay}</span>
+            </div>
+          )}
+          {parsed.meal && (
+            <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
+              <Utensils className="w-3.5 h-3.5 text-[#FF6B35] shrink-0" />
+              <span className="text-slate-400 font-medium">Catering:</span>
+              <span className="font-semibold text-slate-800">{parsed.meal}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function FormattedTextBlock({ text }: { text: string }) {
   if (!text) return null;
@@ -362,76 +649,7 @@ export default function TrekDetailPage() {
             <div className="relative pl-6 sm:pl-8 border-l-2 border-emerald-600/30 ml-3 sm:ml-4 space-y-6 pt-2">
               {trek.itinerary && trek.itinerary.length > 0 ? (
                 trek.itinerary.map((dayItem: any) => (
-                  <div
-                    key={dayItem.day}
-                    className="relative bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden"
-                  >
-                    {/* Timeline Node Pin on left line */}
-                    <div className="absolute -left-[35px] sm:-left-[43px] top-5 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0F3A2E] text-white flex items-center justify-center font-black text-xs shadow-md border-2 border-white ring-2 ring-emerald-600/30">
-                      D{dayItem.day}
-                    </div>
-
-                    <div className="p-5 sm:p-6 space-y-3.5">
-                      {/* Top Header: Day Badge & Title */}
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="space-y-1">
-                          <span className="inline-block text-[11px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
-                            Day {dayItem.day} Schedule
-                          </span>
-                          <h3 className="text-base sm:text-lg font-extrabold text-slate-900 brand-font leading-snug">
-                            {dayItem.title}
-                          </h3>
-                        </div>
-
-                        {/* Metric Badges Strip */}
-                        <div className="flex flex-wrap items-center gap-2">
-                          {dayItem.duration && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200/70 text-amber-900 text-xs font-semibold shadow-xs">
-                              <Clock className="w-3.5 h-3.5 text-amber-600" />
-                              <span>{dayItem.duration}</span>
-                            </span>
-                          )}
-                          {dayItem.distance && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 border border-purple-200/70 text-purple-900 text-xs font-semibold shadow-xs">
-                              <Milestone className="w-3.5 h-3.5 text-purple-600" />
-                              <span>{dayItem.distance}</span>
-                            </span>
-                          )}
-                          {dayItem.altitude && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 border border-sky-200/70 text-sky-900 text-xs font-semibold shadow-xs">
-                              <Mountain className="w-3.5 h-3.5 text-sky-600" />
-                              <span>{dayItem.altitude}</span>
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Prose Description with clean paragraphs & bullets */}
-                      <div className="pt-2 border-t border-slate-100">
-                        <FormattedTextBlock text={dayItem.description} />
-                      </div>
-                    </div>
-
-                    {/* Bottom Hospitality & Night Stay Bar */}
-                    {(dayItem.meal || dayItem.stay) && (
-                      <div className="bg-slate-50/80 px-5 sm:px-6 py-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
-                        {dayItem.meal && (
-                          <div className="flex items-center gap-1.5">
-                            <Utensils className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <span className="text-slate-400 font-medium">Meals:</span>
-                            <span className="font-semibold text-slate-800">{dayItem.meal}</span>
-                          </div>
-                        )}
-                        {dayItem.stay && (
-                          <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
-                            <Tent className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <span className="text-slate-400 font-medium">Overnight Stay:</span>
-                            <span className="font-semibold text-slate-800">{dayItem.stay}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <ItineraryDayCard key={dayItem.day} dayItem={dayItem} />
                 ))
               ) : (
                 <p className="text-slate-500 text-sm">Itinerary details available upon request.</p>

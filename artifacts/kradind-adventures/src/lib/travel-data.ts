@@ -286,45 +286,53 @@ export const treks: TrekData[] = [
     "itinerary": [
       {
         "day": 1,
-        "title": "Manali to Jobra and Trek to Chika",
-        "description": "Drive: Manali – Jobra Trek: Jobra – Chika Approx. Trek Distance: 3 km Trek Duration: 1.5–2.5 hours Your Hampta Pass adventure begins from Manali. After meeting the trek team and completing the necessary formalities, you drive towards Jobra, the roadhead for the trek. The route passes through beautiful mountain scenery as you leave the busy surroundings of Manali behind. From Jobra, the trek begins with a relatively easy walk towards Chika. The trail passes through green landscapes and mountain vegetation before reaching the campsite. After reaching Chika, settle into your tent, enjoy a warm meal and prepare for the next day's longer walk. Overnight stay: Chika campsite.",
-        "altitude": "14,000 Ft",
-        "meal": "Breakfast & Dinner",
-        "stay": "Chika campsite"
+        "title": "Drive from Manali to Jobra & Trek to Chika Campsite",
+        "description": "Your Hampta Pass crossover adventure begins with a picturesque mountain drive from Manali towards Jobra, winding through fragrant pine, cedar and deodar forests along the Pir Panjal foothills.\n\nFrom the Jobra roadhead (9,800 ft), step onto the trail for a gentle 3 km hike towards Chika. Cross the rushing Rani Nallah stream via a sturdy wooden bridge and traverse boulder-speckled alpine pastures fringed with birch and dwarf rhododendrons.\n\nArrive at the lush Chika riverside camp by early afternoon. Settle into high-altitude tents, savor a warm lunch, and enjoy evening acclimatization under towering granite cliffs.",
+        "duration": "1.5–2.5 Hours Trek (2 Hours Drive)",
+        "distance": "3 km Trek | 20 km Drive",
+        "altitude": "10,100 Ft (Jobra: 9,800 Ft)",
+        "meal": "Hot Lunch & Welcome Dinner",
+        "stay": "Chika Riverside Campsite"
       },
       {
         "day": 2,
-        "title": "Chika to Balu Ka Ghera",
-        "description": "Trek Duration: 5–6 hours After breakfast, begin the trek towards Balu Ka Ghera. The trail gradually moves through open valleys, meadows and rocky sections. Depending on the season, the landscape can be filled with wildflowers and flowing mountain streams. You will cross several small water channels, and the flow of streams can vary considerably with weather conditions. As you gain altitude, the landscape becomes more rugged and the mountains appear closer. Eventually, you reach Balu Ka Ghera, a scenic campsite surrounded by high Himalayan terrain. The evening is spent resting and preparing for the most demanding day of the trek. Overnight stay: Balu Ka Ghera campsite.",
-        "altitude": "14,000 Ft",
-        "meal": "Breakfast & Dinner",
-        "stay": "Balu Ka Ghera",
-        "distance": "Approx. 6–7 km"
+        "title": "Chika to Balu Ka Ghera (Valley of Sand)",
+        "description": "After a nutritious hot breakfast, begin the gradual ascent towards Balu Ka Ghera along the gushing course of the Rani River.\n\nThe trail winds gently through expansive alpine valleys, carpeted meadows, and scenic rocky clearings. Depending on the season, the valley is blanketed with vivid wild rhododendrons and Himalayan wildflowers. You will encounter boulder-strewn sections and negotiate refreshing crystal-clear glacial stream crossings.\n\nAs the altitude climbs past 11,000 ft, tree lines recede, revealing massive snow-crowned granite walls and closer views of Indrasan Peak. By late afternoon, arrive at Balu Ka Ghera ('Heap of Sand') — a sheltered, sandy riverbed encircled by towering Himalayan peaks. Settle into high-altitude alpine tents, enjoy hot evening tea, and rest up for summit day.",
+        "duration": "5–6 Hours Trek",
+        "distance": "Approx. 6–7 km",
+        "altitude": "11,900 Ft",
+        "meal": "Breakfast, Packed Lunch & Dinner",
+        "stay": "Balu Ka Ghera Alpine Camp"
       },
       {
         "day": 3,
-        "title": "Balu Ka Ghera to Hampta Pass to Shea Goru",
-        "description": "Trek Duration: 8–10 hours Maximum Altitude: Approx. 14,000 ft This is the most challenging and rewarding day of the Hampta Pass Trek. Start early after breakfast because the trail to the pass involves a significant climb. The route becomes steeper and more rugged as you approach the pass. The terrain can include loose rocks, boulders, snow patches and narrow sections depending on the season. After reaching Hampta Pass, take time to appreciate the extraordinary landscape. Behind you lies the greener Kullu side, while ahead is the dry and dramatic Lahaul region. After spending some time at the pass, begin the descent towards Shea Goru. The descent can be tiring after the summit climb, so maintain a controlled pace and follow the instructions of your trek leader. Overnight stay: Shea Goru campsite.",
-        "altitude": "14,000 Ft",
-        "meal": "Breakfast & Dinner",
-        "stay": "Shea Goru",
-        "distance": "Approx. 7–8 km"
+        "title": "Balu Ka Ghera to Hampta Pass Summit & Descent to Shea Goru",
+        "description": "The centerpiece and most exhilarating day of the crossover trek! Start before dawn at 6:00 AM as the mountain breeze is calm and snow bridges remain firm.\n\nThe ascent to Hampta Pass involves a sustained, steep climb through moraines, giant boulders, and seasonal snow patches. At 14,065 ft, step onto the summit ridge for an astonishing visual revelation: behind you lies the lush, emerald Kullu Valley, while ahead opens up the stark, sun-bleached moonscape of Lahaul and Spiti.\n\nAfter savoring summit vistas of Mount Indrasan and Deo Tibba, commence the steep, careful descent towards the valley of Shea Goru ('Cold Street'). Cross gentle glacial streams to reach the picturesque campsite nestled next to crystalline waters.",
+        "duration": "8–10 Hours Trek",
+        "distance": "Approx. 7–8 km",
+        "altitude": "14,065 Ft Summit (Shea Goru: 12,900 Ft)",
+        "meal": "Breakfast, Trail Snacks & Dinner",
+        "stay": "Shea Goru Riverside Camp"
       },
       {
         "day": 4,
-        "title": "Shea Goru to Chhatru and Optional Chandratal Excursion",
-        "description": "Trek: Shea Goru – Chhatru Approx. Trek Distance: 6–7 km Drive: Chhatru – Chandratal – Chhatru The day begins with a descent towards Chhatru. The surroundings are now completely different from the green Kullu Valley. The landscape around Lahaul is dry, rocky and dramatic, with towering mountains surrounding the valley. After reaching Chhatru, the group may proceed towards Chandratal Lake, depending on road accessibility, weather, local administration and operational conditions. Chandratal is famous for its crescent-like shape and striking blue waters. Spend some time around the lake while following all local environmental guidelines. Return to Chhatru for the night. Important: Chandratal access can be affected by weather, road conditions, local restrictions and other factors. The excursion should never be considered guaranteed.",
-        "altitude": "14,000 Ft",
-        "meal": "Breakfast & Dinner",
-        "stay": "Chhatru / designated campsite"
+        "title": "Shea Goru to Chhatru & Excursion to Chandratal Lake",
+        "description": "Start the morning with an exhilarating icy glacial river crossing near Shea Goru camp — a signature Hampta Pass rite of passage done under expert guide supervision.\n\nThe trail traverses arid moraines down to Chhatru, a rugged roadhead where Pir Panjal meets the Spiti valley. At Chhatru, board 4x4 mountain vehicles for an excursion to the legendary Chandratal Lake ('Moon Lake') at 14,100 ft.\n\nWalk along the sapphire-blue waters of Chandratal, framed by sheer Himalayan peaks. Return to Chhatru campsite by dusk for celebration dinner under a star-dusted Himalayan sky.\n\nImportant: Road accessibility to Chandratal Lake is subject to weather clearance, road condition, and local administrative safety approvals.",
+        "duration": "4–5 Hours Trek + 3 Hours Drive",
+        "distance": "6–7 km Trek + 45 km Drive",
+        "altitude": "11,000 Ft (Chandratal: 14,100 Ft)",
+        "meal": "Breakfast, Packed Lunch & Dinner",
+        "stay": "Chhatru Alpine Campsite"
       },
       {
         "day": 5,
-        "title": "Chhatru to Manali",
-        "description": "Drive Distance: Approx. 60–70 km | Drive Duration: Approx. 4–6 hours | End Point: Manali\n\nAfter breakfast at Chhatru campsite, begin the scenic drive back towards Manali through the Atal Tunnel and Rohtang corridor. The journey transitions dramatically from the barren, moonscape terrain of Lahaul into the lush pine-clad valleys of Kullu.\n\nYour Hampta Pass Crossover Trek concludes upon reaching Manali. We recommend keeping onward bus or flight bookings flexible as mountain roads can experience traffic delays.",
-        "altitude": "14,000 Ft",
-        "meal": "Breakfast & Dinner",
-        "stay": "Hotel / Resort / Campsite"
+        "title": "Chhatru to Manali via Atal Tunnel",
+        "description": "Relish a warm camp breakfast surrounded by the rugged, towering gorge walls of Chhatru before boarding your return vehicle.\n\nThe drive winds through the Chandra River valley, passing the high-altitude Chandra-Bhaga river confluence before traversing the engineering marvel of the Atal Tunnel at Rohtang. In minutes, watch the stark barren desert of Lahaul give way back to the verdant deodar and pine forests of Solang Valley.\n\nArrive in Manali by early afternoon, concluding your unforgettable Hampta Pass crossover expedition with lifetime memories.",
+        "duration": "4–6 Hours Scenic Drive",
+        "distance": "Approx. 65 km Mountain Drive",
+        "altitude": "6,725 Ft (Descent to Manali)",
+        "meal": "Warm Camp Breakfast",
+        "stay": "Trip Concludes at Manali Mall Road"
       }
     ],
     "inclusions": [

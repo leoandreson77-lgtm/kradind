@@ -277,151 +277,67 @@ export function MountainAtmosphere({
       }
 
       // ----------------------------------------
-      // C) RENDER OCEAN SUNRISE (Only on Ocean Sunrise Photo!)
+      // C) RENDER OCEAN SUNRISE (Real Cinematic Golden Hour Atmosphere)
       // ----------------------------------------
       else if (currentMode === "sunrise") {
-        // Stably anchored sun - NO bouncing up and down!
-        const oceanHorizonY = height * 0.46;
-        const sunX = width * 0.73;
-        const sunY = oceanHorizonY - 14; // Fixed resting position on horizon, completely eliminating bounce
+        // Natural camera golden hour warmth & gentle morning sunlight breathing
+        const sunX = width * 0.72;
+        const sunY = height * 0.42;
+        const breathe = Math.sin(now * 0.001);
+        const intensity = 0.85 + breathe * 0.15;
 
-        // Majestic organic breathing of golden sunlight intensity
-        const breathe = Math.sin(now * 0.0012);
-        const intensity = 0.88 + breathe * 0.12;
-
-        // 1. SKY RAYLEIGH SCATTERING OVER OCEAN PHOTO
-        const maxBloomRadius = Math.max(width, height) * 0.65;
+        // 1. SOFT PHOTOGRAPHIC LENS BLOOM (Natural diffuse haze, NO artificial shapes)
+        const bloomRadius = Math.max(width, height) * 0.55;
         const skyBloom = ctx.createRadialGradient(
           sunX,
           sunY,
-          10,
+          20,
           sunX,
           sunY,
-          maxBloomRadius
+          bloomRadius
         );
-        skyBloom.addColorStop(0, `rgba(255, 255, 245, ${0.55 * intensity})`);
-        skyBloom.addColorStop(0.12, `rgba(255, 225, 130, ${0.35 * intensity})`);
-        skyBloom.addColorStop(0.35, `rgba(255, 160, 50, ${0.18 * intensity})`);
-        skyBloom.addColorStop(0.7, `rgba(235, 90, 40, ${0.06 * intensity})`);
+        skyBloom.addColorStop(0, `rgba(255, 245, 210, ${0.28 * intensity})`);
+        skyBloom.addColorStop(0.25, `rgba(255, 200, 100, ${0.15 * intensity})`);
+        skyBloom.addColorStop(0.55, `rgba(245, 140, 50, ${0.05 * intensity})`);
         skyBloom.addColorStop(1, "rgba(0, 0, 0, 0)");
 
         ctx.fillStyle = skyBloom;
         ctx.fillRect(0, 0, width, height);
 
-        // 2. VOLUMETRIC GOD RAYS (Slow, majestic beams)
-        const beamCount = 7;
-        const baseBeamAngle = Math.PI * 0.74;
-        ctx.save();
-        for (let b = 0; b < beamCount; b++) {
-          const spread = (b - (beamCount - 1) / 2) * 0.15;
-          const beamAngle = baseBeamAngle + spread + Math.sin(now * 0.0006 + b) * 0.015;
-          const beamLength = Math.min(width, height) * (1.0 + Math.sin(b * 1.4) * 0.15);
-          const beamWidth = 0.06 + Math.sin(now * 0.001 + b * 2) * 0.015;
+        // 2. FLOATING GOLDEN SUNLIGHT DUST MOTES (Real atmospheric golden particles)
+        for (let i = 0; i < sunMotes.length; i++) {
+          const mote = sunMotes[i];
+          mote.y += mote.speedY * 0.7;
+          mote.x += mote.speedX + Math.sin(now * 0.0012 + i) * 0.35;
+          mote.pulse += mote.pulseSpeed;
 
-          ctx.beginPath();
-          ctx.moveTo(sunX, sunY);
-          ctx.arc(sunX, sunY, beamLength, beamAngle - beamWidth, beamAngle + beamWidth);
-          ctx.closePath();
-
-          const beamGrad = ctx.createRadialGradient(sunX, sunY, 15, sunX, sunY, beamLength);
-          const beamAlpha = (0.09 + Math.sin(now * 0.001 + b) * 0.025) * intensity;
-          beamGrad.addColorStop(0, `rgba(255, 245, 190, ${beamAlpha * 1.3})`);
-          beamGrad.addColorStop(0.4, `rgba(255, 200, 90, ${beamAlpha * 0.6})`);
-          beamGrad.addColorStop(0.85, `rgba(255, 140, 40, ${beamAlpha * 0.15})`);
-          beamGrad.addColorStop(1, "rgba(255, 140, 40, 0)");
-
-          ctx.fillStyle = beamGrad;
-          ctx.fill();
-        }
-        ctx.restore();
-
-        // 3. ANAMORPHIC HORIZONTAL LENS FLARE (Stably aligned on sun, no vertical bounce)
-        const flareWidth = width * (0.65 + Math.sin(now * 0.0008) * 0.05);
-        const streakGrad = ctx.createLinearGradient(sunX - flareWidth / 2, sunY, sunX + flareWidth / 2, sunY);
-        streakGrad.addColorStop(0, "rgba(255, 240, 200, 0)");
-        streakGrad.addColorStop(0.35, `rgba(255, 220, 140, ${0.28 * intensity})`);
-        streakGrad.addColorStop(0.5, `rgba(255, 255, 255, ${0.82 * intensity})`);
-        streakGrad.addColorStop(0.65, `rgba(255, 220, 140, ${0.28 * intensity})`);
-        streakGrad.addColorStop(1, "rgba(255, 240, 200, 0)");
-
-        ctx.fillStyle = streakGrad;
-        ctx.beginPath();
-        ctx.ellipse(sunX, sunY, flareWidth / 2, 2.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 4. RADIANT SUN DISC (Stably anchored glowing orb)
-        const coreRadius = 22 + Math.sin(now * 0.0012) * 1.5;
-        const coreGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, coreRadius);
-        coreGrad.addColorStop(0, "rgba(255, 255, 255, 0.98)");
-        coreGrad.addColorStop(0.35, "rgba(255, 248, 220, 0.90)");
-        coreGrad.addColorStop(0.7, "rgba(255, 215, 100, 0.50)");
-        coreGrad.addColorStop(1, "rgba(255, 160, 50, 0)");
-
-        ctx.fillStyle = coreGrad;
-        ctx.shadowBlur = 24 * intensity;
-        ctx.shadowColor = "rgba(255, 215, 80, 0.95)";
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, coreRadius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        // 5. GOLDEN SHIMMER TRAIL (Glitter Over Real Waves)
-        const waveRows = 24;
-        ctx.save();
-        for (let w = 0; w < waveRows; w++) {
-          const depth = w / waveRows;
-          const waveY = oceanHorizonY + Math.pow(depth, 1.4) * (height - oceanHorizonY);
-          const waveAmp = 1.0 + depth * 3.5;
-          const waveFreq = 0.016 - depth * 0.007;
-          const coneWidth = 25 + depth * (width * 0.32);
-          const waveSpeed = 0.0022;
-
-          const shimmerLeft = Math.max(0, sunX - coneWidth);
-          const shimmerRight = Math.min(width, sunX + coneWidth);
-
-          ctx.beginPath();
-          let inShimmer = false;
-          for (let x = shimmerLeft; x <= shimmerRight; x += 5) {
-            const dist = Math.abs(x - sunX) / coneWidth;
-            const wavePeak = Math.sin(x * waveFreq + now * waveSpeed + w * 1.4);
-
-            if (wavePeak > -0.15) {
-              const yOffset = wavePeak * waveAmp;
-              const sparkle = 0.5 + 0.5 * Math.sin(now * 0.008 + x * 0.12 + w * 2.1);
-              const specularAlpha = (1 - dist) * (0.35 + 0.65 * sparkle) * intensity * (0.35 + depth * 0.65);
-
-              if (specularAlpha > 0.06) {
-                if (!inShimmer) {
-                  ctx.moveTo(x, waveY + yOffset);
-                  inShimmer = true;
-                } else {
-                  ctx.lineTo(x, waveY + yOffset);
-                }
-              }
-            } else {
-              inShimmer = false;
-            }
+          if (mote.y < -15) {
+            mote.y = height + 15;
+            mote.x = Math.random() * width;
           }
+          if (mote.x < -15) mote.x = width + 15;
+          if (mote.x > width + 15) mote.x = -15;
 
-          ctx.strokeStyle = `rgba(255, 245, 175, ${0.85 * intensity})`;
-          ctx.lineWidth = 1.2 + depth * 2.0;
-          ctx.shadowBlur = 5 * intensity;
-          ctx.shadowColor = "rgba(255, 215, 90, 0.9)";
-          ctx.stroke();
+          const sparkleAlpha = mote.opacity * (0.4 + 0.45 * Math.sin(mote.pulse)) * intensity;
+          ctx.beginPath();
+          ctx.arc(mote.x, mote.y, mote.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `${mote.color}${sparkleAlpha})`;
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = "rgba(255, 220, 120, 0.6)";
+          ctx.fill();
           ctx.shadowBlur = 0;
         }
-        ctx.restore();
 
-        // 6. SILHOUETTED COASTAL SEABIRDS
-        ctx.strokeStyle = "rgba(45, 25, 20, 0.72)";
-        ctx.lineWidth = 1.4;
+        // 3. SILHOUETTED COASTAL SEABIRDS (Natural scale in distant sky)
+        ctx.strokeStyle = "rgba(35, 20, 15, 0.65)";
+        ctx.lineWidth = 1.3;
         ctx.lineCap = "round";
 
         for (let i = 0; i < birds.length; i++) {
           const bird = birds[i];
-          const birdX = ((now * 0.02 + bird.xOffset * width) % (width + 60)) - 30;
-          const birdY = bird.yOffset * height + Math.sin(now * 0.001 + i) * 6;
-          const wingFlap = Math.sin(now * bird.wingSpeed) * (bird.size * 0.4);
+          const birdX = ((now * 0.018 + bird.xOffset * width) % (width + 80)) - 40;
+          const birdY = bird.yOffset * height + Math.sin(now * 0.001 + i) * 5;
+          const wingFlap = Math.sin(now * bird.wingSpeed) * (bird.size * 0.35);
 
           ctx.beginPath();
           ctx.moveTo(birdX, birdY);

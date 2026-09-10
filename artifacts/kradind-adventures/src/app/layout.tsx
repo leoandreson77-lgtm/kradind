@@ -224,7 +224,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} scroll-smooth`}>
+    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} scroll-smooth overflow-x-hidden w-full max-w-full`}>
       <head>
         <meta name="google-site-verification" content="T3Scitqdc9Jqk5rp2LCXSF-69t8Q-zpZlgql9ZjxpGI" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -241,7 +241,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-slate-50 text-slate-800 antialiased font-sans relative">
+      <body className="bg-slate-50 text-slate-800 antialiased font-sans relative overflow-x-hidden w-full max-w-full">
         {/* Google tag (gtag.js) deferred with lazyOnload to keep mobile TBT at 0ms */}
         <Script
           strategy="lazyOnload"

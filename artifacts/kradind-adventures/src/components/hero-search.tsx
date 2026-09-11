@@ -189,14 +189,12 @@ export function HeroSearch({
         
         {/* Animated Text Container with smooth transition */}
         <div key={activeSlide.id} className="transition-all duration-700 ease-out space-y-4 animate-in fade-in zoom-in-95">
-          {/* Badge Tagline - Box Removed, Logo Dark Green */}
-          <div className="flex items-center justify-center gap-2.5 sm:gap-3">
-            <span className="hidden sm:inline-block h-0.5 w-8 sm:w-12 bg-gradient-to-r from-transparent to-[#0F3A2E]/80" />
-            <span className="text-xs sm:text-sm font-black uppercase tracking-[0.22em] text-[#0F3A2E] drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)] drop-shadow-[0_0_12px_rgba(255,255,255,0.85)] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#0F3A2E] shadow-[0_0_8px_rgba(255,255,255,0.9)] shrink-0" />
+          {/* Badge Tagline - Crisp White Frosted Badge with Logo Dark Green Text */}
+          <div className="flex items-center justify-center gap-2">
+            <span className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-white text-[#0F3A2E] text-xs sm:text-sm font-black px-4 sm:px-5 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               <span>{badge}</span>
             </span>
-            <span className="hidden sm:inline-block h-0.5 w-8 sm:w-12 bg-gradient-to-l from-transparent to-[#0F3A2E]/80" />
           </div>
 
           {/* Heading */}

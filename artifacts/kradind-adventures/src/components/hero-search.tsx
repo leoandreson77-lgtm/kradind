@@ -212,8 +212,9 @@ export function HeroSearch({
         <div key={activeSlide.id} className="transition-all duration-700 ease-out space-y-4 animate-in fade-in zoom-in-95">
           {/* Badge & Active Scene Pill */}
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-              {badge}
+            <span className="inline-flex items-center gap-2 bg-slate-950/85 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-xs sm:text-sm font-extrabold px-4 sm:px-5 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span>{badge}</span>
             </span>
           </div>
 

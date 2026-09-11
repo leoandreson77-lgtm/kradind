@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
@@ -113,8 +112,8 @@
   --chart-4: 43 70% 48%;
   --chart-5: 171 26% 56%;
 
-  --app-font-sans: 'Inter', sans-serif;
-  --app-font-serif: 'Plus Jakarta Sans', sans-serif;
+  --app-font-sans: var(--font-sans), 'Inter', sans-serif;
+  --app-font-serif: var(--font-brand), 'Plus Jakarta Sans', sans-serif;
   --app-font-mono: 'SFMono-Regular', Consolas, monospace;
   --radius: 0.5rem; /* 8px */
   --shadow-2xs: 0px 2px 0px 0px hsl(166 45% 24% / 0.03);

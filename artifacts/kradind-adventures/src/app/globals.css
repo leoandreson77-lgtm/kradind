@@ -76,3 +76,12 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   animation: whatsapp-pulse-ring 2.8s ease-in-out infinite;
   transform-origin: center center;
 }
+
+@keyframes progressFill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}

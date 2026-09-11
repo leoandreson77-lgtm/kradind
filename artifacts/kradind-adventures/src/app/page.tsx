@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Enable ISR (Incremental Static Regeneration) - serves cached HTML in < 40ms TTFB and revalidates in background
+export const revalidate = 60;
 
 export default async function HomePage() {
   try {

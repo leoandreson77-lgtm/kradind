@@ -233,6 +233,8 @@ export default function RootLayout({
         {/* Preconnect to external image CDN for fast mobile LCP */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        {/* Preload initial hero LCP image for instant discovery */}
+        <link rel="preload" as="image" href="/ocean-sunrise.jpg" fetchPriority="high" />
         {/* Global JSON-LD Schema (Organization & WebSite with SearchAction) */}
         <script
           type="application/ld+json"

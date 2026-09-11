@@ -190,11 +190,14 @@ export function TreksContent({
 
             {/* Difficulty Selector */}
             <div className="flex items-center justify-between sm:justify-start gap-2 bg-slate-50 px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200/80 shrink-0">
-              <div className="flex items-center gap-1.5">
+              <label htmlFor="catalog-difficulty" className="flex items-center gap-1.5 cursor-pointer">
                 <Filter className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                 <span className="text-xs font-bold text-slate-600 shrink-0">Difficulty:</span>
-              </div>
+              </label>
               <select
+                id="catalog-difficulty"
+                name="difficulty"
+                aria-label="Filter treks by difficulty"
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
                 className="bg-white border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2 py-1 outline-none focus:ring-2 focus:ring-[#0F3A2E] cursor-pointer"

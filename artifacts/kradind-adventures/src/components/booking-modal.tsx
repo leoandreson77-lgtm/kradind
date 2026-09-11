@@ -121,10 +121,13 @@ export function BookingModal({
             
             <div className="space-y-3">
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <label htmlFor="booking-trek" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                   Select Trek
                 </label>
                 <select
+                  id="booking-trek"
+                  name="trekName"
+                  aria-label="Select Trek"
                   value={trekName}
                   onChange={(e) => setTrekName(e.target.value)}
                   className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-900 text-xs font-semibold rounded-xl p-3 focus:ring-2 focus:ring-[#0F3A2E] outline-none"
@@ -140,10 +143,13 @@ export function BookingModal({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                  <label htmlFor="booking-batch" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                     <Calendar className="w-3 h-3" /> Batch Date
                   </label>
                   <select
+                    id="booking-batch"
+                    name="batchDate"
+                    aria-label="Batch Date"
                     value={batchDate}
                     onChange={(e) => setBatchDate(e.target.value)}
                     className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-900 text-xs font-semibold rounded-xl p-2.5 outline-none"
@@ -156,10 +162,13 @@ export function BookingModal({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                  <label htmlFor="booking-trekkers" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                     <Users className="w-3 h-3" /> Trekkers
                   </label>
                   <input
+                    id="booking-trekkers"
+                    name="trekkersCount"
+                    aria-label="Number of trekkers"
                     type="number"
                     min={1}
                     max={10}

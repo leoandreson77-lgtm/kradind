@@ -64,37 +64,18 @@ export function HeroSearch({
   // Ultra-Smooth Unified Carousel Loop (5.0s relaxed cinematic rhythm)
   const [slideIndex, setSlideIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [loopProgress, setLoopProgress] = useState(0);
 
   const LOOP_DURATION_MS = 5000;
 
   useEffect(() => {
-    if (!isAutoPlaying) {
-      setLoopProgress(0);
-      return;
-    }
+    if (!isAutoPlaying) return;
 
-    let start = performance.now();
-    let animId: number;
+    const timer = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+    }, LOOP_DURATION_MS);
 
-    const tick = (now: number) => {
-      const elapsed = now - start;
-      if (elapsed >= LOOP_DURATION_MS) {
-        setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
-        start = now;
-        setLoopProgress(0);
-      } else {
-        setLoopProgress(elapsed / LOOP_DURATION_MS);
-      }
-      animId = requestAnimationFrame(tick);
-    };
-
-    animId = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
-  }, [isAutoPlaying, slideIndex]);
+    return () => clearInterval(timer);
+  }, [isAutoPlaying]);
 
   const activeSlide = CAROUSEL_SLIDES[slideIndex];
 
@@ -102,7 +83,6 @@ export function HeroSearch({
     const idx = CAROUSEL_SLIDES.findIndex((s) => s.weatherMode === mode);
     if (idx !== -1) {
       setSlideIndex(idx);
-      setLoopProgress(0);
     }
   };
 
@@ -116,17 +96,14 @@ export function HeroSearch({
 
   const handleNextSlide = () => {
     setSlideIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
-    setLoopProgress(0);
   };
 
   const handlePrevSlide = () => {
     setSlideIndex((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
-    setLoopProgress(0);
   };
 
   const handleSelectSlide = (idx: number) => {
     setSlideIndex(idx);
-    setLoopProgress(0);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -169,6 +146,9 @@ export function HeroSearch({
                 src={slide.image}
                 alt={slide.title}
                 className="w-full h-full object-cover object-center"
+                loading={idx === 0 ? "eager" : "lazy"}
+                fetchPriority={idx === 0 ? "high" : "low"}
+                decoding={idx === 0 ? "sync" : "async"}
               />
             </div>
           );
@@ -183,7 +163,6 @@ export function HeroSearch({
         onSelectMode={handleSelectMode}
         autoLoop={isAutoPlaying}
         onToggleLoop={handleToggleLoop}
-        loopProgress={loopProgress}
         showControls={false}
       />
 
@@ -244,12 +223,13 @@ export function HeroSearch({
                     : "bg-slate-950/60 hover:bg-slate-900/80 text-slate-200 border-white/20 hover:border-white/40"
                 }`}
               >
-                {/* Smooth Animated Progress Fill inside active pill */}
+                {/* Smooth GPU-Accelerated Progress Fill inside active pill */}
                 {isActive && isAutoPlaying && (
                   <span
-                    className="absolute inset-0 bg-emerald-500/20 pointer-events-none transition-all ease-linear"
+                    key={slideIndex}
+                    className="absolute inset-0 bg-emerald-500/20 pointer-events-none origin-left"
                     style={{
-                      width: `${Math.round(loopProgress * 100)}%`,
+                      animation: "progressFill 5000ms linear forwards",
                     }}
                   />
                 )}
@@ -266,10 +246,12 @@ export function HeroSearch({
             
             {/* Field 1: Keyword Input */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-keyword" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Keyword / Search
               </label>
               <input
+                id="hero-keyword"
+                name="keyword"
                 type="text"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
@@ -280,10 +262,13 @@ export function HeroSearch({
 
             {/* Field 2: Trip Type */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-trip-type" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Trip Type
               </label>
               <select
+                id="hero-trip-type"
+                name="tripType"
+                aria-label="Trip Type"
                 value={tripType}
                 onChange={(e) => setTripType(e.target.value)}
                 className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
@@ -298,10 +283,13 @@ export function HeroSearch({
 
             {/* Field 3: Destination */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-destination" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Destination
               </label>
               <select
+                id="hero-destination"
+                name="destination"
+                aria-label="Destination Region or State"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
                 className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
@@ -322,10 +310,13 @@ export function HeroSearch({
 
             {/* Field 4: Season */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-season" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Month / Season
               </label>
               <select
+                id="hero-season"
+                name="season"
+                aria-label="Month or Travel Season"
                 value={season}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -375,6 +366,10 @@ export function HeroSearch({
               <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
                 alt="Domestic Tours"
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
@@ -389,6 +384,10 @@ export function HeroSearch({
               <img
                 src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=150&q=80"
                 alt="Himalayas"
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
@@ -403,6 +402,10 @@ export function HeroSearch({
               <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
                 alt="Kerala"
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
@@ -417,6 +420,10 @@ export function HeroSearch({
               <img
                 src="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=150&q=80"
                 alt="Ladakh"
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
@@ -431,6 +438,10 @@ export function HeroSearch({
               <img
                 src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=150&q=80"
                 alt="Meghalaya"
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
@@ -445,6 +456,10 @@ export function HeroSearch({
               <img
                 src="https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=150&q=80"
                 alt="Rajasthan"
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
@@ -459,6 +474,10 @@ export function HeroSearch({
               <img
                 src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=150&q=80"
                 alt="Goa"
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>

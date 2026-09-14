@@ -185,12 +185,12 @@ export function Footer() {
 
           {/* Legal & Policies Column */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-400">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#FF6B35]">
               Legal &amp; Policies
             </h4>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <Link href="/privacy-policy" className="hover:text-white transition text-emerald-300 font-semibold">
+                <Link href="/privacy-policy" className="hover:text-white transition">
                   Privacy Policy
                 </Link>
               </li>
@@ -200,7 +200,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/editorial-policy" className="hover:text-white transition text-emerald-300 font-medium">
+                <Link href="/editorial-policy" className="hover:text-white transition">
                   Editorial &amp; Safety Policy
                 </Link>
               </li>
@@ -215,13 +215,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/visa-policy" className="hover:text-white transition text-emerald-300 font-medium">
+                <Link href="/visa-policy" className="hover:text-white transition">
                   Visa &amp; International
-                </Link>
-              </li>
-              <li>
-                <Link href="/llms.txt" target="_blank" rel="noopener noreferrer" className="hover:text-white transition text-slate-400">
-                  AI Context (llms.txt)
                 </Link>
               </li>
             </ul>
@@ -230,7 +225,7 @@ export function Footer() {
           {/* Official Social Media Community */}
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-400">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-[#FF6B35]">
                 Connect With Us
               </h4>
               <p className="text-[11px] text-slate-400 mt-1">
@@ -280,21 +275,21 @@ export function Footer() {
         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-slate-400">
           <p>© 2026 KRADIND Adventures / KRAD Global. All rights reserved.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-slate-400">
-            <Link href="/privacy-policy" className="hover:text-emerald-400 transition font-medium">Privacy Policy</Link>
+            <Link href="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link>
             <span>•</span>
-            <Link href="/terms-and-conditions" className="hover:text-emerald-400 transition">Terms</Link>
+            <Link href="/terms-and-conditions" className="hover:text-white transition">Terms</Link>
             <span>•</span>
-            <Link href="/cancellation-policy" className="hover:text-emerald-400 transition">Cancellation</Link>
+            <Link href="/cancellation-policy" className="hover:text-white transition">Cancellation</Link>
             <span>•</span>
-            <Link href="/booking-policy" className="hover:text-emerald-400 transition">Payments</Link>
+            <Link href="/booking-policy" className="hover:text-white transition">Payments</Link>
             <span>•</span>
-            <Link href="/cookie-policy" className="hover:text-emerald-400 transition">Cookies</Link>
+            <Link href="/cookie-policy" className="hover:text-white transition">Cookies</Link>
             <span>•</span>
-            <Link href="/visa-policy" className="hover:text-emerald-400 transition">Visa &amp; Intl</Link>
+            <Link href="/visa-policy" className="hover:text-white transition">Visa &amp; Intl</Link>
             <span>•</span>
-            <Link href="/disclaimer" className="hover:text-emerald-400 transition">Disclaimers</Link>
+            <Link href="/disclaimer" className="hover:text-white transition">Disclaimers</Link>
             <span>•</span>
-            <Link href="/contact" className="hover:text-emerald-400 transition">Contact Support</Link>
+            <Link href="/contact" className="hover:text-white transition">Contact Support</Link>
           </div>
         </div>
 

@@ -32,7 +32,8 @@ export type PolicyTab =
   | "booking"
   | "cookie"
   | "visa"
-  | "disclaimer";
+  | "disclaimer"
+  | "editorial";
 
 interface LegalPoliciesViewProps {
   defaultTab?: PolicyTab;
@@ -48,7 +49,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
     const tabParam = searchParams.get("tab") as PolicyTab | null;
     if (
       tabParam &&
-      ["privacy", "terms", "cancellation", "booking", "cookie", "visa", "disclaimer"].includes(
+      ["privacy", "terms", "cancellation", "booking", "cookie", "visa", "disclaimer", "editorial"].includes(
         tabParam
       )
     ) {
@@ -67,8 +68,9 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
       cancellation: "/cancellation-policy",
       booking: "/booking-policy",
       cookie: "/cookie-policy",
-      visa: "/disclaimer?tab=visa",
+      visa: "/visa-policy",
       disclaimer: "/disclaimer",
+      editorial: "/editorial-policy",
     };
     if (routeMap[tab]) {
       router.push(routeMap[tab], { scroll: false });
@@ -124,6 +126,13 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
       shortName: "Disclaimer",
       icon: AlertTriangle,
       badge: "General Notice",
+    },
+    {
+      id: "editorial" as PolicyTab,
+      name: "Editorial & Safety Standards",
+      shortName: "Editorial Policy",
+      icon: Shield,
+      badge: "E-E-A-T Verified",
     },
   ];
 
@@ -1071,6 +1080,73 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
                     <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
                     <p className="m-0">Website: www.kradind.com</p>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ========================================================================= */}
+            {/* 8. EDITORIAL & SAFETY POLICY (E-E-A-T STANDARDS) */}
+            {/* ========================================================================= */}
+            {activeTab === "editorial" && (
+              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+                <div className="border-b border-slate-200 pb-6 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
+                    <Shield className="w-4 h-4 text-emerald-600" />
+                    <span>E-E-A-T Verification & Expedition Quality</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 brand-font m-0">
+                    Editorial &amp; Trail Safety Policy
+                  </h2>
+                </div>
+
+                <p className="text-xs leading-relaxed text-slate-600">
+                  At <strong>KRADIND Adventures (www.kradind.com)</strong>, we adhere to strict editorial integrity, mountaineering accuracy, and wilderness safety standards. Our content is curated, fact-checked, and regularly audited to ensure every trekker receives safe, authentic, and verified guidance.
+                </p>
+
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">1. Author Expertise &amp; Trail Leadership</h3>
+                  <p className="text-xs leading-relaxed">
+                    All itinerary descriptions, altitude acclimatization profiles, gear recommendations, and difficulty ratings are written or reviewed by certified mountaineering professionals, including graduates of the <strong>Nehru Institute of Mountaineering (NIM)</strong>, <strong>Himalayan Mountaineering Institute (HMI)</strong>, and <strong>Wilderness First Aid (WFA)</strong> certified expedition leads.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">2. Ground Truth &amp; Live Weather Radar</h3>
+                  <p className="text-xs leading-relaxed">
+                    Our Live Trail Radar updates are sourced directly from mountain base camps, local guides, and regional weather monitors. When trail conditions change due to unseasonal snow, landslides, or high-altitude weather advisories, our expedition team updates route statuses promptly.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">3. Leave No Trace (LNT) &amp; Eco-Trekking Standards</h3>
+                  <p className="text-xs leading-relaxed">
+                    We strictly endorse the 7 Principles of Leave No Trace. We mandate that small batch departures (maximum 15 participants) leave mountain campsites cleaner than they were found, carrying back all dry and non-biodegradable waste.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">4. Independent Advice &amp; Transparency</h3>
+                  <p className="text-xs leading-relaxed">
+                    Our gear advice, fitness guidelines, and trek difficulty assessments are completely independent and impartial. We never accept payment to misrepresent trail difficulty or safety requirements.
+                  </p>
+                </section>
+
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">5. Corrections &amp; Feedback Policy</h3>
+                  <p className="text-xs leading-relaxed">
+                    We welcome feedback from the mountaineering community. If you spot an inaccuracy regarding trail distances, elevations, or regional regulations, please email our editorial desk at <strong>support@kradind.com</strong>. We verify and correct confirmed errors within 48 hours.
+                  </p>
+                </section>
+
+                <section className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2 text-xs">
+                  <h4 className="font-bold text-slate-900 text-sm m-0">Editorial Desk Contact</h4>
+                  <div className="pt-2 text-slate-800 space-y-1 font-medium">
+                    <p className="m-0"><strong>Chief Expedition Director:</strong> Aashish Chauhan</p>
+                    <p className="m-0"><strong>Organization:</strong> KRADIND Adventures Private Limited</p>
+                    <p className="m-0"><strong>Address:</strong> Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India</p>
+                    <p className="m-0"><strong>Email:</strong> support@kradind.com / kradglobalind@gmail.com</p>
+                    <p className="m-0"><strong>Last Reviewed:</strong> 14 September 2026</p>
                   </div>
                 </section>
               </div>

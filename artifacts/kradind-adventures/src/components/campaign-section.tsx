@@ -16,37 +16,55 @@ import {
 } from "lucide-react";
 import { LandingPageData } from "@/lib/cms-store";
 
+function getCampaignAlt(camp: { slug?: string; title?: string }) {
+  const s = (camp.slug || "").toLowerCase();
+  const t = (camp.title || "").toLowerCase();
+  if (s.includes("kedarkantha") || t.includes("kedarkantha")) {
+    return "Kedarkantha winter trek 2026 expedition by KRADIND";
+  }
+  if (s.includes("kashmir") || t.includes("kashmir")) {
+    return "Kashmir Great Lakes alpine trek by KRADIND";
+  }
+  if (s.includes("char-dham") || t.includes("char dham")) {
+    return "Char Dham Yatra package covering Yamunotri Gangotri Kedarnath and Badrinath";
+  }
+  if (s.includes("do-dham") || t.includes("do dham")) {
+    return "Kedarnath and Badrinath Do Dham Yatra package";
+  }
+  if (s.includes("kedarnath") || t.includes("kedarnath")) {
+    return "Kedarnath Yatra tour package by KRADIND";
+  }
+  return `${camp.title || "Featured campaign"} - Holiday and tour package by KRADIND`;
+}
+
 export function CampaignSection({
   initialCampaigns,
 }: {
-  initialCampaigns?: LandingPageData[];
+  initialCampaigns?: any[];
 }) {
-  const [campaigns, setCampaigns] = useState<LandingPageData[]>(
-    initialCampaigns || []
-  );
-  const [loading, setLoading] = useState(!initialCampaigns);
+  const [campaigns, setCampaigns] = useState<any[]>(initialCampaigns || []);
 
   useEffect(() => {
-    async function fetchCampaigns() {
-      try {
-        const res = await fetch("/api/landing-pages");
-        if (res.ok) {
-          const data = await res.json();
-          setCampaigns(data || []);
+    if (!initialCampaigns || initialCampaigns.length === 0) {
+      async function loadLPs() {
+        try {
+          const res = await fetch("/api/landing-pages");
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              setCampaigns(data.filter((d: any) => d.status === "Published"));
+            }
+          }
+        } catch (err) {
+          console.error("Failed to load campaigns", err);
         }
-      } catch (err) {
-        console.error("Failed to load campaigns", err);
-      } finally {
-        setLoading(false);
       }
-    }
-    if (!initialCampaigns) {
-      fetchCampaigns();
+      loadLPs();
     }
   }, [initialCampaigns]);
 
-  if (loading || campaigns.length === 0) {
-    return null; // Only render when there are published campaigns
+  if (!campaigns || campaigns.length === 0) {
+    return null;
   }
 
   return (
@@ -64,7 +82,7 @@ export function CampaignSection({
               <span>Exclusive Campaigns</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">
-              Signature <span className="text-[#FF6B35]">Expeditions</span> & Limited Slots
+              Signature <span className="text-[#FF6B35]">Expeditions</span> &amp; Limited Slots
             </h2>
             <p className="text-sm md:text-base text-slate-400 mt-2 max-w-xl">
               Hand-crafted alpine summit routes with certified wilderness leaders, chef-cooked high-altitude meals, and limited 15-trekker batches.
@@ -75,7 +93,7 @@ export function CampaignSection({
             href="/treks"
             className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-emerald-400 hover:text-emerald-300 transition group"
           >
-            <span>Browse All Domestic & Alpine Treks</span>
+            <span>Browse All Domestic &amp; Alpine Treks</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
           </Link>
         </div>
@@ -92,7 +110,7 @@ export function CampaignSection({
               <div className="relative h-64 sm:h-72 w-full overflow-hidden">
                 <Image
                   src={camp.heroImage}
-                  alt={camp.title}
+                  alt={getCampaignAlt(camp)}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   quality={70}
@@ -145,7 +163,7 @@ export function CampaignSection({
                 {/* Highlights preview */}
                 {camp.highlights && camp.highlights.length > 0 && (
                   <div className="space-y-2 py-3 border-y border-white/5">
-                    {camp.highlights.slice(0, 2).map((hl, i) => (
+                    {camp.highlights.slice(0, 2).map((hl: any, i: number) => (
                       <div key={i} className="flex items-start gap-2.5 text-xs text-slate-300">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                         <div>

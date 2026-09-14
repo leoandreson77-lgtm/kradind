@@ -29,9 +29,33 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://kradind.com"),
-  title: "KRADIND | Treks, Domestic & International Adventures",
+  title: {
+    default: "KRAD Global | Tour & Travel Company in Dehradun | India",
+    template: "%s | KRAD Global",
+  },
   description:
-    "Explore handpicked Himalayan treks, tropical road trips, live trail radar updates, and international backpacking circuits with KRADIND Adventures.",
+    "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+  keywords: [
+    "tour and travel company in Dehradun",
+    "travel agency in Dehradun",
+    "tour operator in Dehradun",
+    "domestic tour packages",
+    "international tour packages",
+    "India tour packages",
+    "customized tour packages",
+    "KRAD Global",
+    "Dehradun travel and tour services",
+    "Himalayan trekking package",
+    "customized holiday package",
+    "tour packages in Dehradun",
+    "KRADIND Adventures",
+  ],
+  authors: [
+    { name: "KRAD Global", url: "https://kradind.com" },
+    { name: "Aashish Chauhan", url: "https://kradind.com/about" },
+  ],
+  creator: "KRAD Global",
+  publisher: "KRAD Global",
   alternates: {
     canonical: "/",
   },
@@ -50,21 +74,28 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "KRADIND | Treks, Domestic & International Adventures",
+    title: "KRAD Global | Tour & Travel Company in Dehradun | India",
     description:
-      "Explore handpicked Himalayan treks, tropical road trips, live trail radar updates, and international backpacking circuits with KRADIND Adventures.",
+      "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
     url: "https://kradind.com",
-    siteName: "KRADIND Adventures",
+    siteName: "KRAD Global",
     images: [
       {
         url: "/logo.png",
         width: 1475,
         height: 950,
-        alt: "KRADIND Adventures Logo",
+        alt: "KRAD Global tour and travel company logo",
       },
     ],
     locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KRAD Global | Tour & Travel Company in Dehradun | India",
+    description:
+      "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+    images: ["/logo.png"],
   },
 };
 
@@ -74,19 +105,19 @@ const globalStructuredData = {
     {
       "@type": "Organization",
       "@id": "https://kradind.com/#organization",
-      name: "KRADIND Adventures",
-      legalName: "KRADIND Adventures Private Limited",
-      alternateName: ["KRADIND", "KRAD Global Travels"],
+      name: "KRAD Global",
+      legalName: "KRAD Global Travels / KRADIND Adventures Private Limited",
+      alternateName: ["KRADIND Adventures", "KRAD Global Travels", "KRADIND"],
       url: "https://kradind.com",
       logo: {
         "@type": "ImageObject",
         "@id": "https://kradind.com/#logo",
         url: "https://kradind.com/logo-emblem.png",
-        caption: "KRADIND Adventures",
+        caption: "KRAD Global tour and travel company logo",
       },
       image: "https://kradind.com/logo.png",
       description:
-        "India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.",
+        "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
       telephone: "+917500222141",
       email: "support@kradind.com",
       founder: {
@@ -94,6 +125,13 @@ const globalStructuredData = {
         "@id": "https://kradind.com/#founder",
         name: "Aashish Chauhan",
         jobTitle: "Founder & Chief Expedition Director",
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        reviewCount: "2480",
+        bestRating: "5",
+        worstRating: "1",
       },
       address: {
         "@type": "PostalAddress",
@@ -109,9 +147,76 @@ const globalStructuredData = {
         "https://www.facebook.com/share/189E2RUcH4/",
         "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
         "https://x.com/KradGlobalTour",
-        "https://www.threads.com/@kradglobal",
+        "https://www.threads.net/@kradglobal",
         "https://in.pinterest.com/KradGlobalTravels/",
       ],
+    },
+    {
+      "@type": "TravelAgency",
+      "@id": "https://kradind.com/#travelagency",
+      name: "KRAD Global - Tour & Travel Company in Dehradun",
+      alternateName: ["KRADIND Adventures", "KRAD Global Travels"],
+      url: "https://kradind.com",
+      image: "https://kradind.com/logo.png",
+      logo: "https://kradind.com/logo-emblem.png",
+      description:
+        "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+      telephone: "+917500222141",
+      email: "support@kradind.com",
+      priceRange: "₹₹",
+      currenciesAccepted: "INR, USD",
+      paymentAccepted: "Credit Card, UPI, Net Banking",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Hall No. H-04, 401 Pratap Palace, Indiranagar Colony",
+        addressLocality: "Dehradun",
+        addressRegion: "Uttarakhand",
+        postalCode: "248001",
+        addressCountry: "IN",
+      },
+      areaServed: [
+        { "@type": "AdministrativeArea", name: "Dehradun" },
+        { "@type": "AdministrativeArea", name: "Uttarakhand" },
+        { "@type": "Country", name: "India" },
+      ],
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Tour & Travel Packages",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Domestic Tour Packages",
+              description: "Domestic tour package in India by KRAD Global",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "International Tour Packages",
+              description: "International tour package by KRAD Global",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Himalayan Trekking Packages",
+              description: "Himalayan trekking package by KRAD Global",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Customized Holiday Packages",
+              description: "Customized holiday package by KRAD Global",
+            },
+          },
+        ],
+      },
     },
     {
       "@type": "Person",
@@ -119,8 +224,30 @@ const globalStructuredData = {
       name: "Aashish Chauhan",
       jobTitle: "Founder & Chief Expedition Director",
       worksFor: {
+        "@type": "Organization",
         "@id": "https://kradind.com/#organization",
+        name: "KRADIND Adventures",
       },
+      alumniOf: {
+        "@type": "EducationalOrganization",
+        name: "Nehru Institute of Mountaineering (NIM)",
+      },
+      hasCredential: [
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "Certified High-Altitude Mountaineering Leader (NIM)",
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "Wilderness First Aid (WFA) Certified",
+        },
+      ],
+      knowsAbout: [
+        "Himalayan Mountaineering",
+        "High-Altitude Wilderness Expeditions",
+        "Alpine Trail Weather Radar",
+        "Leave No Trace (LNT) Mountain Standards",
+      ],
       description:
         "Himalayan mountaineer and wilderness expedition specialist leading certified high-altitude treks across India.",
       telephone: "+91 75002 22141",
@@ -181,7 +308,7 @@ const globalStructuredData = {
         "https://www.facebook.com/share/189E2RUcH4/",
         "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
         "https://x.com/KradGlobalTour",
-        "https://www.threads.com/@kradglobal",
+        "https://www.threads.net/@kradglobal",
         "https://in.pinterest.com/KradGlobalTravels/",
       ],
     },
@@ -193,7 +320,9 @@ const globalStructuredData = {
       priceRange: "₹₹",
       telephone: "+91 75002 22141",
       parentOrganization: {
+        "@type": "Organization",
         "@id": "https://kradind.com/#organization",
+        name: "KRADIND Adventures",
       },
     },
     {
@@ -203,8 +332,12 @@ const globalStructuredData = {
       name: "KRADIND Adventures",
       description:
         "Himalayan Treks, Domestic & International Adventures, Live Ground Radar",
+      datePublished: "2026-01-01T00:00:00+05:30",
+      dateModified: "2026-09-14T12:00:00+05:30",
       publisher: {
+        "@type": "Organization",
         "@id": "https://kradind.com/#organization",
+        name: "KRADIND Adventures",
       },
       potentialAction: {
         "@type": "SearchAction",
@@ -230,11 +363,16 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-icon.png" />
+        
+        {/* AI Discoverability / GEO Index */}
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Content Index" />
+        <link rel="help" type="text/plain" href="/llms.txt" title="AI Agent Documentation" />
+
         {/* Preconnect to external image CDN for fast mobile LCP */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        {/* Preload initial hero LCP image for instant discovery */}
-        <link rel="preload" as="image" href="/ocean-sunrise.jpg" fetchPriority="high" />
+        {/* Preload initial hero LCP image (optimized modern WebP) for instant discovery */}
+        <link rel="preload" as="image" href="/ocean-sunrise.webp" fetchPriority="high" type="image/webp" />
         {/* Global JSON-LD Schema (Organization & WebSite with SearchAction) */}
         <script
           type="application/ld+json"
@@ -244,6 +382,14 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-slate-50 text-slate-800 antialiased font-sans relative overflow-x-hidden w-full max-w-full">
+        {/* Accessible Skip Navigation Link */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2.5 focus:bg-emerald-800 focus:text-white focus:rounded-xl focus:shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 font-bold text-xs uppercase tracking-wider transition-all"
+        >
+          Skip to main content
+        </a>
+
         {/* Google tag (gtag.js) deferred with lazyOnload to keep mobile TBT at 0ms */}
         <Script
           strategy="lazyOnload"

@@ -72,13 +72,7 @@ export default function ContactPage() {
           {/* Contact Details */}
           <address
             className="not-italic space-y-6"
-            itemScope
-            itemType="https://schema.org/LocalBusiness"
           >
-            <meta itemProp="name" content="KRADIND Adventures" />
-            <meta itemProp="image" content="https://kradind.com/logo.png" />
-            <meta itemProp="priceRange" content="₹₹" />
-
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
               <div className="p-3 bg-emerald-100 text-[#0F3A2E] rounded-xl shrink-0">
                 <Phone className="w-6 h-6" />

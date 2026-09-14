@@ -180,21 +180,29 @@ export function BookingModal({
               </div>
 
               {/* Promo code field */}
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Promo Code (e.g. MONSOON2026)"
-                  value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
-                  className="flex-1 bg-slate-100 border border-slate-300 text-slate-900 text-xs font-semibold rounded-xl p-2.5 outline-none uppercase"
-                />
-                <button
-                  type="button"
-                  onClick={handleApplyPromo}
-                  className="bg-slate-900 text-white text-xs font-bold px-3 py-2.5 rounded-xl hover:bg-slate-800 transition"
-                >
-                  Apply
-                </button>
+              <div>
+                <label htmlFor="booking-promo" className="sr-only">
+                  Promo Code
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="booking-promo"
+                    name="promoCode"
+                    type="text"
+                    aria-label="Promo Code"
+                    placeholder="Promo Code (e.g. MONSOON2026)"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    className="flex-1 bg-slate-100 border border-slate-300 text-slate-900 text-xs font-semibold rounded-xl p-2.5 outline-none uppercase"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyPromo}
+                    className="bg-slate-900 text-white text-xs font-bold px-3 py-2.5 rounded-xl hover:bg-slate-800 transition"
+                  >
+                    Apply
+                  </button>
+                </div>
               </div>
 
               {promoApplied && (
@@ -207,8 +215,14 @@ export function BookingModal({
 
               {/* Contact info */}
               <div>
+                <label htmlFor="booking-fullname" className="sr-only">
+                  Full Name
+                </label>
                 <input
+                  id="booking-fullname"
+                  name="fullName"
                   type="text"
+                  aria-label="Full Name"
                   placeholder="Full Name"
                   required
                   value={name}
@@ -218,22 +232,38 @@ export function BookingModal({
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-3 outline-none focus:border-[#0F3A2E]"
-                />
-                <input
-                  type="tel"
-                  placeholder="Phone / WhatsApp"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-3 outline-none focus:border-[#0F3A2E]"
-                />
+                <div>
+                  <label htmlFor="booking-email" className="sr-only">
+                    Email Address
+                  </label>
+                  <input
+                    id="booking-email"
+                    name="email"
+                    type="email"
+                    aria-label="Email Address"
+                    placeholder="Email Address"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-3 outline-none focus:border-[#0F3A2E]"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="booking-phone" className="sr-only">
+                    Phone / WhatsApp
+                  </label>
+                  <input
+                    id="booking-phone"
+                    name="phone"
+                    type="tel"
+                    aria-label="Phone or WhatsApp Number"
+                    placeholder="Phone / WhatsApp"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-3 outline-none focus:border-[#0F3A2E]"
+                  />
+                </div>
               </div>
             </div>
 

@@ -25,6 +25,20 @@ function formatCategoryName(slug: string): string {
   return map[slug.toLowerCase()] || slug.charAt(0).toUpperCase() + slug.slice(1);
 }
 
+function getCategoryBannerAlt(category: string): string {
+  const c = category.toLowerCase();
+  if (c === "domestic") return "Domestic tour packages across India by KRADIND";
+  if (c === "international") return "International tour packages and holiday destinations by KRADIND";
+  if (c === "himalayas") return "Himalayan mountain trekking destinations by KRADIND";
+  if (c === "kerala") return "Kerala backwaters and holiday destinations by KRADIND";
+  if (c === "ladakh") return "Ladakh mountain and high altitude travel destination";
+  if (c === "meghalaya") return "Meghalaya waterfalls and natural travel destinations";
+  if (c === "rajasthan") return "Rajasthan heritage forts and palace tour destination";
+  if (c === "goa") return "Goa beaches and holiday destinations";
+  if (c === "weekend") return "Weekend escapes and short breaks by KRADIND";
+  return `${formatCategoryName(category)} holiday and tour packages by KRADIND`;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -51,7 +65,7 @@ export async function generateMetadata({
           url: "https://kradind.com/logo.png",
           width: 1475,
           height: 950,
-          alt: `${catName} Treks - KRADIND Adventures`,
+          alt: getCategoryBannerAlt(category),
         },
       ],
       type: "website",

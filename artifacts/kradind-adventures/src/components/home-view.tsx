@@ -11,6 +11,8 @@ import { WeekendTreks } from "@/components/weekend-treks";
 import { LiveRadar } from "@/components/live-radar";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
+import { EEATAuthoritySection } from "@/components/eeat-authority-section";
+import { SocialShare } from "@/components/social-share";
 import { HomeSectionsConfig, TrailRadarReport, TrekData } from "@/lib/cms-store";
 
 export function HomeView({
@@ -65,7 +67,7 @@ export function HomeView({
       <Header onBookClick={() => handleOpenBooking("Kedarkantha Summit Trek")} />
 
       {/* Main content */}
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* Hero Banner with Filter Widget */}
         <HeroSearch config={sections?.hero} />
 
@@ -86,6 +88,14 @@ export function HomeView({
 
         {/* Live Ground Radar */}
         <LiveRadar initialReports={radarReports} />
+
+        {/* Social Share Bar */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-end">
+          <SocialShare title="KRADIND Adventures | Himalayan Treks & Expeditions" />
+        </div>
+
+        {/* E-E-A-T Editorial Authority, Founder Credentials & FAQs */}
+        <EEATAuthoritySection />
       </main>
 
       {/* Footer */}

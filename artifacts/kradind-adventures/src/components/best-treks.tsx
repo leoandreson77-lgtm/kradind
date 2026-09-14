@@ -5,6 +5,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin, Clock, ArrowRight } from "lucide-react";
 import { treks } from "@/lib/travel-data";
+function getTopTrekAlt(trek: { slug?: string; name?: string }) {
+  const s = (trek.slug || "").toLowerCase();
+  const n = (trek.name || "").toLowerCase();
+  if (s.includes("chopta") || n.includes("chopta")) {
+    return "Chopta Tungnath Chandrashila trekking route in Uttarakhand";
+  }
+  if (s.includes("hampta") || n.includes("hampta")) {
+    return "Hampta Pass crossover trek in Himachal Pradesh";
+  }
+  if (s.includes("kheerganga") || n.includes("kheerganga")) {
+    return "Kheerganga hot spring trek in Parvati Valley Himachal Pradesh";
+  }
+  if (s.includes("ladakh") || n.includes("ladakh")) {
+    return "Leh Ladakh high passes expedition with Pangong Lake";
+  }
+  return `${trek.name} trekking route in India by KRADIND`;
+}
 
 export function BestTreks({
   treks: treksProp,
@@ -67,7 +84,7 @@ export function BestTreks({
                 <div className="relative h-48 overflow-hidden bg-slate-100">
                   <Image
                     src={trek.image}
-                    alt={trek.name}
+                    alt={getTopTrekAlt(trek)}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     loading="lazy"

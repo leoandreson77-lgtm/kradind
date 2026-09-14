@@ -45,7 +45,7 @@ export function Footer() {
     },
     {
       name: "Threads",
-      url: "https://www.threads.com/@kradglobal",
+      url: "https://www.threads.net/@kradglobal",
       icon: FaThreads,
       color: "hover:bg-white hover:text-black hover:border-white",
       bg: "bg-slate-800 text-slate-300 border-slate-700",
@@ -71,7 +71,7 @@ export function Footer() {
             <div className="flex items-center gap-3">
               <Image
                 src="/logo-emblem.png"
-                alt="KRADIND"
+                alt="KRADIND tour and travel company logo"
                 width={44}
                 height={44}
                 loading="lazy"
@@ -89,17 +89,12 @@ export function Footer() {
             </div>
 
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-              India&apos;s premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders under KRAD Global.
+              KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.
             </p>
 
             <address
               className="not-italic space-y-2.5 pt-2 text-slate-300 text-xs"
-              itemScope
-              itemType="https://schema.org/LocalBusiness"
             >
-              <meta itemProp="name" content="KRADIND Adventures / KRAD Global" />
-              <meta itemProp="priceRange" content="₹₹" />
-              <meta itemProp="image" content="https://kradind.com/logo.png" />
               <a
                 href="tel:+917500222141"
                 className="flex items-center gap-2.5 hover:text-emerald-400 transition"
@@ -205,6 +200,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/editorial-policy" className="hover:text-white transition text-emerald-300 font-medium">
+                  Editorial &amp; Safety Policy
+                </Link>
+              </li>
+              <li>
                 <Link href="/cancellation-policy" className="hover:text-white transition">
                   Cancellation &amp; Refund
                 </Link>
@@ -215,13 +215,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/cookie-policy" className="hover:text-white transition">
-                  Cookie Policy
+                <Link href="/visa-policy" className="hover:text-white transition text-emerald-300 font-medium">
+                  Visa &amp; International
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="hover:text-white transition">
-                  Disclaimers &amp; Visa
+                <Link href="/llms.txt" target="_blank" rel="noopener noreferrer" className="hover:text-white transition text-slate-400">
+                  AI Context (llms.txt)
                 </Link>
               </li>
             </ul>
@@ -289,6 +289,8 @@ export function Footer() {
             <Link href="/booking-policy" className="hover:text-emerald-400 transition">Payments</Link>
             <span>•</span>
             <Link href="/cookie-policy" className="hover:text-emerald-400 transition">Cookies</Link>
+            <span>•</span>
+            <Link href="/visa-policy" className="hover:text-emerald-400 transition">Visa &amp; Intl</Link>
             <span>•</span>
             <Link href="/disclaimer" className="hover:text-emerald-400 transition">Disclaimers</Link>
             <span>•</span>

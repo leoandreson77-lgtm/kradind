@@ -27,6 +27,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { LandingPageData, TrekData } from "@/lib/cms-store";
+import { ImageUploader } from "@/components/admin/image-uploader";
 
 const DEFAULT_NEW_PAGE: LandingPageData = {
   id: "",
@@ -662,24 +663,14 @@ export default function AdminLandingPagesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Hero Image URL</label>
-                    <input
-                      type="text"
+                    <ImageUploader
+                      mode="single"
                       value={editingPage.heroImage}
-                      onChange={(e) => setEditingPage({ ...editingPage, heroImage: e.target.value })}
-                      placeholder="https://images.unsplash.com/..."
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none font-mono text-xs"
+                      onChange={(url) => setEditingPage({ ...editingPage, heroImage: url })}
+                      label="Campaign Hero Photo"
+                      description="High-resolution hero background photo displayed on this landing page."
+                      aspect="banner"
                     />
-                    {editingPage.heroImage && (
-                      <div className="mt-2 relative h-32 rounded-xl overflow-hidden border border-slate-200">
-                        <Image
-                          src={editingPage.heroImage}
-                          alt="Hero preview"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
                   </div>
 
                   <div>

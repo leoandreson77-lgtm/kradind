@@ -20,6 +20,22 @@ function normalizeType(val?: string | null): string {
   return val;
 }
 
+function getTrekCatalogAlt(trek: { slug?: string; name?: string; location?: string }) {
+  const s = (trek.slug || "").toLowerCase();
+  const n = (trek.name || "").toLowerCase();
+  if (s.includes("chopta") || n.includes("chopta")) return "Chopta Tungnath Chandrashila trekking route in Uttarakhand";
+  if (s.includes("hampta") || n.includes("hampta")) return "Hampta Pass crossover trek in Himachal Pradesh";
+  if (s.includes("kheerganga") || n.includes("kheerganga")) return "Kheerganga hot spring trek in Parvati Valley Himachal Pradesh";
+  if (s.includes("ladakh") || n.includes("ladakh")) return "Leh Ladakh high passes expedition with Pangong Lake";
+  if (s.includes("kedarkantha") || n.includes("kedarkantha")) return "Kedarkantha winter trek in Uttarakhand by KRADIND";
+  if (s.includes("kashmir") || n.includes("kashmir")) return "Kashmir Great Lakes alpine trek by KRADIND";
+  if (s.includes("meghalaya") || n.includes("meghalaya")) return "Meghalaya monsoon tour with waterfalls and living root bridges";
+  if (s.includes("kerala") || n.includes("kerala")) return "Kerala backwaters holiday tour by KRADIND";
+  if (s.includes("jaipur") || n.includes("jaipur")) return "Jaipur royal heritage weekend tour";
+  if (s.includes("nainital") || n.includes("nainital")) return "Nainital and Kumaon weekend holiday tour";
+  return `${trek.name} trekking route in ${trek.location || "India"} by KRADIND`;
+}
+
 export function TreksContent({
   initialCategory,
   initialTreks,
@@ -270,7 +286,7 @@ export function TreksContent({
                 <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
                   <img
                     src={trek.image}
-                    alt={trek.name}
+                    alt={getTrekCatalogAlt(trek)}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />

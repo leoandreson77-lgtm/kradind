@@ -33,10 +33,11 @@ export function FloatingWhatsApp() {
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
+        aria-label="Chat on WhatsApp with KRADIND Adventures"
         className="animate-whatsapp-btn flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full transition-transform duration-200 hover:scale-110 active:scale-95 shadow-xl"
       >
         <FaWhatsapp className="w-8 h-8 text-white" />
+        <span className="sr-only">Chat on WhatsApp with KRADIND Adventures</span>
       </a>
     </div>
   );

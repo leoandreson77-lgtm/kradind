@@ -33,15 +33,26 @@ export function MountainAtmosphere({
     if (!ctx) return;
 
     let animId: number;
-    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
+    const parent = canvas.parentElement;
+    let width = parent?.clientWidth || window.innerWidth;
+    let height = parent?.clientHeight || window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
 
+    let resizeRaf: number | null = null;
     const handleResize = () => {
-      if (!canvas.parentElement) return;
-      width = canvas.width = canvas.parentElement.clientWidth;
-      height = canvas.height = canvas.parentElement.clientHeight;
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        if (!canvas.parentElement) return;
+        const newW = canvas.parentElement.clientWidth;
+        const newH = canvas.parentElement.clientHeight;
+        if (newW !== width || newH !== height) {
+          width = canvas.width = newW;
+          height = canvas.height = newH;
+        }
+      });
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
     // ==========================================
     // 1. SNOW PARTICLES (Barf Gir Rahi Hai)
@@ -423,6 +434,7 @@ export function MountainAtmosphere({
 
     return () => {
       cancelAnimationFrame(animId);
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibility);
     };

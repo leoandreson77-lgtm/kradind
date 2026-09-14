@@ -17,15 +17,20 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0 group py-1">
+        <Link
+          href="/"
+          aria-label="KRADIND Adventures - Explore, Trek, Travel Homepage"
+          className="flex items-center gap-2 shrink-0 group py-1"
+        >
           <Image
             src="/logo-horizontal.png"
-            alt="KRADIND - Explore, Trek, Travel"
+            alt="KRADIND tour and travel company logo"
             width={195}
             height={50}
             className="h-9 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
             priority
           />
+          <span className="sr-only">KRADIND Adventures Homepage</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -52,11 +57,10 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
               />
             </button>
 
-            <div
-              className={`${
-                treksDropdownOpen ? "block" : "hidden lg:group-hover:block"
-              } absolute top-full -left-20 lg:-left-24 w-[880px] max-w-[92vw] bg-white border border-slate-200/95 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150`}
-            >
+            {treksDropdownOpen && (
+              <div
+                className="absolute top-full -left-20 lg:-left-24 w-[880px] max-w-[92vw] bg-white border border-slate-200/95 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
               {/* Mega Menu Top Header */}
               <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -360,6 +364,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                 </a>
               </div>
             </div>
+            )}
           </div>
 
           {/* Domestic Trips State-Wise Mega Menu */}
@@ -380,11 +385,10 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
               />
             </button>
 
-            <div
-              className={`${
-                domesticDropdownOpen ? "block" : "hidden lg:group-hover:block"
-              } absolute top-full -left-44 w-[860px] max-w-[92vw] bg-white border border-slate-200/95 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150`}
-            >
+            {domesticDropdownOpen && (
+              <div
+                className="absolute top-full -left-44 w-[860px] max-w-[92vw] bg-white border border-slate-200/95 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
               {/* Mega Menu Top Header */}
                 <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-slate-100">
                   <div className="flex items-center gap-2">
@@ -678,7 +682,8 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                   </a>
                 </div>
               </div>
-            </div>
+            )}
+          </div>
 
           <Link href="/treks/category/international" className="hover:text-[#0F3A2E] transition">
             International Trips

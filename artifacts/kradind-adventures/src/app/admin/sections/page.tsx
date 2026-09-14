@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Check, Sparkles, Sliders, CloudRain, PhoneCall, Save, ExternalLink } from "lucide-react";
 import { HomeSectionsConfig } from "@/lib/cms-store";
+import { ImageUploader } from "@/components/admin/image-uploader";
 
 export default function AdminSectionsPage() {
   const [sections, setSections] = useState<HomeSectionsConfig | null>(null);
@@ -169,19 +170,19 @@ export default function AdminSectionsPage() {
             />
           </div>
 
-          <div>
-            <label className="block font-semibold text-slate-700 mb-1">Hero Background Image URL</label>
-            <input
-              type="text"
+          <div className="pt-2">
+            <ImageUploader
+              mode="single"
               value={sections.hero.bgImage}
-              onChange={(e) =>
+              onChange={(url) =>
                 setSections({
                   ...sections,
-                  hero: { ...sections.hero, bgImage: e.target.value },
+                  hero: { ...sections.hero, bgImage: url },
                 })
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono text-slate-600"
-              placeholder="https://images.unsplash.com/photo-..."
+              label="Hero Background Photo"
+              description="Full-bleed background hero picture displayed on the homepage."
+              aspect="banner"
             />
           </div>
         </div>

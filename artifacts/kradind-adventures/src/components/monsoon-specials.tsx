@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { CloudRain, Check } from "lucide-react";
 
 export function MonsoonSpecials({
@@ -67,92 +68,132 @@ export function MonsoonSpecials({
           {/* Card 1: Meghalaya */}
           <Link
             href="/treks/meghalaya-tour-package"
-            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
+            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
           >
-            <div>
-              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
+            <div className="relative h-44 w-full overflow-hidden bg-slate-950">
+              <Image
+                src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=600&q=80"
+                alt="Meghalaya monsoon tour with waterfalls and living root bridges"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={70}
+                loading="lazy"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+              <span className="absolute top-3 left-3 bg-emerald-500/90 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase shadow">
                 Waterfall Paradise
               </span>
-              <h3 className="text-base font-bold mt-2 group-hover:text-emerald-300 transition">
-                Meghalaya Abode of Clouds Tour
-              </h3>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                Living root bridges, roaring Cherrapunji falls, and crystal-clear Umngot waters.
-              </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+            <div className="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <span className="text-[11px] text-slate-400 line-through">₹21,499</span>
-                <span className="text-base font-extrabold text-emerald-300 ml-1">₹16,999</span>
+                <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition">
+                  Meghalaya Abode of Clouds Tour
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Living root bridges, roaring Cherrapunji falls, and crystal-clear Umngot waters.
+                </p>
               </div>
-              <span
-                className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
-              >
-                Claim Offer
-              </span>
+              <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+                <div>
+                  <span className="text-[11px] text-slate-400 line-through">₹21,499</span>
+                  <span className="text-base font-extrabold text-emerald-300 ml-1">₹16,999</span>
+                </div>
+                <span
+                  className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
+                >
+                  Claim Offer
+                </span>
+              </div>
             </div>
           </Link>
 
           {/* Card 2: Hampta Pass */}
           <Link
             href="/treks/hampta-pass"
-            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
+            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
           >
-            <div>
-              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
+            <div className="relative h-44 w-full overflow-hidden bg-slate-950">
+              <Image
+                src="/monsoon-rain.webp"
+                alt="Hampta Pass monsoon trekking experience in Himachal Pradesh"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={70}
+                loading="lazy"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+              <span className="absolute top-3 left-3 bg-emerald-500/90 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase shadow">
                 Rain-Shadow Crossover
               </span>
-              <h3 className="text-base font-bold mt-2 group-hover:text-emerald-300 transition">
-                Hampta Pass Crossover Trek
-              </h3>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                Dramatic transition from green Kullu meadows into the high barren valleys of Spiti.
-              </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+            <div className="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <span className="text-[11px] text-slate-400 line-through">₹12,999</span>
-                <span className="text-base font-extrabold text-emerald-300 ml-1">₹9,999</span>
+                <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition">
+                  Hampta Pass Crossover Trek
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Dramatic transition from green Kullu meadows into the high barren valleys of Spiti.
+                </p>
               </div>
-              <span
-                className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
-              >
-                Claim Offer
-              </span>
+              <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+                <div>
+                  <span className="text-[11px] text-slate-400 line-through">₹12,999</span>
+                  <span className="text-base font-extrabold text-emerald-300 ml-1">₹9,999</span>
+                </div>
+                <span
+                  className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
+                >
+                  Claim Offer
+                </span>
+              </div>
             </div>
           </Link>
 
           {/* Card 3: Kerala */}
           <Link
             href="/treks/kerala-tour-package"
-            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden p-5 flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
+            className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
           >
-            <div>
-              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
+            <div className="relative h-44 w-full overflow-hidden bg-slate-950">
+              <Image
+                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80"
+                alt="Kerala backwaters and Munnar holiday tour"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={70}
+                loading="lazy"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+              <span className="absolute top-3 left-3 bg-emerald-500/90 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase shadow">
                 Tea Hills & Backwaters
               </span>
-              <h3 className="text-base font-bold mt-2 group-hover:text-emerald-300 transition">
-                Kerala Backwaters & Hills Tour
-              </h3>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                Misty tea hills of Munnar, spice hills of Thekkady, and private Alleppey houseboat.
-              </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+            <div className="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <span className="text-[11px] text-slate-400 line-through">₹23,999</span>
-                <span className="text-base font-extrabold text-emerald-300 ml-1">₹18,499</span>
+                <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition">
+                  Kerala Backwaters &amp; Hills Tour
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Misty tea hills of Munnar, spice hills of Thekkady, and private Alleppey houseboat.
+                </p>
               </div>
-              <span
-                className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
-              >
-                Claim Offer
-              </span>
+              <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+                <div>
+                  <span className="text-[11px] text-slate-400 line-through">₹23,999</span>
+                  <span className="text-base font-extrabold text-emerald-300 ml-1">₹18,499</span>
+                </div>
+                <span
+                  className="bg-emerald-400 group-hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition shadow inline-block"
+                >
+                  Claim Offer
+                </span>
+              </div>
             </div>
           </Link>
-
         </div>
-
       </div>
     </section>
   );

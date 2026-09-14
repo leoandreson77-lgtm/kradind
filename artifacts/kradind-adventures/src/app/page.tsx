@@ -5,31 +5,54 @@ import {
   getTreksAsync,
   getTrailReportsAsync,
   getLandingPagesAsync,
+  TrekData,
 } from "@/lib/cms-store";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "KRADIND Adventures | Certified Himalayan Treks & High-Altitude Expeditions",
+  title: "KRAD Global | Tour & Travel Company in Dehradun | India",
   description:
-    "India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.",
+    "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+  keywords: [
+    "tour and travel company in Dehradun",
+    "travel agency in Dehradun",
+    "tour operator in Dehradun",
+    "domestic tour packages",
+    "international tour packages",
+    "India tour packages",
+    "customized tour packages",
+    "KRAD Global",
+    "Dehradun travel and tour services",
+    "Himalayan trekking package",
+    "customized holiday package",
+    "tour packages in Dehradun",
+    "KRADIND Adventures",
+  ],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "KRADIND Adventures | Certified Himalayan Treks & High-Altitude Expeditions",
+    title: "KRAD Global | Tour & Travel Company in Dehradun | India",
     description:
-      "India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.",
+      "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
     url: "https://kradind.com",
-    siteName: "KRADIND Adventures",
+    siteName: "KRAD Global",
     images: [
       {
         url: "/logo.png",
         width: 1475,
         height: 950,
-        alt: "KRADIND Adventures",
+        alt: "KRAD Global tour and travel company logo",
       },
     ],
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KRAD Global | Tour & Travel Company in Dehradun | India",
+    description:
+      "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+    images: ["/logo.png"],
   },
 };
 
@@ -46,6 +69,30 @@ export default async function HomePage() {
     ]);
 
     const publishedTreks = (treks || []).filter((t) => t.status === "Published");
+    // Strip heavy itinerary, inclusions, faqs to shrink inline JS payload from 152KB to <25KB
+    const lightweightHomeTreks: TrekData[] = publishedTreks.map((t) => ({
+      id: t.id,
+      slug: t.slug,
+      name: t.name,
+      badge: t.badge,
+      rating: t.rating,
+      reviewCount: t.reviewCount,
+      location: t.location,
+      region: t.region,
+      duration: t.duration,
+      difficulty: t.difficulty,
+      altitude: t.altitude,
+      tagline: t.tagline,
+      price: t.price,
+      originalPrice: t.originalPrice,
+      image: t.image,
+      gallery: [],
+      categories: t.categories,
+      status: t.status,
+      batches: [],
+      itinerary: [],
+    }));
+
     const publishedCampaigns = (campaigns || []).filter((c) => c.status === "Published");
 
     return (
@@ -53,19 +100,42 @@ export default async function HomePage() {
         initialSections={sections}
         initialReports={reports}
         initialCampaigns={publishedCampaigns}
-        initialTreks={publishedTreks}
+        initialTreks={lightweightHomeTreks}
       />
     );
   } catch (err) {
     console.error("HomePage SSR load error:", err);
     const store = readStore();
     const publishedTreks = (store.treks || []).filter((t) => t.status === "Published");
+    const lightweightHomeTreks: TrekData[] = publishedTreks.map((t) => ({
+      id: t.id,
+      slug: t.slug,
+      name: t.name,
+      badge: t.badge,
+      rating: t.rating,
+      reviewCount: t.reviewCount,
+      location: t.location,
+      region: t.region,
+      duration: t.duration,
+      difficulty: t.difficulty,
+      altitude: t.altitude,
+      tagline: t.tagline,
+      price: t.price,
+      originalPrice: t.originalPrice,
+      image: t.image,
+      gallery: [],
+      categories: t.categories,
+      status: t.status,
+      batches: [],
+      itinerary: [],
+    }));
+
     return (
       <HomeView
         initialSections={store.homeSections}
         initialReports={store.trailReports}
         initialCampaigns={store.landingPages}
-        initialTreks={publishedTreks}
+        initialTreks={lightweightHomeTreks}
       />
     );
   }

@@ -12,17 +12,19 @@ interface CarouselSlide {
   badge: string;
   title: string;
   tagline: string;
+  altText: string;
   weatherMode: AtmosphereMode;
 }
 
 const CAROUSEL_SLIDES: CarouselSlide[] = [
   {
     id: "ocean-sunrise",
-    image: "/ocean-sunrise.jpg", // Real ultra-photorealistic ocean sunrise photo
+    image: "/ocean-sunrise.webp", // Modern optimized WebP (136KB vs 838KB)
     badge: "🌅 Ocean Sunrise • Goa & Kerala Sea",
     title: "Golden Ocean Sunrise",
     tagline: "Golden sun rising over open sea waters with shimmering wave reflections",
-    weatherMode: "sunrise", // ONLY ocean sunrise gets ocean sunrise effects!
+    altText: "Himalayan adventure trekking experiences by KRADIND in Dehradun",
+    weatherMode: "sunrise",
   },
   {
     id: "himalayan-snow",
@@ -30,15 +32,17 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
     badge: "❄️ Alpine Snow • Kedarkantha & Chopta",
     title: "Himalayan Snow Peaks",
     tagline: "High-altitude frosty alpine summits & certified winter mountaineering",
-    weatherMode: "snow", // ONLY snow mountains get snowfall!
+    altText: "Himalayan trekking and adventure tours by KRADIND",
+    weatherMode: "snow",
   },
   {
     id: "monsoon-rain",
-    image: "/monsoon-rain.jpg", // Real dramatic stormy monsoon rain clouds & misty mountains!
+    image: "/monsoon-rain.webp", // Modern optimized WebP (189KB vs 962KB)
     badge: "🌧️ Monsoon Rain • Storm Clouds & Falls",
     title: "Monsoon Rain & Mist",
     tagline: "Authentic monsoon rainfall, stormy mountain ridges & lush misty valleys",
-    weatherMode: "rain", // ONLY stormy clouds get rain! No rain on clear sunny sky!
+    altText: "Himalayan adventure trekking experiences by KRADIND in Dehradun",
+    weatherMode: "rain",
   },
   {
     id: "kerala-backwaters",
@@ -46,7 +50,8 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
     badge: "🌴 Clear Skies • Alleppey & Munnar",
     title: "Backwaters & Palms",
     tagline: "Peaceful houseboat cruises, sunny palm groves & clear emerald tea gardens",
-    weatherMode: "clear", // CLEAR WEATHER! Mausam Saaf - NO rain, NO sunrise rays over palms!
+    altText: "Kerala backwaters and holiday destinations by KRADIND",
+    weatherMode: "clear",
   },
 ];
 
@@ -144,7 +149,9 @@ export function HeroSearch({
             >
               <img
                 src={slide.image}
-                alt={slide.title}
+                alt={slide.altText || "Himalayan adventure trekking experiences by KRADIND in Dehradun"}
+                width={1376}
+                height={768}
                 className="w-full h-full object-cover object-center"
                 loading={idx === 0 ? "eager" : "lazy"}
                 fetchPriority={idx === 0 ? "high" : "low"}
@@ -246,13 +253,14 @@ export function HeroSearch({
             
             {/* Field 1: Keyword Input */}
             <div>
-              <label htmlFor="hero-keyword" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-keyword" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                 Keyword / Search
               </label>
               <input
                 id="hero-keyword"
                 name="keyword"
                 type="text"
+                aria-label="Search trips by keyword or destination"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="e.g. Domestic, Kerala, Chopta..."
@@ -262,7 +270,7 @@ export function HeroSearch({
 
             {/* Field 2: Trip Type */}
             <div>
-              <label htmlFor="hero-trip-type" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-trip-type" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                 Trip Type
               </label>
               <select
@@ -283,7 +291,7 @@ export function HeroSearch({
 
             {/* Field 3: Destination */}
             <div>
-              <label htmlFor="hero-destination" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-destination" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                 Destination
               </label>
               <select
@@ -310,7 +318,7 @@ export function HeroSearch({
 
             {/* Field 4: Season */}
             <div>
-              <label htmlFor="hero-season" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="hero-season" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                 Month / Season
               </label>
               <select
@@ -365,7 +373,7 @@ export function HeroSearch({
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-emerald-400 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg bg-emerald-800">
               <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
-                alt="Domestic Tours"
+                alt="Domestic tour packages across India by KRADIND"
                 width={56}
                 height={56}
                 loading="lazy"
@@ -383,7 +391,7 @@ export function HeroSearch({
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=150&q=80"
-                alt="Himalayas"
+                alt="Himalayan mountain trekking destinations by KRADIND"
                 width={56}
                 height={56}
                 loading="lazy"
@@ -401,7 +409,7 @@ export function HeroSearch({
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
-                alt="Kerala"
+                alt="Kerala backwaters and holiday destinations by KRADIND"
                 width={56}
                 height={56}
                 loading="lazy"
@@ -419,7 +427,7 @@ export function HeroSearch({
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=150&q=80"
-                alt="Ladakh"
+                alt="Ladakh mountain and high altitude travel destination"
                 width={56}
                 height={56}
                 loading="lazy"
@@ -437,7 +445,7 @@ export function HeroSearch({
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=150&q=80"
-                alt="Meghalaya"
+                alt="Meghalaya waterfalls and natural travel destinations"
                 width={56}
                 height={56}
                 loading="lazy"
@@ -455,7 +463,7 @@ export function HeroSearch({
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=150&q=80"
-                alt="Rajasthan"
+                alt="Rajasthan heritage forts and palace tour destination"
                 width={56}
                 height={56}
                 loading="lazy"
@@ -473,7 +481,7 @@ export function HeroSearch({
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=150&q=80"
-                alt="Goa"
+                alt="Goa beaches and holiday destinations"
                 width={56}
                 height={56}
                 loading="lazy"

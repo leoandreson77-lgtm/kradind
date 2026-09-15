@@ -109,7 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex items-center gap-2.5">
           <Image
             src="/logo-emblem.png"
-            alt="KRADIND Emblem"
+            alt="KRAD Global tour and travel company logo"
             width={32}
             height={32}
             className="w-7 h-7 object-contain"
@@ -144,7 +144,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="flex items-center gap-3">
               <Image
                 src="/logo-emblem.png"
-                alt="KRADIND Emblem"
+                alt="KRAD Global tour and travel company logo"
                 width={40}
                 height={40}
                 className="w-10 h-10 object-contain drop-shadow-sm"

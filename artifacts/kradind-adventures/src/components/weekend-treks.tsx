@@ -5,23 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Zap, MapPin, Clock, ArrowRight } from "lucide-react";
 import { treks } from "@/lib/travel-data";
+import { getImageAlt } from "@/lib/image-alt";
 
-function getWeekendAlt(trek: { slug?: string; name?: string }) {
-  const s = (trek.slug || "").toLowerCase();
-  const n = (trek.name || "").toLowerCase();
-  if (s.includes("chopta") || n.includes("chopta")) {
-    return "Chopta weekend trekking getaway in Uttarakhand";
-  }
-  if (s.includes("kheerganga") || n.includes("kheerganga")) {
-    return "Kheerganga weekend trek and hot spring experience";
-  }
-  if (s.includes("nainital") || n.includes("nainital")) {
-    return "Nainital and Kumaon weekend holiday tour";
-  }
-  if (s.includes("jaipur") || n.includes("jaipur")) {
-    return "Jaipur royal heritage weekend tour";
-  }
-  return `${trek.name} weekend getaway by KRADIND`;
+function getWeekendAlt(trek: any) {
+  return getImageAlt(trek, "domesticTour");
 }
 
 export function WeekendTreks({ treks: treksProp }: { treks?: any[] }) {
@@ -80,7 +67,7 @@ export function WeekendTreks({ treks: treksProp }: { treks?: any[] }) {
                 <div className="relative h-40 w-full overflow-hidden bg-slate-100">
                   <Image
                     src={trek.image}
-                    alt={getWeekendAlt(trek)}
+                    alt={trek.imageAlt || getWeekendAlt(trek)}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     loading="lazy"

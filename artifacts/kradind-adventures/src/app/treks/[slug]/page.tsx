@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
 import { treks } from "@/lib/travel-data";
 import { TrekData } from "@/lib/cms-store";
+import { getImageAlt } from "@/lib/image-alt";
 import {
   Clock,
   Mountain,
@@ -433,7 +434,7 @@ export default function TrekDetailPage() {
         <div className="absolute inset-0 z-0">
           <img
             src={trek.image}
-            alt={trek.name}
+            alt={trek.imageAlt || getImageAlt(trek)}
             className="w-full h-full object-cover object-center scale-[1.01] transform transition-transform duration-1000"
           />
           {/* Directional gradient: ensures high contrast for text on the left, while fading out smoothly on the center-right so background scenery, houseboat & palms stay bright and clearly visible */}

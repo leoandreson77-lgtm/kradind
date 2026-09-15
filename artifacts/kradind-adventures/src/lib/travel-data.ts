@@ -45,6 +45,7 @@ export interface TrekData {
   rating: number;
   reviewCount: number;
   image: string;
+  imageAlt?: string;
   gallery: string[];
   tagline: string;
   defaultHighlights: string[];

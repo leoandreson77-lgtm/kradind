@@ -163,6 +163,7 @@ export default function AdminTreksPage() {
       location: "Uttarakhand",
       region: "Garhwal",
       image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+      imageAlt: "Himalayan trekking package by KRAD Global",
       gallery: [
         "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80",
@@ -877,6 +878,9 @@ export default function AdminTreksPage() {
                         mode="single"
                         value={editingTrek.image}
                         onChange={(url) => setEditingTrek({ ...editingTrek, image: url })}
+                        alt={editingTrek.imageAlt || ""}
+                        onAltChange={(alt) => setEditingTrek({ ...editingTrek, imageAlt: alt })}
+                        altPlaceholder="e.g. Himalayan trekking package by KRAD Global"
                         aspect="landscape"
                       />
                     </div>

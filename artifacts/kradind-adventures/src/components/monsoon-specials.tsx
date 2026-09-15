@@ -73,7 +73,7 @@ export function MonsoonSpecials({
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
               <Image
                 src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=600&q=80"
-                alt="Meghalaya monsoon tour with waterfalls and living root bridges"
+                alt="Popular India holiday destination featured by KRAD Global"
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
                 quality={70}
@@ -116,7 +116,7 @@ export function MonsoonSpecials({
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
               <Image
                 src="/monsoon-rain.webp"
-                alt="Hampta Pass monsoon trekking experience in Himachal Pradesh"
+                alt="Himalayan trekking package by KRAD Global"
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
                 quality={70}
@@ -159,7 +159,7 @@ export function MonsoonSpecials({
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
               <Image
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80"
-                alt="Kerala backwaters and Munnar holiday tour"
+                alt="Customized holiday package by KRAD Global"
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
                 quality={70}

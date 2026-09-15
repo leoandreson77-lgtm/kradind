@@ -180,6 +180,14 @@ export default function AdminSectionsPage() {
                   hero: { ...sections.hero, bgImage: url },
                 })
               }
+              alt={sections.hero.imageAlt || ""}
+              onAltChange={(alt) =>
+                setSections({
+                  ...sections,
+                  hero: { ...sections.hero, imageAlt: alt },
+                })
+              }
+              altPlaceholder="Domestic and international tour packages by KRAD Global in Dehradun"
               label="Hero Background Photo"
               description="Full-bleed background hero picture displayed on the homepage."
               aspect="banner"

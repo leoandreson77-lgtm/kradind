@@ -14,7 +14,8 @@
       "badge": "Certified Himalayan Guides • Small Safe Batches",
       "title": "Experience the Himalayas",
       "subtitle": "handpicked expeditions led by certified mountaineers.",
-      "bgImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
+      "bgImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
+      "imageAlt": "Domestic and international tour packages by KRAD Global in Dehradun"
     },
     "monsoon": {
       "enabled": true,
@@ -200,7 +201,8 @@
           "title": "Carry Reusable Hydration Flask",
           "desc": "Plastic bottles are discouraged in the Kedarnath Wildlife Sanctuary. Carry a reusable thermos for warm drinking water."
         }
-      ]
+      ],
+      "imageAlt": "Himalayan trekking package by KRAD Global"
     },
     {
       "id": 2,
@@ -488,7 +490,8 @@
         "Rental gear requirements (trekking poles, crampons, waterproof poncho)",
         "Offloading service for personal backpack on mules",
         "Chandratal Lake excursion vehicle upgrade"
-      ]
+      ],
+      "imageAlt": "Himalayan trekking package by KRAD Global"
     },
     {
       "id": 3,
@@ -647,7 +650,8 @@
         "Tent type (Alpine Dome Tent / Swiss Luxury Tent / Homestay)",
         "Meals plan (Breakfast & Dinner vs All Meals)",
         "Kasol to Barshaini pickup and drop options"
-      ]
+      ],
+      "imageAlt": "Himalayan trekking package by KRAD Global"
     },
     {
       "id": 4,
@@ -862,7 +866,8 @@
           "title": "Temple & Cultural Dress Codes",
           "desc": "Traditional attire is required at several ancient temples like Padmanabhaswamy. Check dress rules in advance."
         }
-      ]
+      ],
+      "imageAlt": "Customized holiday package by KRAD Global"
     },
     {
       "id": 5,
@@ -1124,7 +1129,8 @@
           "title": "Ghat Road Driving Caution",
           "desc": "The ghat roads feature sharp hairpin turns. Drive carefully or hire experienced local cab drivers familiar with Sahyadri fog and mist."
         }
-      ]
+      ],
+      "imageAlt": "Domestic tour package in India by KRAD Global"
     },
     {
       "id": 6,
@@ -1335,7 +1341,8 @@
         "Accommodation tier (Boutique Villa / Beach Resort / 4-Star Luxury)",
         "Vehicle requirements (Self-drive / Dedicated AC private cab)",
         "Water sports and island boat cruise inclusions"
-      ]
+      ],
+      "imageAlt": "Customized holiday package by KRAD Global"
     },
     {
       "id": 7,
@@ -1546,7 +1553,8 @@
         "Hotel category (Heritage Haveli / 3-Star / 4-Star / 5-Star Luxury)",
         "Private AC vehicle choice (Sedan / Innova / Tempo Traveller)",
         "Group size and customised sightseeing additions"
-      ]
+      ],
+      "imageAlt": "Domestic tour package in India by KRAD Global"
     },
     {
       "id": 8,
@@ -1787,7 +1795,8 @@
         "Dedicated private vehicle type (Sedan / SUV / Tempo Traveller)",
         "Additional destinations (Double Decker Root Bridge, Jowai, Mawsynram)",
         "Included meals and adventure activity arrangements"
-      ]
+      ],
+      "imageAlt": "Popular India holiday destination featured by KRAD Global"
     },
     {
       "id": 9,
@@ -2079,7 +2088,8 @@
           "title": "Extreme Sub-Zero Thermal Gear",
           "desc": "High passes and Pangong Lake camps freeze at night. Carry heavy down jackets, woolen caps, thermal inners, and insulated gloves."
         }
-      ]
+      ],
+      "imageAlt": "Himalayan trekking package by KRAD Global"
     },
     {
       "id": 10,
@@ -2349,7 +2359,8 @@
           "title": "Cash Reserves for Mountain Towns",
           "desc": "Network connectivity is limited in remote Himalayan hamlets. Carry adequate cash for food, hot water, and local taxis."
         }
-      ]
+      ],
+      "imageAlt": "Popular India holiday destination featured by KRAD Global"
     },
     {
       "id": 11,
@@ -2559,7 +2570,8 @@
           "title": "Respect Wildlife Regulations",
           "desc": "Maintain strict silence inside national parks. Never step down from safari jeeps unless permitted at designated watchtowers."
         }
-      ]
+      ],
+      "imageAlt": "Popular India holiday destination featured by KRAD Global"
     },
     {
       "id": 12,
@@ -2765,7 +2777,8 @@
         "Hotel category (Lake Facing / Hill View / Luxury Heritage)",
         "Transport options (Kathgodam transfer vs Delhi roundtrip cab)",
         "Sightseeing excursions (Mukteshwar, Ranikhet, or Corbett National Park)"
-      ]
+      ],
+      "imageAlt": "Popular India holiday destination featured by KRAD Global"
     },
     {
       "id": 13,
@@ -2996,7 +3009,8 @@
         "Camp luxury level (Standard Swiss Tent vs Royal AC Jacuzzi Tent)",
         "Adventure activities (Parasailing / Quad Biking / Jeep Dune Bashing)",
         "Private vehicle type for Jodhpur-Jaisalmer highway transfers"
-      ]
+      ],
+      "imageAlt": "Domestic tour package in India by KRAD Global"
     }
   ],
   "trailReports": [
@@ -3240,7 +3254,9 @@
         "faqs": true
       },
       "createdAt": "2026-09-05T08:16:50.834Z",
-      "updatedAt": "2026-09-05T08:16:50.834Z"
+      "updatedAt": "2026-09-05T08:16:50.834Z",
+      "heroImageAlt": "Himalayan trekking package by KRAD Global",
+      "imageAlt": "Himalayan trekking package by KRAD Global"
     },
     {
       "id": "lp-kashmir-great-lakes-2026",
@@ -3332,7 +3348,9 @@
         "faqs": true
       },
       "createdAt": "2026-09-05T08:16:50.834Z",
-      "updatedAt": "2026-09-05T08:16:50.834Z"
+      "updatedAt": "2026-09-05T08:16:50.834Z",
+      "heroImageAlt": "Himalayan trekking package by KRAD Global",
+      "imageAlt": "Himalayan trekking package by KRAD Global"
     },
     {
       "id": "lp-kedarnath-tour-package",
@@ -3436,7 +3454,9 @@
         "faqs": true
       },
       "createdAt": "2026-09-05T10:28:01.921Z",
-      "updatedAt": "2026-09-05T10:28:01.921Z"
+      "updatedAt": "2026-09-05T10:28:01.921Z",
+      "heroImageAlt": "Customized holiday package by KRAD Global",
+      "imageAlt": "Customized holiday package by KRAD Global"
     },
     {
       "id": "lp-char-dham-yatra-package",
@@ -3540,7 +3560,9 @@
         "faqs": true
       },
       "createdAt": "2026-09-05T10:28:01.921Z",
-      "updatedAt": "2026-09-05T10:28:01.921Z"
+      "updatedAt": "2026-09-05T10:28:01.921Z",
+      "heroImageAlt": "Domestic tour package in India by KRAD Global",
+      "imageAlt": "Domestic tour package in India by KRAD Global"
     },
     {
       "id": "lp-do-dham-yatra-package",
@@ -3643,7 +3665,9 @@
         "faqs": true
       },
       "createdAt": "2026-09-05T10:28:01.921Z",
-      "updatedAt": "2026-09-05T10:28:01.921Z"
+      "updatedAt": "2026-09-05T10:28:01.921Z",
+      "heroImageAlt": "Domestic tour package in India by KRAD Global",
+      "imageAlt": "Domestic tour package in India by KRAD Global"
     }
   ]
 }

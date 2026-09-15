@@ -667,6 +667,11 @@ export default function AdminLandingPagesPage() {
                       mode="single"
                       value={editingPage.heroImage}
                       onChange={(url) => setEditingPage({ ...editingPage, heroImage: url })}
+                      alt={editingPage.heroImageAlt || editingPage.imageAlt || ""}
+                      onAltChange={(alt) =>
+                        setEditingPage({ ...editingPage, heroImageAlt: alt, imageAlt: alt })
+                      }
+                      altPlaceholder="e.g. Himalayan trekking package by KRAD Global"
                       label="Campaign Hero Photo"
                       description="High-resolution hero background photo displayed on this landing page."
                       aspect="banner"

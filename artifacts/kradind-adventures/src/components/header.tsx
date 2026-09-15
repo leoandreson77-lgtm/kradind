@@ -24,7 +24,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         >
           <Image
             src="/logo-horizontal.png"
-            alt="KRADIND tour and travel company logo"
+            alt="KRAD Global tour and travel company logo"
             width={195}
             height={50}
             className="h-9 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
@@ -316,7 +316,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     <div className="relative h-24 w-full bg-slate-900">
                       <Image
                         src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
-                        alt="Hampta Pass Trek"
+                        alt="Himalayan trekking package by KRAD Global"
                         fill
                         className="object-cover group-hover:scale-105 transition duration-500 opacity-85"
                         sizes="(max-width: 768px) 100vw, 300px"

@@ -15,26 +15,10 @@ import {
   Users,
 } from "lucide-react";
 import { LandingPageData } from "@/lib/cms-store";
+import { getImageAlt } from "@/lib/image-alt";
 
-function getCampaignAlt(camp: { slug?: string; title?: string }) {
-  const s = (camp.slug || "").toLowerCase();
-  const t = (camp.title || "").toLowerCase();
-  if (s.includes("kedarkantha") || t.includes("kedarkantha")) {
-    return "Kedarkantha winter trek 2026 expedition by KRADIND";
-  }
-  if (s.includes("kashmir") || t.includes("kashmir")) {
-    return "Kashmir Great Lakes alpine trek by KRADIND";
-  }
-  if (s.includes("char-dham") || t.includes("char dham")) {
-    return "Char Dham Yatra package covering Yamunotri Gangotri Kedarnath and Badrinath";
-  }
-  if (s.includes("do-dham") || t.includes("do dham")) {
-    return "Kedarnath and Badrinath Do Dham Yatra package";
-  }
-  if (s.includes("kedarnath") || t.includes("kedarnath")) {
-    return "Kedarnath Yatra tour package by KRADIND";
-  }
-  return `${camp.title || "Featured campaign"} - Holiday and tour package by KRADIND`;
+function getCampaignAlt(camp: any) {
+  return camp.heroImageAlt || camp.imageAlt || getImageAlt(camp, "trekking");
 }
 
 export function CampaignSection({

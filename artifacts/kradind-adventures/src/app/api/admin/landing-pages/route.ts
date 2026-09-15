@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
       subtitle: body.subtitle || "",
       badge: body.badge || "EXCLUSIVE EXPEDITION",
       heroImage: body.heroImage || "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85",
+      heroImageAlt: body.heroImageAlt || body.imageAlt || "",
       promoOffer: body.promoOffer || {
         tag: "LIMITED PROMO",
         discountText: "Early Bird Discount",

@@ -15,6 +15,7 @@ import {
   LandingPageTestimonial,
   TrekData,
 } from "@/lib/cms-store";
+import { getImageAlt } from "@/lib/image-alt";
 import {
   Mountain,
   CheckCircle2,
@@ -234,7 +235,7 @@ export default function LandingPageRoute({
           <div className="absolute inset-0 z-0">
             <Image
               src={page.heroImage}
-              alt={page.title}
+              alt={page.heroImageAlt || page.imageAlt || getImageAlt(page, "trekking")}
               fill
               priority
               quality={80}

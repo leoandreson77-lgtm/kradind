@@ -18,12 +18,17 @@ import {
   Maximize2,
   Copy,
   ExternalLink,
+  Tag,
 } from "lucide-react";
+import { ALT_TEXT_PRESETS } from "@/lib/image-alt";
 
 interface SingleImageUploaderProps {
   mode?: "single";
   value: string;
   onChange: (url: string) => void;
+  alt?: string;
+  onAltChange?: (alt: string) => void;
+  altPlaceholder?: string;
   label?: string;
   description?: string;
   aspect?: "banner" | "landscape" | "square" | "video";
@@ -479,6 +484,40 @@ export function ImageUploader(props: ImageUploaderProps) {
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {/* Optional Image Alt Tag (SEO & Accessibility) */}
+        {singleProps.onAltChange && (
+          <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-200/90 space-y-2 mt-2">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Image Alt Tag (SEO &amp; Accessibility)</span>
+              </label>
+              <span className="text-[10px] text-slate-400 font-medium">Google Image SEO Keyword</span>
+            </div>
+            <input
+              type="text"
+              value={singleProps.alt || ""}
+              onChange={(e) => singleProps.onAltChange!(e.target.value)}
+              placeholder={singleProps.altPlaceholder || "e.g. Domestic and international tour packages by KRAD Global in Dehradun"}
+              className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+            />
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[10px] text-slate-500 font-semibold">Quick Alt Presets:</span>
+              {ALT_TEXT_PRESETS.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => singleProps.onAltChange!(preset.value)}
+                  className="text-[10px] px-2 py-0.5 rounded-full bg-white hover:bg-emerald-50 text-slate-700 hover:text-[#0F3A2E] border border-slate-200 transition shadow-2xs"
+                  title={preset.value}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

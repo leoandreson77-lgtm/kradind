@@ -23,7 +23,7 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
     badge: "🌅 Ocean Sunrise • Goa & Kerala Sea",
     title: "Golden Ocean Sunrise",
     tagline: "Golden sun rising over open sea waters with shimmering wave reflections",
-    altText: "Himalayan adventure trekking experiences by KRADIND in Dehradun",
+    altText: "Domestic and international tour packages by KRAD Global in Dehradun",
     weatherMode: "sunrise",
   },
   {
@@ -32,7 +32,7 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
     badge: "❄️ Alpine Snow • Kedarkantha & Chopta",
     title: "Himalayan Snow Peaks",
     tagline: "High-altitude frosty alpine summits & certified winter mountaineering",
-    altText: "Himalayan trekking and adventure tours by KRADIND",
+    altText: "Himalayan trekking package by KRAD Global",
     weatherMode: "snow",
   },
   {
@@ -41,7 +41,7 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
     badge: "🌧️ Monsoon Rain • Storm Clouds & Falls",
     title: "Monsoon Rain & Mist",
     tagline: "Authentic monsoon rainfall, stormy mountain ridges & lush misty valleys",
-    altText: "Himalayan adventure trekking experiences by KRADIND in Dehradun",
+    altText: "Popular India holiday destination featured by KRAD Global",
     weatherMode: "rain",
   },
   {
@@ -50,7 +50,7 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
     badge: "🌴 Clear Skies • Alleppey & Munnar",
     title: "Backwaters & Palms",
     tagline: "Peaceful houseboat cruises, sunny palm groves & clear emerald tea gardens",
-    altText: "Kerala backwaters and holiday destinations by KRADIND",
+    altText: "Customized holiday package by KRAD Global",
     weatherMode: "clear",
   },
 ];
@@ -58,7 +58,7 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
 export function HeroSearch({
   config,
 }: {
-  config?: { badge?: string; title?: string; subtitle?: string; bgImage?: string };
+  config?: { badge?: string; title?: string; subtitle?: string; bgImage?: string; imageAlt?: string };
 }) {
   const router = useRouter();
   const [keyword, setKeyword] = useState("");
@@ -149,7 +149,7 @@ export function HeroSearch({
             >
               <img
                 src={slide.image}
-                alt={slide.altText || "Himalayan adventure trekking experiences by KRADIND in Dehradun"}
+                alt={config?.imageAlt || slide.altText || "Domestic and international tour packages by KRAD Global in Dehradun"}
                 width={1376}
                 height={768}
                 className="w-full h-full object-cover object-center"

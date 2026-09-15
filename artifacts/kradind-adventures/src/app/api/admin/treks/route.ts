@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       location: body.location || "Uttarakhand",
       region: body.region || "Himalayas",
       image: body.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+      imageAlt: body.imageAlt || "",
       gallery: body.gallery || [body.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"],
       tagline: body.tagline || "",
       description: body.description || "",

@@ -56,7 +56,7 @@ export function EEATAuthoritySection() {
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-emerald-400/60 shadow-lg bg-emerald-950 shrink-0">
                 <Image
                   src="/logo-emblem.png"
-                  alt="Aashish Chauhan - Expedition Director"
+                  alt="KRAD Global tour and travel company logo"
                   width={96}
                   height={96}
                   className="w-full h-full object-contain p-2"
@@ -140,8 +140,17 @@ export function EEATAuthoritySection() {
           </div>
 
           <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center">
-              <Compass className="w-5 h-5 text-purple-700" />
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center">
+                <Compass className="w-5 h-5 text-purple-700" />
+              </div>
+              <Image
+                src="/logo-horizontal.png"
+                alt="Dehradun travel and tour services by KRAD Global"
+                width={120}
+                height={30}
+                className="h-6 w-auto object-contain opacity-80"
+              />
             </div>
             <h4 className="font-extrabold text-sm text-slate-900">Tour &amp; Travel Company in Dehradun</h4>
             <p className="text-xs text-slate-600 leading-relaxed">

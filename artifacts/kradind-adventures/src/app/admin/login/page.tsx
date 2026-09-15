@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
           <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center p-2 mb-3 shadow-lg shadow-emerald-950/40">
             <Image
               src="/logo-emblem.png"
-              alt="KRADIND"
+              alt="KRAD Global tour and travel company logo"
               width={64}
               height={64}
               className="w-14 h-14 object-contain"

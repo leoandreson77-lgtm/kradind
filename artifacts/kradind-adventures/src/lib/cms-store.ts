@@ -33,6 +33,7 @@ export interface TrekData {
   location: string;
   region: string;
   image: string;
+  imageAlt?: string;
   gallery: string[];
   tagline: string;
   description?: string;
@@ -77,6 +78,7 @@ export interface HomeSectionsConfig {
     title: string;
     subtitle: string;
     bgImage: string;
+    imageAlt?: string;
   };
   monsoon: {
     enabled: boolean;
@@ -144,6 +146,8 @@ export interface LandingPageData {
   subtitle: string;
   badge?: string;
   heroImage: string;
+  heroImageAlt?: string;
+  imageAlt?: string;
   promoOffer?: {
     tag: string;
     discountText: string;
@@ -752,6 +756,7 @@ function getInitialStore(): CMSStoreData {
         title: "Experience the Himalayas",
         subtitle: "Explore handpicked Himalayan treks, tropical road trips, and international backpacking circuits.",
         bgImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
+        imageAlt: "Domestic and international tour packages by KRAD Global in Dehradun",
       },
       monsoon: {
         enabled: true,

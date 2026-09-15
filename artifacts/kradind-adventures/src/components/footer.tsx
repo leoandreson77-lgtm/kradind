@@ -71,7 +71,7 @@ export function Footer() {
             <div className="flex items-center gap-3">
               <Image
                 src="/logo-emblem.png"
-                alt="KRADIND tour and travel company logo"
+                alt="KRAD Global tour and travel company logo"
                 width={44}
                 height={44}
                 loading="lazy"

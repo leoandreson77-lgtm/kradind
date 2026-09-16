@@ -875,6 +875,92 @@ export function getDefaultLandingPages(): LandingPageData[] {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
+    {
+      id: "lp-rajasthan-tour-package-6-days",
+      slug: "rajasthan-tour-package-6-days",
+      title: "Rajasthan Tour Package – 6 Days / 5 Nights",
+      subtitle:
+        "See the royal side of Rajasthan on a private 6-day journey through Jaipur, Jodhpur and Udaipur with private Swift Dzire, 3-star stays and meals.",
+      badge: "⭐ PRIVATE COUPLE TOUR • JAIPUR - JODHPUR - UDAIPUR",
+      heroImage:
+        "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1920&q=85",
+      promoOffer: {
+        tag: "COUPLE SPECIAL OFFER",
+        discountText: "Flat ₹42,999 (Breakfast) / ₹49,999 (Breakfast + Dinner)",
+        code: "PADHARO2026",
+        expiryDate: "2026-12-31T23:59:59.000Z",
+      },
+      highlights: [
+        {
+          title: "Three Major Cities in One Route",
+          desc: "Connects the Pink City (Jaipur), the Blue City (Jodhpur), and the City of Lakes (Udaipur).",
+          icon: "Sparkles",
+        },
+        {
+          title: "Dedicated Private Swift Dzire",
+          desc: "Car reserved exclusively for your couple for all 6 days with no large group rush.",
+          icon: "ShieldCheck",
+        },
+        {
+          title: "Practical 3-Star Accommodations",
+          desc: "Clean, comfortable verified 3-star stays in central locations.",
+          icon: "Mountain",
+        },
+        {
+          title: "Two Meal Plan Options",
+          desc: "Choose between Breakfast Only (₹42,999) or Breakfast + Dinner (₹49,999) for 2 adults.",
+          icon: "Compass",
+        },
+      ],
+      featuredTrekSlugs: ["chopta-tungnath-chandrashila", "hampta-pass"],
+      inclusions: [
+        "5 nights accommodation in selected 3-star hotels for 2 adults",
+        "Private AC Swift Dzire for the complete itinerary with Jaipur pickup & Udaipur drop",
+        "Daily breakfast (plus dinner if selecting the ₹49,999 plan)",
+        "All driver allowances, fuel, tolls, and standard parking fees",
+        "Sightseeing to Amber Fort, Mehrangarh, City Palace, Ranakpur & Lake Pichola",
+      ],
+      exclusions: [
+        "Airfare or train tickets",
+        "Monument, museum, fort entry tickets",
+        "Lake Pichola boat ride",
+        "Tourist guides & personal shopping",
+      ],
+      leadFormConfig: {
+        title: "Get Your Rajasthan Tour Quote",
+        subtitle:
+          "Leave your WhatsApp number to receive complete day-by-day travel plan, hotel options, and booking voucher.",
+        ctaText: "Get Rajasthan Quotation",
+      },
+      whatsappNumber: "917500222141",
+      whatsappMessage:
+        "Hi KRADIND! I want to book the Rajasthan Tour Package (6 Days / 5 Nights: Jaipur, Jodhpur, Udaipur).",
+      faqs: [
+        {
+          question: "What is included in the 6-day Rajasthan tour package?",
+          answer:
+            "The package includes 5 nights of 3-star accommodation, private Swift Dzire transportation, Jaipur Airport/Railway Station pickup, Udaipur Airport/Railway Station drop, sightseeing and transfers listed in the itinerary, driver charges, fuel, tolls and standard parking. Breakfast is included in both plans, while the ₹49,999 option also includes dinner.",
+        },
+        {
+          question: "Is this Rajasthan tour package private for couples?",
+          answer:
+            "Yes. The package is planned for 2 adults / one couple with a private Swift Dzire. You do not have to share the vehicle with another tourist group.",
+        },
+      ],
+      status: "Published",
+      sectionsEnabled: {
+        hero: true,
+        countdown: true,
+        highlights: true,
+        treks: true,
+        inclusions: true,
+        leadForm: true,
+        testimonials: true,
+        faqs: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
   ];
 }
 

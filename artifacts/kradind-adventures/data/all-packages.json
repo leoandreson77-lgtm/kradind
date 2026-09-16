@@ -2981,5 +2981,106 @@
       "Private vehicle type for Jodhpur-Jaisalmer highway transfers"
     ],
     "imageAlt": "Domestic tour package in India by KRAD Global"
+  },
+  {
+    "id": 99201,
+    "slug": "rajasthan-tour-package-6-days",
+    "name": "Rajasthan Tour Package – 6 Days / 5 Nights",
+    "category": "Rajasthan",
+    "categories": [
+      "Rajasthan",
+      "Domestic",
+      "Road Trip",
+      "Heritage",
+      "Cultural"
+    ],
+    "location": "Jaipur, Jodhpur & Udaipur, Rajasthan",
+    "region": "Rajasthan",
+    "duration": "6 Days / 5 Nights",
+    "altitude": "Ground Elevation",
+    "difficulty": "Easy",
+    "price": 42999,
+    "originalPrice": 49999,
+    "badge": "Couple Special",
+    "rating": 4.9,
+    "reviewCount": 184,
+    "image": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1920&q=85",
+    "gallery": [
+      "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "tagline": "Private 6-day royal journey through Jaipur, Jodhpur, and Udaipur in a dedicated Swift Dzire with verified 3-star stays.",
+    "defaultHighlights": [
+      "Private Swift Dzire reserved exclusively for 2 adults for all 6 days.",
+      "Explore Amber Fort, Jaigarh, Nahargarh, City Palace, Mehrangarh, and Lake Pichola.",
+      "Includes 5 nights in verified 3-star hotels with breakfast and optional dinner.",
+      "Scenic highway road trip with stop at the 15th-century Ranakpur Jain Temple."
+    ],
+    "highlights": [
+      "Amber Fort & Nahargarh sunset views in Jaipur",
+      "Mehrangarh Fort & blue-painted old city lanes in Jodhpur",
+      "Ranakpur marble temple with 1,444 uniquely carved pillars",
+      "Lake Pichola lakeside ghats & Udaipur City Palace"
+    ],
+    "itinerary": [
+      {
+        "day": 1,
+        "title": "Jaipur Arrival & Pink City Sightseeing",
+        "description": "Meet driver at Jaipur Airport/Railway Station, check-in, visit City Palace, Jantar Mantar, Hawa Mahal and Old City Bazaars.",
+        "stay": "Jaipur 3-Star Hotel",
+        "meal": "Breakfast / +Dinner"
+      },
+      {
+        "day": 2,
+        "title": "Jaipur Forts & City Sightseeing",
+        "description": "Explore Amber Fort, Jaigarh Fort, Jal Mahal photo stop, Nahargarh Fort sunset, and Birla Mandir.",
+        "stay": "Jaipur 3-Star Hotel",
+        "meal": "Breakfast / +Dinner"
+      },
+      {
+        "day": 3,
+        "title": "Jaipur to Jodhpur (330–350 km / 6–7 hrs)",
+        "description": "Scenic road trip to Jodhpur, check-in, evening visit to Clock Tower, Sardar Market, and blue lanes.",
+        "stay": "Jodhpur 3-Star Hotel",
+        "meal": "Breakfast / +Dinner"
+      },
+      {
+        "day": 4,
+        "title": "Jodhpur Forts, Palaces & Old City",
+        "description": "Visit Mehrangarh Fort, Jaswant Thada, Umaid Bhawan Palace museum, and Mandore Gardens.",
+        "stay": "Jodhpur 3-Star Hotel",
+        "meal": "Breakfast / +Dinner"
+      },
+      {
+        "day": 5,
+        "title": "Jodhpur to Udaipur via Ranakpur",
+        "description": "Drive to Udaipur stopping at Ranakpur Jain Temple, evening stroll at Lake Pichola and Gangaur Ghat.",
+        "stay": "Udaipur 3-Star Hotel",
+        "meal": "Breakfast / +Dinner"
+      },
+      {
+        "day": 6,
+        "title": "Udaipur Sightseeing & Departure Drop",
+        "description": "Visit Udaipur City Palace, Jagdish Temple, Saheliyon Ki Bari, and transfer to Udaipur Airport/Railway Station.",
+        "stay": "Departure",
+        "meal": "Breakfast"
+      }
+    ],
+    "inclusions": [
+      "5 nights accommodation in selected 3-star hotels for 2 adults",
+      "Private AC Swift Dzire for the full route with Jaipur pickup and Udaipur drop",
+      "Daily breakfast (plus dinner if selecting the ₹49,999 plan)",
+      "Driver allowance, fuel, road taxes, tolls, and standard parking"
+    ],
+    "exclusions": [
+      "Airfare or train tickets",
+      "Monument, fort, museum entry tickets",
+      "Lake Pichola boat ride",
+      "Lunches and personal shopping"
+    ],
+    "status": "Published",
+    "imageAlt": "Rajasthan Tour Package – Jaipur Jodhpur Udaipur by KRAD Global"
   }
 ]

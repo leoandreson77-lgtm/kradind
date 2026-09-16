@@ -6,12 +6,12 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export * from './batch';
-export * from './bookingConfirmation';
-export * from './bookingInput';
-export * from './healthStatus';
-export * from './itineraryDay';
-export * from './listTreksParams';
-export * from './trailReport';
-export * from './trailReportStatus';
-export * from './trek';
+export * from "./batch";
+export * from "./bookingConfirmation";
+export * from "./bookingInput";
+export * from "./healthStatus";
+export * from "./itineraryDay";
+export * from "./listTreksParams";
+export * from "./trailReport";
+export * from "./trailReportStatus";
+export * from "./trek";

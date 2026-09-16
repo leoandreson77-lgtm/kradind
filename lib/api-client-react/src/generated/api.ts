@@ -5,10 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   MutationFunction,
   QueryFunction,
@@ -16,8 +13,8 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   BookingConfirmation,
@@ -25,27 +22,27 @@ import type {
   HealthStatus,
   ListTreksParams,
   TrailReport,
-  Trek
-} from './api.schemas';
+  Trek,
+} from "./api.schemas";
 
-import { customFetch } from '../custom-fetch';
-import type { ErrorType , BodyType } from '../custom-fetch';
+import { customFetch } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
-
-
-const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+const withQueryKey = <T extends object, K>(
+  query: T,
+  queryKey: K,
+): T & { queryKey: K } => {
   const result = { queryKey } as T & { queryKey: K };
   for (const key of Object.keys(query)) {
     // The explicit queryKey always wins, matching the previous
     // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
+    if (key === "queryKey") continue;
     Object.defineProperty(result, key, {
       enumerable: true,
       configurable: true,
@@ -56,389 +53,409 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 export const getHealthCheckUrl = () => {
-
-
-
-
-  return `/api/healthz`
-}
+  return `/api/healthz`;
+};
 
 /**
  * Returns server health status
  * @summary Health check
  */
-export const healthCheck = async ( options?: Parameters<typeof customFetch>[1]): Promise<HealthStatus> => {
-
-  return customFetch<HealthStatus>(getHealthCheckUrl(),
-  {
+export const healthCheck = async (
+  options?: Parameters<typeof customFetch>[1],
+): Promise<HealthStatus> => {
+  return customFetch<HealthStatus>(getHealthCheckUrl(), {
     ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
+    method: "GET",
+  });
+};
 
 export const getHealthCheckQueryKey = () => {
-    return [
-    `/api/healthz`
-    ] as const;
-    }
+  return [`/api/healthz`] as const;
+};
 
+export const getHealthCheckQueryOptions = <
+  TData = Awaited<ReturnType<typeof healthCheck>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof healthCheck>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-export const getHealthCheckQueryOptions = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
-) => {
+  const queryKey = queryOptions?.queryKey ?? getHealthCheckQueryKey();
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof healthCheck>>> = ({
+    signal,
+  }) => healthCheck({ signal, ...requestOptions });
 
-  const queryKey =  queryOptions?.queryKey ?? getHealthCheckQueryKey();
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof healthCheck>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
 
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof healthCheck>>> = ({ signal }) => healthCheck({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type HealthCheckQueryResult = NonNullable<Awaited<ReturnType<typeof healthCheck>>>
-export type HealthCheckQueryError = ErrorType<unknown>
-
+export type HealthCheckQueryResult = NonNullable<
+  Awaited<ReturnType<typeof healthCheck>>
+>;
+export type HealthCheckQueryError = ErrorType<unknown>;
 
 /**
  * @summary Health check
  */
 
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export function useHealthCheck<
+  TData = Awaited<ReturnType<typeof healthCheck>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof healthCheck>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getHealthCheckQueryOptions(options);
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-
-  const queryOptions = getHealthCheckQueryOptions(options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
 
-
-
-
-
-
-
-export const getListTreksUrl = (params?: ListTreksParams,) => {
+export const getListTreksUrl = (params?: ListTreksParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
+      normalizedParams.append(key, value === null ? "null" : String(value));
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/treks?${stringifiedParams}` : `/api/treks`
-}
+  return stringifiedParams.length > 0
+    ? `/api/treks?${stringifiedParams}`
+    : `/api/treks`;
+};
 
 /**
  * @summary List curated treks
  */
-export const listTreks = async (params?: ListTreksParams, options?: Parameters<typeof customFetch>[1]): Promise<Trek[]> => {
-
-  return customFetch<Trek[]>(getListTreksUrl(params),
-  {
+export const listTreks = async (
+  params?: ListTreksParams,
+  options?: Parameters<typeof customFetch>[1],
+): Promise<Trek[]> => {
+  return customFetch<Trek[]>(getListTreksUrl(params), {
     ...options,
-    method: 'GET'
+    method: "GET",
+  });
+};
 
+export const getListTreksQueryKey = (params?: ListTreksParams) => {
+  return [`/api/treks`, ...(params ? [params] : [])] as const;
+};
 
-  }
-);}
-
-
-
-
-
-export const getListTreksQueryKey = (params?: ListTreksParams,) => {
-    return [
-    `/api/treks`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-
-export const getListTreksQueryOptions = <TData = Awaited<ReturnType<typeof listTreks>>, TError = ErrorType<unknown>>(params?: ListTreksParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listTreks>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getListTreksQueryOptions = <
+  TData = Awaited<ReturnType<typeof listTreks>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListTreksParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listTreks>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getListTreksQueryKey(params);
 
-  const queryKey =  queryOptions?.queryKey ?? getListTreksQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listTreks>>> = ({
+    signal,
+  }) => listTreks(params, { signal, ...requestOptions });
 
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listTreks>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
 
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTreks>>> = ({ signal }) => listTreks(params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTreks>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type ListTreksQueryResult = NonNullable<Awaited<ReturnType<typeof listTreks>>>
-export type ListTreksQueryError = ErrorType<unknown>
-
+export type ListTreksQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listTreks>>
+>;
+export type ListTreksQueryError = ErrorType<unknown>;
 
 /**
  * @summary List curated treks
  */
 
-export function useListTreks<TData = Awaited<ReturnType<typeof listTreks>>, TError = ErrorType<unknown>>(
- params?: ListTreksParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listTreks>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export function useListTreks<
+  TData = Awaited<ReturnType<typeof listTreks>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListTreksParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listTreks>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListTreksQueryOptions(params, options);
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-
-  const queryOptions = getListTreksQueryOptions(params,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
 
-
-
-
-
-
-
-export const getGetTrekUrl = (slug: string,) => {
-
-
-
-
-  return `/api/treks/${slug}`
-}
+export const getGetTrekUrl = (slug: string) => {
+  return `/api/treks/${slug}`;
+};
 
 /**
  * @summary Get a trek by slug
  */
-export const getTrek = async (slug: string, options?: Parameters<typeof customFetch>[1]): Promise<Trek> => {
-
-  return customFetch<Trek>(getGetTrekUrl(slug),
-  {
+export const getTrek = async (
+  slug: string,
+  options?: Parameters<typeof customFetch>[1],
+): Promise<Trek> => {
+  return customFetch<Trek>(getGetTrekUrl(slug), {
     ...options,
-    method: 'GET'
+    method: "GET",
+  });
+};
 
+export const getGetTrekQueryKey = (slug: string) => {
+  return [`/api/treks/${slug}`] as const;
+};
 
-  }
-);}
-
-
-
-
-
-export const getGetTrekQueryKey = (slug: string,) => {
-    return [
-    `/api/treks/${slug}`
-    ] as const;
-    }
-
-
-export const getGetTrekQueryOptions = <TData = Awaited<ReturnType<typeof getTrek>>, TError = ErrorType<void>>(slug: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrek>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetTrekQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTrek>>,
+  TError = ErrorType<void>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getTrek>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetTrekQueryKey(slug);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetTrekQueryKey(slug);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrek>>> = ({
+    signal,
+  }) => getTrek(slug, { signal, ...requestOptions });
 
+  return {
+    queryKey,
+    queryFn,
+    enabled: slug !== null && slug !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getTrek>>, TError, TData> & {
+    queryKey: QueryKey;
+  };
+};
 
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrek>>> = ({ signal }) => getTrek(slug, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: slug !== null && slug !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrek>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type GetTrekQueryResult = NonNullable<Awaited<ReturnType<typeof getTrek>>>
-export type GetTrekQueryError = ErrorType<void>
-
+export type GetTrekQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTrek>>
+>;
+export type GetTrekQueryError = ErrorType<void>;
 
 /**
  * @summary Get a trek by slug
  */
 
-export function useGetTrek<TData = Awaited<ReturnType<typeof getTrek>>, TError = ErrorType<void>>(
- slug: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrek>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export function useGetTrek<
+  TData = Awaited<ReturnType<typeof getTrek>>,
+  TError = ErrorType<void>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getTrek>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetTrekQueryOptions(slug, options);
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-
-  const queryOptions = getGetTrekQueryOptions(slug,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
-
 
 export const getGetTrailRadarUrl = () => {
-
-
-
-
-  return `/api/radar`
-}
+  return `/api/radar`;
+};
 
 /**
  * @summary Get live trail conditions
  */
-export const getTrailRadar = async ( options?: Parameters<typeof customFetch>[1]): Promise<TrailReport[]> => {
-
-  return customFetch<TrailReport[]>(getGetTrailRadarUrl(),
-  {
+export const getTrailRadar = async (
+  options?: Parameters<typeof customFetch>[1],
+): Promise<TrailReport[]> => {
+  return customFetch<TrailReport[]>(getGetTrailRadarUrl(), {
     ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
+    method: "GET",
+  });
+};
 
 export const getGetTrailRadarQueryKey = () => {
-    return [
-    `/api/radar`
-    ] as const;
-    }
+  return [`/api/radar`] as const;
+};
 
+export const getGetTrailRadarQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTrailRadar>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getTrailRadar>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-export const getGetTrailRadarQueryOptions = <TData = Awaited<ReturnType<typeof getTrailRadar>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrailRadar>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
-) => {
+  const queryKey = queryOptions?.queryKey ?? getGetTrailRadarQueryKey();
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrailRadar>>> = ({
+    signal,
+  }) => getTrailRadar({ signal, ...requestOptions });
 
-  const queryKey =  queryOptions?.queryKey ?? getGetTrailRadarQueryKey();
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTrailRadar>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
 
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrailRadar>>> = ({ signal }) => getTrailRadar({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTrailRadar>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type GetTrailRadarQueryResult = NonNullable<Awaited<ReturnType<typeof getTrailRadar>>>
-export type GetTrailRadarQueryError = ErrorType<unknown>
-
+export type GetTrailRadarQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTrailRadar>>
+>;
+export type GetTrailRadarQueryError = ErrorType<unknown>;
 
 /**
  * @summary Get live trail conditions
  */
 
-export function useGetTrailRadar<TData = Awaited<ReturnType<typeof getTrailRadar>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTrailRadar>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export function useGetTrailRadar<
+  TData = Awaited<ReturnType<typeof getTrailRadar>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getTrailRadar>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetTrailRadarQueryOptions(options);
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-
-  const queryOptions = getGetTrailRadarQueryOptions(options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
 
-
-
-
-
-
-
 export const getCreateBookingUrl = () => {
-
-
-
-
-  return `/api/bookings`
-}
+  return `/api/bookings`;
+};
 
 /**
  * @summary Submit a booking request
  */
-export const createBooking = async (bookingInput: BookingInput, options?: Parameters<typeof customFetch>[1]): Promise<BookingConfirmation> => {
-
-  return customFetch<BookingConfirmation>(getCreateBookingUrl(),
-  {
+export const createBooking = async (
+  bookingInput: BookingInput,
+  options?: Parameters<typeof customFetch>[1],
+): Promise<BookingConfirmation> => {
+  return customFetch<BookingConfirmation>(getCreateBookingUrl(), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(bookingInput)
-  }
-);}
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(bookingInput),
+  });
+};
 
+export const getCreateBookingMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createBooking>>,
+    TError,
+    { data: BodyType<BookingInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createBooking>>,
+  TError,
+  { data: BodyType<BookingInput> },
+  TContext
+> => {
+  const mutationKey = ["createBooking"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createBooking>>,
+    { data: BodyType<BookingInput> }
+  > = (props) => {
+    const { data } = props ?? {};
 
+    return createBooking(data, requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-export const getCreateBookingMutationOptions = <TError = ErrorType<void>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBooking>>, TError,{data: BodyType<BookingInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof createBooking>>, TError,{data: BodyType<BookingInput>}, TContext> => {
+export type CreateBookingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createBooking>>
+>;
+export type CreateBookingMutationBody = BodyType<BookingInput>;
+export type CreateBookingMutationError = ErrorType<void>;
 
-const mutationKey = ['createBooking'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createBooking>>, {data: BodyType<BookingInput>}> = (props) => {
-          const {data} = props ?? {};
-
-          return  createBooking(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateBookingMutationResult = NonNullable<Awaited<ReturnType<typeof createBooking>>>
-    export type CreateBookingMutationBody = BodyType<BookingInput>
-    export type CreateBookingMutationError = ErrorType<void>
-
-    /**
+/**
  * @summary Submit a booking request
  */
-export const useCreateBooking = <TError = ErrorType<void>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createBooking>>, TError,{data: BodyType<BookingInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof createBooking>>,
-        TError,
-        {data: BodyType<BookingInput>},
-        TContext
-      > => {
-      return useMutation(getCreateBookingMutationOptions(options));
-    }
-
+export const useCreateBooking = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createBooking>>,
+    TError,
+    { data: BodyType<BookingInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createBooking>>,
+  TError,
+  { data: BodyType<BookingInput> },
+  TContext
+> => {
+  return useMutation(getCreateBookingMutationOptions(options));
+};

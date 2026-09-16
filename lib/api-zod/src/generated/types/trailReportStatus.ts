@@ -6,11 +6,11 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type TrailReportStatus = typeof TrailReportStatus[keyof typeof TrailReportStatus];
-
+export type TrailReportStatus =
+  (typeof TrailReportStatus)[keyof typeof TrailReportStatus];
 
 export const TrailReportStatus = {
-  open: 'open',
-  caution: 'caution',
-  closed: 'closed',
+  open: "open",
+  caution: "caution",
+  closed: "closed",
 } as const;

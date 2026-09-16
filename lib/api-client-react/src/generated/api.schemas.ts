@@ -52,13 +52,13 @@ export interface Trek {
   itinerary: ItineraryDay[];
 }
 
-export type TrailReportStatus = typeof TrailReportStatus[keyof typeof TrailReportStatus];
-
+export type TrailReportStatus =
+  (typeof TrailReportStatus)[keyof typeof TrailReportStatus];
 
 export const TrailReportStatus = {
-  open: 'open',
-  caution: 'caution',
-  closed: 'closed',
+  open: "open",
+  caution: "caution",
+  closed: "closed",
 } as const;
 
 export interface TrailReport {
@@ -92,7 +92,6 @@ export interface BookingConfirmation {
 }
 
 export type ListTreksParams = {
-type?: string;
-season?: string;
+  type?: string;
+  season?: string;
 };
-

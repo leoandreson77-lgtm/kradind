@@ -7,6 +7,6 @@
  */
 
 export type ListTreksParams = {
-type?: string;
-season?: string;
+  type?: string;
+  season?: string;
 };

@@ -3,18 +3,39 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Menu, X, PhoneCall } from "lucide-react";
+import {
+  ChevronDown,
+  Menu,
+  X,
+  PhoneCall,
+  Sparkles,
+  Mountain,
+  Compass,
+  Globe2,
+  Tent,
+  MapPin,
+  Briefcase,
+  BookOpen,
+  ArrowRight,
+  ShieldCheck,
+  Calendar,
+  Footprints,
+} from "lucide-react";
 
 export function Header({ onBookClick }: { onBookClick?: () => void }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [treksDropdownOpen, setTreksDropdownOpen] = useState(false);
-  const [domesticDropdownOpen, setDomesticDropdownOpen] = useState(false);
-  const [mobileTreksOpen, setMobileTreksOpen] = useState(false);
-  const [mobileDomesticOpen, setMobileDomesticOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({});
+
+  const toggleMobile = (key: string) => {
+    setMobileExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const closeDropdown = () => setActiveDropdown(null);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+      <div className="max-w-[96rem] mx-auto px-3 sm:px-5 lg:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
         
         {/* Brand Logo */}
         <Link
@@ -25,682 +46,1059 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           <Image
             src="/logo-horizontal.png"
             alt="KRAD Global tour and travel company logo"
-            width={195}
-            height={50}
-            className="h-9 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+            width={180}
+            height={46}
+            className="h-8 sm:h-10 md:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
             priority
           />
           <span className="sr-only">KRADIND Adventures Homepage</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-7 text-sm font-semibold text-slate-700">
-          <Link href="/" className="text-[#0F3A2E] font-bold hover:text-[#FF6B35] transition">
+        <nav className="hidden xl:flex items-center space-x-3 2xl:space-x-5 text-[13px] font-semibold text-slate-700">
+          
+          {/* 1. Home */}
+          <Link
+            href="/"
+            className="hover:text-[#FF6B35] text-[#0F3A2E] font-bold transition px-1.5 py-2"
+          >
             Home
           </Link>
-          
-          {/* Treks Full Mega Menu */}
+
+          {/* 2. Treks ▾ */}
           <div
-            className="relative group"
-            onMouseEnter={() => setTreksDropdownOpen(true)}
-            onMouseLeave={() => setTreksDropdownOpen(false)}
+            className="relative"
+            onMouseEnter={() => setActiveDropdown("treks")}
+            onMouseLeave={() => setActiveDropdown(null)}
           >
             <button
-              onClick={() => setTreksDropdownOpen(!treksDropdownOpen)}
-              className="hover:text-[#0F3A2E] flex items-center gap-1 py-2 cursor-pointer transition"
+              onClick={() => setActiveDropdown(activeDropdown === "treks" ? null : "treks")}
+              className={`hover:text-[#0F3A2E] flex items-center gap-1 px-1.5 py-2 cursor-pointer transition ${
+                activeDropdown === "treks" ? "text-[#0F3A2E] font-bold" : ""
+              }`}
             >
-              Treks{" "}
+              <span>Treks</span>
               <ChevronDown
-                className={`w-4 h-4 text-slate-500 transition-transform duration-200 group-hover:rotate-180 ${
-                  treksDropdownOpen ? "rotate-180 text-[#0F3A2E]" : ""
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                  activeDropdown === "treks" ? "rotate-180 text-[#0F3A2E]" : ""
                 }`}
               />
             </button>
 
-            {treksDropdownOpen && (
+            {activeDropdown === "treks" && (
               <div
-                className="absolute top-full -left-20 lg:-left-24 w-[880px] max-w-[92vw] bg-white border border-slate-200/95 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                className="absolute top-full -left-12 w-[620px] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
               >
-              {/* Mega Menu Top Header */}
-              <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                    🏔️ Certified Himalayan Trekking — Summits, High Passes & Alpine Trails
-                  </span>
-                </div>
-                <Link
-                  href="/treks"
-                  onClick={() => setTreksDropdownOpen(false)}
-                  className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
-                >
-                  View All Treks →
-                </Link>
-              </div>
-
-              {/* 3-Column Categories Grid */}
-              <div className="grid grid-cols-3 gap-4">
-                {/* Column 1: High Passes & Summit Expeditions */}
-                <div className="space-y-3">
-                  <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                    <Link
-                      href="/treks/category/himalayas"
-                      onClick={() => setTreksDropdownOpen(false)}
-                      className="group flex items-center justify-between mb-1.5"
-                    >
-                      <span className="font-bold text-xs text-[#0F3A2E] group-hover:text-[#FF6B35] transition flex items-center gap-1.5">
-                        🏔️ High Passes & Summits
-                      </span>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5 rounded-full">
-                        13,000+ Ft
-                      </span>
-                    </Link>
-                    <ul className="space-y-1.5 text-xs text-slate-600">
-                      <li>
-                        <Link
-                          href="/treks/hampta-pass"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                        >
-                          • Hampta Pass Crossover{" "}
-                          <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1 rounded">14,065 Ft</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/treks/chopta-tungnath-chandrashila"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                        >
-                          • Chopta Tungnath Chandrashila{" "}
-                          <span className="text-[10px] text-amber-600 font-bold bg-amber-50 px-1 rounded">13,000 Ft</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/treks/leh-ladakh-tour-package"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                        >
-                          • Leh Ladakh High Passes{" "}
-                          <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-1 rounded">17,500 Ft</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/treks/category/himalayas"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
-                        >
-                          Explore all High Altitude Treks →
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Trek Difficulty Filter Box */}
-                  <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-xs text-[#0F3A2E] flex items-center gap-1.5">
-                        🧭 By Trail Difficulty
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-1.5 text-xs">
-                      <Link
-                        href="/treks/category/weekend"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="flex items-center justify-between bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 border border-slate-200 px-2.5 py-1 rounded-lg transition"
-                      >
-                        <span className="font-medium">🟢 Easy / Beginner</span>
-                        <span className="text-[10px] text-slate-400 font-bold">Chopta, Nainital</span>
-                      </Link>
-                      <Link
-                        href="/treks/category/himalayas"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="flex items-center justify-between bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 border border-slate-200 px-2.5 py-1 rounded-lg transition"
-                      >
-                        <span className="font-medium">🟡 Moderate</span>
-                        <span className="text-[10px] text-slate-400 font-bold">Hampta Pass</span>
-                      </Link>
-                      <Link
-                        href="/treks/category/himalayas"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="flex items-center justify-between bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 border border-slate-200 px-2.5 py-1 rounded-lg transition"
-                      >
-                        <span className="font-medium">🔴 Challenging</span>
-                        <span className="text-[10px] text-slate-400 font-bold">High Passes</span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 2: Weekend Treks & Regional Trails */}
-                <div className="space-y-3">
-                  <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                    <Link
-                      href="/treks/category/weekend"
-                      onClick={() => setTreksDropdownOpen(false)}
-                      className="group flex items-center justify-between mb-1.5"
-                    >
-                      <span className="font-bold text-xs text-[#0F3A2E] group-hover:text-[#FF6B35] transition flex items-center gap-1.5">
-                        ⛺ Weekend & Short Treks
-                      </span>
-                      <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded-full">
-                        2–3 Days
-                      </span>
-                    </Link>
-                    <ul className="space-y-1.5 text-xs text-slate-600">
-                      <li>
-                        <Link
-                          href="/treks/kheerganga-trek"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                        >
-                          • Kheerganga Hot Spring Trek{" "}
-                          <span className="text-[10px] text-slate-400">Kasol</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/treks/nainital-tour-package"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                        >
-                          • Nainital Nature & Ridge Walk{" "}
-                          <span className="text-[10px] text-slate-400">Kumaon</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/treks/chopta-tungnath-chandrashila"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                        >
-                          • Deoria Tal & Rohini Meadow{" "}
-                          <span className="text-[10px] text-slate-400">Garhwal</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/treks/category/weekend"
-                          onClick={() => setTreksDropdownOpen(false)}
-                          className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
-                        >
-                          View all Weekend Treks →
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Trek States Pills */}
-                  <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-xs text-[#0F3A2E] flex items-center gap-1.5">
-                        📍 Treks By Mountain Region
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      <Link
-                        href="/treks/category/uttarakhand"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                      >
-                        🏔️ Uttarakhand
-                      </Link>
-                      <Link
-                        href="/treks/category/himachal"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                      >
-                        🌲 Himachal Pradesh
-                      </Link>
-                      <Link
-                        href="/treks/category/ladakh"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                      >
-                        ❄️ Ladakh
-                      </Link>
-                      <Link
-                        href="/treks/category/northeast"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                      >
-                        🌿 Northeast
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 3: Seasonal Collections & Spotlight Card */}
-                <div className="space-y-3">
-                  {/* Seasonal Seasons Box */}
-                  <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                    <span className="font-bold text-xs text-[#0F3A2E] block mb-2">
-                      🌦️ Trekking By Season
-                    </span>
-                    <div className="space-y-1.5 text-xs">
-                      <Link
-                        href="/treks/category/monsoon"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="flex items-center justify-between text-slate-700 hover:text-[#0F3A2E] hover:font-semibold transition"
-                      >
-                        <span>🌧️ Monsoon & Valley Blooms</span>
-                        <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">Jul–Sep</span>
-                      </Link>
-                      <Link
-                        href="/treks/category/autumn"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="flex items-center justify-between text-slate-700 hover:text-[#0F3A2E] hover:font-semibold transition"
-                      >
-                        <span>🍁 Autumn Clear Skies</span>
-                        <span className="text-[10px] text-amber-600 font-bold bg-amber-50 px-1.5 py-0.5 rounded">Oct–Nov</span>
-                      </Link>
-                      <Link
-                        href="/treks/category/winter"
-                        onClick={() => setTreksDropdownOpen(false)}
-                        className="flex items-center justify-between text-slate-700 hover:text-[#0F3A2E] hover:font-semibold transition"
-                      >
-                        <span>❄️ Winter Snow Expeditions</span>
-                        <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded">Dec–Mar</span>
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Featured Spotlight Trek Card */}
-                  <Link
-                    href="/treks/hampta-pass"
-                    onClick={() => setTreksDropdownOpen(false)}
-                    className="group block relative rounded-xl overflow-hidden border border-emerald-200/80 shadow-xs hover:shadow-md transition duration-300"
-                  >
-                    <div className="relative h-24 w-full bg-slate-900">
-                      <Image
-                        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
-                        alt="Himalayan trekking package by KRAD Global"
-                        fill
-                        className="object-cover group-hover:scale-105 transition duration-500 opacity-85"
-                        sizes="(max-width: 768px) 100vw, 300px"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      <span className="absolute top-2 left-2 bg-[#FF6B35] text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
-                        🔥 Bestseller • 4.9 ★
-                      </span>
-                      <div className="absolute bottom-1.5 left-2.5 right-2.5 text-white">
-                        <p className="font-extrabold text-xs leading-tight drop-shadow-sm">
-                          Hampta Pass Crossover
-                        </p>
-                        <p className="text-[10px] text-emerald-300 font-medium">
-                          5 Days • 14,065 Ft • Spiti & Kullu
-                        </p>
-                      </div>
-                    </div>
-                    <div className="bg-emerald-950 p-2 text-white flex items-center justify-between text-xs">
-                      <div>
-                        <span className="text-[10px] text-slate-300 line-through mr-1">₹12,999</span>
-                        <span className="font-extrabold text-[#FF6B35]">₹9,999</span>
-                      </div>
-                      <span className="text-[11px] font-bold text-emerald-300 group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
-                        Book Trek →
-                      </span>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Bottom Assurance Banner */}
-              <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-50/80 to-teal-50/80 px-3.5 py-2.5 rounded-xl">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">🛡️</span>
-                  <span className="text-xs font-semibold text-[#0F3A2E]">
-                    Certified Himalayan Guides (WFR / BMC) • Small Batches (Max 15) • Medical Kit & O2 Cylinders
-                  </span>
-                </div>
-                <a
-                  href="tel:+917500222141"
-                  className="inline-flex items-center gap-1.5 bg-[#0F3A2E] hover:bg-emerald-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap"
-                >
-                  <PhoneCall className="w-3 h-3 text-emerald-400" />
-                  <span>Call Trek Desk: 7500222141</span>
-                </a>
-              </div>
-            </div>
-            )}
-          </div>
-
-          {/* Domestic Trips State-Wise Mega Menu */}
-          <div
-            className="relative group"
-            onMouseEnter={() => setDomesticDropdownOpen(true)}
-            onMouseLeave={() => setDomesticDropdownOpen(false)}
-          >
-            <button
-              onClick={() => setDomesticDropdownOpen(!domesticDropdownOpen)}
-              className="hover:text-[#0F3A2E] flex items-center gap-1 py-2 cursor-pointer transition"
-            >
-              Domestic Trips{" "}
-              <ChevronDown
-                className={`w-4 h-4 text-slate-500 transition-transform duration-200 group-hover:rotate-180 ${
-                  domesticDropdownOpen ? "rotate-180 text-[#0F3A2E]" : ""
-                }`}
-              />
-            </button>
-
-            {domesticDropdownOpen && (
-              <div
-                className="absolute top-full -left-44 w-[860px] max-w-[92vw] bg-white border border-slate-200/95 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
-              >
-              {/* Mega Menu Top Header */}
-                <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-slate-100">
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                      🇮🇳 Explore India By State — Handpicked Escapes
+                      🏔️ Certified Himalayan Treks & High Passes
                     </span>
                   </div>
                   <Link
-                    href="/treks/category/domestic"
-                    onClick={() => setDomesticDropdownOpen(false)}
+                    href="/treks"
+                    onClick={closeDropdown}
                     className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
                   >
-                    View All Domestic Trips →
+                    All Treks →
                   </Link>
                 </div>
 
-                {/* State Wise Categories Grid */}
-                <div className="grid grid-cols-3 gap-4">
-                  {/* Column 1: Uttarakhand & Himachal */}
-                  <div className="space-y-3">
-                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                      <Link
-                        href="/treks/category/uttarakhand"
-                        onClick={() => setDomesticDropdownOpen(false)}
-                        className="group flex items-center justify-between mb-1.5"
-                      >
-                        <span className="font-bold text-xs text-[#0F3A2E] group-hover:text-[#FF6B35] transition flex items-center gap-1.5">
-                          🏔️ Uttarakhand
-                        </span>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5 rounded-full">
-                          6 Trips
-                        </span>
-                      </Link>
-                      <ul className="space-y-1 text-xs text-slate-600">
-                        <li>
-                          <Link
-                            href="/treks/chopta-tungnath-chandrashila"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Chopta Tungnath Chandrashila
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/nainital-tour-package"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Nainital & Kumaon Lakes
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/category/uttarakhand"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
-                          >
-                            View all in Uttarakhand →
-                          </Link>
-                        </li>
-                      </ul>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <Link
+                    href="/treks"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
                     </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">All Treks</span>
+                      <span className="text-[11px] text-slate-500">Explore complete catalog</span>
+                    </div>
+                  </Link>
 
-                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                      <Link
-                        href="/treks/category/himachal"
-                        onClick={() => setDomesticDropdownOpen(false)}
-                        className="group flex items-center justify-between mb-1.5"
-                      >
-                        <span className="font-bold text-xs text-[#0F3A2E] group-hover:text-[#FF6B35] transition flex items-center gap-1.5">
-                          🌲 Himachal Pradesh
-                        </span>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5 rounded-full">
-                          4 Trips
-                        </span>
-                      </Link>
-                      <ul className="space-y-1 text-xs text-slate-600">
-                        <li>
-                          <Link
-                            href="/treks/hampta-pass"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Hampta Pass Crossover
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/kheerganga-trek"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Kheerganga Hot Springs
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/category/himachal"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
-                          >
-                            View all in Himachal →
-                          </Link>
-                        </li>
-                      </ul>
+                  <Link
+                    href="/treks/uttarakhand"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🛕
                     </div>
-                  </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Uttarakhand Treks</span>
+                      <span className="text-[11px] text-slate-500">Chopta, Kedarkantha, Tungnath</span>
+                    </div>
+                  </Link>
 
-                  {/* Column 2: Ladakh & Rajasthan */}
-                  <div className="space-y-3">
-                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-blue-200 transition">
-                      <Link
-                        href="/treks/category/ladakh"
-                        onClick={() => setDomesticDropdownOpen(false)}
-                        className="group flex items-center justify-between mb-1.5"
-                      >
-                        <span className="font-bold text-xs text-[#0F3A2E] group-hover:text-[#FF6B35] transition flex items-center gap-1.5">
-                          ❄️ Ladakh & Kashmir
-                        </span>
-                        <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-1.5 py-0.5 rounded-full">
-                          Alpine
-                        </span>
-                      </Link>
-                      <ul className="space-y-1 text-xs text-slate-600">
-                        <li>
-                          <Link
-                            href="/treks/ladakh-tour-package"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Leh, Nubra & Pangong Tso
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/category/ladakh"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
-                          >
-                            View all in Ladakh & Kashmir →
-                          </Link>
-                        </li>
-                      </ul>
+                  <Link
+                    href="/treks/himachal-pradesh"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold shrink-0">
+                      🌲
                     </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Himachal Pradesh Treks</span>
+                      <span className="text-[11px] text-slate-500">Hampta Pass, Kheerganga, Bhrigu</span>
+                    </div>
+                  </Link>
 
-                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-amber-200 transition">
-                      <Link
-                        href="/treks/category/rajasthan"
-                        onClick={() => setDomesticDropdownOpen(false)}
-                        className="group flex items-center justify-between mb-1.5"
-                      >
-                        <span className="font-bold text-xs text-[#0F3A2E] group-hover:text-[#FF6B35] transition flex items-center gap-1.5">
-                          🏰 Rajasthan Heritage
-                        </span>
-                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded-full">
-                          Desert & Forts
-                        </span>
-                      </Link>
-                      <ul className="space-y-1 text-xs text-slate-600">
-                        <li>
-                          <Link
-                            href="/treks/jaisalmer-tour-package"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Jaisalmer Dunes & Camp
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/jaipur-tour-package"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Jaipur Forts & Palaces
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/category/rajasthan"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
-                          >
-                            View all in Rajasthan →
-                          </Link>
-                        </li>
-                      </ul>
+                  <Link
+                    href="/treks/kashmir"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold shrink-0">
+                      ❄️
                     </div>
-                  </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Kashmir Treks</span>
+                      <span className="text-[11px] text-slate-500">Great Lakes, Tarsar Marsar</span>
+                    </div>
+                  </Link>
 
-                  {/* Column 3: Kerala & Northeast / Coast */}
-                  <div className="space-y-3">
-                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-teal-200 transition">
-                      <Link
-                        href="/treks/category/kerala"
-                        onClick={() => setDomesticDropdownOpen(false)}
-                        className="group flex items-center justify-between mb-1.5"
-                      >
-                        <span className="font-bold text-xs text-[#0F3A2E] group-hover:text-[#FF6B35] transition flex items-center gap-1.5">
-                          🌴 Kerala
-                        </span>
-                        <span className="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200/60 px-1.5 py-0.5 rounded-full">
-                          Backwaters
-                        </span>
-                      </Link>
-                      <ul className="space-y-1 text-xs text-slate-600">
-                        <li>
-                          <Link
-                            href="/treks/kerala-tour-package"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="hover:text-[#0F3A2E] hover:font-medium transition block truncate"
-                          >
-                            • Munnar & Alleppey Backwaters
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/treks/category/kerala"
-                            onClick={() => setDomesticDropdownOpen(false)}
-                            className="text-[11px] font-semibold text-[#FF6B35] hover:underline pt-0.5 inline-block"
-                          >
-                            View all in Kerala →
-                          </Link>
-                        </li>
-                      </ul>
+                  <Link
+                    href="/treks/ladakh"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
                     </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Ladakh Treks</span>
+                      <span className="text-[11px] text-slate-500">Markha Valley, High Passes</span>
+                    </div>
+                  </Link>
 
-                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 hover:border-emerald-200 transition">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-xs text-[#0F3A2E] flex items-center gap-1.5">
-                          🌿 Other Popular States
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        <Link
-                          href="/treks/category/meghalaya"
-                          onClick={() => setDomesticDropdownOpen(false)}
-                          className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                        >
-                          Meghalaya
-                        </Link>
-                        <Link
-                          href="/treks/category/sikkim"
-                          onClick={() => setDomesticDropdownOpen(false)}
-                          className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                        >
-                          Sikkim
-                        </Link>
-                        <Link
-                          href="/treks/category/assam"
-                          onClick={() => setDomesticDropdownOpen(false)}
-                          className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                        >
-                          Assam
-                        </Link>
-                        <Link
-                          href="/treks/category/goa"
-                          onClick={() => setDomesticDropdownOpen(false)}
-                          className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                        >
-                          Goa Beach
-                        </Link>
-                        <Link
-                          href="/treks/category/maharashtra"
-                          onClick={() => setDomesticDropdownOpen(false)}
-                          className="text-[11px] font-medium bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 px-2 py-1 rounded-lg transition"
-                        >
-                          Maharashtra
-                        </Link>
-                      </div>
+                  <Link
+                    href="/treks/nepal"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center font-bold shrink-0">
+                      🇳🇵
                     </div>
-                  </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Nepal Treks</span>
+                      <span className="text-[11px] text-slate-500">Annapurna, Everest Base Camp</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/treks/high-altitude"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold shrink-0">
+                      ⚡
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">High Altitude Treks</span>
+                      <span className="text-[11px] text-slate-500">14,000+ Ft Technical trails</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/treks/weekend"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      ⛺
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Weekend Treks</span>
+                      <span className="text-[11px] text-slate-500">2-3 Days Quick Escapes</span>
+                    </div>
+                  </Link>
                 </div>
 
-                {/* Bottom Assistance Banner */}
-                <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-50/80 to-teal-50/80 px-3.5 py-2.5 rounded-xl">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">✨</span>
-                    <span className="text-xs font-semibold text-[#0F3A2E]">
-                      Custom corporate offsites or private family tours across India?
-                    </span>
-                  </div>
-                  <a
-                    href="tel:+917500222141"
-                    className="inline-flex items-center gap-1.5 bg-[#0F3A2E] hover:bg-emerald-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap"
-                  >
-                    <PhoneCall className="w-3 h-3 text-emerald-400" />
-                    <span>Call Ground Desk: 7500222141</span>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                  <span className="flex items-center gap-1.5 font-medium text-emerald-800">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> NIM Certified Guides • Medical Kit & Oxygen
+                  </span>
+                  <a href="tel:+917500222141" className="font-bold text-[#FF6B35] hover:underline">
+                    Call: +91 7500222141
                   </a>
                 </div>
               </div>
             )}
           </div>
 
-          <Link href="/treks/category/international" className="hover:text-[#0F3A2E] transition">
-            International Trips
-          </Link>
-          <Link href="/contact" className="hover:text-[#0F3A2E] transition">
-            Trekker Forum & Blog
-          </Link>
-          <Link href="/about" className="hover:text-[#0F3A2E] transition">
+          {/* 3. Domestic Trips ▾ */}
+          <div
+            className="relative"
+            onMouseEnter={() => setActiveDropdown("domestic")}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "domestic" ? null : "domestic")}
+              className={`hover:text-[#0F3A2E] flex items-center gap-1 px-1.5 py-2 cursor-pointer transition ${
+                activeDropdown === "domestic" ? "text-[#0F3A2E] font-bold" : ""
+              }`}
+            >
+              <span>Domestic Trips</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                  activeDropdown === "domestic" ? "rotate-180 text-[#0F3A2E]" : ""
+                }`}
+              />
+            </button>
+
+            {activeDropdown === "domestic" && (
+              <div
+                className="absolute top-full -left-20 w-[620px] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                      🇮🇳 Curated India Tours By State
+                    </span>
+                  </div>
+                  <Link
+                    href="/domestic-trips"
+                    onClick={closeDropdown}
+                    className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
+                  >
+                    All Domestic Trips →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <Link
+                    href="/domestic-trips"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🇮🇳
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">All Domestic Trips</span>
+                      <span className="text-[11px] text-slate-500">Explore India tour packages</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/domestic-trips/uttarakhand"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Uttarakhand Tours</span>
+                      <span className="text-[11px] text-slate-500">Nainital, Mussoorie, Rishikesh</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/domestic-trips/himachal-pradesh"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold shrink-0">
+                      🌲
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Himachal Pradesh Tours</span>
+                      <span className="text-[11px] text-slate-500">Manali, Shimla, Spiti Valley</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/domestic-trips/kashmir"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold shrink-0">
+                      ❄️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Kashmir Tours</span>
+                      <span className="text-[11px] text-slate-500">Srinagar, Gulmarg, Pahalgam</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/domestic-trips/ladakh"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Ladakh Tours</span>
+                      <span className="text-[11px] text-slate-500">Leh, Pangong Tso, Nubra Valley</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/domestic-trips/rajasthan"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🏰
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Rajasthan Tours</span>
+                      <span className="text-[11px] text-slate-500">Jaipur, Udaipur, Jaisalmer dunes</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/domestic-trips/kerala"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🌴
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Kerala Tours</span>
+                      <span className="text-[11px] text-slate-500">Munnar, Alleppey Houseboats</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/domestic-trips/goa"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center font-bold shrink-0">
+                      🌊
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Goa Tours</span>
+                      <span className="text-[11px] text-slate-500">North & South Goa Beaches</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 4. International Trips ▾ */}
+          <div
+            className="relative"
+            onMouseEnter={() => setActiveDropdown("international")}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "international" ? null : "international")}
+              className={`hover:text-[#0F3A2E] flex items-center gap-1 px-1.5 py-2 cursor-pointer transition ${
+                activeDropdown === "international" ? "text-[#0F3A2E] font-bold" : ""
+              }`}
+            >
+              <span>International Trips</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                  activeDropdown === "international" ? "rotate-180 text-[#0F3A2E]" : ""
+                }`}
+              />
+            </button>
+
+            {activeDropdown === "international" && (
+              <div
+                className="absolute top-full -left-28 w-[620px] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                      🌎 Handpicked International Holidays
+                    </span>
+                  </div>
+                  <Link
+                    href="/international-trips"
+                    onClick={closeDropdown}
+                    className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
+                  >
+                    All International Trips →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <Link
+                    href="/international-trips"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold shrink-0">
+                      ✈️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">All International Trips</span>
+                      <span className="text-[11px] text-slate-500">Global travel packages</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/international-trips/nepal"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🇳🇵
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">Nepal Tours</span>
+                      <span className="text-[11px] text-slate-500">Kathmandu, Pokhara, Chitwan</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/international-trips/bali"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold shrink-0">
+                      🌺
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">Bali Tours</span>
+                      <span className="text-[11px] text-slate-500">Ubud, Seminyak, Nusa Penida</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/international-trips/thailand"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🐘
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">Thailand Tours</span>
+                      <span className="text-[11px] text-slate-500">Bangkok, Phuket, Krabi</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/international-trips/dubai"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold shrink-0">
+                      🏙️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">Dubai Tours</span>
+                      <span className="text-[11px] text-slate-500">Burj Khalifa, Desert Safari</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/international-trips/vietnam"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center font-bold shrink-0">
+                      🏮
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">Vietnam Tours</span>
+                      <span className="text-[11px] text-slate-500">Hanoi, Ha Long Bay, Da Nang</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/international-trips/singapore"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold shrink-0">
+                      🦁
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">Singapore Tours</span>
+                      <span className="text-[11px] text-slate-500">Marina Bay, Sentosa, Universal</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/international-trips/maldives"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition group border border-transparent hover:border-blue-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-800 flex items-center justify-center font-bold shrink-0">
+                      🏖️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-blue-900 block">Maldives Holidays</span>
+                      <span className="text-[11px] text-slate-500">Overwater Villas & Private Island</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 5. Adventure Tours ▾ */}
+          <div
+            className="relative"
+            onMouseEnter={() => setActiveDropdown("adventure")}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "adventure" ? null : "adventure")}
+              className={`hover:text-[#0F3A2E] flex items-center gap-1 px-1.5 py-2 cursor-pointer transition ${
+                activeDropdown === "adventure" ? "text-[#0F3A2E] font-bold" : ""
+              }`}
+            >
+              <span>Adventure Tours</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                  activeDropdown === "adventure" ? "rotate-180 text-[#0F3A2E]" : ""
+                }`}
+              />
+            </button>
+
+            {activeDropdown === "adventure" && (
+              <div
+                className="absolute top-full -left-16 w-[540px] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                      🧗 High Adrenaline Adventures & Expeditions
+                    </span>
+                  </div>
+                  <Link
+                    href="/adventure-tours"
+                    onClick={closeDropdown}
+                    className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
+                  >
+                    All Adventures →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <Link
+                    href="/adventure-tours"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-amber-50/80 transition group border border-transparent hover:border-amber-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🧭
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-amber-900 block">Adventure Tours</span>
+                      <span className="text-[11px] text-slate-500">Explore all activities</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/adventure-tours/camping"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-amber-50/80 transition group border border-transparent hover:border-amber-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      ⛺
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-amber-900 block">Camping</span>
+                      <span className="text-[11px] text-slate-500">Riverside & Alpine glamping</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/adventure-tours/hiking"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-amber-50/80 transition group border border-transparent hover:border-amber-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold shrink-0">
+                      🥾
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-amber-900 block">Hiking</span>
+                      <span className="text-[11px] text-slate-500">Scenic forest & ridge walks</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/adventure-tours/snow-treks"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-amber-50/80 transition group border border-transparent hover:border-amber-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold shrink-0">
+                      ❄️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-amber-900 block">Snow Treks</span>
+                      <span className="text-[11px] text-slate-500">Winter crampon trails & summits</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/adventure-tours/expeditions"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-amber-50/80 transition group border border-transparent hover:border-amber-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center font-bold shrink-0">
+                      🚩
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-amber-900 block">Expeditions</span>
+                      <span className="text-[11px] text-slate-500">Glacial passes & mountain summits</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/adventure-tours/high-altitude"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-amber-50/80 transition group border border-transparent hover:border-amber-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-amber-900 block">High Altitude Adventures</span>
+                      <span className="text-[11px] text-slate-500">12,000 to 18,000 Ft circuits</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 6. Destinations ▾ */}
+          <div
+            className="relative"
+            onMouseEnter={() => setActiveDropdown("destinations")}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "destinations" ? null : "destinations")}
+              className={`hover:text-[#0F3A2E] flex items-center gap-1 px-1.5 py-2 cursor-pointer transition ${
+                activeDropdown === "destinations" ? "text-[#0F3A2E] font-bold" : ""
+              }`}
+            >
+              <span>Destinations</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                  activeDropdown === "destinations" ? "rotate-180 text-[#0F3A2E]" : ""
+                }`}
+              />
+            </button>
+
+            {activeDropdown === "destinations" && (
+              <div
+                className="absolute top-full -left-20 w-[600px] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                      📍 Explore Top Destinations
+                    </span>
+                  </div>
+                  <Link
+                    href="/destinations"
+                    onClick={closeDropdown}
+                    className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
+                  >
+                    All Destinations →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <Link
+                    href="/destinations/uttarakhand"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Uttarakhand</span>
+                      <span className="text-[11px] text-slate-500">Land of the Gods & Peaks</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/himachal-pradesh"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold shrink-0">
+                      🌲
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Himachal Pradesh</span>
+                      <span className="text-[11px] text-slate-500">Valleys, Passes & Apple Orchards</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/kashmir"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold shrink-0">
+                      ❄️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Kashmir</span>
+                      <span className="text-[11px] text-slate-500">Paradise On Earth & Alpine Lakes</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/ladakh"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Ladakh</span>
+                      <span className="text-[11px] text-slate-500">High Altitude Desert & Monasteries</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/rajasthan"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🏰
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Rajasthan</span>
+                      <span className="text-[11px] text-slate-500">Royal Forts, Palaces & Desert Dunes</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/kerala"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🌴
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Kerala</span>
+                      <span className="text-[11px] text-slate-500">God's Own Country & Backwaters</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/goa"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center font-bold shrink-0">
+                      🌊
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Goa</span>
+                      <span className="text-[11px] text-slate-500">Sun, Sand, Sea & Portuguese Charm</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/nepal"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold shrink-0">
+                      🇳🇵
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Nepal</span>
+                      <span className="text-[11px] text-slate-500">Himalayan Kingdom & Stupas</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 7. Travel Services ▾ */}
+          <div
+            className="relative"
+            onMouseEnter={() => setActiveDropdown("services")}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "services" ? null : "services")}
+              className={`hover:text-[#0F3A2E] flex items-center gap-1 px-1.5 py-2 cursor-pointer transition ${
+                activeDropdown === "services" ? "text-[#0F3A2E] font-bold" : ""
+              }`}
+            >
+              <span>Travel Services</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                  activeDropdown === "services" ? "rotate-180 text-[#0F3A2E]" : ""
+                }`}
+              />
+            </button>
+
+            {activeDropdown === "services" && (
+              <div
+                className="absolute top-full -left-20 w-[520px] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                      🛎️ End-to-End Travel Logistics & Bookings
+                    </span>
+                  </div>
+                  <Link
+                    href="/travel-services"
+                    onClick={closeDropdown}
+                    className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
+                  >
+                    All Services →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <Link
+                    href="/travel-services#hotels"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50/80 transition group border border-transparent hover:border-teal-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold shrink-0">
+                      🏨
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-teal-900 block">Hotels & Resorts</span>
+                      <span className="text-[11px] text-slate-500">Handpicked stays & camps</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/travel-services#flights"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50/80 transition group border border-transparent hover:border-teal-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold shrink-0">
+                      🛫
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-teal-900 block">Flight Tickets</span>
+                      <span className="text-[11px] text-slate-500">Domestic & International fares</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/travel-services#transfers"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50/80 transition group border border-transparent hover:border-teal-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🚗
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-teal-900 block">Airport Transfers</span>
+                      <span className="text-[11px] text-slate-500">Pick-and-drop outstations</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/travel-services#transport"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50/80 transition group border border-transparent hover:border-teal-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🚙
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-teal-900 block">Mountain 4x4 Cabs</span>
+                      <span className="text-[11px] text-slate-500">Innova, Tempo & Bolero Camper</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/travel-services#customized"
+                    onClick={closeDropdown}
+                    className="col-span-2 flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50/80 transition group border border-transparent hover:border-teal-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold shrink-0">
+                      ✨
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-teal-900 block">Customized & Corporate Tours</span>
+                      <span className="text-[11px] text-slate-500">Tailormade family itineraries, corporate retreats & student groups</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 8. Travel Blog ▾ */}
+          <div
+            className="relative"
+            onMouseEnter={() => setActiveDropdown("blog")}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "blog" ? null : "blog")}
+              className={`hover:text-[#0F3A2E] flex items-center gap-1 px-1.5 py-2 cursor-pointer transition ${
+                activeDropdown === "blog" ? "text-[#0F3A2E] font-bold" : ""
+              }`}
+            >
+              <span>Travel Blog</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                  activeDropdown === "blog" ? "rotate-180 text-[#0F3A2E]" : ""
+                }`}
+              />
+            </button>
+
+            {activeDropdown === "blog" && (
+              <div
+                className="absolute top-full -left-20 w-[540px] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+              >
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                      ✍️ Trail Guides, Tips & Stories
+                    </span>
+                  </div>
+                  <Link
+                    href="/blog"
+                    onClick={closeDropdown}
+                    className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
+                  >
+                    All Articles →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <Link
+                    href="/blog/trekking-guides"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                      🏔️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Trekking Guides</span>
+                      <span className="text-[11px] text-slate-500">Route breakdowns & itineraries</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/blog/travel-guides"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold shrink-0">
+                      🗺️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Travel Guides</span>
+                      <span className="text-[11px] text-slate-500">City, beach & cultural escapes</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/blog/trekking-tips"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      🎒
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Trekking Tips</span>
+                      <span className="text-[11px] text-slate-500">Altitude gear & fitness prep</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/blog/travel-tips"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold shrink-0">
+                      💡
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Travel Tips</span>
+                      <span className="text-[11px] text-slate-500">Packing hacks & budget tricks</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/blog/destination-guides"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold shrink-0">
+                      📍
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Destination Guides</span>
+                      <span className="text-[11px] text-slate-500">Best seasons & local sights</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/blog/trek-stories"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center font-bold shrink-0">
+                      📖
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Trek Stories</span>
+                      <span className="text-[11px] text-slate-500">Summit diaries & experiences</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 9. About Us */}
+          <Link
+            href="/about-us"
+            className="hover:text-[#0F3A2E] text-slate-700 transition px-1.5 py-2"
+          >
             About Us
+          </Link>
+
+          {/* 10. Contact Us */}
+          <Link
+            href="/contact-us"
+            className="hover:text-[#0F3A2E] text-slate-700 transition px-1.5 py-2"
+          >
+            Contact Us
           </Link>
         </nav>
 
         {/* Right CTA Actions */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          
+          {/* Phone CTA */}
           <a
             href="tel:+917500222141"
-            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] border border-emerald-200/80 text-xs sm:text-sm font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full transition shadow-sm group whitespace-nowrap"
+            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] border border-emerald-200/80 text-xs sm:text-sm font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full transition shadow-xs group whitespace-nowrap"
             title="Direct Ground Desk: +91 7500222141"
           >
             <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 animate-phone-vibrate shrink-0" />
@@ -708,10 +1106,20 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             <span className="tracking-tight font-bold sm:hidden">Call</span>
           </a>
 
-          {/* Mobile menu toggle */}
+          {/* Plan Your Trip CTA */}
+          <Link
+            href="/plan-your-trip"
+            onClick={onBookClick}
+            className="hidden sm:inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FF6B35] to-[#f0551d] hover:from-[#e05a26] hover:to-[#df4913] text-white text-xs sm:text-sm font-extrabold px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm hover:shadow-md transition duration-200 whitespace-nowrap"
+          >
+            <span>Plan Your Trip</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+
+          {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-700 hover:text-[#0F3A2E] hover:bg-slate-100 rounded-xl transition shrink-0"
+            className="xl:hidden p-2 text-slate-700 hover:text-[#0F3A2E] hover:bg-slate-100 rounded-xl transition shrink-0"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -719,16 +1127,31 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3">
-          <a
-            href="tel:+917500222141"
-            className="flex items-center justify-center gap-2 bg-emerald-50 text-[#0F3A2E] border border-emerald-200 font-bold text-sm py-2.5 rounded-xl"
-          >
-            <PhoneCall className="w-4 h-4 text-emerald-600 animate-phone-vibrate shrink-0" />
-            <span>+91 7500222141</span>
-          </a>
+        <div className="xl:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-8 space-y-3 max-h-[85vh] overflow-y-auto">
+          
+          {/* Quick Actions in Drawer */}
+          <div className="grid grid-cols-2 gap-2 pb-2 border-b border-slate-100">
+            <a
+              href="tel:+917500222141"
+              className="flex items-center justify-center gap-1.5 bg-emerald-50 text-[#0F3A2E] border border-emerald-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"
+            >
+              <PhoneCall className="w-3.5 h-3.5 text-emerald-600 animate-phone-vibrate shrink-0" />
+              <span>+91 7500222141</span>
+            </a>
+            <Link
+              href="/plan-your-trip"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onBookClick) onBookClick();
+              }}
+              className="flex items-center justify-center gap-1.5 bg-[#FF6B35] text-white font-extrabold text-xs py-2.5 rounded-xl shadow-xs"
+            >
+              <span>Plan Your Trip →</span>
+            </Link>
+          </div>
+
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
@@ -736,168 +1159,310 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           >
             Home
           </Link>
-          {/* Mobile Treks Accordion */}
+
+          {/* 1. Mobile Treks Accordion */}
           <div className="border-t border-slate-100 py-1">
             <button
-              onClick={() => setMobileTreksOpen(!mobileTreksOpen)}
+              onClick={() => toggleMobile("treks")}
               className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
             >
-              <span>🏔️ Treks & Expeditions</span>
+              <span>🏔️ Treks</span>
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
-                  mobileTreksOpen ? "rotate-180 text-emerald-600" : ""
+                  mobileExpanded["treks"] ? "rotate-180 text-emerald-600" : ""
                 }`}
               />
             </button>
-            {mobileTreksOpen && (
+            {mobileExpanded["treks"] && (
               <div className="pl-3 py-1 space-y-1.5 border-l-2 border-emerald-500 ml-1 text-xs">
-                <Link
-                  href="/treks/hampta-pass"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🏔️ Hampta Pass Crossover (14,065 Ft)
+                <Link href="/treks" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
+                  • All Treks →
                 </Link>
-                <Link
-                  href="/treks/chopta-tungnath-chandrashila"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🛕 Chopta Tungnath Chandrashila (13,000 Ft)
+                <Link href="/treks/uttarakhand" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Uttarakhand Treks
                 </Link>
-                <Link
-                  href="/treks/kheerganga-trek"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  ♨️ Kheerganga Hot Spring Trek (Weekend)
+                <Link href="/treks/himachal-pradesh" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Himachal Pradesh Treks
                 </Link>
-                <Link
-                  href="/treks/leh-ladakh-tour-package"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  ❄️ Leh Ladakh High Passes
+                <Link href="/treks/kashmir" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Kashmir Treks
                 </Link>
-                <Link
-                  href="/treks/category/weekend"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  ⛺ Weekend & Beginner Treks
+                <Link href="/treks/ladakh" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Ladakh Treks
                 </Link>
-                <Link
-                  href="/treks/category/monsoon"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🌧️ Monsoon & Valley Blooms
+                <Link href="/treks/nepal" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Nepal Treks
                 </Link>
-                <Link
-                  href="/treks"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block font-bold text-[#FF6B35] py-1 pt-1.5"
-                >
-                  View All Treks & Expeditions →
+                <Link href="/treks/high-altitude" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • High Altitude Treks
+                </Link>
+                <Link href="/treks/weekend" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Weekend Treks
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Domestic Trips Accordion */}
-          <div className="border-y border-slate-100 py-1">
+          {/* 2. Mobile Domestic Trips Accordion */}
+          <div className="border-t border-slate-100 py-1">
             <button
-              onClick={() => setMobileDomesticOpen(!mobileDomesticOpen)}
+              onClick={() => toggleMobile("domestic")}
               className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
             >
-              <span>🇮🇳 Domestic Trips (By State)</span>
+              <span>🇮🇳 Domestic Trips</span>
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
-                  mobileDomesticOpen ? "rotate-180 text-emerald-600" : ""
+                  mobileExpanded["domestic"] ? "rotate-180 text-emerald-600" : ""
                 }`}
               />
             </button>
-            {mobileDomesticOpen && (
+            {mobileExpanded["domestic"] && (
               <div className="pl-3 py-1 space-y-1.5 border-l-2 border-emerald-500 ml-1 text-xs">
-                <Link
-                  href="/treks/category/uttarakhand"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🏔️ Uttarakhand (Chopta, Kedarkantha, Nainital)
+                <Link href="/domestic-trips" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
+                  • All Domestic Trips →
                 </Link>
-                <Link
-                  href="/treks/category/himachal"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🌲 Himachal Pradesh (Hampta, Kheerganga)
+                <Link href="/domestic-trips/uttarakhand" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Uttarakhand Tours
                 </Link>
-                <Link
-                  href="/treks/category/ladakh"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  ❄️ Ladakh & Kashmir (Leh, Pangong Tso)
+                <Link href="/domestic-trips/himachal-pradesh" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Himachal Pradesh Tours
                 </Link>
-                <Link
-                  href="/treks/category/rajasthan"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🏰 Rajasthan (Jaipur, Jaisalmer Desert)
+                <Link href="/domestic-trips/kashmir" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Kashmir Tours
                 </Link>
-                <Link
-                  href="/treks/category/kerala"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🌴 Kerala (Munnar, Alleppey Backwaters)
+                <Link href="/domestic-trips/ladakh" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Ladakh Tours
                 </Link>
-                <Link
-                  href="/treks/category/northeast"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🌿 Northeast (Meghalaya, Sikkim, Assam)
+                <Link href="/domestic-trips/rajasthan" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Rajasthan Tours
                 </Link>
-                <Link
-                  href="/treks/category/goa"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-600 hover:text-[#0F3A2E] py-1"
-                >
-                  🌊 Goa Beaches & Maharashtra Ghats
+                <Link href="/domestic-trips/kerala" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Kerala Tours
                 </Link>
-                <Link
-                  href="/treks/category/domestic"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block font-bold text-[#FF6B35] py-1 pt-1.5"
-                >
-                  View All Domestic Trips →
+                <Link href="/domestic-trips/goa" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Goa Tours
                 </Link>
               </div>
             )}
           </div>
+
+          {/* 3. Mobile International Trips Accordion */}
+          <div className="border-t border-slate-100 py-1">
+            <button
+              onClick={() => toggleMobile("international")}
+              className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
+            >
+              <span>🌎 International Trips</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  mobileExpanded["international"] ? "rotate-180 text-emerald-600" : ""
+                }`}
+              />
+            </button>
+            {mobileExpanded["international"] && (
+              <div className="pl-3 py-1 space-y-1.5 border-l-2 border-blue-500 ml-1 text-xs">
+                <Link href="/international-trips" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
+                  • All International Trips →
+                </Link>
+                <Link href="/international-trips/nepal" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Nepal Tours
+                </Link>
+                <Link href="/international-trips/bali" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Bali Tours
+                </Link>
+                <Link href="/international-trips/thailand" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Thailand Tours
+                </Link>
+                <Link href="/international-trips/dubai" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Dubai Tours
+                </Link>
+                <Link href="/international-trips/vietnam" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Vietnam Tours
+                </Link>
+                <Link href="/international-trips/singapore" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Singapore Tours
+                </Link>
+                <Link href="/international-trips/maldives" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Maldives Holidays
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* 4. Mobile Adventure Tours Accordion */}
+          <div className="border-t border-slate-100 py-1">
+            <button
+              onClick={() => toggleMobile("adventure")}
+              className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
+            >
+              <span>🧗 Adventure Tours</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  mobileExpanded["adventure"] ? "rotate-180 text-emerald-600" : ""
+                }`}
+              />
+            </button>
+            {mobileExpanded["adventure"] && (
+              <div className="pl-3 py-1 space-y-1.5 border-l-2 border-amber-500 ml-1 text-xs">
+                <Link href="/adventure-tours" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
+                  • All Adventure Tours →
+                </Link>
+                <Link href="/adventure-tours/camping" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Camping
+                </Link>
+                <Link href="/adventure-tours/hiking" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Hiking
+                </Link>
+                <Link href="/adventure-tours/snow-treks" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Snow Treks
+                </Link>
+                <Link href="/adventure-tours/expeditions" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Expeditions
+                </Link>
+                <Link href="/adventure-tours/high-altitude" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • High Altitude Adventures
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* 5. Mobile Destinations Accordion */}
+          <div className="border-t border-slate-100 py-1">
+            <button
+              onClick={() => toggleMobile("destinations")}
+              className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
+            >
+              <span>📍 Destinations</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  mobileExpanded["destinations"] ? "rotate-180 text-emerald-600" : ""
+                }`}
+              />
+            </button>
+            {mobileExpanded["destinations"] && (
+              <div className="pl-3 py-1 space-y-1.5 border-l-2 border-emerald-500 ml-1 text-xs">
+                <Link href="/destinations" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
+                  • All Destinations →
+                </Link>
+                <Link href="/destinations/uttarakhand" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Uttarakhand
+                </Link>
+                <Link href="/destinations/himachal-pradesh" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Himachal Pradesh
+                </Link>
+                <Link href="/destinations/kashmir" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Kashmir
+                </Link>
+                <Link href="/destinations/ladakh" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Ladakh
+                </Link>
+                <Link href="/destinations/rajasthan" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Rajasthan
+                </Link>
+                <Link href="/destinations/kerala" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Kerala
+                </Link>
+                <Link href="/destinations/goa" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Goa
+                </Link>
+                <Link href="/destinations/nepal" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Nepal
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* 6. Mobile Travel Services Accordion */}
+          <div className="border-t border-slate-100 py-1">
+            <button
+              onClick={() => toggleMobile("services")}
+              className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
+            >
+              <span>🛎️ Travel Services</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  mobileExpanded["services"] ? "rotate-180 text-emerald-600" : ""
+                }`}
+              />
+            </button>
+            {mobileExpanded["services"] && (
+              <div className="pl-3 py-1 space-y-1.5 border-l-2 border-teal-500 ml-1 text-xs">
+                <Link href="/travel-services" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
+                  • All Travel Services →
+                </Link>
+                <Link href="/travel-services#hotels" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Hotels & Resorts
+                </Link>
+                <Link href="/travel-services#flights" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Flights Booking
+                </Link>
+                <Link href="/travel-services#transfers" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Airport & Outstation Transfers
+                </Link>
+                <Link href="/travel-services#transport" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Mountain 4x4 Transportation
+                </Link>
+                <Link href="/travel-services#customized" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Customized & Corporate Tours
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* 7. Mobile Travel Blog Accordion */}
+          <div className="border-t border-slate-100 py-1">
+            <button
+              onClick={() => toggleMobile("blog")}
+              className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
+            >
+              <span>✍️ Travel Blog</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  mobileExpanded["blog"] ? "rotate-180 text-emerald-600" : ""
+                }`}
+              />
+            </button>
+            {mobileExpanded["blog"] && (
+              <div className="pl-3 py-1 space-y-1.5 border-l-2 border-emerald-500 ml-1 text-xs">
+                <Link href="/blog" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
+                  • All Articles & Guides →
+                </Link>
+                <Link href="/blog/trekking-guides" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Trekking Guides
+                </Link>
+                <Link href="/blog/travel-guides" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Travel Guides
+                </Link>
+                <Link href="/blog/trekking-tips" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Trekking Tips
+                </Link>
+                <Link href="/blog/travel-tips" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Travel Tips
+                </Link>
+                <Link href="/blog/destination-guides" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Destination Guides
+                </Link>
+                <Link href="/blog/trek-stories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-[#0F3A2E] py-1">
+                  • Trek Stories
+                </Link>
+              </div>
+            )}
+          </div>
+
           <Link
-            href="/treks/category/weekend"
+            href="/about-us"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-slate-700 hover:text-[#0F3A2E] py-2"
-          >
-            Weekend Getaways
-          </Link>
-          <Link
-            href="/about"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-slate-700 hover:text-[#0F3A2E] py-2"
+            className="block text-sm font-semibold text-slate-700 hover:text-[#0F3A2E] py-2 border-t border-slate-100"
           >
             About Us
           </Link>
+
           <Link
-            href="/contact"
+            href="/contact-us"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-slate-700 hover:text-[#0F3A2E] py-2"
+            className="block text-sm font-semibold text-slate-700 hover:text-[#0F3A2E] py-2 border-t border-slate-100"
           >
-            Contact & Support
+            Contact Us
           </Link>
         </div>
       )}

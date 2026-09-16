@@ -182,6 +182,22 @@ export interface LandingPageData {
   updatedAt: string;
 }
 
+export interface DestinationData {
+  id: string | number;
+  name: string;
+  slug: string;
+  category?: "Domestic" | "International" | "Trek" | "Heritage" | "Beach" | string;
+  tagline: string;
+  image: string;
+  badge?: string;
+  highlights?: string[];
+  color?: string;
+  icon?: string;
+  status: "Published" | "Draft";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface AdminUser {
   id: string;
   email: string;
@@ -199,6 +215,7 @@ export interface CMSStoreData {
   bookings: BookingRecord[];
   leads: LeadRecord[];
   landingPages: LandingPageData[];
+  destinations?: DestinationData[];
 }
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
@@ -217,6 +234,131 @@ export function verifyPassword(password: string, hash: string, salt: string): bo
     .pbkdf2Sync(password, salt, 10000, 64, "sha512")
     .toString("hex");
   return computed === hash;
+}
+
+export function getDefaultDestinations(): DestinationData[] {
+  return [
+    {
+      id: "dest-uttarakhand",
+      name: "Uttarakhand",
+      slug: "uttarakhand",
+      category: "Domestic",
+      tagline: "Land of Gods, Sacred Rivers & Snowy Peaks",
+      image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
+      badge: "Most Popular",
+      highlights: ["Chopta Tungnath", "Kedarkantha", "Nainital", "Rishikesh"],
+      color: "from-emerald-900/80",
+      icon: "🏔️",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "dest-himachal-pradesh",
+      name: "Himachal Pradesh",
+      slug: "himachal-pradesh",
+      category: "Domestic",
+      tagline: "Apple Orchards, Pine Valleys & High Passes",
+      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+      badge: "Trending",
+      highlights: ["Hampta Pass", "Manali", "Kheerganga", "Spiti Valley"],
+      color: "from-blue-900/80",
+      icon: "🌲",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "dest-kashmir",
+      name: "Kashmir",
+      slug: "kashmir",
+      category: "Domestic",
+      tagline: "Paradise On Earth & Serene Alpine Lakes",
+      image: "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80",
+      badge: "Alpine Gem",
+      highlights: ["Srinagar Dal Lake", "Gulmarg", "Pahalgam", "Great Lakes"],
+      color: "from-teal-900/80",
+      icon: "❄️",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "dest-ladakh",
+      name: "Ladakh",
+      slug: "ladakh",
+      category: "Domestic",
+      tagline: "Moonscapes, Ancient Gompas & Pangong Tso",
+      image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+      badge: "High Altitude",
+      highlights: ["Leh Palace", "Nubra Valley", "Khardung La", "Pangong Tso"],
+      color: "from-sky-900/80",
+      icon: "🏔️",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "dest-rajasthan",
+      name: "Rajasthan",
+      slug: "rajasthan",
+      category: "Heritage",
+      tagline: "Royal Forts, Palaces & Golden Desert Dunes",
+      image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80",
+      badge: "Heritage",
+      highlights: ["Jaipur Amber Fort", "Udaipur Lake Pichola", "Jaisalmer Dunes"],
+      color: "from-amber-900/80",
+      icon: "🏰",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "dest-kerala",
+      name: "Kerala",
+      slug: "kerala",
+      category: "Domestic",
+      tagline: "God's Own Country, Tea Valleys & Backwaters",
+      image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+      badge: "Tropical",
+      highlights: ["Alleppey Houseboats", "Munnar Tea Gardens", "Wayanad"],
+      color: "from-emerald-950/80",
+      icon: "🌴",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "dest-goa",
+      name: "Goa",
+      slug: "goa",
+      category: "Beach",
+      tagline: "Sun-Kissed Beaches, Coastal Cafes & Watersports",
+      image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80",
+      badge: "Beach Escapes",
+      highlights: ["Calangute Beach", "Old Goa Churches", "Dudhsagar Falls"],
+      color: "from-rose-900/80",
+      icon: "🌊",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "dest-nepal",
+      name: "Nepal",
+      slug: "nepal",
+      category: "International",
+      tagline: "Himalayan Kingdom, Stupas & High Summits",
+      image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
+      badge: "International",
+      highlights: ["Kathmandu Valley", "Pokhara", "Annapurna", "Chitwan"],
+      color: "from-purple-900/80",
+      icon: "🇳🇵",
+      status: "Published",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ];
 }
 
 export function getDefaultLandingPages(): LandingPageData[] {
@@ -844,6 +986,7 @@ function getInitialStore(): CMSStoreData {
       },
     ],
     landingPages: getDefaultLandingPages(),
+    destinations: getDefaultDestinations(),
   };
 }
 
@@ -902,6 +1045,11 @@ export function readStore(): CMSStoreData {
 
     if (!parsed.landingPages || parsed.landingPages.length === 0) {
       parsed.landingPages = getDefaultLandingPages();
+      updated = true;
+    }
+
+    if (!parsed.destinations || parsed.destinations.length === 0) {
+      parsed.destinations = getDefaultDestinations();
       updated = true;
     }
 
@@ -1089,4 +1237,49 @@ export async function syncLandingPagesToMongo(pages: LandingPageData[]): Promise
     console.error("Failed to sync landingPages to MongoDB:", err);
   }
 }
+
+export function getStoreDestinations(): DestinationData[] {
+  try {
+    return readStore().destinations || getDefaultDestinations();
+  } catch {
+    return getDefaultDestinations();
+  }
+}
+
+export function getPublishedDestinations(): DestinationData[] {
+  try {
+    return getStoreDestinations().filter((d) => d.status === "Published");
+  } catch {
+    return getDefaultDestinations();
+  }
+}
+
+export async function getDestinationsAsync(): Promise<DestinationData[]> {
+  try {
+    const db = await getDb();
+    const doc = await db.collection("kradind_config").findOne({ configKey: "destinations" });
+    if (doc && Array.isArray((doc as any).destinations) && (doc as any).destinations.length > 0) {
+      const store = readStore();
+      store.destinations = (doc as any).destinations;
+      return (doc as any).destinations;
+    }
+  } catch (err) {
+    console.warn("MongoDB getDestinations error, fallback to local store:", err);
+  }
+  return readStore().destinations || getDefaultDestinations();
+}
+
+export async function syncDestinationsToMongo(destinations: DestinationData[]): Promise<void> {
+  try {
+    const db = await getDb();
+    await db.collection("kradind_config").updateOne(
+      { configKey: "destinations" },
+      { $set: { configKey: "destinations", destinations } },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error("Failed to sync destinations to MongoDB:", err);
+  }
+}
+
 

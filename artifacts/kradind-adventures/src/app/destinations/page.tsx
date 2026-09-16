@@ -21,82 +21,15 @@ export const metadata: Metadata = {
   },
 };
 
-const DESTINATIONS = [
-  {
-    name: "Uttarakhand",
-    slug: "uttarakhand",
-    tagline: "Land of Gods, Sacred Rivers & Snowy Peaks",
-    highlights: ["Chopta Tungnath", "Kedarkantha", "Nainital", "Rishikesh"],
-    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
-    badge: "Most Popular",
-    color: "from-emerald-900/80",
-  },
-  {
-    name: "Himachal Pradesh",
-    slug: "himachal-pradesh",
-    tagline: "Apple Orchards, Pine Valleys & High Passes",
-    highlights: ["Hampta Pass", "Manali", "Kheerganga", "Spiti Valley"],
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
-    badge: "Trending",
-    color: "from-blue-900/80",
-  },
-  {
-    name: "Kashmir",
-    slug: "kashmir",
-    tagline: "Paradise On Earth & Serene Alpine Lakes",
-    highlights: ["Srinagar Dal Lake", "Gulmarg", "Pahalgam", "Great Lakes"],
-    image: "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80",
-    badge: "Alpine Gem",
-    color: "from-teal-900/80",
-  },
-  {
-    name: "Ladakh",
-    slug: "ladakh",
-    tagline: "Moonscapes, Ancient Gompas & Pangong Tso",
-    highlights: ["Leh Palace", "Nubra Valley", "Khardung La", "Pangong Tso"],
-    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    badge: "High Altitude",
-    color: "from-sky-900/80",
-  },
-  {
-    name: "Rajasthan",
-    slug: "rajasthan",
-    tagline: "Royal Forts, Palaces & Golden Desert Dunes",
-    highlights: ["Jaipur Amber Fort", "Udaipur Lake Pichola", "Jaisalmer Dunes"],
-    image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80",
-    badge: "Heritage",
-    color: "from-amber-900/80",
-  },
-  {
-    name: "Kerala",
-    slug: "kerala",
-    tagline: "God's Own Country, Tea Valleys & Backwaters",
-    highlights: ["Alleppey Houseboats", "Munnar Tea Gardens", "Wayanad"],
-    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
-    badge: "Tropical",
-    color: "from-emerald-950/80",
-  },
-  {
-    name: "Goa",
-    slug: "goa",
-    tagline: "Sun-Kissed Beaches, Coastal Cafes & Watersports",
-    highlights: ["Calangute Beach", "Old Goa Churches", "Dudhsagar Falls"],
-    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80",
-    badge: "Beach Escapes",
-    color: "from-rose-900/80",
-  },
-  {
-    name: "Nepal",
-    slug: "nepal",
-    tagline: "Himalayan Kingdom, Stupas & High Summits",
-    highlights: ["Kathmandu Valley", "Pokhara", "Annapurna", "Chitwan"],
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
-    badge: "International",
-    color: "from-purple-900/80",
-  },
-];
+import { getDestinationsAsync, getDefaultDestinations } from "@/lib/cms-store";
 
-export default function DestinationsPage() {
+export const revalidate = 60;
+
+export default async function DestinationsPage() {
+  const allDestinations = await getDestinationsAsync();
+  const destinations = (allDestinations || getDefaultDestinations()).filter(
+    (d) => d.status === "Published"
+  );
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <TopBar />
@@ -119,7 +52,7 @@ export default function DestinationsPage() {
 
         {/* Destination Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {DESTINATIONS.map((dest) => (
+          {destinations.map((dest) => (
             <Link
               key={dest.slug}
               href={`/destinations/${dest.slug}`}
@@ -133,10 +66,12 @@ export default function DestinationsPage() {
                   className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
                   sizes="(max-width: 768px) 100vw, 300px"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-t ${dest.color} via-black/30 to-transparent`} />
-                <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs text-slate-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
-                  {dest.badge}
-                </span>
+                <div className={`absolute inset-0 bg-gradient-to-t ${dest.color || "from-emerald-900/80"} via-black/30 to-transparent`} />
+                {dest.badge && (
+                  <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs text-slate-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+                    {dest.badge}
+                  </span>
+                )}
                 <div className="absolute bottom-3 left-3 right-3 text-white">
                   <h3 className="text-lg font-extrabold leading-tight drop-shadow-sm flex items-center gap-1">
                     <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -151,16 +86,18 @@ export default function DestinationsPage() {
                 </p>
 
                 <div className="space-y-2 pt-2 border-t border-slate-100">
-                  <div className="flex flex-wrap gap-1">
-                    {dest.highlights.map((h, i) => (
-                      <span
-                        key={i}
-                        className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md font-medium"
-                      >
-                        {h}
-                      </span>
-                    ))}
-                  </div>
+                  {dest.highlights && dest.highlights.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {dest.highlights.map((h, i) => (
+                        <span
+                          key={i}
+                          className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md font-medium"
+                        >
+                          {h}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
                   <span className="inline-flex items-center gap-1 text-xs font-bold text-[#FF6B35] group-hover:translate-x-1 transition-transform">
                     Explore {dest.name} Tours <ArrowRight className="w-3 h-3" />

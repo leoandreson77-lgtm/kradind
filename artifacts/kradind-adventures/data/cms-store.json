@@ -3669,5 +3669,164 @@
       "heroImageAlt": "Domestic tour package in India by KRAD Global",
       "imageAlt": "Domestic tour package in India by KRAD Global"
     }
+  ],
+  "destinations": [
+    {
+      "id": "dest-uttarakhand",
+      "name": "Uttarakhand",
+      "slug": "uttarakhand",
+      "category": "Domestic",
+      "tagline": "Land of Gods, Sacred Rivers & Snowy Peaks",
+      "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
+      "badge": "Most Popular",
+      "highlights": [
+        "Chopta Tungnath",
+        "Kedarkantha",
+        "Nainital",
+        "Rishikesh"
+      ],
+      "color": "from-emerald-900/80",
+      "icon": "🏔️",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    },
+    {
+      "id": "dest-himachal-pradesh",
+      "name": "Himachal Pradesh",
+      "slug": "himachal-pradesh",
+      "category": "Domestic",
+      "tagline": "Apple Orchards, Pine Valleys & High Passes",
+      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+      "badge": "Trending",
+      "highlights": [
+        "Hampta Pass",
+        "Manali",
+        "Kheerganga",
+        "Spiti Valley"
+      ],
+      "color": "from-blue-900/80",
+      "icon": "🌲",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    },
+    {
+      "id": "dest-kashmir",
+      "name": "Kashmir",
+      "slug": "kashmir",
+      "category": "Domestic",
+      "tagline": "Paradise On Earth & Serene Alpine Lakes",
+      "image": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80",
+      "badge": "Alpine Gem",
+      "highlights": [
+        "Srinagar Dal Lake",
+        "Gulmarg",
+        "Pahalgam",
+        "Great Lakes"
+      ],
+      "color": "from-teal-900/80",
+      "icon": "❄️",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    },
+    {
+      "id": "dest-ladakh",
+      "name": "Ladakh",
+      "slug": "ladakh",
+      "category": "Domestic",
+      "tagline": "Moonscapes, Ancient Gompas & Pangong Tso",
+      "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+      "badge": "High Altitude",
+      "highlights": [
+        "Leh Palace",
+        "Nubra Valley",
+        "Khardung La",
+        "Pangong Tso"
+      ],
+      "color": "from-sky-900/80",
+      "icon": "🏔️",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    },
+    {
+      "id": "dest-rajasthan",
+      "name": "Rajasthan",
+      "slug": "rajasthan",
+      "category": "Heritage",
+      "tagline": "Royal Forts, Palaces & Golden Desert Dunes",
+      "image": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80",
+      "badge": "Heritage",
+      "highlights": [
+        "Jaipur Amber Fort",
+        "Udaipur Lake Pichola",
+        "Jaisalmer Dunes"
+      ],
+      "color": "from-amber-900/80",
+      "icon": "🏰",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    },
+    {
+      "id": "dest-kerala",
+      "name": "Kerala",
+      "slug": "kerala",
+      "category": "Domestic",
+      "tagline": "God's Own Country, Tea Valleys & Backwaters",
+      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+      "badge": "Tropical",
+      "highlights": [
+        "Alleppey Houseboats",
+        "Munnar Tea Gardens",
+        "Wayanad"
+      ],
+      "color": "from-emerald-950/80",
+      "icon": "🌴",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    },
+    {
+      "id": "dest-goa",
+      "name": "Goa",
+      "slug": "goa",
+      "category": "Beach",
+      "tagline": "Sun-Kissed Beaches, Coastal Cafes & Watersports",
+      "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80",
+      "badge": "Beach Escapes",
+      "highlights": [
+        "Calangute Beach",
+        "Old Goa Churches",
+        "Dudhsagar Falls"
+      ],
+      "color": "from-rose-900/80",
+      "icon": "🌊",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    },
+    {
+      "id": "dest-nepal",
+      "name": "Nepal",
+      "slug": "nepal",
+      "category": "International",
+      "tagline": "Himalayan Kingdom, Stupas & High Summits",
+      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
+      "badge": "International",
+      "highlights": [
+        "Kathmandu Valley",
+        "Pokhara",
+        "Annapurna",
+        "Chitwan"
+      ],
+      "color": "from-purple-900/80",
+      "icon": "🇳🇵",
+      "status": "Published",
+      "createdAt": "2026-09-16T10:52:34.929Z",
+      "updatedAt": "2026-09-16T10:52:34.929Z"
+    }
   ]
 }

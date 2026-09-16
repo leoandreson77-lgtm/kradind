@@ -826,21 +826,11 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         {/* Right CTA Actions */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           
-          {/* Phone Quick Call Pill */}
-          <a
-            href="tel:+917500222141"
-            className="hidden sm:flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] border border-emerald-200/80 text-xs sm:text-sm font-bold px-3 py-2 rounded-full transition shadow-xs group whitespace-nowrap"
-            title="Direct Ground Desk: +91 7500222141"
-          >
-            <PhoneCall className="w-4 h-4 text-emerald-600 animate-phone-vibrate shrink-0" />
-            <span className="tracking-tight font-bold">+91 7500222141</span>
-          </a>
-
           {/* Glowing Vibrant Plan Your Trip CTA */}
           <Link
             href="/plan-your-trip"
             onClick={onBookClick}
-            className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FF6B35] to-[#f0551d] hover:from-[#e05a26] hover:to-[#df4913] text-white text-xs sm:text-sm font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-md hover:shadow-xl transition-all duration-200 whitespace-nowrap transform hover:-translate-y-0.5 active:translate-y-0"
+            className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FF6B35] to-[#f0551d] hover:from-[#e05a26] hover:to-[#df4913] text-white text-xs sm:text-sm font-extrabold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-md hover:shadow-xl transition-all duration-200 whitespace-nowrap transform hover:-translate-y-0.5 active:translate-y-0"
           >
             <span>Plan Your Trip</span>
             <ArrowRight className="w-4 h-4" />
@@ -868,7 +858,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
               className="flex items-center justify-center gap-1.5 bg-emerald-50 text-[#0F3A2E] border border-emerald-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"
             >
               <PhoneCall className="w-3.5 h-3.5 text-emerald-600 animate-phone-vibrate shrink-0" />
-              <span>+91 7500222141</span>
+              <span>Call Us</span>
             </a>
             <Link
               href="/plan-your-trip"

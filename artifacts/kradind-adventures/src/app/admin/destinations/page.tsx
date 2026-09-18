@@ -21,6 +21,7 @@ import {
   Eye,
 } from "lucide-react";
 import { DestinationData } from "@/lib/cms-store";
+import { ImageUploader } from "@/components/admin/image-uploader";
 
 const POPULAR_EMOJIS = ["🏔️", "🌲", "❄️", "🏰", "🌴", "🌊", "🇳🇵", "🏝️", "✈️", "🛕", "⛺", "📍"];
 const CATEGORIES = ["All", "Domestic", "International", "Trek", "Heritage", "Beach", "Spiritual"];
@@ -638,23 +639,18 @@ export default function AdminDestinationsPage() {
                 />
               </div>
 
-              {/* Image URL & Status */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Cover Image URL *</label>
-                  <input
-                    type="url"
-                    required
-                    placeholder="https://images.unsplash.com/photo-..."
-                    value={editingDestination.image}
-                    onChange={(e) =>
-                      setEditingDestination({ ...editingDestination, image: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] transition font-mono text-[11px]"
-                  />
-                </div>
+              {/* Image Upload & Status */}
+              <div className="space-y-4">
+                <ImageUploader
+                  value={editingDestination.image}
+                  onChange={(url) => setEditingDestination({ ...editingDestination, image: url })}
+                  label="Destination Cover Image"
+                  description="Upload a photo from your device or paste a photo link"
+                  aspect="landscape"
+                  required
+                />
 
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 max-w-xs">
                   <label className="text-xs font-bold text-slate-700">Publish Status</label>
                   <select
                     value={editingDestination.status}
@@ -666,7 +662,7 @@ export default function AdminDestinationsPage() {
                     }
                     className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] font-bold bg-white"
                   >
-                    <option value="Published">🟢 Published (Live)</option>
+                    <option value="Published">🟢 Published (Live on Website)</option>
                     <option value="Draft">🟡 Draft (Hidden)</option>
                   </select>
                 </div>

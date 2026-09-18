@@ -92,13 +92,27 @@ export function ImageUploader(props: ImageUploaderProps) {
         formData.append("file", files[i]);
       }
 
+      const headers: Record<string, string> = {};
+      try {
+        const savedToken = typeof window !== "undefined" ? localStorage.getItem("kradind_admin_token") : null;
+        if (savedToken) {
+          headers["x-admin-token"] = savedToken;
+          headers["Authorization"] = `Bearer ${savedToken}`;
+        }
+      } catch {}
+
       const res = await fetch("/api/admin/upload", {
         method: "POST",
+        credentials: "include",
+        headers,
         body: formData,
       });
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);
+        if (res.status === 401) {
+          throw new Error("Admin session expired or unauthorized. Please re-login to continue uploading.");
+        }
         throw new Error(data?.error || "Failed to upload image(s)");
       }
 
@@ -275,7 +289,19 @@ export function ImageUploader(props: ImageUploaderProps) {
         {errorMessage && (
           <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            <span className="flex-1">{errorMessage}</span>
+            <span className="flex-1">
+              {errorMessage}
+              {errorMessage.includes("re-login") && (
+                <a
+                  href="/admin/login"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="ml-1.5 font-bold text-rose-900 underline hover:text-black inline-flex items-center gap-0.5"
+                >
+                  Log In <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </span>
             <button
               type="button"
               onClick={() => setErrorMessage("")}
@@ -626,7 +652,19 @@ export function ImageUploader(props: ImageUploaderProps) {
       {errorMessage && (
         <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          <span className="flex-1">{errorMessage}</span>
+          <span className="flex-1">
+            {errorMessage}
+            {errorMessage.includes("re-login") && (
+              <a
+                href="/admin/login"
+                target="_blank"
+                rel="noreferrer"
+                className="ml-1.5 font-bold text-rose-900 underline hover:text-black inline-flex items-center gap-0.5"
+              >
+                Log In <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </span>
           <button
             type="button"
             onClick={() => setErrorMessage("")}

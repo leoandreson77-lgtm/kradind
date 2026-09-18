@@ -75,7 +75,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const session = await getAdminSession(request);
   if (!session.authenticated) {
-    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+    return NextResponse.json(
+      {
+        error: "Unauthorized access: Admin session is missing, invalid or expired. Please re-login.",
+        authenticated: false,
+      },
+      { status: 401 },
+    );
   }
 
   try {
@@ -138,15 +144,16 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (uploadedFiles.length === 1) {
-      return NextResponse.json({
-        success: true,
-        ...uploadedFiles[0],
-      }, { status: 201 });
+    if (uploadedFiles.length === 0) {
+      return NextResponse.json({ error: "No valid image files were processed" }, { status: 400 });
     }
 
     return NextResponse.json({
       success: true,
+      url: uploadedFiles[0].url,
+      filename: uploadedFiles[0].filename,
+      size: uploadedFiles[0].size,
+      type: uploadedFiles[0].type,
       files: uploadedFiles,
       urls: uploadedFiles.map((f) => f.url),
     }, { status: 201 });

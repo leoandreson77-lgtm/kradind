@@ -37,9 +37,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     let isMounted = true;
     async function checkAuth() {
       try {
-        const res = await fetch("/api/admin/auth");
+        const savedToken = typeof window !== "undefined" ? localStorage.getItem("kradind_admin_token") : null;
+        const headers: Record<string, string> = {};
+        if (savedToken) {
+          headers["x-admin-token"] = savedToken;
+          headers["Authorization"] = `Bearer ${savedToken}`;
+        }
+
+        const res = await fetch("/api/admin/auth", {
+          credentials: "include",
+          headers,
+        });
+
         if (res.ok) {
           const data = await res.json();
+          if (data.token && typeof window !== "undefined") {
+            try {
+              localStorage.setItem("kradind_admin_token", data.token);
+            } catch {}
+          }
           if (isMounted) {
             setAuthenticated(true);
             setAdminUser(data.user);
@@ -84,9 +100,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/admin/auth", { method: "DELETE" });
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("kradind_admin_token");
+      }
+      await fetch("/api/admin/auth", { method: "DELETE", credentials: "include" });
       router.push("/admin/login");
     } catch {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("kradind_admin_token");
+      }
       router.push("/admin/login");
     }
   };

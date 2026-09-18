@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   ],
   authors: [
     { name: "KRAD Global", url: "https://kradind.com" },
-    { name: "Aashish Chauhan", url: "https://kradind.com/about" },
+    { name: "KRADIND Expedition Team", url: "https://kradind.com/about" },
   ],
   creator: "KRAD Global",
   publisher: "KRAD Global",
@@ -120,12 +120,6 @@ const globalStructuredData = {
         "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
       telephone: "+917500222141",
       email: "support@kradind.com",
-      founder: {
-        "@type": "Person",
-        "@id": "https://kradind.com/#founder",
-        name: "Aashish Chauhan",
-        jobTitle: "Founder & Chief Expedition Director",
-      },
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: "4.9",
@@ -217,45 +211,6 @@ const globalStructuredData = {
           },
         ],
       },
-    },
-    {
-      "@type": "Person",
-      "@id": "https://kradind.com/#founder",
-      name: "Aashish Chauhan",
-      jobTitle: "Founder & Chief Expedition Director",
-      worksFor: {
-        "@type": "Organization",
-        "@id": "https://kradind.com/#organization",
-        name: "KRADIND Adventures",
-      },
-      alumniOf: {
-        "@type": "EducationalOrganization",
-        name: "Nehru Institute of Mountaineering (NIM)",
-      },
-      hasCredential: [
-        {
-          "@type": "EducationalOccupationalCredential",
-          name: "Certified High-Altitude Mountaineering Leader (NIM)",
-        },
-        {
-          "@type": "EducationalOccupationalCredential",
-          name: "Wilderness First Aid (WFA) Certified",
-        },
-      ],
-      knowsAbout: [
-        "Himalayan Mountaineering",
-        "High-Altitude Wilderness Expeditions",
-        "Alpine Trail Weather Radar",
-        "Leave No Trace (LNT) Mountain Standards",
-      ],
-      description:
-        "Himalayan mountaineer and wilderness expedition specialist leading certified high-altitude treks across India.",
-      telephone: "+91 75002 22141",
-      email: "support@kradind.com",
-      sameAs: [
-        "https://www.instagram.com/kradglobal/",
-        "https://x.com/KradGlobalTour",
-      ],
     },
     {
       "@type": "LocalBusiness",

@@ -23,12 +23,18 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
+        if (data.token && typeof window !== "undefined") {
+          try {
+            localStorage.setItem("kradind_admin_token", data.token);
+          } catch {}
+        }
         router.push("/admin");
       } else {
         setErrorMsg(data.error || "Invalid email or password");

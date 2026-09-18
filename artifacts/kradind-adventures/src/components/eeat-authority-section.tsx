@@ -76,11 +76,11 @@ export function EEATAuthoritySection() {
                 </div>
 
                 <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  Curated by Aashish Chauhan
+                  Curated by KRADIND Expedition Team
                 </h3>
                 
                 <p className="text-xs sm:text-sm text-slate-300 font-medium">
-                  Founder &amp; Chief Expedition Director • Nehru Institute of Mountaineering (NIM) Alumnus • WFA Certified Leader
+                  Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified
                 </p>
 
                 <p className="text-xs text-slate-400 max-w-2xl leading-relaxed pt-1">

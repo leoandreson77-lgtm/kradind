@@ -72,6 +72,18 @@ export interface TrailRadarReport {
   note: string;
 }
 
+export interface TrustSignalItem {
+  title: string;
+  desc: string;
+  badge?: string;
+  icon?: string;
+}
+
+export interface SectionFaqItem {
+  q: string;
+  a: string;
+}
+
 export interface HomeSectionsConfig {
   hero: {
     badge: string;
@@ -79,16 +91,61 @@ export interface HomeSectionsConfig {
     subtitle: string;
     bgImage: string;
     imageAlt?: string;
+    searchPlaceholder?: string;
+    popularTags?: string[];
   };
   monsoon: {
     enabled: boolean;
     title: string;
+    subtitle?: string;
     promoCode: string;
     discountPercent: number;
+    badge?: string;
   };
   topBar: {
     supportPhone: string;
     leaveNoTrace: string;
+    whatsappNumber?: string;
+    announcementText?: string;
+    announcementLink?: string;
+  };
+  bestTreks: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    featuredSlugs: string[];
+  };
+  weekendTreks: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    featuredSlugs: string[];
+  };
+  eeat: {
+    badge: string;
+    title: string;
+    role: string;
+    description: string;
+    lastReviewed: string;
+    policyLinkText: string;
+    policyLinkUrl: string;
+    auditBadgeText: string;
+    trustCards: TrustSignalItem[];
+    faqs: SectionFaqItem[];
+  };
+  contactAndFooter: {
+    supportEmail: string;
+    supportPhone: string;
+    whatsappLink: string;
+    address: string;
+    officeHours?: string;
+    instagramUrl: string;
+    facebookUrl: string;
+    youtubeUrl: string;
+    twitterUrl: string;
+    threadsUrl: string;
+    pinterestUrl: string;
+    copyrightText: string;
   };
 }
 
@@ -964,6 +1021,129 @@ export function getDefaultLandingPages(): LandingPageData[] {
   ];
 }
 
+export function getDefaultHomeSections(): HomeSectionsConfig {
+  return {
+    hero: {
+      badge: "Certified Himalayan Guides • Small Safe Batches",
+      title: "Experience the Himalayas",
+      subtitle: "Explore handpicked Himalayan treks, tropical road trips, and international backpacking circuits.",
+      bgImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
+      imageAlt: "Domestic and international tour packages by KRAD Global in Dehradun",
+      searchPlaceholder: "Search by trek name, state, pass or elevation...",
+      popularTags: ["Kedarkantha", "Chopta Tungnath", "Hampta Pass", "Leh Ladakh", "Char Dham"],
+    },
+    monsoon: {
+      enabled: true,
+      title: "Monsoon Specials & Valley Blooms",
+      subtitle: "Unlock exclusive rainy season discounts on UNESCO Valley of Flowers, Hampta Pass, and Kashmir circuits.",
+      promoCode: "MONSOON2026",
+      discountPercent: 20,
+      badge: "Limited Season Offer",
+    },
+    topBar: {
+      supportPhone: "+91 75002 22141",
+      leaveNoTrace: "🌱 Leave No Trace Certified Operator",
+      whatsappNumber: "+91 75002 22141",
+      announcementText: "🔥 2026 Himalayan Batches Now Live with Early-Bird Discounts",
+      announcementLink: "/treks",
+    },
+    bestTreks: {
+      badge: "4.9+ Rated Flagship Expeditions",
+      title: "Top Himalayan Treks & High Passes",
+      subtitle: "Highest rated high-altitude alpine routes led by NIM-certified leaders.",
+      featuredSlugs: [
+        "chopta-tungnath-chandrashila",
+        "hampta-pass",
+        "kheerganga-trek",
+        "leh-ladakh-tour-package",
+      ],
+    },
+    weekendTreks: {
+      badge: "Zero Work Leave Needed",
+      title: "Weekend Escapes & Short Breaks",
+      subtitle: "Quick Himalayan recharges designed to fit comfortably into Friday to Sunday departures.",
+      featuredSlugs: [
+        "chopta-tungnath-chandrashila",
+        "kheerganga-trek",
+        "nainital-tour-package",
+        "jaipur-tour-package",
+      ],
+    },
+    eeat: {
+      badge: "Expedition Authority & Curation",
+      title: "Curated by KRADIND Expedition Team",
+      role: "Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified",
+      description: "Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring.",
+      lastReviewed: "14 September 2026",
+      policyLinkText: "Read Our Editorial & Safety Policy",
+      policyLinkUrl: "/editorial-policy",
+      auditBadgeText: "Fact-Checked & NIM/HMI Audited",
+      trustCards: [
+        {
+          title: "4.9 / 5 Verified Rating",
+          desc: "Consistently rated top-tier by over 2,480+ trekkers across India for certified safety, authentic trail guidance, and hygienic summit camps.",
+          badge: "Award",
+          icon: "Award",
+        },
+        {
+          title: "Wilderness First Aid (WFA)",
+          desc: "All guides undergo rigorous Wilderness First Aid training, carry dedicated oxygen canisters, pulse oximeters, and adhere to strict AMS protocols.",
+          badge: "Activity",
+          icon: "Activity",
+        },
+        {
+          title: "Leave No Trace (LNT)",
+          desc: "We adhere to strict zero-waste alpine ethics. All non-biodegradable waste is catalogued and packed down for eco-certified recycling in Dehradun.",
+          badge: "Compass",
+          icon: "Compass",
+        },
+        {
+          title: "Small Batches (Max 15)",
+          desc: "We limit departures to small groups for personalized guiding, optimal safety management, and uncompromised silence on pristine Himalayan ridges.",
+          badge: "HeartHandshake",
+          icon: "HeartHandshake",
+        },
+      ],
+      faqs: [
+        {
+          q: "How does KRADIND Adventures verify high-altitude trail safety and weather?",
+          a: "Our certified expedition leaders maintain direct VHF radio and satellite communication with base camps across Uttarakhand, Himachal Pradesh, and Ladakh. Every 24 hours, our ground coordinators inspect ridge stability, avalanche risks, and fresh snow levels before batch movements. When conditions change, updates are posted immediately to our Live Ground Radar.",
+        },
+        {
+          q: "What medical and safety equipment is carried on Himalayan treks?",
+          a: "Every departure carries high-altitude medical oxygen cylinders, pulse oximeters, automated first-aid trauma kits, and Gamow hyperbaric emergency protocols. All expedition directors are graduates of the Nehru Institute of Mountaineering (NIM) and hold Wilderness First Aid (WFA) certification to manage Acute Mountain Sickness (AMS) and high-altitude emergencies.",
+        },
+        {
+          q: "What is your batch size policy and Leave No Trace (LNT) standard?",
+          a: "We operate with a strict cap of 15 trekkers per batch to preserve trail silence, minimize alpine degradation, and provide 1:5 guide-to-trekker safety ratios. Under our Leave No Trace protocol, our teams collect and pack back all non-biodegradable waste from camps and mountain ridges for certified recycling in Dehradun.",
+        },
+        {
+          q: "Why choose KRAD Global as your tour and travel company in Dehradun?",
+          a: "KRAD Global is a trusted Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, Himalayan treks, and complete travel planning. We provide local Himalayan expertise, verified accommodations, licensed wilderness leaders, and 24/7 ground assistance.",
+        },
+        {
+          q: "How can beginner trekkers prepare for their first Himalayan summit?",
+          a: "We recommend four to six weeks of cardiovascular conditioning, including stair climbing, brisk walking, and core strengthening. Our trek desk provides customized training guides, gear rental checklists, and personalized consultations to ensure you have the correct footwear, layered clothing, and physical stamina before your departure.",
+        },
+      ],
+    },
+    contactAndFooter: {
+      supportEmail: "support@kradind.com",
+      supportPhone: "+91 75002 22141",
+      whatsappLink: "https://wa.link/n3u8c0",
+      address: "Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India",
+      officeHours: "Open 24/7 for Expedition & Ground Support",
+      instagramUrl: "https://www.instagram.com/kradglobal/",
+      facebookUrl: "https://www.facebook.com/share/189E2RUcH4/",
+      youtubeUrl: "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
+      twitterUrl: "https://x.com/KradGlobalTour",
+      threadsUrl: "https://www.threads.net/@kradglobal",
+      pinterestUrl: "https://in.pinterest.com/KradGlobalTravels/",
+      copyrightText: "© 2026 KRADIND Adventures Private Limited. All rights reserved. Registered under Ministry of Tourism.",
+    },
+  };
+}
+
 function getInitialStore(): CMSStoreData {
   const defaultAdmin = hashPassword("Admin@Kradind2026");
 
@@ -978,25 +1158,7 @@ function getInitialStore(): CMSStoreData {
         createdAt: new Date().toISOString(),
       },
     ],
-    homeSections: {
-      hero: {
-        badge: "Certified Himalayan Guides • Small Safe Batches",
-        title: "Experience the Himalayas",
-        subtitle: "Explore handpicked Himalayan treks, tropical road trips, and international backpacking circuits.",
-        bgImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
-        imageAlt: "Domestic and international tour packages by KRAD Global in Dehradun",
-      },
-      monsoon: {
-        enabled: true,
-        title: "Monsoon Specials & Valley Blooms",
-        promoCode: "MONSOON2026",
-        discountPercent: 20,
-      },
-      topBar: {
-        supportPhone: "+91 75002 22141",
-        leaveNoTrace: "🌱 Leave No Trace Certified Operator",
-      },
-    },
+    homeSections: getDefaultHomeSections(),
     treks: defaultTreks as unknown as TrekData[],
     trailReports: [
       {
@@ -1138,6 +1300,65 @@ export function readStore(): CMSStoreData {
       parsed.destinations = getDefaultDestinations();
       updated = true;
     }
+
+    const defaultSections = getDefaultHomeSections();
+    const rawHome = parsed.homeSections as Partial<HomeSectionsConfig> | undefined;
+
+    parsed.homeSections = {
+      hero: { ...defaultSections.hero, ...(rawHome?.hero || {}) },
+      monsoon: { ...defaultSections.monsoon, ...(rawHome?.monsoon || {}) },
+      topBar: { ...defaultSections.topBar, ...(rawHome?.topBar || {}) },
+      bestTreks: {
+        badge: rawHome?.bestTreks?.badge || defaultSections.bestTreks.badge,
+        title: rawHome?.bestTreks?.title || defaultSections.bestTreks.title,
+        subtitle: rawHome?.bestTreks?.subtitle || defaultSections.bestTreks.subtitle,
+        featuredSlugs:
+          rawHome?.bestTreks?.featuredSlugs && rawHome.bestTreks.featuredSlugs.length > 0
+            ? rawHome.bestTreks.featuredSlugs
+            : defaultSections.bestTreks.featuredSlugs,
+      },
+      weekendTreks: {
+        badge: rawHome?.weekendTreks?.badge || defaultSections.weekendTreks.badge,
+        title: rawHome?.weekendTreks?.title || defaultSections.weekendTreks.title,
+        subtitle: rawHome?.weekendTreks?.subtitle || defaultSections.weekendTreks.subtitle,
+        featuredSlugs:
+          rawHome?.weekendTreks?.featuredSlugs && rawHome.weekendTreks.featuredSlugs.length > 0
+            ? rawHome.weekendTreks.featuredSlugs
+            : defaultSections.weekendTreks.featuredSlugs,
+      },
+      eeat: {
+        badge: rawHome?.eeat?.badge || defaultSections.eeat.badge,
+        title: rawHome?.eeat?.title || defaultSections.eeat.title,
+        role: rawHome?.eeat?.role || defaultSections.eeat.role,
+        description: rawHome?.eeat?.description || defaultSections.eeat.description,
+        lastReviewed: rawHome?.eeat?.lastReviewed || defaultSections.eeat.lastReviewed,
+        policyLinkText: rawHome?.eeat?.policyLinkText || defaultSections.eeat.policyLinkText,
+        policyLinkUrl: rawHome?.eeat?.policyLinkUrl || defaultSections.eeat.policyLinkUrl,
+        auditBadgeText: rawHome?.eeat?.auditBadgeText || defaultSections.eeat.auditBadgeText,
+        trustCards:
+          rawHome?.eeat?.trustCards && rawHome.eeat.trustCards.length > 0
+            ? rawHome.eeat.trustCards
+            : defaultSections.eeat.trustCards,
+        faqs:
+          rawHome?.eeat?.faqs && rawHome.eeat.faqs.length > 0
+            ? rawHome.eeat.faqs
+            : defaultSections.eeat.faqs,
+      },
+      contactAndFooter: {
+        supportEmail: rawHome?.contactAndFooter?.supportEmail || defaultSections.contactAndFooter.supportEmail,
+        supportPhone: rawHome?.contactAndFooter?.supportPhone || defaultSections.contactAndFooter.supportPhone,
+        whatsappLink: rawHome?.contactAndFooter?.whatsappLink || defaultSections.contactAndFooter.whatsappLink,
+        address: rawHome?.contactAndFooter?.address || defaultSections.contactAndFooter.address,
+        officeHours: rawHome?.contactAndFooter?.officeHours || defaultSections.contactAndFooter.officeHours,
+        instagramUrl: rawHome?.contactAndFooter?.instagramUrl || defaultSections.contactAndFooter.instagramUrl,
+        facebookUrl: rawHome?.contactAndFooter?.facebookUrl || defaultSections.contactAndFooter.facebookUrl,
+        youtubeUrl: rawHome?.contactAndFooter?.youtubeUrl || defaultSections.contactAndFooter.youtubeUrl,
+        twitterUrl: rawHome?.contactAndFooter?.twitterUrl || defaultSections.contactAndFooter.twitterUrl,
+        threadsUrl: rawHome?.contactAndFooter?.threadsUrl || defaultSections.contactAndFooter.threadsUrl,
+        pinterestUrl: rawHome?.contactAndFooter?.pinterestUrl || defaultSections.contactAndFooter.pinterestUrl,
+        copyrightText: rawHome?.contactAndFooter?.copyrightText || defaultSections.contactAndFooter.copyrightText,
+      },
+    };
 
     if (updated) {
       writeStore(parsed);

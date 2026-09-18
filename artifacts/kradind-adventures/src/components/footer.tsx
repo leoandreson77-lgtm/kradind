@@ -12,47 +12,48 @@ import {
   FaThreads,
 } from "react-icons/fa6";
 import { Phone, Mail, MapPin, ShieldCheck, HeartHandshake, Compass } from "lucide-react";
+import { HomeSectionsConfig } from "@/lib/cms-store";
 
-export function Footer() {
+export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFooter"] }) {
   const socialLinks = [
     {
       name: "Instagram",
-      url: "https://www.instagram.com/kradglobal/",
+      url: config?.instagramUrl || "https://www.instagram.com/kradglobal/",
       icon: FaInstagram,
       color: "hover:bg-gradient-to-tr hover:from-amber-500 hover:via-rose-600 hover:to-purple-600 hover:text-white hover:border-transparent",
       bg: "bg-rose-500/10 text-rose-400 border-rose-500/30",
     },
     {
       name: "Facebook",
-      url: "https://www.facebook.com/share/189E2RUcH4/",
+      url: config?.facebookUrl || "https://www.facebook.com/share/189E2RUcH4/",
       icon: FaFacebookF,
       color: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]",
       bg: "bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/30",
     },
     {
       name: "YouTube",
-      url: "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
+      url: config?.youtubeUrl || "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
       icon: FaYoutube,
       color: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]",
       bg: "bg-[#FF0000]/10 text-rose-400 border-[#FF0000]/30",
     },
     {
       name: "X (Twitter)",
-      url: "https://x.com/KradGlobalTour",
+      url: config?.twitterUrl || "https://x.com/KradGlobalTour",
       icon: FaXTwitter,
       color: "hover:bg-white hover:text-black hover:border-white",
       bg: "bg-slate-800 text-slate-300 border-slate-700",
     },
     {
       name: "Threads",
-      url: "https://www.threads.net/@kradglobal",
+      url: config?.threadsUrl || "https://www.threads.net/@kradglobal",
       icon: FaThreads,
       color: "hover:bg-white hover:text-black hover:border-white",
       bg: "bg-slate-800 text-slate-300 border-slate-700",
     },
     {
       name: "Pinterest",
-      url: "https://in.pinterest.com/KradGlobalTravels/",
+      url: config?.pinterestUrl || "https://in.pinterest.com/KradGlobalTravels/",
       icon: FaPinterestP,
       color: "hover:bg-[#BD081C] hover:text-white hover:border-[#BD081C]",
       bg: "bg-[#BD081C]/10 text-rose-500 border-[#BD081C]/30",
@@ -96,20 +97,20 @@ export function Footer() {
               className="not-italic space-y-2.5 pt-2 text-slate-300 text-xs"
             >
               <a
-                href="tel:+917500222141"
+                href={`tel:${(config?.supportPhone || "+917500222141").replace(/\s+/g, "")}`}
                 className="flex items-center gap-2.5 hover:text-emerald-400 transition"
                 itemProp="telephone"
               >
                 <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>+91 75002 22141 (24/7 Helpline &amp; WhatsApp)</span>
+                <span>{config?.supportPhone || "+91 75002 22141"} (24/7 Helpline &amp; WhatsApp)</span>
               </a>
               <a
-                href="mailto:kradglobalind@gmail.com"
+                href={`mailto:${config?.supportEmail || "support@kradind.com"}`}
                 className="flex items-center gap-2.5 hover:text-emerald-400 transition"
                 itemProp="email"
               >
                 <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>kradglobalind@gmail.com</span>
+                <span>{config?.supportEmail || "support@kradind.com"}</span>
               </a>
               <div
                 className="flex items-start gap-2.5 text-slate-400"
@@ -119,11 +120,7 @@ export function Footer() {
               >
                 <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                 <span className="leading-relaxed">
-                  <span itemProp="streetAddress">Hall No. H-04, 401 Pratap Palace, Indiranagar Colony</span>,{" "}
-                  <span itemProp="addressLocality">Dehradun</span>,{" "}
-                  <span itemProp="addressRegion">Uttarakhand</span>{" "}
-                  <span itemProp="postalCode">248001</span>,{" "}
-                  <span itemProp="addressCountry">India</span>
+                  {config?.address || "Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India"}
                 </span>
               </div>
             </address>
@@ -273,7 +270,7 @@ export function Footer() {
 
         {/* Bottom Copyright & Legal Links */}
         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-slate-400">
-          <p>© 2026 KRADIND Adventures / KRAD Global. All rights reserved.</p>
+          <p>{config?.copyrightText || "© 2026 KRADIND Adventures / KRAD Global. All rights reserved."}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-slate-400">
             <Link href="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link>
             <span>•</span>

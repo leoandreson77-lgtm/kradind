@@ -119,6 +119,7 @@ export default function AdminTreksPage() {
   const [treks, setTreks] = useState<TrekData[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -215,6 +216,34 @@ export default function AdminTreksPage() {
       faqs: trek.faqs || [],
     });
     setIsModalOpen(true);
+  };
+
+  const handleDuplicateTrek = (trek: TrekData) => {
+    setModalTab("basic");
+    const copySlug = `${trek.slug}-copy-${Date.now().toString().slice(-4)}`;
+    setEditingTrek({
+      ...trek,
+      id: "",
+      name: `${trek.name} (Copy)`,
+      slug: copySlug,
+      status: "Draft",
+      gallery: trek.gallery && trek.gallery.length > 0 ? [...trek.gallery] : [trek.image || ""].filter(Boolean),
+      batches:
+        trek.batches && trek.batches.length > 0
+          ? trek.batches.map((b, i) => ({ ...b, id: i + 1 }))
+          : [{ id: 1, startDate: "Upcoming Weekend", endDate: "Open Batch", slotsLeft: 12, price: trek.price || 8999 }],
+      categories: [...(trek.categories || ["Himalayas"])],
+      highlights: [...(trek.highlights || [])],
+      itinerary:
+        trek.itinerary && trek.itinerary.length > 0
+          ? trek.itinerary.map((d, i) => ({ ...d, day: i + 1 }))
+          : getDefaultItinerary(5),
+      inclusions: [...(trek.inclusions || [])],
+      exclusions: [...(trek.exclusions || [])],
+      faqs: [...(trek.faqs || [])],
+    });
+    setIsModalOpen(true);
+    showToast("📋 Trek duplicated! Review details and click Save Trek.");
   };
 
   const handleSaveTrek = async (e: React.FormEvent) => {
@@ -356,12 +385,16 @@ export default function AdminTreksPage() {
     showToast(`Applied ${count}-Day Itinerary Template`);
   };
 
-  const filtered = treks.filter(
-    (t) =>
+  const filtered = treks.filter((t) => {
+    const matchesSearch =
       t.name.toLowerCase().includes(search.toLowerCase()) ||
       t.location.toLowerCase().includes(search.toLowerCase()) ||
-      t.slug.toLowerCase().includes(search.toLowerCase()),
-  );
+      t.slug.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" ||
+      (t.categories && t.categories.some((c) => c.toLowerCase() === selectedCategory.toLowerCase()));
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -391,6 +424,23 @@ export default function AdminTreksPage() {
           <Plus className="w-4 h-4 text-emerald-400" />
           <span>Add New Trek</span>
         </button>
+      </div>
+
+      {/* Category Pills Filter */}
+      <div className="flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-x-auto">
+        {["All", ...POPULAR_CATEGORIES].map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+              selectedCategory === cat
+                ? "bg-[#0F3A2E] text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            }`}
+          >
+            {cat} {cat === "All" ? `(${treks.length})` : ""}
+          </button>
+        ))}
       </div>
 
       {/* Search Filter */}
@@ -487,7 +537,23 @@ export default function AdminTreksPage() {
                       <span>{t.status}</span>
                     </button>
                   </td>
-                  <td className="px-5 py-3.5 text-right space-x-2">
+                  <td className="px-5 py-3.5 text-right space-x-1 whitespace-nowrap">
+                    <a
+                      href={`/treks/${t.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block p-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
+                      title="View live page"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </a>
+                    <button
+                      onClick={() => handleDuplicateTrek(t)}
+                      className="p-1.5 text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
+                      title="Duplicate / Clone this trek"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
                     <button
                       onClick={() => handleOpenEdit(t)}
                       className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"

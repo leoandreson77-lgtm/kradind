@@ -16,6 +16,8 @@ import {
   Inbox,
   Mail,
   MessageSquare,
+  Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { TrekData, TrailRadarReport, BookingRecord, LeadRecord } from "@/lib/cms-store";
 
@@ -208,6 +210,107 @@ export default function AdminDashboardPage() {
           <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
             <Inbox className="w-6 h-6" />
           </div>
+        </div>
+      </div>
+
+      {/* Quick Website Sections & Content Controls */}
+      <div className="bg-gradient-to-br from-slate-900 to-[#0F3A2E] text-white p-6 sm:p-7 rounded-3xl shadow-lg space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400">
+              ⚡ Instant Site Controls
+            </span>
+            <h2 className="text-lg sm:text-xl font-black tracking-tight text-white mt-0.5">
+              Edit Every Website Section &amp; Publish New Entries
+            </h2>
+          </div>
+          <Link
+            href="/admin/sections"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition text-emerald-200"
+          >
+            <span>Open Sections CMS</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+          <Link
+            href="/admin/sections"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Hero &amp; Title</span>
+              <span className="text-[10px] text-slate-400">Heading &amp; backdrop</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/treks"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <Mountain className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Treks CMS</span>
+              <span className="text-[10px] text-slate-400">1-click clone &amp; days</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/destinations"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <TrendingUp className="w-4 h-4 text-purple-400" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Destinations</span>
+              <span className="text-[10px] text-slate-400">Domestic &amp; yatras</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/radar"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <Radio className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Live Radar</span>
+              <span className="text-[10px] text-slate-400">Weather &amp; pass alerts</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/sections"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Authority &amp; FAQs</span>
+              <span className="text-[10px] text-slate-400">Trust cards &amp; Q&amp;A</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/sections"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <MessageSquare className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Footer &amp; Social</span>
+              <span className="text-[10px] text-slate-400">Phones &amp; channels</span>
+            </div>
+          </Link>
         </div>
       </div>
 

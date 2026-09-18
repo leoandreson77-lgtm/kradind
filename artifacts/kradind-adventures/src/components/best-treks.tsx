@@ -10,22 +10,31 @@ function getTopTrekAlt(trek: any) {
   return getImageAlt(trek, "trekking");
 }
 
+import { HomeSectionsConfig } from "@/lib/cms-store";
+
 export function BestTreks({
   treks: treksProp,
   onSelectTrek,
+  config,
 }: {
   treks?: any[];
   onSelectTrek?: (slug: string) => void;
+  config?: HomeSectionsConfig["bestTreks"];
 }) {
   const availableTreks = treksProp && treksProp.length > 0 ? treksProp : treks;
 
-  // Top 4 flagship expeditions: Chopta, Hampta Pass, Kheerganga, Leh Ladakh
-  const featuredSlugs = [
+  // Default flagship expeditions if not customized
+  const defaultSlugs = [
     "chopta-tungnath-chandrashila",
     "hampta-pass",
     "kheerganga-trek",
     "leh-ladakh-tour-package",
   ];
+
+  const featuredSlugs =
+    config?.featuredSlugs && config.featuredSlugs.length > 0
+      ? config.featuredSlugs
+      : defaultSlugs;
 
   let featuredTreks = featuredSlugs
     .map((slug) => availableTreks.find((t: any) => t.slug === slug))
@@ -42,17 +51,20 @@ export function BestTreks({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-3">
         <div>
           <span className="text-[#FF6B35] font-extrabold text-xs uppercase tracking-wider flex items-center gap-1">
-            <Star className="w-4 h-4 fill-[#FF6B35] text-[#FF6B35]" /> 4.9+ Rated Flagship Expeditions
+            <Star className="w-4 h-4 fill-[#FF6B35] text-[#FF6B35]" /> {config?.badge || "4.9+ Rated Flagship Expeditions"}
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 brand-font">
-            Top Himalayan Treks & High Passes
+            {config?.title || "Top Himalayan Treks & High Passes"}
           </h2>
+          {config?.subtitle && (
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">{config.subtitle}</p>
+          )}
         </div>
         <Link
           href="/treks"
           className="text-xs sm:text-sm font-bold text-[#0F3A2E] hover:underline flex items-center gap-1"
         >
-          <span>Explore All 13 Packages</span>
+          <span>Explore All {availableTreks.length} Packages</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

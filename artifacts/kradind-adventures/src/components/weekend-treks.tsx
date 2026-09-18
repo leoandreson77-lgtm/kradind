@@ -11,15 +11,28 @@ function getWeekendAlt(trek: any) {
   return getImageAlt(trek, "domesticTour");
 }
 
-export function WeekendTreks({ treks: treksProp }: { treks?: any[] }) {
+import { HomeSectionsConfig } from "@/lib/cms-store";
+
+export function WeekendTreks({
+  treks: treksProp,
+  config,
+}: {
+  treks?: any[];
+  config?: HomeSectionsConfig["weekendTreks"];
+}) {
   const availableTreks = treksProp && treksProp.length > 0 ? treksProp : treks;
 
-  const weekendSlugs = [
+  const defaultSlugs = [
     "chopta-tungnath-chandrashila",
     "kheerganga-trek",
     "nainital-tour-package",
     "jaipur-tour-package",
   ];
+
+  const weekendSlugs =
+    config?.featuredSlugs && config.featuredSlugs.length > 0
+      ? config.featuredSlugs
+      : defaultSlugs;
 
   let weekendTrips = weekendSlugs
     .map((slug) => availableTreks.find((t: any) => t.slug === slug))
@@ -41,11 +54,14 @@ export function WeekendTreks({ treks: treksProp }: { treks?: any[] }) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-3">
         <div>
           <span className="text-amber-600 font-extrabold text-xs uppercase tracking-wider flex items-center gap-1">
-            <Zap className="w-4 h-4 fill-amber-500 text-amber-500" /> Zero Work Leave Needed
+            <Zap className="w-4 h-4 fill-amber-500 text-amber-500" /> {config?.badge || "Zero Work Leave Needed"}
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 brand-font">
-            Weekend Escapes &amp; Short Breaks
+            {config?.title || "Weekend Escapes & Short Breaks"}
           </h2>
+          {config?.subtitle && (
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">{config.subtitle}</p>
+          )}
         </div>
         <Link href="/treks/category/weekend" className="text-xs sm:text-sm font-bold text-[#0F3A2E] hover:underline flex items-center gap-1">
           <span>View All Weekend Getaways</span>

@@ -19,6 +19,7 @@ import {
   X,
   AlertCircle,
   Eye,
+  Copy,
 } from "lucide-react";
 import { DestinationData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
@@ -84,6 +85,22 @@ export default function AdminDestinationsPage() {
     setEditingDestination(dest);
     setHighlightsInput((dest.highlights || []).join(", "));
     setIsModalOpen(true);
+  };
+
+  const handleDuplicateDestination = (dest: DestinationData) => {
+    const copySlug = `${dest.slug}-copy-${Date.now().toString().slice(-4)}`;
+    const cloned: DestinationData = {
+      ...dest,
+      id: "",
+      name: `${dest.name} (Copy)`,
+      slug: copySlug,
+      status: "Draft",
+      highlights: dest.highlights ? [...dest.highlights] : [],
+    };
+    setEditingDestination(cloned);
+    setHighlightsInput((cloned.highlights || []).join(", "));
+    setIsModalOpen(true);
+    showToast("📋 Destination duplicated! Review details and click Save.");
   };
 
   const handleNameChange = (name: string) => {
@@ -429,6 +446,14 @@ export default function AdminDestinationsPage() {
                 </span>
 
                 <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => handleDuplicateDestination(dest)}
+                    className="p-1.5 text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
+                    title="Duplicate / Clone Destination"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+
                   <button
                     onClick={() => handleOpenEdit(dest)}
                     className="p-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"

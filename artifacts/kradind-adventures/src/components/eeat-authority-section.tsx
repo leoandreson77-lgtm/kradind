@@ -15,11 +15,12 @@ import {
   Activity,
   FileCheck,
 } from "lucide-react";
+import { HomeSectionsConfig } from "@/lib/cms-store";
 
-export function EEATAuthoritySection() {
+export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["eeat"] }) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const faqs = [
+  const defaultFaqs = [
     {
       q: "How does KRADIND Adventures verify high-altitude trail safety and weather?",
       a: "Our certified expedition leaders maintain direct VHF radio and satellite communication with base camps across Uttarakhand, Himachal Pradesh, and Ladakh. Every 24 hours, our ground coordinators inspect ridge stability, avalanche risks, and fresh snow levels before batch movements. When conditions change, updates are posted immediately to our Live Ground Radar.",
@@ -66,25 +67,27 @@ export function EEATAuthoritySection() {
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider">
-                    Expedition Authority &amp; Curation
+                    {config?.badge || "Expedition Authority & Curation"}
                   </span>
                   <span className="flex items-center gap-1 text-[11px] text-slate-300">
                     <Calendar className="w-3 h-3 text-emerald-400" />
                     <span>Last Reviewed: </span>
-                    <time dateTime="2026-09-14" className="text-white font-bold">14 September 2026</time>
+                    <time dateTime="2026-09-14" className="text-white font-bold">
+                      {config?.lastReviewed || "14 September 2026"}
+                    </time>
                   </span>
                 </div>
 
                 <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  Curated by KRADIND Expedition Team
+                  {config?.title || "Curated by KRADIND Expedition Team"}
                 </h3>
                 
                 <p className="text-xs sm:text-sm text-slate-300 font-medium">
-                  Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified
+                  {config?.role || "Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified"}
                 </p>
 
                 <p className="text-xs text-slate-400 max-w-2xl leading-relaxed pt-1">
-                  Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring.
+                  {config?.description || "Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring."}
                 </p>
               </div>
             </div>
@@ -92,16 +95,16 @@ export function EEATAuthoritySection() {
             {/* Quick Badges & Editorial Policy Link */}
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 w-full sm:w-auto">
               <Link
-                href="/editorial-policy"
+                href={config?.policyLinkUrl || "/editorial-policy"}
                 className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-md"
               >
                 <FileCheck className="w-4 h-4" />
-                <span>Read Our Editorial &amp; Safety Policy</span>
+                <span>{config?.policyLinkText || "Read Our Editorial & Safety Policy"}</span>
               </Link>
               
               <div className="flex items-center justify-center gap-2 text-[11px] text-emerald-300 bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Fact-Checked &amp; NIM/HMI Audited</span>
+                <span>{config?.auditBadgeText || "Fact-Checked & NIM/HMI Audited"}</span>
               </div>
             </div>
           </div>
@@ -184,7 +187,7 @@ export function EEATAuthoritySection() {
 
           {/* Accordion FAQs */}
           <div className="lg:col-span-2 space-y-3">
-            {faqs.map((item, idx) => {
+            {(config?.faqs && config.faqs.length > 0 ? config.faqs : defaultFaqs).map((item, idx) => {
               const isOpen = openFaq === idx;
               return (
                 <div

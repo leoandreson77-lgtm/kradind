@@ -75,7 +75,11 @@ export function HomeView({
         <CampaignSection initialCampaigns={initialCampaigns} />
 
         {/* 4.9+ Rated Best Treks */}
-        <BestTreks treks={treks} onSelectTrek={(slug) => handleOpenBooking(slug)} />
+        <BestTreks
+          treks={treks}
+          onSelectTrek={(slug) => handleOpenBooking(slug)}
+          config={sections?.bestTreks}
+        />
 
         {/* Monsoon Specials & Valley Blooms Banner */}
         <MonsoonSpecials
@@ -84,7 +88,7 @@ export function HomeView({
         />
 
         {/* Zero Work Leave Weekend Treks */}
-        <WeekendTreks treks={treks} />
+        <WeekendTreks treks={treks} config={sections?.weekendTreks} />
 
         {/* Live Ground Radar */}
         <LiveRadar initialReports={radarReports} />
@@ -95,11 +99,11 @@ export function HomeView({
         </div>
 
         {/* E-E-A-T Editorial Authority, Founder Credentials & FAQs */}
-        <EEATAuthoritySection />
+        <EEATAuthoritySection config={sections?.eeat} />
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer config={sections?.contactAndFooter} />
 
       {/* Interactive Booking Modal */}
       <BookingModal

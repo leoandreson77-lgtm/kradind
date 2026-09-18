@@ -1018,6 +1018,92 @@ export function getDefaultLandingPages(): LandingPageData[] {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
+    {
+      id: "lp-kerala-tour-package-5-nights-6-days",
+      slug: "kerala-tour-package-5-nights-6-days",
+      title: "Kerala Tour Package – 5 Nights / 6 Days",
+      subtitle:
+        "A well-planned Kerala holiday for couples covering Munnar tea hills, Thekkady wildlife, an Alleppey traditional houseboat stay, and Kochi heritage with private Swift Dzire.",
+      badge: "⭐ PRIVATE COUPLE TOUR • KOCHI - MUNNAR - THEKKADY - ALLEPPEY",
+      heroImage:
+        "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=85",
+      promoOffer: {
+        tag: "COUPLE ALL-INCLUSIVE SPECIAL",
+        discountText: "Flat ₹60,000 Total for 2 Adults (₹30,000 / person)",
+        code: "KERALA2026",
+        expiryDate: "2026-12-31T23:59:59.000Z",
+      },
+      highlights: [
+        {
+          title: "Private Swift Dzire For Complete Tour",
+          desc: "Reserved exclusively for your couple for all 6 days from Kochi pickup to drop.",
+          icon: "ShieldCheck",
+        },
+        {
+          title: "Traditional Alleppey Houseboat Night",
+          desc: "Backwater cruise through Vembanad Lake including lunch, snacks, candlelight dinner & breakfast.",
+          icon: "Sparkles",
+        },
+        {
+          title: "Munnar Hills & Thekkady Spices",
+          desc: "Explore tea museums, Mattupetty dam, cardamom plantations, and Periyar wildlife.",
+          icon: "Mountain",
+        },
+        {
+          title: "Full Breakfast & Dinner Included",
+          desc: "Daily breakfast and daily dinners at verified 3-star hotel stays plus full houseboat board.",
+          icon: "Compass",
+        },
+      ],
+      featuredTrekSlugs: ["kerala-tour-package"],
+      inclusions: [
+        "5 nights accommodation (2N Munnar, 1N Thekkady, 1N Alleppey Houseboat, 1N Kochi) for 2 adults",
+        "Private AC Swift Dzire for the full 6-day itinerary",
+        "Daily breakfast and daily dinners at hotels",
+        "Houseboat lunch, evening tea/snacks, dinner and breakfast",
+        "Kochi Airport / Railway Station pickup & drop + fuel, tolls and parking",
+      ],
+      exclusions: [
+        "Airfare or train tickets to/from Kochi",
+        "Monument, park, museum, and attraction entry fees",
+        "Boating tickets (Mattupetty, Kundala, Periyar)",
+        "Wildlife activities, elephant safari, Kathakali / martial arts show tickets",
+      ],
+      leadFormConfig: {
+        title: "Get Your Kerala Tour Quote",
+        subtitle:
+          "Leave your WhatsApp number to receive complete day-by-day travel plan, hotel vouchers, and instant confirmation.",
+        ctaText: "Get Kerala Quotation",
+      },
+      whatsappNumber: "917500222141",
+      whatsappMessage:
+        "Hi KRADIND! I want to book the Kerala Tour Package (5 Nights / 6 Days: Kochi, Munnar, Thekkady, Alleppey Houseboat).",
+      faqs: [
+        {
+          question: "What is the cost of this 5 nights 6 days Kerala tour package?",
+          answer:
+            "The package costs ₹60,000 for 2 adults, which works out to ₹30,000 per person. It includes 3-star accommodation, private Swift Dzire transportation, daily breakfast and dinner at hotels, plus one night in an Alleppey houseboat with full houseboat meals.",
+        },
+        {
+          question: "Is the Alleppey houseboat stay included?",
+          answer:
+            "Yes. The package includes one night on an Alleppey houseboat. The houseboat plan includes lunch, evening tea/snacks and dinner, along with breakfast as specified in the itinerary.",
+        },
+      ],
+      status: "Published",
+      sectionsEnabled: {
+        hero: true,
+        countdown: true,
+        highlights: true,
+        treks: true,
+        inclusions: true,
+        leadForm: true,
+        testimonials: true,
+        faqs: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
   ];
 }
 

@@ -62,6 +62,19 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: "/(favicon.ico|icon.png|favicon.svg|apple-icon.png|icon-192.png)",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
 };

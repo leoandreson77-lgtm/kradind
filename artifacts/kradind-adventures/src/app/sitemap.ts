@@ -95,6 +95,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
+      url: `${baseUrl}/visa-and-international-travel-disclaimer`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       url: `${baseUrl}/visa-and-international-policy`,
       lastModified: now,
       changeFrequency: "monthly",
@@ -108,6 +114,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/cookie-policy`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/website-disclaimer`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,

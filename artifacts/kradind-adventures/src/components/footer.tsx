@@ -197,11 +197,6 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                 </Link>
               </li>
               <li>
-                <Link href="/editorial-and-safety-policy" className="hover:text-white transition">
-                  Editorial &amp; Safety Policy
-                </Link>
-              </li>
-              <li>
                 <Link href="/cancellation-and-refund-policy" className="hover:text-white transition">
                   Cancellation &amp; Refund Policy
                 </Link>
@@ -212,8 +207,23 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                 </Link>
               </li>
               <li>
-                <Link href="/visa-and-international-policy" className="hover:text-white transition">
-                  Visa &amp; International Policy
+                <Link href="/cookie-policy" className="hover:text-white transition">
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/website-disclaimer" className="hover:text-white transition">
+                  Website Disclaimer
+                </Link>
+              </li>
+              <li>
+                <Link href="/visa-and-international-travel-disclaimer" className="hover:text-white transition">
+                  Visa &amp; International Travel Disclaimer
+                </Link>
+              </li>
+              <li>
+                <Link href="/editorial-and-safety-policy" className="hover:text-white transition">
+                  Editorial &amp; Safety Policy
                 </Link>
               </li>
             </ul>
@@ -276,17 +286,17 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
             <span>•</span>
             <Link href="/terms-and-conditions" className="hover:text-white transition">Terms &amp; Conditions</Link>
             <span>•</span>
-            <Link href="/editorial-and-safety-policy" className="hover:text-white transition">Editorial &amp; Safety</Link>
+            <Link href="/cancellation-and-refund-policy" className="hover:text-white transition">Cancellation &amp; Refund Policy</Link>
             <span>•</span>
-            <Link href="/cancellation-and-refund-policy" className="hover:text-white transition">Cancellation &amp; Refund</Link>
+            <Link href="/booking-and-payment-policy" className="hover:text-white transition">Booking &amp; Payment Policy</Link>
             <span>•</span>
-            <Link href="/booking-and-payment-policy" className="hover:text-white transition">Booking &amp; Payment</Link>
+            <Link href="/cookie-policy" className="hover:text-white transition">Cookie Policy</Link>
             <span>•</span>
-            <Link href="/cookie-policy" className="hover:text-white transition">Cookies</Link>
+            <Link href="/website-disclaimer" className="hover:text-white transition">Website Disclaimer</Link>
             <span>•</span>
-            <Link href="/visa-and-international-policy" className="hover:text-white transition">Visa &amp; International</Link>
+            <Link href="/visa-and-international-travel-disclaimer" className="hover:text-white transition">Visa &amp; International Travel Disclaimer</Link>
             <span>•</span>
-            <Link href="/disclaimer" className="hover:text-white transition">Disclaimer</Link>
+            <Link href="/editorial-and-safety-policy" className="hover:text-white transition">Editorial &amp; Safety Policy</Link>
             <span>•</span>
             <Link href="/contact" className="hover:text-white transition">Contact Support</Link>
           </div>

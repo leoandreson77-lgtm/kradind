@@ -70,9 +70,9 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
       editorial: "/editorial-and-safety-policy",
       cancellation: "/cancellation-and-refund-policy",
       booking: "/booking-and-payment-policy",
-      visa: "/visa-and-international-policy",
       cookie: "/cookie-policy",
-      disclaimer: "/disclaimer",
+      disclaimer: "/website-disclaimer",
+      visa: "/visa-and-international-travel-disclaimer",
     };
     if (routeMap[tab]) {
       router.push(routeMap[tab], { scroll: false });
@@ -97,30 +97,23 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
     {
       id: "editorial" as PolicyTab,
       name: "Editorial & Safety Policy",
-      shortName: "Editorial & Safety",
+      shortName: "Editorial & Safety Policy",
       icon: Shield,
       badge: "E-E-A-T Verified Standards",
     },
     {
       id: "cancellation" as PolicyTab,
       name: "Cancellation & Refund Policy",
-      shortName: "Cancellation & Refund",
+      shortName: "Cancellation & Refund Policy",
       icon: RefreshCw,
       badge: "Fair Cancellation Slabs",
     },
     {
       id: "booking" as PolicyTab,
       name: "Booking & Payment Policy",
-      shortName: "Booking & Payment",
+      shortName: "Booking & Payment Policy",
       icon: CreditCard,
       badge: "Secure Payment Protocol",
-    },
-    {
-      id: "visa" as PolicyTab,
-      name: "Visa & International Policy",
-      shortName: "Visa & International",
-      icon: Plane,
-      badge: "Immigration & Entry",
     },
     {
       id: "cookie" as PolicyTab,
@@ -135,6 +128,13 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
       shortName: "Website Disclaimer",
       icon: AlertTriangle,
       badge: "General Legal Notice",
+    },
+    {
+      id: "visa" as PolicyTab,
+      name: "Visa & International Travel Disclaimer",
+      shortName: "Visa & International Travel Disclaimer",
+      icon: Plane,
+      badge: "Immigration & Entry",
     },
   ];
 
@@ -1174,7 +1174,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             )}
 
             {/* ========================================================================= */}
-            {/* 6. VISA & INTERNATIONAL POLICY */}
+            {/* 6. VISA & INTERNATIONAL TRAVEL DISCLAIMER */}
             {/* ========================================================================= */}
             {activeTab === "visa" && (
               <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
@@ -1184,7 +1184,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <span>International Entry &amp; Immigration</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 brand-font m-0">
-                    Visa &amp; International Policy
+                    Visa &amp; International Travel Disclaimer
                   </h2>
                 </div>
 

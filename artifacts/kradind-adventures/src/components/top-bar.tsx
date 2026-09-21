@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { PhoneCall, ShieldCheck, Sparkles, BookOpen, Hotel, Info, MessageSquare } from "lucide-react";
 
@@ -10,12 +10,28 @@ export function TopBar({
   config?: { supportPhone?: string; leaveNoTrace?: string };
 }) {
   const [currency, setCurrency] = useState<"INR" | "USD">("INR");
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const supportPhone = config?.supportPhone || "+91 75002 22141";
   const lntText = config?.leaveNoTrace || "🌱 Leave No Trace Certified Operator";
 
   return (
-    <div className="bg-[#0b241d] text-slate-300 text-xs py-2 px-3 sm:px-6 lg:px-8 flex justify-between items-center border-b border-white/10 overflow-hidden">
+    <div
+      className={`transition-all duration-300 ease-in-out overflow-hidden ${
+        isScrolled
+          ? "max-h-0 opacity-0 pointer-events-none -translate-y-full py-0 border-b-0"
+          : "max-h-12 opacity-100 translate-y-0 py-2 border-b border-white/10"
+      } bg-[#0b241d] text-slate-300 text-xs px-3 sm:px-6 lg:px-8 flex justify-between items-center`}
+    >
       {/* Left: Support & Trust Badges */}
       <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
         <a

@@ -597,7 +597,7 @@ export default function TrekDetailPage() {
         <div className="lg:col-span-2 space-y-8">
           
           {/* Quick Navigation Tabs - Sticky below header without overlap */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 scrollbar-none sticky top-[108px] z-30 bg-slate-50/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 shadow-xs">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 scrollbar-none sticky top-[72px] sm:top-[80px] z-30 bg-slate-50/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 shadow-xs">
             <button
               onClick={() => scrollToSection("itinerary", "itinerary")}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
@@ -926,7 +926,7 @@ export default function TrekDetailPage() {
         </div>
 
         {/* Right Sticky Booking Sidebar */}
-        <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[120px] h-fit">
+        <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[96px] h-fit">
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xl space-y-5">
             
             {/* Price Header */}

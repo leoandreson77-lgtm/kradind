@@ -140,8 +140,11 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <TopBar />
-      <Header onBookClick={() => setBookingOpen(true)} />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header onBookClick={() => setBookingOpen(true)} />
+      </div>
 
       {/* Hero Header Banner */}
       <section className="bg-gradient-to-b from-[#0F3A2E] via-[#16483a] to-[#0d2e24] text-white py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-emerald-800/30">

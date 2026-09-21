@@ -96,8 +96,11 @@ export function DestinationDetailView({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <TopBar />
-      <Header />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header />
+      </div>
 
       {/* HERO SECTION */}
       <section className="relative w-full min-h-[460px] sm:min-h-[520px] bg-slate-950 text-white flex flex-col justify-end overflow-hidden">

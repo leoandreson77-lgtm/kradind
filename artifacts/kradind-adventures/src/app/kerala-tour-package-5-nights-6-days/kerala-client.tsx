@@ -89,8 +89,11 @@ export function KeralaTourClient() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-emerald-600 selection:text-white">
-      <TopBar />
-      <Header />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header />
+      </div>
 
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="bg-white border-b border-slate-200/80">

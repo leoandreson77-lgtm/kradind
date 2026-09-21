@@ -69,8 +69,11 @@ export default function PlanYourTripPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <TopBar />
-      <Header />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header />
+      </div>
 
       <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
         {/* Header Hero */}

@@ -138,8 +138,11 @@ export default function TravelServicesPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <TopBar />
-      <Header onBookClick={() => setBookingOpen(true)} />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header onBookClick={() => setBookingOpen(true)} />
+      </div>
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
         {/* Header Hero */}

@@ -143,8 +143,11 @@ export function TreksContent({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <TopBar />
-      <Header />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header />
+      </div>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-5 sm:py-10">
         {/* Title */}

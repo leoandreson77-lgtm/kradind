@@ -225,8 +225,11 @@ export default function LandingPageRoute({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-white">
-      <TopBar />
-      <Header onBookClick={() => setBookingOpen(true)} />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header onBookClick={() => setBookingOpen(true)} />
+      </div>
 
       {/* 1. HERO EXPEDITION SECTION WITH INTEGRATED ABOVE-THE-FOLD LEAD FORM */}
       {sections.hero && (

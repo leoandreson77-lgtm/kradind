@@ -61,11 +61,11 @@ export function HomeView({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* Top emergency and support bar */}
-      <TopBar config={sections?.topBar} />
-
-      {/* Main navigation header */}
-      <Header onBookClick={() => handleOpenBooking("Kedarkantha Summit Trek")} />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar config={sections?.topBar} />
+        <Header onBookClick={() => handleOpenBooking("Kedarkantha Summit Trek")} />
+      </div>
 
       {/* Main content */}
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">

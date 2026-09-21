@@ -483,8 +483,11 @@ export default function TrekDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <TopBar />
-      <Header />
+      {/* Fixed Sticky Top Navigation Header */}
+      <div className="sticky top-0 z-50 w-full shadow-xs">
+        <TopBar />
+        <Header />
+      </div>
 
       {/* Hero Banner with Clear Vibrant Background & Balanced Contrast */}
       <div className="relative overflow-hidden py-16 sm:py-24 px-4 sm:px-8 text-white min-h-[480px] sm:min-h-[520px] flex items-center shadow-lg">
@@ -588,13 +591,13 @@ export default function TrekDetailPage() {
       </div>
 
       {/* Main Breakdown Layout */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 pb-24 lg:pb-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 pb-24 lg:pb-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
         {/* Left Column (Content Sections) */}
         <div className="lg:col-span-2 space-y-8">
           
           {/* Quick Navigation Tabs - Sticky below header without overlap */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 scrollbar-none sticky top-[65px] sm:top-[81px] z-30 bg-slate-50/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 shadow-xs">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 scrollbar-none sticky top-[108px] z-30 bg-slate-50/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 shadow-xs">
             <button
               onClick={() => scrollToSection("itinerary", "itinerary")}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
@@ -923,8 +926,8 @@ export default function TrekDetailPage() {
         </div>
 
         {/* Right Sticky Booking Sidebar */}
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md sticky top-24 space-y-5">
+        <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[120px] h-fit">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xl space-y-5">
             
             {/* Price Header */}
             <div>
@@ -1016,7 +1019,7 @@ export default function TrekDetailPage() {
             </div>
 
           </div>
-        </div>
+        </aside>
 
       </main>
 

@@ -312,7 +312,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} scroll-smooth overflow-x-hidden w-full max-w-full`}>
+    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} scroll-smooth overflow-x-clip w-full max-w-full`}>
       <head>
         <meta name="google-site-verification" content="T3Scitqdc9Jqk5rp2LCXSF-69t8Q-zpZlgql9ZjxpGI" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -336,7 +336,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-slate-50 text-slate-800 antialiased font-sans relative overflow-x-hidden w-full max-w-full">
+      <body className="bg-slate-50 text-slate-800 antialiased font-sans relative overflow-x-clip w-full max-w-full">
         {/* Accessible Skip Navigation Link */}
         <a
           href="#main-content"

@@ -7,36 +7,166 @@ import { getDb } from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const maxDuration = 60;
+
+// Maximum allowed payload limit on server (25MB)
+const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
+
+const EXTENSION_TO_MIME: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".jfif": "image/jpeg",
+  ".pjpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".bmp": "image/bmp",
+  ".ico": "image/x-icon",
+  ".heic": "image/heic",
+  ".heif": "image/heif",
+};
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
   "image/jpg",
+  "image/jfif",
+  "image/pjpeg",
   "image/png",
+  "image/x-png",
   "image/webp",
   "image/avif",
   "image/gif",
   "image/svg+xml",
+  "image/bmp",
+  "image/x-icon",
+  "image/vnd.microsoft.icon",
+  "image/heic",
+  "image/heif",
+  "application/octet-stream",
 ]);
 
-const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB
-
-function getUploadDir(): string {
+function getPublicUploadDir(): string {
   return path.join(process.cwd(), "public", "uploads");
 }
 
+function getTmpUploadDir(): string {
+  return path.join("/tmp", "kradind_uploads");
+}
+
+function resolveMimeType(filename: string, declaredType?: string): string {
+  const ext = path.extname(filename).toLowerCase();
+  if (EXTENSION_TO_MIME[ext]) {
+    return EXTENSION_TO_MIME[ext];
+  }
+  const cleanDeclared = (declaredType || "").toLowerCase().trim();
+  if (cleanDeclared && cleanDeclared !== "application/octet-stream" && cleanDeclared.startsWith("image/")) {
+    return cleanDeclared;
+  }
+  return "image/jpeg";
+}
+
+function generateSafeFilename(originalName: string, mimeType: string): string {
+  let ext = path.extname(originalName).toLowerCase();
+  if (!ext || !EXTENSION_TO_MIME[ext]) {
+    const mimeMap: Record<string, string> = {
+      "image/jpeg": ".jpg",
+      "image/png": ".png",
+      "image/webp": ".webp",
+      "image/avif": ".avif",
+      "image/gif": ".gif",
+      "image/svg+xml": ".svg",
+      "image/bmp": ".bmp",
+    };
+    ext = mimeMap[mimeType] || ".jpg";
+  }
+
+  const baseName = path
+    .basename(originalName, ext)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "-")
+    .slice(0, 40)
+    .replace(/^-+|-+$/g, "");
+
+  const randomHash = crypto.randomBytes(4).toString("hex");
+  return `${Date.now()}-${randomHash}-${baseName || "photo"}${ext}`;
+}
+
+async function persistFile(
+  safeFilename: string,
+  buffer: Buffer,
+  mimeType: string,
+  db: any
+): Promise<boolean> {
+  let stored = false;
+
+  // 1. Store in MongoDB Atlas (Persisted across serverless restarts and Vercel builds)
+  if (db) {
+    try {
+      await db.collection("media_uploads").updateOne(
+        { filename: safeFilename },
+        {
+          $set: {
+            filename: safeFilename,
+            contentType: mimeType,
+            size: buffer.length,
+            data: buffer,
+            dataBase64: buffer.toString("base64"),
+            createdAt: new Date().toISOString(),
+          },
+        },
+        { upsert: true }
+      );
+      stored = true;
+    } catch (mongoErr) {
+      console.error("Failed saving image to MongoDB Atlas:", mongoErr);
+    }
+  }
+
+  // 2. Cache in /tmp directory (Always writable on Vercel / AWS Lambda / Linux)
+  try {
+    const tmpDir = getTmpUploadDir();
+    if (!fs.existsSync(tmpDir)) {
+      await fs.promises.mkdir(tmpDir, { recursive: true });
+    }
+    await fs.promises.writeFile(path.join(tmpDir, safeFilename), buffer);
+    stored = true;
+  } catch (tmpErr) {
+    // Ignore tmp write warnings
+  }
+
+  // 3. Write to public/uploads (Writable in local dev environment)
+  try {
+    const publicDir = getPublicUploadDir();
+    if (!fs.existsSync(publicDir)) {
+      await fs.promises.mkdir(publicDir, { recursive: true });
+    }
+    await fs.promises.writeFile(path.join(publicDir, safeFilename), buffer);
+    stored = true;
+  } catch (fsErr: any) {
+    // EROFS is expected on Vercel read-only filesystem, ignore if stored in Mongo or tmp
+    if (fsErr?.code !== "EROFS" && !stored) {
+      console.warn("Public directory write notice:", fsErr);
+    }
+  }
+
+  return stored;
+}
+
 /**
- * GET: List all uploaded media files from MongoDB (and local disk if available)
+ * GET: List all uploaded media files from MongoDB Atlas and local disk
  */
 export async function GET(request: NextRequest) {
   const session = await getAdminSession(request);
   if (!session.authenticated) {
-    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized access: Session expired. Please re-login." }, { status: 401 });
   }
 
   try {
     const fileMap = new Map<string, { url: string; filename: string; size: number; createdAt: string }>();
 
-    // 1. Fetch from MongoDB Atlas (persistent on Vercel / serverless)
+    // 1. Fetch from MongoDB Atlas
     try {
       const db = await getDb();
       const docs = await db
@@ -60,9 +190,9 @@ export async function GET(request: NextRequest) {
       console.warn("MongoDB listing warning (falling back to disk):", dbErr);
     }
 
-    // 2. Fetch from local disk if writable/present
+    // 2. Fetch from local public/uploads directory if present
     try {
-      const uploadDir = getUploadDir();
+      const uploadDir = getPublicUploadDir();
       if (fs.existsSync(uploadDir)) {
         const diskFiles = await fs.promises.readdir(uploadDir);
         for (const fn of diskFiles) {
@@ -94,124 +224,141 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST: Upload one or more image files
- * Stores to MongoDB Atlas to support read-only / serverless filesystems (e.g. Vercel EROFS),
- * while also attempting to write to local disk if available.
+ * POST: Upload one or more images
+ * Accepts both multipart/form-data (FormData) and application/json (Base64 data-uris)
  */
 export async function POST(request: NextRequest) {
   const session = await getAdminSession(request);
   if (!session.authenticated) {
     return NextResponse.json(
       {
-        error: "Unauthorized access: Admin session is missing, invalid or expired. Please re-login.",
+        error: "Admin authentication required. Please re-login to the admin portal.",
         authenticated: false,
       },
       { status: 401 }
     );
   }
 
+  let db: any = null;
   try {
-    const formData = await request.formData();
-    const files = formData.getAll("file") as File[];
+    db = await getDb();
+  } catch (dbErr) {
+    console.warn("MongoDB connection warning in upload route:", dbErr);
+  }
 
-    if (!files || files.length === 0) {
-      return NextResponse.json({ error: "No file provided in form-data" }, { status: 400 });
-    }
+  const contentType = request.headers.get("content-type") || "";
+  const uploadedFiles: Array<{ url: string; filename: string; size: number; type: string }> = [];
 
-    const uploadedFiles: Array<{ url: string; filename: string; size: number; type: string }> = [];
+  try {
+    // ---------------------------------------------------------
+    // CASE A: JSON body with Base64 payload
+    // ---------------------------------------------------------
+    if (contentType.includes("application/json")) {
+      const body = await request.json();
+      const rawImages: Array<{ image?: string; data?: string; base64?: string; filename?: string; type?: string }> = [];
 
-    // Connect to MongoDB Atlas
-    let db: any = null;
-    try {
-      db = await getDb();
-    } catch (dbErr) {
-      console.error("Failed to connect to MongoDB for upload:", dbErr);
-    }
-
-    for (const file of files) {
-      if (typeof file === "string" || !file.name) continue;
-
-      const mimeType = file.type?.toLowerCase() || "image/jpeg";
-      if (!ALLOWED_MIME_TYPES.has(mimeType)) {
-        return NextResponse.json(
-          {
-            error: `Unsupported file type "${file.type}". Allowed types: JPG, PNG, WEBP, AVIF, GIF, SVG.`,
-          },
-          { status: 400 }
-        );
+      if (Array.isArray(body.images)) {
+        rawImages.push(...body.images);
+      } else if (body.image || body.data || body.base64) {
+        rawImages.push(body);
       }
 
-      if (file.size > MAX_FILE_SIZE_BYTES) {
-        return NextResponse.json(
-          { error: `File "${file.name}" exceeds maximum allowed limit of 15MB.` },
-          { status: 400 }
-        );
-      }
+      for (const item of rawImages) {
+        const payloadStr = item.image || item.data || item.base64 || "";
+        if (!payloadStr) continue;
 
-      // Generate a clean safe filename
-      const originalExt = path.extname(file.name) || ".jpg";
-      const baseName = path
-        .basename(file.name, originalExt)
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "-")
-        .slice(0, 40)
-        .replace(/^-+|-+$/g, "");
+        let mimeType = item.type || "image/jpeg";
+        let base64Data = payloadStr;
 
-      const randomHash = crypto.randomBytes(4).toString("hex");
-      const safeFilename = `${Date.now()}-${randomHash}-${baseName || "photo"}${originalExt.toLowerCase()}`;
+        const dataUriMatch = payloadStr.match(/^data:([^;]+);base64,(.+)$/);
+        if (dataUriMatch) {
+          mimeType = dataUriMatch[1];
+          base64Data = dataUriMatch[2];
+        }
 
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-
-      // 1. Store into MongoDB Atlas (works seamlessly on Vercel / serverless)
-      let storedInMongo = false;
-      if (db) {
-        try {
-          await db.collection("media_uploads").updateOne(
-            { filename: safeFilename },
-            {
-              $set: {
-                filename: safeFilename,
-                contentType: mimeType,
-                size: buffer.length,
-                data: buffer,
-                createdAt: new Date().toISOString(),
-              },
-            },
-            { upsert: true }
+        const buffer = Buffer.from(base64Data, "base64");
+        if (buffer.length > MAX_FILE_SIZE_BYTES) {
+          return NextResponse.json(
+            { error: `Image exceeds maximum allowed size limit of 25MB.` },
+            { status: 400 }
           );
-          storedInMongo = true;
-        } catch (mongoSaveErr) {
-          console.error("Failed saving image to MongoDB:", mongoSaveErr);
         }
+
+        const safeFilename = generateSafeFilename(item.filename || "upload.jpg", mimeType);
+        await persistFile(safeFilename, buffer, mimeType, db);
+
+        uploadedFiles.push({
+          url: `/uploads/${safeFilename}`,
+          filename: safeFilename,
+          size: buffer.length,
+          type: mimeType,
+        });
+      }
+    }
+    // ---------------------------------------------------------
+    // CASE B: multipart/form-data
+    // ---------------------------------------------------------
+    else {
+      const formData = await request.formData();
+      
+      const rawList: any[] = [
+        ...formData.getAll("file"),
+        ...formData.getAll("files"),
+        ...formData.getAll("image"),
+        ...formData.getAll("images"),
+      ];
+
+      const files: File[] = rawList.filter((f) => f && typeof f !== "string" && f.name);
+
+      if (files.length === 0) {
+        return NextResponse.json(
+          { error: "No image file received. Please select a valid photo file." },
+          { status: 400 }
+        );
       }
 
-      // 2. Also try writing to local disk (ignore EROFS on read-only environments like Vercel)
-      try {
-        const uploadDir = getUploadDir();
-        if (!fs.existsSync(uploadDir)) {
-          await fs.promises.mkdir(uploadDir, { recursive: true });
-        }
-        const filePath = path.join(uploadDir, safeFilename);
-        await fs.promises.writeFile(filePath, buffer);
-      } catch (fsErr: any) {
-        // If filesystem is read-only (EROFS) and we saved to MongoDB, this is expected on Vercel!
-        if (fsErr?.code !== "EROFS" && !storedInMongo) {
-          console.error("Filesystem write error:", fsErr);
-          throw fsErr;
-        }
-      }
+      for (const file of files) {
+        const declaredType = file.type?.toLowerCase() || "";
+        const ext = path.extname(file.name).toLowerCase();
+        const mimeType = resolveMimeType(file.name, declaredType);
 
-      uploadedFiles.push({
-        url: `/uploads/${safeFilename}`,
-        filename: safeFilename,
-        size: file.size,
-        type: mimeType,
-      });
+        const isMimeAllowed = ALLOWED_MIME_TYPES.has(mimeType) || Boolean(EXTENSION_TO_MIME[ext]);
+        if (!isMimeAllowed) {
+          return NextResponse.json(
+            {
+              error: `Unsupported file format "${file.name}". Please upload a JPG, PNG, WEBP, AVIF, or SVG image.`,
+            },
+            { status: 400 }
+          );
+        }
+
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+          return NextResponse.json(
+            { error: `File "${file.name}" exceeds maximum allowed limit of 25MB.` },
+            { status: 400 }
+          );
+        }
+
+        const safeFilename = generateSafeFilename(file.name, mimeType);
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        await persistFile(safeFilename, buffer, mimeType, db);
+
+        uploadedFiles.push({
+          url: `/uploads/${safeFilename}`,
+          filename: safeFilename,
+          size: buffer.length,
+          type: mimeType,
+        });
+      }
     }
 
     if (uploadedFiles.length === 0) {
-      return NextResponse.json({ error: "No valid image files were processed" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No valid image files could be processed." },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json(
@@ -227,16 +374,16 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("Upload error:", error);
+    console.error("Upload handler error:", error);
     return NextResponse.json(
-      { error: error?.message || "Internal server error during upload" },
+      { error: error?.message || "Failed to complete image upload" },
       { status: 500 }
     );
   }
 }
 
 /**
- * DELETE: Remove an uploaded file from MongoDB and local disk
+ * DELETE: Remove an uploaded file
  */
 export async function DELETE(request: NextRequest) {
   const session = await getAdminSession(request);
@@ -254,17 +401,25 @@ export async function DELETE(request: NextRequest) {
 
     const safeFilename = path.basename(filename);
 
-    // 1. Remove from MongoDB
+    // 1. Remove from MongoDB Atlas
     try {
       const db = await getDb();
       await db.collection("media_uploads").deleteOne({ filename: safeFilename });
     } catch (dbErr) {
-      console.warn("Error removing from MongoDB:", dbErr);
+      console.warn("Error removing from MongoDB Atlas:", dbErr);
     }
 
-    // 2. Remove from disk if present
+    // 2. Remove from /tmp
     try {
-      const filePath = path.join(getUploadDir(), safeFilename);
+      const tmpPath = path.join(getTmpUploadDir(), safeFilename);
+      if (fs.existsSync(tmpPath)) {
+        await fs.promises.unlink(tmpPath);
+      }
+    } catch {}
+
+    // 3. Remove from public/uploads
+    try {
+      const filePath = path.join(getPublicUploadDir(), safeFilename);
       if (fs.existsSync(filePath)) {
         await fs.promises.unlink(filePath);
       }

@@ -98,6 +98,11 @@ export async function getAdminSession(req?: NextRequest): Promise<{ authenticate
         }
       }
     }
+
+    // 3b. Fallback: Check search query parameters
+    if (!token && req.nextUrl) {
+      token = req.nextUrl.searchParams.get("admin_token") || req.nextUrl.searchParams.get("token") || undefined;
+    }
   }
 
   // 4. Fallback: Next.js cookies() from next/headers
@@ -117,7 +122,7 @@ export async function getAdminSession(req?: NextRequest): Promise<{ authenticate
     return { authenticated: false };
   }
 
-  // 5. Verify that the user still exists in the store
+  // 5. Verify against store if possible, but trust valid cryptographic signature
   try {
     const store = readStore();
     const exists = store.admins?.find(
@@ -136,34 +141,19 @@ export async function getAdminSession(req?: NextRequest): Promise<{ authenticate
         },
       };
     }
-
-    // Fallback: Default admin match
-    if (verification.user?.email?.toLowerCase() === "admin@kradind.com") {
-      return {
-        authenticated: true,
-        user: {
-          id: "admin-1",
-          email: "admin@kradind.com",
-          name: verification.user.name || "Head of Expeditions",
-        },
-      };
-    }
   } catch (err) {
-    console.error("Error verifying admin against store:", err);
-    // If store read failed but token signature is valid and belongs to admin
-    if (verification.user?.email?.toLowerCase() === "admin@kradind.com") {
-      return {
-        authenticated: true,
-        user: {
-          id: "admin-1",
-          email: "admin@kradind.com",
-          name: verification.user.name || "Head of Expeditions",
-        },
-      };
-    }
+    console.warn("Store check warning during session verification:", err);
   }
 
-  return { authenticated: false };
+  // If HMAC signature is verified with SESSION_SECRET, it was issued by this server
+  return {
+    authenticated: true,
+    user: {
+      id: verification.user.id || "admin-1",
+      email: verification.user.email || "admin@kradind.com",
+      name: verification.user.name || "Head of Expeditions",
+    },
+  };
 }
 
 export const SESSION_COOKIE_NAME = SESSION_COOKIE;

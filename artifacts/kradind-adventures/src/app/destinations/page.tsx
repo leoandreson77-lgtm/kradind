@@ -4,7 +4,7 @@ import Image from "next/image";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { MapPin, ArrowRight, Mountain, Sparkles, Compass } from "lucide-react";
+import { MapPin, ArrowRight, Mountain, Sparkles, Compass, Calendar, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Top Travel Destinations in India & International | KRADIND Adventures",
@@ -84,6 +84,30 @@ export default async function DestinationsPage() {
                 <p className="text-xs text-slate-600 leading-snug">
                   {dest.tagline}
                 </p>
+
+                {/* Duration & Itinerary badge & Price */}
+                {(dest.duration || (dest.itinerary && dest.itinerary.length > 0) || dest.price) && (
+                  <div className="flex items-center justify-between text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+                    <span className="font-semibold text-emerald-800 flex items-center gap-1">
+                      {dest.itinerary && dest.itinerary.length > 0 ? (
+                        <>
+                          <Calendar className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>{dest.itinerary.length} Days Itinerary</span>
+                        </>
+                      ) : dest.duration ? (
+                        <>
+                          <Clock className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>{dest.duration}</span>
+                        </>
+                      ) : null}
+                    </span>
+                    {dest.price && (
+                      <span className="font-extrabold text-slate-900">
+                        ₹{dest.price.toLocaleString("en-IN")}
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 <div className="space-y-2 pt-2 border-t border-slate-100">
                   {dest.highlights && dest.highlights.length > 0 && (

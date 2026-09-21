@@ -82,6 +82,39 @@ export async function POST(request: NextRequest) {
       color: body.color || "from-emerald-900/80",
       icon: body.icon || "📍",
       status: body.status === "Draft" ? "Draft" : "Published",
+      duration: body.duration || "",
+      price: body.price ? Number(body.price) : undefined,
+      originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
+      bestSeason: body.bestSeason || "",
+      pickupDrop: body.pickupDrop || "",
+      suitableFor: body.suitableFor || "",
+      overview: body.overview || "",
+      gallery: Array.isArray(body.gallery) ? body.gallery : [],
+      itinerary: Array.isArray(body.itinerary)
+        ? body.itinerary.map((day: any, idx: number) => ({
+            day: idx + 1,
+            title: day.title || `Day ${idx + 1}`,
+            description: day.description || "",
+            distance: day.distance || "",
+            duration: day.duration || "",
+            altitude: day.altitude || "",
+            meal: day.meal || "",
+            stay: day.stay || "",
+            activities: day.activities || "",
+          }))
+        : [],
+      inclusions: Array.isArray(body.inclusions)
+        ? body.inclusions
+        : (body.inclusions || "").split("\n").map((s: string) => s.trim()).filter(Boolean),
+      exclusions: Array.isArray(body.exclusions)
+        ? body.exclusions
+        : (body.exclusions || "").split("\n").map((s: string) => s.trim()).filter(Boolean),
+      travelTips: Array.isArray(body.travelTips)
+        ? body.travelTips
+        : (body.travelTips || "").split("\n").map((s: string) => s.trim()).filter(Boolean),
+      faqs: Array.isArray(body.faqs)
+        ? body.faqs.map((f: any) => ({ question: f.question || "", answer: f.answer || "" }))
+        : [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -146,6 +179,45 @@ export async function PUT(request: NextRequest) {
       name: body.name.trim(),
       slug,
       tagline: body.tagline?.trim() || store.destinations[index].tagline,
+      duration: body.duration !== undefined ? body.duration : store.destinations[index].duration,
+      price: body.price !== undefined ? (body.price ? Number(body.price) : undefined) : store.destinations[index].price,
+      originalPrice: body.originalPrice !== undefined ? (body.originalPrice ? Number(body.originalPrice) : undefined) : store.destinations[index].originalPrice,
+      bestSeason: body.bestSeason !== undefined ? body.bestSeason : store.destinations[index].bestSeason,
+      pickupDrop: body.pickupDrop !== undefined ? body.pickupDrop : store.destinations[index].pickupDrop,
+      suitableFor: body.suitableFor !== undefined ? body.suitableFor : store.destinations[index].suitableFor,
+      overview: body.overview !== undefined ? body.overview : store.destinations[index].overview,
+      gallery: Array.isArray(body.gallery) ? body.gallery : store.destinations[index].gallery || [],
+      itinerary: Array.isArray(body.itinerary)
+        ? body.itinerary.map((day: any, idx: number) => ({
+            day: idx + 1,
+            title: day.title || `Day ${idx + 1}`,
+            description: day.description || "",
+            distance: day.distance || "",
+            duration: day.duration || "",
+            altitude: day.altitude || "",
+            meal: day.meal || "",
+            stay: day.stay || "",
+            activities: day.activities || "",
+          }))
+        : store.destinations[index].itinerary || [],
+      inclusions: Array.isArray(body.inclusions)
+        ? body.inclusions
+        : typeof body.inclusions === "string"
+        ? (body.inclusions as string).split("\n").map((s) => s.trim()).filter(Boolean)
+        : store.destinations[index].inclusions || [],
+      exclusions: Array.isArray(body.exclusions)
+        ? body.exclusions
+        : typeof body.exclusions === "string"
+        ? (body.exclusions as string).split("\n").map((s) => s.trim()).filter(Boolean)
+        : store.destinations[index].exclusions || [],
+      travelTips: Array.isArray(body.travelTips)
+        ? body.travelTips
+        : typeof body.travelTips === "string"
+        ? (body.travelTips as string).split("\n").map((s) => s.trim()).filter(Boolean)
+        : store.destinations[index].travelTips || [],
+      faqs: Array.isArray(body.faqs)
+        ? body.faqs.map((f: any) => ({ question: f.question || "", answer: f.answer || "" }))
+        : store.destinations[index].faqs || [],
       highlights: Array.isArray(body.highlights)
         ? body.highlights
         : typeof body.highlights === "string"

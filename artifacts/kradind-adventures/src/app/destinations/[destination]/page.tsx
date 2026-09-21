@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { DestinationDetailView } from "@/components/destination-detail-view";
 import { TreksContent } from "@/components/treks-catalog";
+import { getDestinationsAsync, getDefaultDestinations } from "@/lib/cms-store";
+
+export const revalidate = 60;
 
 const DESTINATION_MAP: Record<string, { name: string; title: string; subtitle: string; category: string }> = {
   uttarakhand: {
@@ -77,19 +81,30 @@ export async function generateMetadata({
   params: Promise<{ destination: string }>;
 }): Promise<Metadata> {
   const { destination } = await params;
+  const key = destination.toLowerCase();
+  const allDestinations = await getDestinationsAsync();
+  const cmsDest = (allDestinations || getDefaultDestinations()).find(
+    (d) => d.slug.toLowerCase() === key
+  );
+
   const info = getDestinationInfo(destination);
+  const title = cmsDest
+    ? `${cmsDest.name} Tour Circuit & Travel Packages | KRADIND Adventures`
+    : `${info.title} | KRADIND Adventures`;
+  const description = cmsDest?.tagline || cmsDest?.overview || info.subtitle;
 
   return {
-    title: `${info.title} | KRADIND Adventures`,
-    description: info.subtitle,
+    title,
+    description,
     alternates: {
-      canonical: `https://kradind.com/destinations/${destination.toLowerCase()}`,
+      canonical: `https://kradind.com/destinations/${key}`,
     },
     openGraph: {
-      title: `${info.title} | KRADIND Adventures`,
-      description: info.subtitle,
-      url: `https://kradind.com/destinations/${destination.toLowerCase()}`,
+      title,
+      description,
+      url: `https://kradind.com/destinations/${key}`,
       type: "website",
+      images: cmsDest?.image ? [{ url: cmsDest.image, alt: `${cmsDest.name} holiday tour` }] : undefined,
     },
   };
 }
@@ -100,6 +115,21 @@ export default async function SingleDestinationPage({
   params: Promise<{ destination: string }>;
 }) {
   const { destination } = await params;
+  const key = destination.toLowerCase();
+
+  const allDestinations = await getDestinationsAsync();
+  const cmsDest = (allDestinations || getDefaultDestinations()).find(
+    (d) => d.slug.toLowerCase() === key
+  );
+
+  if (cmsDest) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-slate-950 animate-pulse" />}>
+        <DestinationDetailView destination={cmsDest} />
+      </Suspense>
+    );
+  }
+
   const info = getDestinationInfo(destination);
 
   return (

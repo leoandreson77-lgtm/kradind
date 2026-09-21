@@ -19,6 +19,8 @@ import {
   ChevronRight,
   Lock,
   ExternalLink,
+  HeartHandshake,
+  Compass,
 } from "lucide-react";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
@@ -61,16 +63,16 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
 
   const handleTabChange = (tab: PolicyTab) => {
     setActiveTab(tab);
-    // Route navigation matching specific pages
+    // Route navigation matching specific canonical pages
     const routeMap: Record<PolicyTab, string> = {
       privacy: "/privacy-policy",
       terms: "/terms-and-conditions",
-      cancellation: "/cancellation-policy",
-      booking: "/booking-policy",
+      editorial: "/editorial-and-safety-policy",
+      cancellation: "/cancellation-and-refund-policy",
+      booking: "/booking-and-payment-policy",
+      visa: "/visa-and-international-policy",
       cookie: "/cookie-policy",
-      visa: "/visa-policy",
       disclaimer: "/disclaimer",
-      editorial: "/editorial-policy",
     };
     if (routeMap[tab]) {
       router.push(routeMap[tab], { scroll: false });
@@ -81,58 +83,58 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
     {
       id: "privacy" as PolicyTab,
       name: "Privacy Policy",
-      shortName: "Privacy",
+      shortName: "Privacy Policy",
       icon: Shield,
-      badge: "User Data & Protection",
+      badge: "DPDP Act 2023 Compliant",
     },
     {
       id: "terms" as PolicyTab,
       name: "Terms & Conditions",
-      shortName: "Terms",
+      shortName: "Terms & Conditions",
       icon: FileText,
       badge: "Service Agreement",
     },
     {
+      id: "editorial" as PolicyTab,
+      name: "Editorial & Safety Policy",
+      shortName: "Editorial & Safety",
+      icon: Shield,
+      badge: "E-E-A-T Verified Standards",
+    },
+    {
       id: "cancellation" as PolicyTab,
-      name: "Cancellation & Refund",
-      shortName: "Refunds",
+      name: "Cancellation & Refund Policy",
+      shortName: "Cancellation & Refund",
       icon: RefreshCw,
-      badge: "Cancellation Terms",
+      badge: "Fair Cancellation Slabs",
     },
     {
       id: "booking" as PolicyTab,
-      name: "Booking & Payment",
-      shortName: "Payments",
+      name: "Booking & Payment Policy",
+      shortName: "Booking & Payment",
       icon: CreditCard,
-      badge: "Payment Security",
-    },
-    {
-      id: "cookie" as PolicyTab,
-      name: "Cookie Policy",
-      shortName: "Cookies",
-      icon: Cookie,
-      badge: "Tracking & Tech",
+      badge: "Secure Payment Protocol",
     },
     {
       id: "visa" as PolicyTab,
-      name: "Visa & International",
-      shortName: "Visa Info",
+      name: "Visa & International Policy",
+      shortName: "Visa & International",
       icon: Plane,
       badge: "Immigration & Entry",
     },
     {
-      id: "disclaimer" as PolicyTab,
-      name: "Website Disclaimer",
-      shortName: "Disclaimer",
-      icon: AlertTriangle,
-      badge: "General Notice",
+      id: "cookie" as PolicyTab,
+      name: "Cookie Policy",
+      shortName: "Cookie Policy",
+      icon: Cookie,
+      badge: "Tracking & Tech",
     },
     {
-      id: "editorial" as PolicyTab,
-      name: "Editorial & Safety Standards",
-      shortName: "Editorial Policy",
-      icon: Shield,
-      badge: "E-E-A-T Verified",
+      id: "disclaimer" as PolicyTab,
+      name: "Website Disclaimer",
+      shortName: "Website Disclaimer",
+      icon: AlertTriangle,
+      badge: "General Legal Notice",
     },
   ];
 
@@ -297,7 +299,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <Shield className="w-4 h-4 text-emerald-600" />
-                    <span>Data Protection & Privacy Standards</span>
+                    <span>Data Protection &amp; Privacy Standards • DPDP Act 2023 Compliant</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 brand-font m-0">
                     Privacy Policy
@@ -305,193 +307,427 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <div className="flex flex-wrap gap-4 text-xs text-slate-500 pt-1">
                     <span>Effective Date: <strong>09 September 2026</strong></span>
                     <span>•</span>
-                    <span>Last Updated: <strong>09 September 2026</strong></span>
+                    <span>Last Updated: <strong>21 September 2026</strong></span>
+                    <span>•</span>
+                    <span>Governing Entity: <strong>KRADIND Adventures Private Limited / KRAD Global</strong></span>
                   </div>
                 </div>
 
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs leading-relaxed text-slate-600">
-                  KRAD Global (&quot;KRAD Global&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates the website <strong className="text-slate-800">www.kradind.com</strong> and provides domestic and international travel and tourism services. We respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, store and protect information when you visit our website, contact us, request a quotation, or purchase our travel services.
+                {/* Statutory Overview Box */}
+                <div className="bg-emerald-50/80 p-5 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950 space-y-2.5">
+                  <div className="flex items-center gap-2 font-bold text-emerald-900 text-sm">
+                    <Lock className="w-4 h-4 text-emerald-700 shrink-0" />
+                    <span>Official Privacy &amp; Data Protection Commitment</span>
+                  </div>
+                  <p className="m-0">
+                    KRADIND Adventures Private Limited operating jointly with KRAD Global (&quot;KRADIND&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) provides high-altitude alpine expeditions, Himalayan trekking circuits, and domestic and international travel management via our official domain <strong className="text-emerald-900">www.kradind.com</strong>. We are resolutely committed to safeguarding your personal data in strict conformity with the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong>, the <strong>Information Technology Act, 2000</strong>, the <strong>IT (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011</strong>, and the <strong>Consumer Protection (E-Commerce) Rules, 2020</strong>.
+                  </p>
+                  <p className="m-0 text-[11px] text-emerald-800">
+                    This Privacy Policy comprehensively governs the collection, processing, storage, sharing, and statutory deletion of personal data collected from website visitors, travel inquirers, booking customers, and expedition participants.
+                  </p>
                 </div>
 
+                {/* 1. Introduction & Statutory Scope */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">1. Information We Collect</h3>
-                  <p className="text-sm leading-relaxed">
-                    We may collect information necessary to provide our travel services, including:
-                  </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs list-disc pl-5">
-                    <li>Full name</li>
-                    <li>Mobile or telephone number</li>
-                    <li>Email address</li>
-                    <li>Address</li>
-                    <li>Travel dates</li>
-                    <li>Destination and itinerary preferences</li>
-                    <li>Number of travellers</li>
-                    <li>Age/date of birth where required</li>
-                    <li>Passport and visa information for international travel</li>
-                    <li>Emergency contact details</li>
-                    <li>Special travel requirements voluntarily provided by you</li>
-                    <li>Booking and transaction information</li>
-                    <li>Enquiry and communication history</li>
-                    <li>Information submitted through website forms</li>
-                    <li>IP address, browser type, device information and website usage information</li>
-                  </ul>
-                  <p className="text-xs text-slate-500 italic">
-                    We request only information reasonably necessary for providing or arranging the requested travel services.
-                  </p>
-                </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">2. How We Collect Information</h3>
-                  <p className="text-sm leading-relaxed">We may collect information when you:</p>
-                  <ul className="text-xs space-y-1.5 list-disc pl-5">
-                    <li>Submit an enquiry on www.kradind.com</li>
-                    <li>Request a tour package or customized quotation</li>
-                    <li>Make a booking for domestic or international tours</li>
-                    <li>Contact us by phone, WhatsApp or email</li>
-                    <li>Communicate with our travel representatives</li>
-                    <li>Subscribe to promotional communications</li>
-                    <li>Use our website</li>
-                    <li>Interact with our online advertisements or social media channels</li>
-                  </ul>
-                </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">3. How We Use Your Information</h3>
-                  <p className="text-sm leading-relaxed">We may use your information to:</p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs list-disc pl-5">
-                    <li>Respond to enquiries &amp; requests</li>
-                    <li>Prepare travel quotations</li>
-                    <li>Customize tour packages</li>
-                    <li>Process and manage bookings</li>
-                    <li>Arrange hotels, transportation, flights, sightseeing and activities</li>
-                    <li>Provide customer support</li>
-                    <li>Process payments through authorized payment providers</li>
-                    <li>Assist with visa or travel documentation where applicable</li>
-                    <li>Send booking confirmations and travel updates</li>
-                    <li>Communicate important changes to your itinerary</li>
-                    <li>Improve our website and services</li>
-                    <li>Prevent fraud and unauthorized activity</li>
-                    <li>Maintain business and financial records</li>
-                    <li>Comply with applicable laws and regulations</li>
-                    <li>Send promotional offers where permitted by law</li>
-                  </ul>
-                </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">4. Sharing Your Information</h3>
-                  <p className="text-sm leading-relaxed">
-                    To provide your requested travel services, we may share relevant information with trusted third parties, including:
+                  <h3 className="text-lg font-bold text-slate-900 m-0">1. Introduction, Operating Entity &amp; Scope</h3>
+                  <p className="text-xs leading-relaxed">
+                    Under the DPDP Act 2023, KRADIND Adventures Private Limited functions as a <em>Data Fiduciary</em> determining the purpose and means of processing personal data provided by you (the <em>Data Principal</em>). This policy applies to:
                   </p>
                   <ul className="text-xs space-y-1.5 list-disc pl-5">
-                    <li>Hotels and accommodation providers</li>
-                    <li>Airlines</li>
-                    <li>Transport providers</li>
-                    <li>Local tour operators</li>
-                    <li>Destination management companies (DMCs)</li>
-                    <li>Activity and excursion providers</li>
-                    <li>Visa/documentation service providers</li>
-                    <li>Travel insurance providers</li>
-                    <li>Payment gateways and financial service providers</li>
-                    <li>Technology and website service providers</li>
-                    <li>Government, immigration or regulatory authorities where legally required</li>
+                    <li>Visitors accessing <strong>www.kradind.com</strong> or our associated mobile interfaces.</li>
+                    <li>Individuals submitting tour inquiries, quotation requests, or live chat messages.</li>
+                    <li>Confirmed travellers booking domestic holidays, high-altitude treks, or international excursions.</li>
+                    <li>Participants completing alpine health declarations and base-camp documentation.</li>
+                    <li>Users communicating via official WhatsApp helplines, telephone calls, or emails.</li>
                   </ul>
-                  <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs font-semibold text-emerald-900">
-                    We do NOT sell your personal information to third parties for their independent marketing purposes.
+                </section>
+
+                {/* 2. Detailed Categories of Personal Data Collected */}
+                <section className="space-y-4">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">2. Categories of Personal Data We Collect</h3>
+                  <p className="text-xs leading-relaxed">
+                    To deliver secure mountain expeditions and travel itineraries, we collect specific categories of information based on the nature of your interaction:
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                      <h4 className="font-bold text-slate-900 m-0 flex items-center gap-1.5 text-xs uppercase tracking-wide text-emerald-800">
+                        <FileText className="w-3.5 h-3.5" />
+                        2.1 Personal Identity &amp; Contact Details
+                      </h4>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                        <li>Full legal name (matching government-issued photo ID)</li>
+                        <li>Gender, date of birth, and age verification</li>
+                        <li>Primary telephone number and WhatsApp mobile contact</li>
+                        <li>Verified email address for confirmations and vouchers</li>
+                        <li>Complete residential address and state of domicile</li>
+                        <li>Father&apos;s/Guardian&apos;s name (for minor participants)</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                      <h4 className="font-bold text-slate-900 m-0 flex items-center gap-1.5 text-xs uppercase tracking-wide text-emerald-800">
+                        <Shield className="w-3.5 h-3.5" />
+                        2.2 Government ID &amp; Forest / Army Permits
+                      </h4>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                        <li>Government Photo ID proof (Aadhaar Card, Voter ID, Driving Licence)</li>
+                        <li>Passport copy (number, expiry date, nationality, place of issue)</li>
+                        <li>State Forest Department trek entry permits and sanctuary tokens</li>
+                        <li>Inner Line Permits (ILP) and Border Area ITBP / Army clearances</li>
+                        <li>Foreign national details: Visa copy, e-FRRO registration, Form C data</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                      <h4 className="font-bold text-slate-900 m-0 flex items-center gap-1.5 text-xs uppercase tracking-wide text-emerald-800">
+                        <HeartHandshake className="w-3.5 h-3.5" />
+                        2.3 Alpine Medical Fitness &amp; Emergency Health
+                      </h4>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                        <li>Self-declaration of physical fitness for high altitude (10,000+ ft)</li>
+                        <li>Pre-existing medical conditions (asthma, hypertension, cardiac ailments, epilepsy)</li>
+                        <li>Past history of Acute Mountain Sickness (AMS), HAPE, or HACE</li>
+                        <li>Blood group, critical allergies, and dietary restrictions</li>
+                        <li>Next-of-kin emergency contact: Full name, relationship, 24x7 phone</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                      <h4 className="font-bold text-slate-900 m-0 flex items-center gap-1.5 text-xs uppercase tracking-wide text-emerald-800">
+                        <CreditCard className="w-3.5 h-3.5" />
+                        2.4 Financial &amp; Transaction Information
+                      </h4>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                        <li>Payment transaction reference IDs and UTR numbers</li>
+                        <li>Bank transfer counterfoils (NEFT/RTGS/IMPS receipts)</li>
+                        <li>Billing entity name, address, and corporate GSTIN</li>
+                        <li>Refund bank account details (in event of approved cancellation)</li>
+                        <li><strong className="text-slate-800">Notice:</strong> Card numbers and CVVs are handled solely by RBI-licensed PCI-DSS gateways and are NEVER stored by us</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                      <h4 className="font-bold text-slate-900 m-0 flex items-center gap-1.5 text-xs uppercase tracking-wide text-emerald-800">
+                        <Compass className="w-3.5 h-3.5" />
+                        2.5 Telemetry, Safety Logs &amp; Trail Media
+                      </h4>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                        <li>Base camp check-in rosters and morning pulse-oximeter logs</li>
+                        <li>Satellite communicator / VHF radio check-in timestamps</li>
+                        <li>Emergency SOS GPS coordinates during rescue operations</li>
+                        <li>Expedition photographs and group celebration summit media</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                      <h4 className="font-bold text-slate-900 m-0 flex items-center gap-1.5 text-xs uppercase tracking-wide text-emerald-800">
+                        <Lock className="w-3.5 h-3.5" />
+                        2.6 Technical Logs &amp; Web Analytics
+                      </h4>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                        <li>Internet Protocol (IP) address and approximate geolocation</li>
+                        <li>Browser version, operating system, and device identifiers</li>
+                        <li>Pages visited, duration of visit, and referral URLs</li>
+                        <li>Session cookies and preference tokens</li>
+                      </ul>
+                    </div>
                   </div>
                 </section>
 
+                {/* 3. Methods of Data Collection */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">5. International Travel and Data Transfers</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">3. How We Collect Your Personal Information</h3>
                   <p className="text-xs leading-relaxed">
-                    If you book an international trip, certain personal information may need to be shared with service providers located outside India. For example, hotels, airlines, destination management companies, visa service providers or local operators in another country may require traveller information to provide the booked services. We take reasonable steps to ensure that personal information is handled appropriately when shared with service providers.
+                    We collect personal data transparently through the following lawful avenues:
                   </p>
+                  <ul className="text-xs space-y-1.5 list-disc pl-5">
+                    <li><strong>Direct Digital Submissions:</strong> Booking inquiry forms, itinerary customizer, and contact modals on www.kradind.com.</li>
+                    <li><strong>Direct Communication:</strong> Verbal and text discussions via our verified WhatsApp (+91 75002 22141) and official email (@kradind.com).</li>
+                    <li><strong>Offline Base Camp Check-In:</strong> Physical sign-in registers, photo ID verification, and medical fitness forms at assembly points in Rishikesh, Dehradun, Sankri, Joshimath, Manali, Leh, or Srinagar.</li>
+                    <li><strong>Automated Telemetry:</strong> Cookies, server error logs, and web analytics tracking as you browse our digital interfaces.</li>
+                    <li><strong>Authorised Third Parties:</strong> Corporate HR coordinators or group organizers providing participant rosters with your prior authorization.</li>
+                  </ul>
                 </section>
 
+                {/* 4. Lawful Grounds & Specific Purposes */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">6. Payment Information &amp; Security</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">4. Lawful Grounds &amp; Purposes of Processing</h3>
                   <p className="text-xs leading-relaxed">
-                    Payments may be processed through third-party payment gateways, banks or other authorized payment providers. KRAD Global does not ask customers to provide their:
+                    In compliance with Section 4 and Section 7 of the DPDP Act 2023, personal data is processed solely under valid lawful grounds:
                   </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-semibold text-rose-800 bg-rose-50 p-3 rounded-xl border border-rose-200">
-                    <span>❌ UPI PIN</span>
-                    <span>❌ ATM PIN</span>
-                    <span>❌ Card PIN</span>
-                    <span>❌ CVV via unsecured channels</span>
-                    <span>❌ Internet banking password</span>
-                    <span>❌ OTP / Passwords</span>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-xs border border-slate-200 rounded-xl overflow-hidden">
+                      <thead className="bg-slate-100 text-slate-700 font-bold">
+                        <tr>
+                          <th className="p-3 text-left border-b border-slate-200">Lawful Basis</th>
+                          <th className="p-3 text-left border-b border-slate-200">Processing Activity</th>
+                          <th className="p-3 text-left border-b border-slate-200">Categories of Data Used</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 text-slate-600">
+                        <tr>
+                          <td className="p-3 font-semibold text-slate-900">Performance of Contract</td>
+                          <td className="p-3">Executing tour bookings, securing mountain homestays/campsites, provisioning trek leaders, reserving flights/cabs.</td>
+                          <td className="p-3">Identity, Contact, Travel preferences, Financial receipts.</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 font-semibold text-slate-900">Explicit Consent</td>
+                          <td className="p-3">Providing customized quotes, trail condition advisories, weather radar alerts, and promotional announcements.</td>
+                          <td className="p-3">Name, Email, WhatsApp number, Itinerary choices.</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 font-semibold text-slate-900">Vital Interests (Life Safety)</td>
+                          <td className="p-3">High-altitude medical rescue, administering emergency wilderness first aid, helicopter evacuation dispatch during AMS/trauma.</td>
+                          <td className="p-3">Medical fitness declaration, Blood group, Emergency contact, GPS telemetry.</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 font-semibold text-slate-900">Statutory &amp; Legal Compliance</td>
+                          <td className="p-3">State Forest Department wildlife permits, ITBP border clearance, e-FRRO foreigner registration, GST invoicing, police verification.</td>
+                          <td className="p-3">Government Photo ID, Passport, Visa, Tax invoice data.</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                  <p className="text-xs text-slate-600">
-                    Never share confidential banking credentials with anyone claiming to represent KRAD Global.
-                  </p>
                 </section>
 
+                {/* 5. Sharing & Authorised Disclosures */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">7. Cookies</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">5. Sharing &amp; Third-Party Disclosures</h3>
                   <p className="text-xs leading-relaxed">
-                    Our website may use cookies and similar technologies to improve website functionality, understand website traffic, remember preferences and improve user experience. Third-party analytics or advertising services may also use cookies where applicable. You can control or disable cookies through your browser settings. Disabling certain cookies may affect some website functionality.
+                    Personal data is shared strictly on a confidential, need-to-know basis with verified operational partners:
                   </p>
+                  <ul className="text-xs space-y-1.5 list-disc pl-5">
+                    <li><strong>Accommodations &amp; Campsites:</strong> Hotels, eco-lodges, homestays, and alpine camping teams for guest check-in rosters.</li>
+                    <li><strong>Government &amp; Forest Authorities:</strong> State Forest Departments (Uttarakhand, Himachal Pradesh, J&amp;K, Ladakh, Sikkim), Wildlife Wardens, District Magistrates, and Armed Forces for permit verification.</li>
+                    <li><strong>Transport &amp; Flight Carriers:</strong> Mountain taxi associations, tempo traveller operators, and airline consolidators.</li>
+                    <li><strong>Expedition Staff:</strong> Certified NIM/HMI trek leaders, high-altitude guides, and base camp coordinators.</li>
+                    <li><strong>Emergency Medical &amp; Rescue Agencies:</strong> Wilderness First Aid paramedics, local mountain hospitals, State Disaster Response Force (SDRF), NDRF, and emergency helicopter evacuation services.</li>
+                    <li><strong>Payment Gateways &amp; Banks:</strong> RBI-licensed payment processors (PCI-DSS compliant) for processing digital payments and refunds.</li>
+                    <li><strong>Law Enforcement &amp; Regulatory Bodies:</strong> When legally mandated under valid Indian court orders or police summons.</li>
+                  </ul>
+                  
+                  {/* Strict No Sale Guarantee */}
+                  <div className="bg-emerald-50 border-2 border-emerald-300 p-4 rounded-xl text-xs font-semibold text-emerald-950 flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-sm text-emerald-900 block mb-0.5">Strict Anti-Commercialization Guarantee</strong>
+                      KRADIND Adventures Private Limited and KRAD Global explicitly warrant that we <strong>NEVER</strong> sell, rent, lease, trade, or monetize your personal or medical data to third-party brokers, advertisers, or marketing firms under any circumstances.
+                    </div>
+                  </div>
                 </section>
 
+                {/* 6. International Cross-Border Transfers */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">8. Data Security</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">6. Cross-Border / International Data Transfers</h3>
                   <p className="text-xs leading-relaxed">
-                    KRAD Global takes reasonable technical and organizational measures to protect personal information against unauthorized access, misuse, alteration, disclosure or destruction. However, no internet transmission or electronic storage system can be guaranteed to be completely secure.
+                    For international tour packages (e.g., Dubai, Bali, Thailand, Singapore, Nepal, Europe, etc.), your passport bio-data and itinerary requirements are transferred to overseas Destination Management Companies (DMCs), foreign airlines, embassies, and hotels solely to execute the travel services. All cross-border transfers adhere to Section 16 of the DPDP Act 2023 and ensure adequate security protocols.
                   </p>
                 </section>
 
+                {/* 7. Anti-Fraud & Payment Security Advisory */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">9. Data Retention</h3>
-                  <p className="text-xs leading-relaxed">
-                    We may retain personal information for as long as reasonably necessary to complete bookings, provide customer service, maintain accounting and business records, resolve disputes, comply with legal requirements, and protect our legitimate business interests. When information is no longer reasonably required, it may be deleted, anonymized or securely disposed of.
-                  </p>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">7. Anti-Fraud Advisory &amp; Payment Security Protocols</h3>
+                  <div className="bg-rose-50 border border-rose-200 p-5 rounded-2xl space-y-3 text-xs text-rose-950">
+                    <div className="flex items-center gap-2 font-bold text-rose-800 text-sm">
+                      <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                      <span>CRITICAL CONSUMER SECURITY ADVISORY</span>
+                    </div>
+                    <p className="m-0 leading-relaxed">
+                      KRADIND Adventures and KRAD Global representatives will <strong>NEVER</strong> request, solicit, or require you to disclose:
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 font-bold text-rose-900 pt-1">
+                      <span className="bg-white/80 px-2.5 py-1.5 rounded-lg border border-rose-200">❌ One-Time Password (OTP)</span>
+                      <span className="bg-white/80 px-2.5 py-1.5 rounded-lg border border-rose-200">❌ UPI PIN / QR Approvals</span>
+                      <span className="bg-white/80 px-2.5 py-1.5 rounded-lg border border-rose-200">❌ ATM / Debit Card PIN</span>
+                      <span className="bg-white/80 px-2.5 py-1.5 rounded-lg border border-rose-200">❌ CVV / Card Security Code</span>
+                      <span className="bg-white/80 px-2.5 py-1.5 rounded-lg border border-rose-200">❌ Net Banking Passwords</span>
+                      <span className="bg-white/80 px-2.5 py-1.5 rounded-lg border border-rose-200">❌ Screen-Sharing App Installs</span>
+                    </div>
+                    <p className="m-0 text-[11px] text-rose-800">
+                      All official remittances must be made solely to official company bank accounts or through verified payment links ending in <strong>kradind.com</strong>.
+                    </p>
+                  </div>
                 </section>
 
+                {/* 8. Cookies & Web Tracking */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">10. Your Privacy Rights</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">8. Cookies &amp; Tracking Technologies</h3>
                   <p className="text-xs leading-relaxed">
-                    Subject to applicable law, you may request access to certain personal information, correction of inaccurate information, deletion of personal information where legally applicable, withdrawal of consent, or information regarding the processing of your personal data.
+                    Our web portal uses first-party and trusted third-party cookies to optimize user experience:
+                  </p>
+                  <ul className="text-xs space-y-1 list-disc pl-5">
+                    <li><strong>Strictly Necessary Cookies:</strong> Essential for session authentication, page routing, and CSRF attack prevention.</li>
+                    <li><strong>Performance &amp; Analytics Cookies:</strong> Google Analytics cookies to monitor traffic flows, server latency, and popular trekking routes.</li>
+                    <li><strong>Functional Cookies:</strong> Storing currency preferences and itinerary filter states.</li>
+                    <li><strong>Security Cookies:</strong> Detecting bot traffic and unauthorized access attempts.</li>
+                  </ul>
+                  <p className="text-xs text-slate-500">
+                    You may manage or disable cookies via your browser settings. For further technical details, review our <Link href="/cookie-policy" className="text-emerald-700 underline font-semibold">Cookie Policy</Link>.
                   </p>
                 </section>
 
+                {/* 9. Data Security Safeguards */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">11. Marketing Communications</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">9. Technical &amp; Organizational Data Security</h3>
                   <p className="text-xs leading-relaxed">
-                    We may contact you regarding your enquiry, booking, payment or travel arrangements. Where permitted, we may also send travel offers, destination information, promotional messages and other marketing communications. You may request to stop receiving promotional communications at any time.
+                    We maintain comprehensive technical and administrative safeguards in accordance with Section 8(5) of the DPDP Act 2023 and the SPDI Rules 2011:
                   </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block mb-1">🔐 TLS 256-Bit Transport Encryption</strong>
+                      <p className="text-slate-600 m-0">All website transmissions are encrypted using modern Transport Layer Security certificates.</p>
+                    </div>
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block mb-1">🛡️ Role-Based Access Controls (RBAC)</strong>
+                      <p className="text-slate-600 m-0">Trekker medical records and ID copies are accessible exclusively by verified expedition directors.</p>
+                    </div>
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block mb-1">🏢 Secure Cloud Infrastructure</strong>
+                      <p className="text-slate-600 m-0">Hosted in enterprise data centers featuring regular vulnerability assessments and firewall shielding.</p>
+                    </div>
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block mb-1">📋 Physical Document Shredding</strong>
+                      <p className="text-slate-600 m-0">Printed base camp rosters and health declarations are securely shredded upon statutory expiry.</p>
+                    </div>
+                  </div>
                 </section>
 
+                {/* 10. Data Retention Schedule */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">12. Children&apos;s Privacy</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">10. Data Retention &amp; Disposal Schedule</h3>
                   <p className="text-xs leading-relaxed">
-                    Our website is not intentionally designed to collect personal information directly from children without appropriate involvement of a parent or legal guardian where required. If you believe that a child has provided personal information to us improperly, please contact us.
+                    Personal data is retained only for periods strictly necessary to fulfill the operational purpose or comply with statutory requirements:
                   </p>
+                  <ul className="text-xs space-y-1.5 list-disc pl-5">
+                    <li><strong>Pre-Booking Inquiries:</strong> Retained for 180 days to facilitate trip planning, then permanently purged.</li>
+                    <li><strong>Completed Booking Records:</strong> Retained for the duration of the journey plus 90 days for post-trip service support.</li>
+                    <li><strong>Tax, Invoicing &amp; Financial Audits:</strong> Retained for a mandatory statutory duration of <strong>7 years</strong> in compliance with Section 44AA of the Income Tax Act, 1961 and the GST Act, 2017.</li>
+                    <li><strong>High-Altitude Medical Disclosures:</strong> Retained for <strong>1 year</strong> following trek completion for liability and insurance verification, after which they are securely expunged.</li>
+                    <li><strong>Forest Department &amp; Border Permits:</strong> Retained in adherence to specific state forestry guidelines.</li>
+                  </ul>
                 </section>
 
+                {/* 11. Your Statutory Privacy Rights */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">13. Third-Party Websites</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">11. Your Rights as a Data Principal (DPDP Act 2023)</h3>
                   <p className="text-xs leading-relaxed">
-                    Our website may contain links to third-party websites such as airlines, hotels, payment gateways, visa websites, insurance providers and other travel services. KRAD Global is not responsible for the privacy practices, content or security of third-party websites.
+                    Under Chapter III of the Digital Personal Data Protection Act 2023, you hold the following enforceable rights:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block">1. Right to Access Information</strong>
+                      <span className="text-slate-600">Request a summary of your personal data being processed and identities of entities with whom data was shared.</span>
+                    </div>
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block">2. Right to Correction &amp; Completion</strong>
+                      <span className="text-slate-600">Request rectification of inaccurate data or completion of incomplete personal information.</span>
+                    </div>
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block">3. Right to Erasure / Deletion</strong>
+                      <span className="text-slate-600">Request permanent deletion of data when the processing purpose is fulfilled, subject to statutory tax laws.</span>
+                    </div>
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block">4. Right to Withdraw Consent</strong>
+                      <span className="text-slate-600">Withdraw consent for marketing communications or optional services at any time with immediate effect.</span>
+                    </div>
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block">5. Right of Grievance Redressal</strong>
+                      <span className="text-slate-600">Direct access to our designated Grievance Officer with guaranteed statutory response timelines.</span>
+                    </div>
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong className="text-slate-900 block">6. Right to Nominate</strong>
+                      <span className="text-slate-600">Nominate any individual to exercise your data rights in the unfortunate event of death or incapacity.</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    To exercise any statutory right, submit a written request to our Grievance Officer at <a href="mailto:grievance@kradind.com" className="text-emerald-700 underline font-semibold">grievance@kradind.com</a>.
                   </p>
                 </section>
 
+                {/* 12. Protection of Children & Minors */}
                 <section className="space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 m-0">14. Changes to This Privacy Policy</h3>
+                  <h3 className="text-lg font-bold text-slate-900 m-0">12. Protection of Children &amp; Minors</h3>
                   <p className="text-xs leading-relaxed">
-                    KRAD Global may update this Privacy Policy from time to time. Any updated version will be published on this webpage with a revised &quot;Last Updated&quot; date.
+                    In compliance with Section 9 of the DPDP Act 2023, KRADIND Adventures does not knowingly process personal data of individuals under the age of 18 without verifiable consent from a parent or lawful guardian. Minors participating in high-altitude treks must be accompanied by an adult guardian or provide written parental consent alongside valid guardian ID verification. We strictly abstain from tracking or behavioral profiling of minor users.
                   </p>
                 </section>
 
-                <section className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2 text-xs">
-                  <h4 className="font-bold text-slate-900 text-sm m-0">15. Contact Us</h4>
-                  <p className="text-slate-600 m-0">
-                    For questions, concerns or requests regarding this Privacy Policy, please contact us:
+                {/* 13. Trail Photography & Media Consent */}
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">13. Trail Photography, Videography &amp; Social Media</h3>
+                  <p className="text-xs leading-relaxed">
+                    During scheduled expeditions, our mountain leads may capture candid group photos or summit reels for expedition documentation and community sharing on official channels. If you do not wish to be included in public media:
                   </p>
-                  <div className="pt-2 text-slate-800 space-y-1 font-medium">
-                    <p className="m-0"><strong>KRAD Global</strong></p>
-                    <p className="m-0">Website: www.kradind.com</p>
-                    <p className="m-0">Email: kradglobalind@gmail.com</p>
-                    <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
-                    <p className="m-0">Address: Hall No. H-04, 401 Pratap Palace, Indiranagar Colony, Dehradun, Uttarakhand – 248001, India</p>
+                  <ul className="text-xs space-y-1 list-disc pl-5">
+                    <li>Inform the trek leader during the base camp briefing before trail departure.</li>
+                    <li>Or submit an opt-out email with your batch details to <a href="mailto:support@kradind.com" className="text-emerald-700 underline">support@kradind.com</a>.</li>
+                    <li>Upon receiving a takedown request, we will blur or remove the participant&apos;s likeness from digital media within <strong>48 hours</strong>.</li>
+                  </ul>
+                </section>
+
+                {/* 14. Third-Party Websites */}
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">14. External Third-Party Links</h3>
+                  <p className="text-xs leading-relaxed">
+                    Our website may contain links to external portals such as airline web check-ins, national park portals, regional weather bureaus, or payment intermediaries. KRADIND Adventures does not control and is not liable for the privacy practices, content, or data handling protocols of third-party platforms.
+                  </p>
+                </section>
+
+                {/* 15. Policy Updates & Versioning */}
+                <section className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-900 m-0">15. Amendments to This Privacy Policy</h3>
+                  <p className="text-xs leading-relaxed">
+                    We may update this Privacy Policy periodically to reflect technological changes, alpine operational improvements, or updates to Indian data protection laws. Significant amendments will be highlighted through a prominent notice on <strong>www.kradind.com</strong> along with a revised &quot;Last Updated&quot; date.
+                  </p>
+                </section>
+
+                {/* 16. Designated Grievance Officer & Statutory Contacts */}
+                <section className="bg-slate-900 text-white p-6 sm:p-8 rounded-2xl shadow-md border border-slate-800 space-y-4 text-xs">
+                  <div className="flex items-center gap-2 text-emerald-400 font-bold uppercase tracking-wider text-xs">
+                    <Shield className="w-4 h-4 text-emerald-400" />
+                    <span>Statutory Grievance Redressal Mechanism</span>
+                  </div>
+                  
+                  <p className="text-slate-300 leading-relaxed m-0">
+                    Pursuant to Section 19 of the Digital Personal Data Protection Act, 2023 and Rule 5(9) of the Information Technology (SPDI) Rules, 2011, the details of the designated <strong>Grievance Redressal Officer</strong> are published below:
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-slate-200">
+                    <div className="space-y-2">
+                      <p className="m-0"><strong>Designation:</strong> Data Protection &amp; Grievance Redressal Officer</p>
+                      <p className="m-0"><strong>Operating Entity:</strong> KRADIND Adventures Private Limited &amp; KRAD Global</p>
+                      <p className="m-0"><strong>Official Website:</strong> <a href="https://kradind.com" className="text-emerald-400 underline">www.kradind.com</a></p>
+                      <p className="m-0"><strong>Registered Office:</strong> Hall No. H-04, 401 Pratap Palace, Indiranagar Colony, Dehradun, Uttarakhand – 248001, India</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="m-0">
+                        <strong>Dedicated Grievance Email:</strong>{" "}
+                        <a href="mailto:grievance@kradind.com" className="text-emerald-400 underline font-bold">
+                          grievance@kradind.com
+                        </a>
+                      </p>
+                      <p className="m-0">
+                        <strong>Operational Support Email:</strong>{" "}
+                        <a href="mailto:support@kradind.com" className="text-emerald-400 underline">
+                          support@kradind.com
+                        </a>{" "}
+                        /{" "}
+                        <a href="mailto:kradglobalind@gmail.com" className="text-emerald-400 underline">
+                          kradglobalind@gmail.com
+                        </a>
+                      </p>
+                      <p className="m-0">
+                        <strong>Emergency Helpline:</strong>{" "}
+                        <a href="tel:+917500222141" className="text-emerald-400 font-bold">
+                          +91 75002 22141
+                        </a>
+                      </p>
+                      <p className="m-0 text-[11px] text-slate-400">
+                        <strong>Service Level Agreement (SLA):</strong> Acknowledgment within <strong>24 hours</strong>; final resolution within <strong>15 working days</strong>.
+                      </p>
+                    </div>
                   </div>
                 </section>
               </div>
@@ -938,7 +1174,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             )}
 
             {/* ========================================================================= */}
-            {/* 6. VISA & INTERNATIONAL TRAVEL DISCLAIMER */}
+            {/* 6. VISA & INTERNATIONAL POLICY */}
             {/* ========================================================================= */}
             {activeTab === "visa" && (
               <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
@@ -948,7 +1184,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <span>International Entry &amp; Immigration</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 brand-font m-0">
-                    Visa &amp; International Travel Disclaimer
+                    Visa &amp; International Policy
                   </h2>
                 </div>
 
@@ -1093,10 +1329,10 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <Shield className="w-4 h-4 text-emerald-600" />
-                    <span>E-E-A-T Verification & Expedition Quality</span>
+                    <span>E-E-A-T Verification &amp; Expedition Quality</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 brand-font m-0">
-                    Editorial &amp; Trail Safety Policy
+                    Editorial &amp; Safety Policy
                   </h2>
                 </div>
 

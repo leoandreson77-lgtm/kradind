@@ -12,6 +12,7 @@ import { LiveRadar } from "@/components/live-radar";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
 import { EEATAuthoritySection } from "@/components/eeat-authority-section";
+import { InternationalShowcase } from "@/components/international-showcase";
 import { SocialShare } from "@/components/social-share";
 import { HomeSectionsConfig, TrailRadarReport, TrekData } from "@/lib/cms-store";
 
@@ -89,6 +90,9 @@ export function HomeView({
 
         {/* Zero Work Leave Weekend Treks */}
         <WeekendTreks treks={treks} config={sections?.weekendTreks} />
+
+        {/* International Holidays & World Tours Showcase */}
+        <InternationalShowcase config={sections?.international} />
 
         {/* Live Ground Radar */}
         <LiveRadar initialReports={radarReports} />

@@ -28,15 +28,17 @@ import {
   Clock,
   MapPin,
   CheckCircle2,
+  Plane,
 } from "lucide-react";
-import { HomeSectionsConfig, SectionFaqItem, TrustSignalItem, TrekData } from "@/lib/cms-store";
+import { HomeSectionsConfig, SectionFaqItem, TrustSignalItem, TrekData, DestinationData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 
-type SectionTab = "topBar" | "hero" | "monsoon" | "treks" | "eeat" | "footer";
+type SectionTab = "topBar" | "hero" | "monsoon" | "treks" | "international" | "eeat" | "footer";
 
 export default function AdminSectionsPage() {
   const [sections, setSections] = useState<HomeSectionsConfig | null>(null);
   const [treks, setTreks] = useState<TrekData[]>([]);
+  const [internationalList, setInternationalList] = useState<DestinationData[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<SectionTab>("hero");
   const [savingSection, setSavingSection] = useState<string | null>(null);
@@ -49,9 +51,10 @@ export default function AdminSectionsPage() {
 
   const fetchData = async () => {
     try {
-      const [secRes, treksRes] = await Promise.all([
+      const [secRes, treksRes, intlRes] = await Promise.all([
         fetch("/api/admin/sections", { cache: "no-store" }),
         fetch("/api/admin/treks", { cache: "no-store" }),
+        fetch("/api/admin/international", { cache: "no-store" }),
       ]);
 
       if (secRes.ok) {
@@ -59,6 +62,9 @@ export default function AdminSectionsPage() {
       }
       if (treksRes.ok) {
         setTreks(await treksRes.json());
+      }
+      if (intlRes.ok) {
+        setInternationalList(await intlRes.json());
       }
     } catch (err) {
       console.error("Failed to load sections data", err);
@@ -196,6 +202,7 @@ export default function AdminSectionsPage() {
     { id: "topBar" as SectionTab, label: "Top Bar & Helpline", icon: PhoneCall, desc: "Helpline & badges" },
     { id: "monsoon" as SectionTab, label: "Monsoon & Offers", icon: CloudRain, desc: "Promo coupons & discounts" },
     { id: "treks" as SectionTab, label: "Featured & Weekend", icon: Mountain, desc: "Homepage showcase curations" },
+    { id: "international" as SectionTab, label: "International Tours", icon: Plane, desc: "Global destinations showcase" },
     { id: "eeat" as SectionTab, label: "Authority & FAQs", icon: ShieldCheck, desc: "Curation byline & FAQs" },
     { id: "footer" as SectionTab, label: "Footer & Social", icon: Globe, desc: "Contact info & social links" },
   ];
@@ -247,7 +254,7 @@ export default function AdminSectionsPage() {
       </div>
 
       {/* Tab Navigation Pill Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-slate-200/70 p-1.5 rounded-2xl">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 bg-slate-200/70 p-1.5 rounded-2xl">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -864,6 +871,199 @@ export default function AdminSectionsPage() {
                   })}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: INTERNATIONAL TOURS SHOWCASE */}
+      {activeTab === "international" && (
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center font-bold">
+                <Plane className="w-5 h-5 text-sky-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">International Escapes &amp; Island Gateways</h2>
+                <p className="text-xs text-slate-500">Curate the global journeys showcased on the homepage</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin/international"
+                className="inline-flex items-center gap-1.5 px-3 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition"
+              >
+                <span>Manage Tour Packages</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+              <button
+                onClick={() => handleSave("international")}
+                disabled={savingSection === "international"}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-xs disabled:opacity-60"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{savingSection === "international" ? "Saving..." : "Save International"}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
+            {/* Section Enable Toggle */}
+            <div className="sm:col-span-2 flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <div>
+                <span className="text-xs font-bold text-slate-800 block">Showcase Section Visibility</span>
+                <span className="text-[11px] text-slate-500">Toggle whether the International Tours section is displayed on the homepage</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={sections.international?.enabled ?? true}
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      international: {
+                        enabled: e.target.checked,
+                        badge: sections.international?.badge || "Explore Beyond Borders",
+                        title: sections.international?.title || "International Tours & Island Escapes",
+                        subtitle: sections.international?.subtitle || "Handcrafted overseas journeys with verified accommodations, local English-speaking guides, seamless visa assistance, and 24/7 on-trip concierge.",
+                        featuredSlugs: sections.international?.featuredSlugs || ["bali", "thailand", "dubai", "vietnam", "singapore", "maldives"],
+                      },
+                    })
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F3A2E]"></div>
+              </label>
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1.5">Section Pill Badge</label>
+              <input
+                type="text"
+                value={sections.international?.badge || "Explore Beyond Borders"}
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    international: {
+                      enabled: sections.international?.enabled ?? true,
+                      badge: e.target.value,
+                      title: sections.international?.title || "International Tours & Island Escapes",
+                      subtitle: sections.international?.subtitle || "",
+                      featuredSlugs: sections.international?.featuredSlugs || [],
+                    },
+                  })
+                }
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                placeholder="Explore Beyond Borders"
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1.5">Section Main Heading</label>
+              <input
+                type="text"
+                value={sections.international?.title || "International Tours & Island Escapes"}
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    international: {
+                      enabled: sections.international?.enabled ?? true,
+                      badge: sections.international?.badge || "",
+                      title: e.target.value,
+                      subtitle: sections.international?.subtitle || "",
+                      featuredSlugs: sections.international?.featuredSlugs || [],
+                    },
+                  })
+                }
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                placeholder="International Tours & Island Escapes"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block font-bold text-slate-700 mb-1.5">Section Subtitle / Description</label>
+              <textarea
+                rows={2}
+                value={sections.international?.subtitle || ""}
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    international: {
+                      enabled: sections.international?.enabled ?? true,
+                      badge: sections.international?.badge || "",
+                      title: sections.international?.title || "",
+                      subtitle: e.target.value,
+                      featuredSlugs: sections.international?.featuredSlugs || [],
+                    },
+                  })
+                }
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                placeholder="Handcrafted overseas journeys with verified accommodations, local English-speaking guides, seamless visa assistance, and 24/7 on-trip concierge."
+              />
+            </div>
+
+            {/* Featured International Slugs selector */}
+            <div className="sm:col-span-2 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block font-bold text-slate-700">Featured International Packages (Click to Select / Deselect)</label>
+                <Link
+                  href="/admin/international"
+                  className="text-xs text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1"
+                >
+                  <span>Open International CMS</span>
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+              </div>
+              <div className="flex flex-wrap gap-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                {internationalList.length === 0 ? (
+                  <div className="text-xs text-slate-500 py-2">
+                    Loading packages or no international tours found. You can create and manage tours in the{" "}
+                    <Link href="/admin/international" className="text-emerald-700 font-bold underline">
+                      International CMS
+                    </Link>
+                    .
+                  </div>
+                ) : (
+                  internationalList.map((dest) => {
+                    const isSelected = (sections.international?.featuredSlugs || []).includes(dest.slug);
+                    return (
+                      <button
+                        type="button"
+                        key={dest.slug}
+                        onClick={() => {
+                          const current = sections.international?.featuredSlugs || [];
+                          const updated = isSelected
+                            ? current.filter((s) => s !== dest.slug)
+                            : [...current, dest.slug];
+                          setSections({
+                            ...sections,
+                            international: {
+                              enabled: sections.international?.enabled ?? true,
+                              badge: sections.international?.badge || "Explore Beyond Borders",
+                              title: sections.international?.title || "International Tours & Island Escapes",
+                              subtitle: sections.international?.subtitle || "",
+                              featuredSlugs: updated,
+                            },
+                          });
+                        }}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 ${
+                          isSelected
+                            ? "bg-[#0F3A2E] text-white shadow-sm"
+                            : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                        <span>{dest.icon ? `${dest.icon} ` : ""}{dest.name}</span>
+                        <span className="text-[10px] opacity-75">({dest.duration})</span>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Selected packages will be displayed in the high-converting interactive carousel cards on your homepage.
+              </p>
             </div>
           </div>
         </div>

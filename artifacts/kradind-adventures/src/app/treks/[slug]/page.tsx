@@ -38,7 +38,11 @@ import {
   ArrowRight,
   AlertTriangle,
   Compass,
+  FileDown,
+  Sliders,
 } from "lucide-react";
+import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
+import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 
 interface ParsedItineraryDay {
   cleanTitle: string;
@@ -462,6 +466,8 @@ export default function TrekDetailPage() {
   }, [slug]);
 
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [isPdfOpen, setIsPdfOpen] = useState(false);
+  const [isSalesCustomizerOpen, setIsSalesCustomizerOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [activeTab, setActiveTab] = useState<"itinerary" | "highlights" | "inclusions" | "tips" | "faqs">("itinerary");
 
@@ -692,7 +698,7 @@ export default function TrekDetailPage() {
 
           {/* Itinerary Section */}
           <div id="itinerary" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
               <div>
                 <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
                   <Calendar className="w-5 h-5 text-[#FF6B35]" />
@@ -702,9 +708,30 @@ export default function TrekDetailPage() {
                   Tour Schedule & Route
                 </h2>
               </div>
-              <span className="text-xs bg-emerald-50 text-[#0F3A2E] border border-emerald-200/80 px-3.5 py-1 rounded-full font-bold">
-                {trek.itinerary?.length} Days Plan
-              </span>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPdfOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white rounded-xl text-xs font-bold transition shadow-2xs cursor-pointer"
+                >
+                  <FileDown className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>Download PDF</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSalesCustomizerOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition cursor-pointer"
+                >
+                  <Sliders className="w-3.5 h-3.5 text-amber-700" />
+                  <span>Seasonal Customizer</span>
+                </button>
+
+                <span className="text-xs bg-emerald-50 text-[#0F3A2E] border border-emerald-200/80 px-3 py-1 rounded-full font-bold">
+                  {trek.itinerary?.length} Days
+                </span>
+              </div>
             </div>
 
             {/* Timeline track */}
@@ -976,6 +1003,27 @@ export default function TrekDetailPage() {
                 <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Direct Call Desk: +91 75002 22141</span>
               </a>
+
+              {/* PDF & Seasonal Quote Actions */}
+              <div className="pt-2 border-t border-slate-100 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPdfOpen(true)}
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <FileDown className="w-4 h-4 text-emerald-400" />
+                  <span>📥 Download PDF Itinerary</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSalesCustomizerOpen(true)}
+                  className="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs py-2 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Sliders className="w-3.5 h-3.5 text-amber-700" />
+                  <span>🏷️ Customize Quote & Season</span>
+                </button>
+              </div>
             </div>
 
             {/* Upcoming Batches */}
@@ -1069,6 +1117,24 @@ export default function TrekDetailPage() {
         initialTrek={trek.name}
         onClose={() => setBookingOpen(false)}
       />
+
+      {/* Itinerary PDF Modal with Logo & Watermark */}
+      {isPdfOpen && (
+        <ItineraryPdfModal
+          isOpen={isPdfOpen}
+          onClose={() => setIsPdfOpen(false)}
+          tour={trek}
+        />
+      )}
+
+      {/* Sales Seasonal Customizer */}
+      {isSalesCustomizerOpen && (
+        <SalesItineraryCustomizer
+          isOpen={isSalesCustomizerOpen}
+          onClose={() => setIsSalesCustomizerOpen(false)}
+          tour={trek}
+        />
+      )}
     </div>
   );
 }

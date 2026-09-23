@@ -11,6 +11,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Compass,
+  Mic,
 } from "lucide-react";
 
 const DEFAULT_HEADER_DESTINATIONS = [
@@ -61,6 +62,12 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
   };
 
   const closeDropdown = () => setActiveDropdown(null);
+
+  const triggerVoiceAssistant = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("open-voice-assistant"));
+    }
+  };
 
   return (
     <header className="w-full relative z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
@@ -773,6 +780,17 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         {/* Right CTA Actions */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           
+          {/* Quick Voice Command Assistant Trigger */}
+          <button
+            type="button"
+            onClick={triggerVoiceAssistant}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-emerald-600/30 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] text-xs font-bold transition cursor-pointer"
+            title="Voice Search (Treks, Tours, Destinations, Honeymoon)"
+          >
+            <Mic className="w-3.5 h-3.5 text-emerald-700 animate-pulse" />
+            <span className="hidden xl:inline">Voice Search</span>
+          </button>
+
           {/* Glowing Vibrant Plan Your Trip CTA */}
           <Link
             href="/plan-your-trip"
@@ -799,10 +817,21 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-8 space-y-3 max-h-[85vh] overflow-y-auto">
           
           {/* Quick Actions in Drawer */}
-          <div className="grid grid-cols-2 gap-2 pb-2 border-b border-slate-100">
+          <div className="grid grid-cols-3 gap-2 pb-2 border-b border-slate-100">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                triggerVoiceAssistant();
+              }}
+              className="flex items-center justify-center gap-1 bg-emerald-50 text-[#0F3A2E] border border-emerald-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"
+            >
+              <Mic className="w-3.5 h-3.5 text-emerald-600 animate-pulse shrink-0" />
+              <span>Voice</span>
+            </button>
             <a
               href="tel:+917500222141"
-              className="flex items-center justify-center gap-1.5 bg-emerald-50 text-[#0F3A2E] border border-emerald-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"
+              className="flex items-center justify-center gap-1 bg-slate-50 text-[#0F3A2E] border border-slate-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"
             >
               <PhoneCall className="w-3.5 h-3.5 text-emerald-600 animate-phone-vibrate shrink-0" />
               <span>Call Us</span>
@@ -813,9 +842,9 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                 setMobileMenuOpen(false);
                 if (onBookClick) onBookClick();
               }}
-              className="flex items-center justify-center gap-1.5 bg-[#FF6B35] text-white font-extrabold text-xs py-2.5 rounded-xl shadow-xs"
+              className="flex items-center justify-center gap-1 bg-[#FF6B35] text-white font-extrabold text-xs py-2.5 rounded-xl shadow-xs"
             >
-              <span>Plan Your Trip →</span>
+              <span>Plan Trip →</span>
             </Link>
           </div>
 

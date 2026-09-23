@@ -29,6 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.95,
     },
     {
+      url: `${baseUrl}/rajasthan-tour-package-5-nights-6-days`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.95,
+    },
+    {
       url: `${baseUrl}/kerala-tour-package-5-nights-6-days`,
       lastModified: now,
       changeFrequency: "weekly",

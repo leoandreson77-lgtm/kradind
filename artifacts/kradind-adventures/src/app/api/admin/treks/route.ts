@@ -72,6 +72,11 @@ export async function POST(request: NextRequest) {
       price: Number(body.price) || 8999,
       originalPrice: Number(body.originalPrice) || 10999,
       badge: body.badge || "Featured",
+      category:
+        body.category ||
+        (body.categories?.some((c) => c.toLowerCase() === "domestic")
+          ? "Domestic"
+          : body.categories?.[0] || "Himalayas"),
       categories: body.categories || ["Himalayas"],
       status: body.status || "Published",
       batches: body.batches || [

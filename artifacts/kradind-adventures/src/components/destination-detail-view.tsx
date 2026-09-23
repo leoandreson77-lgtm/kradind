@@ -30,9 +30,13 @@ import {
   Users,
   Sun,
   Navigation,
+  FileDown,
+  Sliders,
 } from "lucide-react";
 import { treks } from "@/lib/travel-data";
 import { getImageAlt } from "@/lib/image-alt";
+import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
+import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 
 export function DestinationDetailView({
   destination,
@@ -41,6 +45,8 @@ export function DestinationDetailView({
 }) {
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isPdfOpen, setIsPdfOpen] = useState(false);
+  const [isSalesCustomizerOpen, setIsSalesCustomizerOpen] = useState(false);
   const [selectedPackageName, setSelectedPackageName] = useState(destination.name + " Circuit");
   const [allTreks, setAllTreks] = useState<TrekData[]>(treks as TrekData[]);
 
@@ -84,6 +90,26 @@ export function DestinationDetailView({
       );
     });
   }, [allTreks, destination]);
+
+  const destinationTourObject = useMemo(() => ({
+    id: destination.id || destination.slug,
+    name: `${destination.name} Tour Circuit`,
+    slug: destination.slug,
+    duration: destination.duration || `${destination.itinerary?.length || 5} Days`,
+    altitude: "Scenic Hills & Valleys",
+    difficulty: "Easy to Moderate",
+    location: `${destination.name}, India`,
+    region: destination.name,
+    pickupPoint: destination.pickupDrop || "Airport / Railway Station Pickup",
+    price: destination.price || 14999,
+    originalPrice: destination.originalPrice || 18999,
+    category: "Domestic",
+    tagline: destination.tagline || `Explore the best of ${destination.name}`,
+    overview: destination.overview || "",
+    itinerary: destination.itinerary || [],
+    inclusions: destination.inclusions || [],
+    exclusions: destination.exclusions || [],
+  }), [destination]);
 
   const whatsappMessage = encodeURIComponent(
     `Hello KRADIND Adventures! I am interested in the ${destination.name} Tour Circuit (${destination.duration || "Custom Days"}). Please share availability and customized pricing.`
@@ -217,7 +243,7 @@ export function DestinationDetailView({
             </button>
 
             <a
-              href={`https://wa.me/919456789012?text=${whatsappMessage}`}
+              href={`https://wa.me/917500222141?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-3.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-black rounded-2xl shadow-md transition flex items-center gap-2"
@@ -226,13 +252,33 @@ export function DestinationDetailView({
               <span>Chat on WhatsApp</span>
             </a>
 
+            {/* Branded PDF Itinerary */}
+            <button
+              type="button"
+              onClick={() => setIsPdfOpen(true)}
+              className="px-5 py-3.5 bg-slate-900/90 hover:bg-slate-900 text-white border border-white/20 text-xs sm:text-sm font-black rounded-2xl shadow-md transition flex items-center gap-2 cursor-pointer"
+            >
+              <FileDown className="w-4 h-4 text-emerald-400" />
+              <span>📥 Download PDF</span>
+            </button>
+
+            {/* Sales Seasonal Customizer */}
+            <button
+              type="button"
+              onClick={() => setIsSalesCustomizerOpen(true)}
+              className="px-5 py-3.5 bg-amber-500/90 hover:bg-amber-500 text-slate-950 text-xs sm:text-sm font-black rounded-2xl shadow-md transition flex items-center gap-2 cursor-pointer"
+            >
+              <Sliders className="w-4 h-4" />
+              <span>🏷️ Customize Quote</span>
+            </button>
+
             {destination.itinerary && destination.itinerary.length > 0 && (
               <a
                 href="#day-by-day-itinerary"
-                className="px-5 py-3.5 bg-white/15 hover:bg-white/25 text-white backdrop-blur-xs text-xs sm:text-sm font-bold rounded-2xl transition flex items-center gap-2"
+                className="px-4 py-3.5 bg-white/15 hover:bg-white/25 text-white backdrop-blur-xs text-xs sm:text-sm font-bold rounded-2xl transition flex items-center gap-2"
               >
                 <Calendar className="w-4 h-4 text-emerald-400" />
-                <span>View {destination.itinerary.length}-Day Itinerary</span>
+                <span>{destination.itinerary.length}-Day Plan</span>
               </a>
             )}
           </div>
@@ -312,16 +358,37 @@ export function DestinationDetailView({
                 </p>
               </div>
 
-              <button
-                onClick={() => {
-                  setSelectedPackageName(`${destination.name} ${destination.itinerary?.length}-Day Tour`);
-                  setIsBookingOpen(true);
-                }}
-                className="px-4 py-2 bg-[#0F3A2E] hover:bg-[#154d3d] text-white text-xs font-black rounded-xl shadow-xs transition self-start sm:self-auto flex items-center gap-1.5"
-              >
-                <span>Inquire for this Plan</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsPdfOpen(true)}
+                  className="px-3.5 py-2 bg-[#0F3A2E] hover:bg-[#154d3d] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <FileDown className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>Download PDF</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSalesCustomizerOpen(true)}
+                  className="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Sliders className="w-3.5 h-3.5 text-amber-700" />
+                  <span>Seasonal Customizer</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPackageName(`${destination.name} ${destination.itinerary?.length}-Day Tour`);
+                    setIsBookingOpen(true);
+                  }}
+                  className="px-4 py-2 bg-[#FF6B35] hover:bg-[#e05320] text-white text-xs font-black rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>Inquire for this Plan</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             {/* Timeline Cards */}
@@ -626,6 +693,24 @@ export function DestinationDetailView({
         onClose={() => setIsBookingOpen(false)}
         initialTrek={selectedPackageName}
       />
+
+      {/* Branded Itinerary PDF Modal with Logo & Watermark */}
+      {isPdfOpen && (
+        <ItineraryPdfModal
+          isOpen={isPdfOpen}
+          onClose={() => setIsPdfOpen(false)}
+          tour={destinationTourObject}
+        />
+      )}
+
+      {/* Sales Seasonal Customizer */}
+      {isSalesCustomizerOpen && (
+        <SalesItineraryCustomizer
+          isOpen={isSalesCustomizerOpen}
+          onClose={() => setIsSalesCustomizerOpen(false)}
+          tour={destinationTourObject}
+        />
+      )}
     </div>
   );
 }

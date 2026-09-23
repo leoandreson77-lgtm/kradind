@@ -2260,8 +2260,8 @@ export function getDefaultLandingPages(): LandingPageData[] {
       updatedAt: new Date().toISOString(),
     },
     {
-      id: "lp-rajasthan-tour-package-6-days",
-      slug: "rajasthan-tour-package-6-days",
+      id: "lp-rajasthan-tour-package-5-nights-6-days",
+      slug: "rajasthan-tour-package-5-nights-6-days",
       title: "Rajasthan Tour Package – 6 Days / 5 Nights",
       subtitle:
         "See the royal side of Rajasthan on a private 6-day journey through Jaipur, Jodhpur and Udaipur with private Swift Dzire, 3-star stays and meals.",

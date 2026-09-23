@@ -37,9 +37,16 @@ import {
   Users,
   Navigation,
   Percent,
+  Mountain,
+  Car,
+  ArrowRightLeft,
+  FileDown,
+  Sliders,
 } from "lucide-react";
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
+import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
+import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 
 const POPULAR_EMOJIS = ["🏔️", "🌲", "❄️", "🏰", "🌴", "🌊", "🇳🇵", "🏝️", "✈️", "🛕", "⛺", "📍"];
 const CATEGORIES = ["All", "Domestic", "International", "Trek", "Heritage", "Beach", "Spiritual"];
@@ -102,6 +109,8 @@ export default function AdminDestinationsPage() {
   const [toastMessage, setToastMessage] = useState("");
   const [highlightsInput, setHighlightsInput] = useState("");
   const [newGalleryUrl, setNewGalleryUrl] = useState("");
+  const [salesModalDest, setSalesModalDest] = useState<DestinationData | null>(null);
+  const [pdfModalDest, setPdfModalDest] = useState<DestinationData | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -125,6 +134,33 @@ export default function AdminDestinationsPage() {
   useEffect(() => {
     fetchDestinations();
   }, []);
+
+  const handleToggleCategory = async (dest: DestinationData) => {
+    const isDomestic = dest.category?.toLowerCase() === "domestic";
+    const newCat = isDomestic ? "Trek" : "Domestic";
+    setActionLoading(true);
+    try {
+      const updated: DestinationData = { ...dest, category: newCat };
+      const res = await fetch("/api/admin/destinations", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      if (res.ok) {
+        showToast(`Switched "${dest.name}" to ${newCat} classification!`);
+        setDestinations((prev) =>
+          prev.map((d) => (d.id === dest.id ? { ...d, category: newCat } : d))
+        );
+      } else {
+        const data = await res.json();
+        showToast(`❌ ${data.error || "Failed to switch category"}`);
+      }
+    } catch {
+      showToast("❌ Network error switching category");
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   const handleOpenAdd = () => {
     const defaultItem: DestinationData = {
@@ -792,11 +828,47 @@ export default function AdminDestinationsPage() {
                 </span>
 
                 <div className="flex items-center gap-1.5">
+                  {/* Switch between Domestic and Trek */}
                   <button
-                    onClick={() => handleDuplicateDestination(dest)}
-                    className="p-1.5 text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
-                    title="Duplicate / Clone Destination"
+                    onClick={() => handleToggleCategory(dest)}
+                    disabled={actionLoading}
+                    className="p-1.5 text-slate-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition"
+                    title={
+                      dest.category?.toLowerCase() === "domestic"
+                        ? "Switch Category to Trek"
+                        : "Switch Category to Domestic"
+                    }
                   >
+                    {dest.category?.toLowerCase() === "domestic" ? (
+                      <Mountain className="w-4 h-4 text-emerald-600" />
+                    ) : (
+                      <Car className="w-4 h-4 text-amber-600" />
+                    )}
+                  </button>
+
+                    {/* Sales Seasonal Customizer & WhatsApp Quote */}
+                    <button
+                      onClick={() => setSalesModalDest(dest)}
+                      className="p-1.5 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-lg transition"
+                      title="Sales Seasonal Customizer & WhatsApp Quote"
+                    >
+                      <Sliders className="w-4 h-4" />
+                    </button>
+
+                    {/* Client Itinerary PDF with Watermark & Logo */}
+                    <button
+                      onClick={() => setPdfModalDest(dest)}
+                      className="p-1.5 text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 rounded-lg transition"
+                      title="Download Branded Client PDF (With Logo & Watermark)"
+                    >
+                      <FileDown className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      onClick={() => handleDuplicateDestination(dest)}
+                      className="p-1.5 text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
+                      title="Duplicate / Clone Destination"
+                    >
                     <Copy className="w-4 h-4" />
                   </button>
 
@@ -1834,6 +1906,60 @@ export default function AdminDestinationsPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Sales Seasonal Customizer */}
+      {salesModalDest && (
+        <SalesItineraryCustomizer
+          isOpen={!!salesModalDest}
+          onClose={() => setSalesModalDest(null)}
+          tour={{
+            id: salesModalDest.id || salesModalDest.slug,
+            name: `${salesModalDest.name} Tour Circuit`,
+            slug: salesModalDest.slug,
+            duration: salesModalDest.duration || `${salesModalDest.itinerary?.length || 5} Days`,
+            altitude: "Scenic Hills & Valleys",
+            difficulty: "Easy to Moderate",
+            location: `${salesModalDest.name}, India`,
+            region: salesModalDest.name,
+            pickupPoint: salesModalDest.pickupDrop || "Airport / Station Pickup",
+            price: salesModalDest.price || 14999,
+            originalPrice: salesModalDest.originalPrice || 18999,
+            category: "Domestic",
+            tagline: salesModalDest.tagline || `Explore the best of ${salesModalDest.name}`,
+            overview: salesModalDest.overview || "",
+            itinerary: salesModalDest.itinerary || [],
+            inclusions: salesModalDest.inclusions || [],
+            exclusions: salesModalDest.exclusions || [],
+          }}
+        />
+      )}
+
+      {/* Client Itinerary PDF Modal with Logo & Watermark */}
+      {pdfModalDest && (
+        <ItineraryPdfModal
+          isOpen={!!pdfModalDest}
+          onClose={() => setPdfModalDest(null)}
+          tour={{
+            id: pdfModalDest.id || pdfModalDest.slug,
+            name: `${pdfModalDest.name} Tour Circuit`,
+            slug: pdfModalDest.slug,
+            duration: pdfModalDest.duration || `${pdfModalDest.itinerary?.length || 5} Days`,
+            altitude: "Scenic Hills & Valleys",
+            difficulty: "Easy to Moderate",
+            location: `${pdfModalDest.name}, India`,
+            region: pdfModalDest.name,
+            pickupPoint: pdfModalDest.pickupDrop || "Airport / Station Pickup",
+            price: pdfModalDest.price || 14999,
+            originalPrice: pdfModalDest.originalPrice || 18999,
+            category: "Domestic",
+            tagline: pdfModalDest.tagline || `Explore the best of ${pdfModalDest.name}`,
+            overview: pdfModalDest.overview || "",
+            itinerary: pdfModalDest.itinerary || [],
+            inclusions: pdfModalDest.inclusions || [],
+            exclusions: pdfModalDest.exclusions || [],
+          }}
+        />
       )}
     </div>
   );

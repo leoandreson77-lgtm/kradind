@@ -123,7 +123,7 @@ export function RajasthanTourClient() {
               </Link>
             </li>
             <li>•</li>
-            <li className="font-bold text-[#0F3A2E] truncate">Rajasthan Tour Package (6 Days)</li>
+            <li className="font-bold text-[#0F3A2E] truncate">Rajasthan Tour Package – 6 Days / 5 Nights</li>
           </ol>
         </div>
       </nav>
@@ -428,7 +428,7 @@ export function RajasthanTourClient() {
               Detailed Day-By-Day Schedule
             </span>
             <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              Rajasthan Tour Itinerary – 6 Days / 5 Nights
+              Rajasthan Tour Itinerary
             </h2>
             <p className="text-slate-600 text-xs sm:text-sm">
               Carefully timed driving hours and thoughtful buffer intervals to avoid travel fatigue.
@@ -445,7 +445,7 @@ export function RajasthanTourClient() {
                     D1
                   </span>
                   <h3 className="text-lg font-black text-slate-900">
-                    Day 1 – Jaipur Arrival & Pink City Sightseeing
+                    Day 1 – Jaipur Arrival & Local Sightseeing
                   </h3>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -481,7 +481,7 @@ export function RajasthanTourClient() {
                     D2
                   </span>
                   <h3 className="text-lg font-black text-slate-900">
-                    Day 2 – Jaipur Forts & City Sightseeing
+                    Day 2 – Jaipur Forts & Sightseeing
                   </h3>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -554,7 +554,7 @@ export function RajasthanTourClient() {
                     D4
                   </span>
                   <h3 className="text-lg font-black text-slate-900">
-                    Day 4 – Jodhpur Forts, Palaces & Old City
+                    Day 4 – Jodhpur Sightseeing
                   </h3>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -663,7 +663,7 @@ export function RajasthanTourClient() {
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-200 shadow-xs space-y-5">
             <div className="flex items-center gap-2.5 text-emerald-800">
               <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-              <h2 className="text-xl font-black tracking-tight">Package Inclusions</h2>
+              <h2 className="text-xl font-black tracking-tight">Rajasthan Tour Package Inclusions</h2>
             </div>
 
             <div className="space-y-3.5 text-xs sm:text-sm text-slate-700">
@@ -708,7 +708,7 @@ export function RajasthanTourClient() {
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-rose-200 shadow-xs space-y-5">
             <div className="flex items-center gap-2.5 text-rose-800">
               <XCircle className="w-6 h-6 text-rose-600" />
-              <h2 className="text-xl font-black tracking-tight">Package Exclusions</h2>
+              <h2 className="text-xl font-black tracking-tight">Rajasthan Tour Package Exclusions</h2>
             </div>
 
             <div className="space-y-3.5 text-xs sm:text-sm text-slate-700">
@@ -758,7 +758,7 @@ export function RajasthanTourClient() {
               Transparent Pricing
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Rajasthan Package Price Comparison
+              Rajasthan Tour Price
             </h2>
             <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
               Your package is designed specifically for 2 adults travelling privately. Competitor starting prices often represent large shared bus tours, budget guest houses, or hidden transport exclusions. Here is how KRADIND compares:
@@ -894,7 +894,7 @@ export function RajasthanTourClient() {
             <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
               <Sun className="w-5 h-5" />
             </div>
-            <h2 className="font-extrabold text-base text-slate-900">Best Time to Visit</h2>
+            <h2 className="font-extrabold text-base text-slate-900">Best Time to Visit Rajasthan</h2>
             <div className="space-y-2 text-xs text-slate-600">
               <p><strong>October to March (Peak):</strong> Pleasant daytime sightseeing weather with cool evenings. Highly recommended.</p>
               <p><strong>July to September (Monsoon):</strong> Lighter crowds and lush Aravalli hills around Udaipur.</p>
@@ -907,7 +907,7 @@ export function RajasthanTourClient() {
             <div className="w-10 h-10 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
               <Luggage className="w-5 h-5" />
             </div>
-            <h2 className="font-extrabold text-base text-slate-900">What to Pack</h2>
+            <h2 className="font-extrabold text-base text-slate-900">What to Pack for Rajasthan</h2>
             <ul className="list-disc pl-4 space-y-1 text-xs text-slate-600">
               <li>Comfortable walking shoes for fort cobblestones</li>
               <li>Light cotton clothes for daytime travel</li>

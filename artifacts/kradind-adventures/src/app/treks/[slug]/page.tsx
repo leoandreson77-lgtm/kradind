@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { TopBar } from "@/components/top-bar";
@@ -470,6 +470,20 @@ export default function TrekDetailPage() {
   const [isSalesCustomizerOpen, setIsSalesCustomizerOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [activeTab, setActiveTab] = useState<"itinerary" | "highlights" | "inclusions" | "tips" | "faqs">("itinerary");
+
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [isTallerThanScreen, setIsTallerThanScreen] = useState(false);
+
+  useEffect(() => {
+    const checkHeight = () => {
+      if (sidebarRef.current) {
+        setIsTallerThanScreen(sidebarRef.current.offsetHeight > window.innerHeight - 110);
+      }
+    };
+    checkHeight();
+    window.addEventListener("resize", checkHeight);
+    return () => window.removeEventListener("resize", checkHeight);
+  }, [trek]);
 
   const scrollToSection = (id: string, tab: "itinerary" | "highlights" | "inclusions" | "tips" | "faqs") => {
     setActiveTab(tab);
@@ -952,9 +966,16 @@ export default function TrekDetailPage() {
 
         </div>
 
-        {/* Right Sticky Booking Sidebar */}
-        <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[96px] h-fit">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xl space-y-5">
+        {/* Right Smart-Sticky Booking Sidebar - Fully visible from top to bottom on scroll */}
+        <aside
+          ref={sidebarRef}
+          className={`lg:col-span-1 space-y-6 h-fit transition-all duration-300 ${
+            isTallerThanScreen
+              ? "lg:sticky lg:bottom-6"
+              : "lg:sticky lg:top-[96px]"
+          }`}
+        >
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xl space-y-5 lg:max-h-[calc(100vh-48px)] overflow-y-auto scrollbar-none">
             
             {/* Price Header */}
             <div>

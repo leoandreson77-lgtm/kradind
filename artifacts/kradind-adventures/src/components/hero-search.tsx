@@ -136,16 +136,11 @@ export function HeroSearch({
           return (
             <div
               key={slide.id}
-              className={`absolute inset-0 transition-all ${
+              className={`absolute inset-0 transition-all hero-slide-transition ${
                 isActive
                   ? "opacity-100 scale-100 z-1 pointer-events-auto"
                   : "opacity-0 scale-105 z-0 pointer-events-none"
               }`}
-              style={{
-                transitionDuration: "1600ms",
-                transitionTimingFunction: "cubic-bezier(0.25, 1, 0.5, 1)",
-                willChange: "opacity, transform",
-              }}
             >
               <img
                 src={slide.image}
@@ -234,10 +229,7 @@ export function HeroSearch({
                 {isActive && isAutoPlaying && (
                   <span
                     key={slideIndex}
-                    className="absolute inset-0 bg-emerald-500/20 pointer-events-none origin-left"
-                    style={{
-                      animation: "progressFill 5000ms linear forwards",
-                    }}
+                    className="absolute inset-0 bg-emerald-500/20 pointer-events-none origin-left hero-progress-fill"
                   />
                 )}
                 <span className="relative z-10">{slide.title}</span>

@@ -55,11 +55,13 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
             {/* Author Profile */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-emerald-400/60 shadow-lg bg-emerald-950 shrink-0">
-                <Image
+                <img
                   src="/logo-emblem.png"
                   alt="KRAD Global tour and travel company logo"
                   width={96}
                   height={96}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-contain p-2"
                 />
               </div>
@@ -147,11 +149,13 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
               <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center">
                 <Compass className="w-5 h-5 text-purple-700" />
               </div>
-              <Image
+              <img
                 src="/logo-horizontal.png"
                 alt="Dehradun travel and tour services by KRAD Global"
                 width={120}
                 height={30}
+                loading="lazy"
+                decoding="async"
                 className="h-6 w-auto object-contain opacity-80"
               />
             </div>

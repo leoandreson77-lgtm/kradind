@@ -545,13 +545,15 @@ export function MountainAtmosphere({
               >
                 {autoLoop && (
                   <span
+                    ref={(el) => {
+                      if (el) el.style.width = `${Math.round(loopProgress * 100)}%`;
+                    }}
                     className="absolute left-0 bottom-0 top-0 bg-emerald-500/30 transition-all pointer-events-none"
-                    style={{ width: `${Math.round(loopProgress * 100)}%` }}
                   />
                 )}
                 {autoLoop ? (
                   <>
-                    <RotateCw className="w-3 h-3 text-emerald-400 animate-spin" style={{ animationDuration: "3.5s" }} />
+                    <RotateCw className="w-3 h-3 text-emerald-400 spin-slow" />
                     <span className="relative z-10 font-mono">Loop</span>
                   </>
                 ) : (

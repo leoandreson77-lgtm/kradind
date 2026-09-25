@@ -71,14 +71,12 @@ export function MonsoonSpecials({
             className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
           >
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
-              <Image
+              <img
                 src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=600&q=80"
                 alt="Popular India holiday destination featured by KRAD Global"
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                quality={70}
                 loading="lazy"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                decoding="async"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <span className="absolute top-3 left-3 bg-emerald-500/90 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase shadow">
@@ -114,14 +112,12 @@ export function MonsoonSpecials({
             className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
           >
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
-              <Image
+              <img
                 src="/monsoon-rain.webp"
                 alt="Himalayan trekking package by KRAD Global"
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                quality={70}
                 loading="lazy"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                decoding="async"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <span className="absolute top-3 left-3 bg-emerald-500/90 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase shadow">
@@ -157,14 +153,12 @@ export function MonsoonSpecials({
             className="bg-slate-900/80 border border-emerald-500/20 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-emerald-500/40 transition group cursor-pointer"
           >
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
-              <Image
+              <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80"
                 alt="Customized holiday package by KRAD Global"
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                quality={70}
                 loading="lazy"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                decoding="async"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <span className="absolute top-3 left-3 bg-emerald-500/90 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase shadow">

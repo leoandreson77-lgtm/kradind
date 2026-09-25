@@ -62,12 +62,12 @@ export default async function DestinationsPage() {
               className="group relative rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col"
             >
               <div className="relative h-48 w-full overflow-hidden bg-slate-900">
-                <Image
+                <img
                   src={dest.image}
                   alt={`${dest.name} holiday destination by KRADIND`}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                  sizes="(max-width: 768px) 100vw, 300px"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t ${dest.color || "from-emerald-900/80"} via-black/30 to-transparent`} />
                 {dest.badge && (

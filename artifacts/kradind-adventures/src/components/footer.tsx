@@ -139,13 +139,13 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
               <div className="relative p-1.5 bg-white/5 rounded-2xl border border-white/10 shadow-inner">
-                <Image
+                <img
                   src="/logo-emblem.png"
                   alt="KRADIND Adventures - Official Himalayan Tour & Trek Operator Emblem"
                   width={44}
                   height={44}
                   loading="lazy"
-                  quality={85}
+                  decoding="async"
                   className="w-10 h-10 object-contain"
                 />
               </div>

@@ -79,13 +79,13 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           aria-label="KRADIND Adventures - Explore, Trek, Travel Homepage"
           className="flex items-center gap-2 shrink-0 group py-1"
         >
-          <Image
+          <img
             src="/logo-horizontal.png"
             alt="KRAD Global tour and travel company logo"
             width={195}
             height={50}
             className="h-9 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
-            priority
+            fetchPriority="high"
           />
           <span className="sr-only">KRADIND Adventures Homepage</span>
         </Link>

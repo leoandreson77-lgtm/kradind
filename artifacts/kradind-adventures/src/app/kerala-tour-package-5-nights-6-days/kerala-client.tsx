@@ -126,12 +126,11 @@ export function KeralaTourClient() {
       <section className="relative bg-slate-950 text-white overflow-hidden">
         {/* Background Cover Image with Gradient Overlay */}
         <div className="absolute inset-0 z-0">
-          <Image
+          <img
             src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=2000&q=85"
             alt="Traditional Alleppey Houseboat Backwaters - Kerala Tour Package by KRADIND"
-            fill
-            className="object-cover object-center opacity-35 scale-105 transition-transform duration-1000"
-            priority
+            fetchPriority="high"
+            className="w-full h-full object-cover object-center opacity-35 scale-105 transition-transform duration-1000"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-900/60" />
         </div>

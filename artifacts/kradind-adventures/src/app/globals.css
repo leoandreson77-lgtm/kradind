@@ -85,3 +85,27 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     width: 100%;
   }
 }
+
+.hero-slide-transition {
+  transition-duration: 1600ms;
+  transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+.hero-progress-fill {
+  animation: progressFill 5000ms linear forwards;
+}
+
+.spin-slow {
+  animation: spinSlow 3.5s linear infinite;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

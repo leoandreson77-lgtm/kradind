@@ -81,14 +81,12 @@ export function WeekendTreks({
             >
               <div>
                 <div className="relative h-40 w-full overflow-hidden bg-slate-100">
-                  <Image
+                  <img
                     src={trek.image}
                     alt={trek.imageAlt || getWeekendAlt(trek)}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     loading="lazy"
-                    quality={70}
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
 

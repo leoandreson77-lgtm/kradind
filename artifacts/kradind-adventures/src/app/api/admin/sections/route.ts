@@ -112,7 +112,7 @@ export async function PUT(request: NextRequest) {
         officeHours: body.contactAndFooter?.officeHours ?? currentSections?.contactAndFooter?.officeHours ?? "Open 24/7 for Expedition & Ground Support",
         instagramUrl: body.contactAndFooter?.instagramUrl ?? currentSections?.contactAndFooter?.instagramUrl ?? "https://www.instagram.com/kradglobal/",
         facebookUrl: body.contactAndFooter?.facebookUrl ?? currentSections?.contactAndFooter?.facebookUrl ?? "https://www.facebook.com/share/189E2RUcH4/",
-        youtubeUrl: body.contactAndFooter?.youtubeUrl ?? currentSections?.contactAndFooter?.youtubeUrl ?? "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
+        youtubeUrl: body.contactAndFooter?.youtubeUrl ?? currentSections?.contactAndFooter?.youtubeUrl ?? "https://www.youtube.com/@kradglobaltravels",
         twitterUrl: body.contactAndFooter?.twitterUrl ?? currentSections?.contactAndFooter?.twitterUrl ?? "https://x.com/KradGlobalTour",
         threadsUrl: body.contactAndFooter?.threadsUrl ?? currentSections?.contactAndFooter?.threadsUrl ?? "https://www.threads.net/@kradglobal",
         pinterestUrl: body.contactAndFooter?.pinterestUrl ?? currentSections?.contactAndFooter?.pinterestUrl ?? "https://in.pinterest.com/KradGlobalTravels/",

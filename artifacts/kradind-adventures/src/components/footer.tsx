@@ -54,7 +54,9 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
     },
     {
       name: "YouTube",
-      url: config?.youtubeUrl || "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
+      url: (config?.youtubeUrl && config.youtubeUrl.trim().length > 0)
+        ? config.youtubeUrl.split("?")[0].replace(/^https?:\/\/youtube\.com\//, "https://www.youtube.com/")
+        : "https://www.youtube.com/@kradglobaltravels",
       icon: FaYoutube,
       color: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]",
       bg: "bg-[#FF0000]/10 text-rose-400 border-[#FF0000]/30",
@@ -344,7 +346,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                     key={s.name}
                     href={s.url}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="me noopener noreferrer"
                     aria-label={s.name}
                     title={s.name}
                     className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm ${s.bg} ${s.color}`}

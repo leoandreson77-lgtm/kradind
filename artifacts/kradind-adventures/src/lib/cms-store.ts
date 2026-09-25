@@ -2555,7 +2555,7 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       officeHours: "Open 24/7 for Expedition & Ground Support",
       instagramUrl: "https://www.instagram.com/kradglobal/",
       facebookUrl: "https://www.facebook.com/share/189E2RUcH4/",
-      youtubeUrl: "https://youtube.com/@kradglobaltravels?si=jZDwhsl-h42P_YZW",
+      youtubeUrl: "https://www.youtube.com/@kradglobaltravels",
       twitterUrl: "https://x.com/KradGlobalTour",
       threadsUrl: "https://www.threads.net/@kradglobal",
       pinterestUrl: "https://in.pinterest.com/KradGlobalTravels/",

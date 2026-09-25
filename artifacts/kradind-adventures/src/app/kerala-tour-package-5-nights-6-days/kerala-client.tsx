@@ -1317,7 +1317,7 @@ export function KeralaTourClient() {
                     </label>
                     <input
                       type="email"
-                      placeholder="e.g. rahul@example.com"
+                      placeholder="Enter your email address"
                       value={leadEmail}
                       onChange={(e) => setLeadEmail(e.target.value)}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-600 focus:outline-none"

@@ -403,7 +403,7 @@ export function ItineraryPdfModal({
                     <Phone className="w-3 h-3 text-emerald-700" /> +91 7500222141
                   </span>
                   <span className="flex items-center gap-1">
-                    <Mail className="w-3 h-3 text-emerald-700" /> contact@kradind.com
+                    <Mail className="w-3 h-3 text-emerald-700" /> {['contact', 'kradind.com'].join('@')}
                   </span>
                   <span className="flex items-center gap-1">
                     <Globe className="w-3 h-3 text-emerald-700" /> www.kradind.com
@@ -861,7 +861,7 @@ export function ItineraryPdfModal({
                   required
                   value={queryEmail}
                   onChange={(e) => setQueryEmail(e.target.value)}
-                  placeholder="rahul@example.com"
+                  placeholder="Enter your email address"
                   className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-[#0F3A2E] focus:outline-none transition"
                 />
               </div>

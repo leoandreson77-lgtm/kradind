@@ -6,6 +6,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
 import { Phone, Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { ProtectedContactCardEmail } from "@/components/protected-email";
 
 export default function ContactPage() {
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -98,13 +99,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-bold text-sm text-slate-900">Email Expeditions Team</h3>
-                <a
-                  href="mailto:support@kradind.com"
-                  itemProp="email"
-                  className="text-xs text-slate-600 hover:text-emerald-700 font-medium mt-1 block"
-                >
-                  support@kradind.com
-                </a>
+                <ProtectedContactCardEmail email="support@kradind.com" />
               </div>
             </div>
 

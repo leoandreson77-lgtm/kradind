@@ -278,7 +278,7 @@ export default function PlanYourTripPage() {
                   <label className="block text-xs text-slate-600 font-medium mb-1">Email Address</label>
                   <input
                     type="email"
-                    placeholder="priya@example.com"
+                    placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500"

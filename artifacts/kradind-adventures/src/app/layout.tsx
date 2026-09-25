@@ -119,8 +119,12 @@ const globalStructuredData = {
       image: "https://kradind.com/logo.png",
       description:
         "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
-      telephone: "+917500222141",
-      email: "support@kradind.com",
+      contactPoint: {
+        "@type": "ContactPoint",
+        "telephone": "+917500222141",
+        "contactType": "customer service",
+        "url": "https://kradind.com/contact",
+      },
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: "4.9",
@@ -156,8 +160,12 @@ const globalStructuredData = {
       logo: "https://kradind.com/logo-emblem.png",
       description:
         "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
-      telephone: "+917500222141",
-      email: "support@kradind.com",
+      contactPoint: {
+        "@type": "ContactPoint",
+        "telephone": "+917500222141",
+        "contactType": "customer service",
+        "url": "https://kradind.com/contact",
+      },
       priceRange: "₹₹",
       currenciesAccepted: "INR, USD",
       paymentAccepted: "Credit Card, UPI, Net Banking",
@@ -224,8 +232,12 @@ const globalStructuredData = {
       logo: "https://kradind.com/logo-emblem.png",
       description:
         "India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.",
-      telephone: "+91 75002 22141",
-      email: "support@kradind.com",
+      contactPoint: {
+        "@type": "ContactPoint",
+        "telephone": "+91 75002 22141",
+        "contactType": "customer service",
+        "url": "https://kradind.com/contact",
+      },
       priceRange: "₹₹",
       currenciesAccepted: "INR",
       paymentAccepted: "Cash, Credit Card, UPI, Net Banking",

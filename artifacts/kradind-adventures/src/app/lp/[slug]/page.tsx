@@ -418,7 +418,7 @@ export default function LandingPageRoute({
                           type="email"
                           value={leadEmail}
                           onChange={(e) => setLeadEmail(e.target.value)}
-                          placeholder="your.email@example.com"
+                          placeholder="Enter your email address"
                           className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                         />
                       </div>

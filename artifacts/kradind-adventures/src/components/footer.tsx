@@ -23,6 +23,7 @@ import {
   Shield,
   FileText,
 } from "lucide-react";
+import { ProtectedEmailLink } from "./protected-email";
 import { HomeSectionsConfig } from "@/lib/cms-store";
 
 export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFooter"] }) {
@@ -182,16 +183,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                 <span>{supportPhone} (24/7 Helpline &amp; WhatsApp)</span>
               </a>
 
-              <a
-                href={`mailto:${supportEmail}`}
-                className="flex items-center gap-2.5 hover:text-emerald-400 transition group"
-                itemProp="email"
-              >
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition">
-                  <Mail className="w-3.5 h-3.5" />
-                </div>
-                <span>{supportEmail}</span>
-              </a>
+              <ProtectedEmailLink email={supportEmail} />
 
               <div
                 className="flex items-start gap-2.5 text-slate-400"

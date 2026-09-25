@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s | KRAD Global",
   },
   description:
-    "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+    "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
   keywords: [
     "tour and travel company in Dehradun",
     "travel agency in Dehradun",
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "KRAD Global | Tour & Travel Company in Dehradun | India",
     description:
-      "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+      "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
     url: "https://kradind.com",
     siteName: "KRAD Global",
     images: [
@@ -95,7 +95,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "KRAD Global | Tour & Travel Company in Dehradun | India",
     description:
-      "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+      "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
     images: ["/logo.png"],
   },
 };
@@ -118,7 +118,7 @@ const globalStructuredData = {
       },
       image: "https://kradind.com/logo.png",
       description:
-        "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+        "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
       contactPoint: {
         "@type": "ContactPoint",
         "telephone": "+917500222141",
@@ -159,7 +159,7 @@ const globalStructuredData = {
       image: "https://kradind.com/logo.png",
       logo: "https://kradind.com/logo-emblem.png",
       description:
-        "KRAD Global is a Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, treks and memorable travel experiences.",
+        "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
       contactPoint: {
         "@type": "ContactPoint",
         "telephone": "+917500222141",

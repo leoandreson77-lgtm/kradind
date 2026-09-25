@@ -71,7 +71,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
   return (
     <header className="w-full relative z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
+      <div className="w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-6 xl:px-8 h-18 sm:h-20 flex items-center justify-between gap-2 lg:gap-3 xl:gap-4">
         
         {/* Brand Logo */}
         <Link
@@ -84,19 +84,19 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             alt="KRAD Global tour and travel company logo"
             width={195}
             height={50}
-            className="h-9 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+            className="h-9 sm:h-10 xl:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
             fetchPriority="high"
           />
           <span className="sr-only">KRADIND Adventures Homepage</span>
         </Link>
 
-        {/* Desktop Navigation (Option 2 - Spacious, Clean, Single-Line, Zero Wrapping) */}
-        <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2 2xl:space-x-3 text-[13.5px] font-bold text-slate-700">
+        {/* Desktop Navigation (Spacious, Adaptive, Clean, Single-Line, Zero Wrapping) */}
+        <nav className="hidden lg:flex items-center space-x-0.5 xl:space-x-1.5 2xl:space-x-2.5 text-[12.5px] xl:text-[13.5px] font-bold text-slate-700">
           
           {/* Home */}
           <Link
             href="/"
-            className="text-[#0F3A2E] hover:text-[#FF6B35] hover:bg-slate-50 px-3 py-2 rounded-xl transition whitespace-nowrap"
+            className="text-[#0F3A2E] hover:text-[#FF6B35] hover:bg-slate-50 px-2 xl:px-3 py-2 rounded-xl transition whitespace-nowrap"
           >
             Home
           </Link>
@@ -109,7 +109,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           >
             <button
               onClick={() => setActiveDropdown(activeDropdown === "treks" ? null : "treks")}
-              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1.5 px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
+              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
                 activeDropdown === "treks" ? "text-[#0F3A2E] bg-slate-50" : ""
               }`}
             >
@@ -275,11 +275,11 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           >
             <button
               onClick={() => setActiveDropdown(activeDropdown === "domestic" ? null : "domestic")}
-              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1.5 px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
+              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
                 activeDropdown === "domestic" ? "text-[#0F3A2E] bg-slate-50" : ""
               }`}
             >
-              <span>Domestic Trips</span>
+              <span>Domestic<span className="hidden xl:inline"> Trips</span></span>
               <ChevronDown
                 className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
                   activeDropdown === "domestic" ? "rotate-180 text-[#0F3A2E]" : ""
@@ -432,11 +432,11 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           >
             <button
               onClick={() => setActiveDropdown(activeDropdown === "international" ? null : "international")}
-              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1.5 px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
+              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
                 activeDropdown === "international" ? "text-[#0F3A2E] bg-slate-50" : ""
               }`}
             >
-              <span>International Trips</span>
+              <span>International<span className="hidden xl:inline"> Trips</span></span>
               <ChevronDown
                 className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
                   activeDropdown === "international" ? "rotate-180 text-[#0F3A2E]" : ""
@@ -589,11 +589,11 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           >
             <button
               onClick={() => setActiveDropdown(activeDropdown === "adventure" ? null : "adventure")}
-              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1.5 px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
+              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
                 activeDropdown === "adventure" ? "text-[#0F3A2E] bg-slate-50" : ""
               }`}
             >
-              <span>Adventure Tours</span>
+              <span>Adventure<span className="hidden xl:inline"> Tours</span></span>
               <ChevronDown
                 className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
                   activeDropdown === "adventure" ? "rotate-180 text-[#0F3A2E]" : ""
@@ -718,7 +718,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           >
             <button
               onClick={() => setActiveDropdown(activeDropdown === "destinations" ? null : "destinations")}
-              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1.5 px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
+              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
                 activeDropdown === "destinations" ? "text-[#0F3A2E] bg-slate-50" : ""
               }`}
             >
@@ -778,27 +778,27 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         </nav>
 
         {/* Right CTA Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
           {/* Quick Voice Command Assistant Trigger */}
           <button
             type="button"
             onClick={triggerVoiceAssistant}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-emerald-600/30 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] text-xs font-bold transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 xl:px-3 py-2 rounded-full border border-emerald-600/30 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] text-xs font-bold transition shrink-0 cursor-pointer"
             title="Voice Search (Treks, Tours, Destinations, Honeymoon)"
           >
-            <Mic className="w-3.5 h-3.5 text-emerald-700 animate-pulse" />
-            <span className="hidden xl:inline">Voice Search</span>
+            <Mic className="w-3.5 h-3.5 text-emerald-700 animate-pulse shrink-0" />
+            <span className="hidden 2xl:inline whitespace-nowrap">Voice Search</span>
           </button>
 
-          {/* Glowing Vibrant Plan Your Trip CTA */}
+          {/* Glowing Vibrant Plan Your Trip CTA - Full Visibility & Zero Clipping */}
           <Link
             href="/plan-your-trip"
             onClick={onBookClick}
-            className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FF6B35] to-[#f0551d] hover:from-[#e05a26] hover:to-[#df4913] text-white text-xs sm:text-sm font-extrabold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-md hover:shadow-xl transition-all duration-200 whitespace-nowrap transform hover:-translate-y-0.5 active:translate-y-0"
+            className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FF6B35] to-[#f0551d] hover:from-[#e05a26] hover:to-[#df4913] text-white text-xs sm:text-[13px] xl:text-sm font-extrabold px-3.5 sm:px-4 xl:px-5 py-2 sm:py-2.5 rounded-full shadow-md hover:shadow-xl transition-all duration-200 shrink-0 whitespace-nowrap transform hover:-translate-y-0.5 active:translate-y-0"
           >
             <span>Plan Your Trip</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0" />
           </Link>
 
           {/* Mobile Menu Toggle Button */}

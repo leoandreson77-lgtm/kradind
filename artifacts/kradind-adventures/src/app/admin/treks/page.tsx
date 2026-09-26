@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Plus,
   Edit,
@@ -34,6 +34,9 @@ import {
   Filter,
   FileDown,
   Sliders,
+  Search,
+  ChevronDown,
+  Hash,
 } from "lucide-react";
 import { TrekData, TrekBatch, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
@@ -46,6 +49,65 @@ function isDomesticPackage(trek?: { category?: string; categories?: string[] } |
     (trek.category || "").toLowerCase() === "domestic" ||
     (trek.categories || []).some((c) => c.toLowerCase() === "domestic")
   );
+}
+
+function normalizeWord(w: string): string {
+  return w.toLowerCase().replace(/ies$/, "y").replace(/es$/, "").replace(/s$/, "");
+}
+
+function cleanWords(s: string): string[] {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter(
+      (w) =>
+        ![
+          "treks",
+          "trek",
+          "tours",
+          "tour",
+          "packages",
+          "package",
+          "specials",
+          "special",
+          "escapes",
+          "escape",
+          "pradesh",
+          "district",
+        ].includes(w) && w.length >= 3
+    )
+    .map(normalizeWord);
+}
+
+function matchesCategoryOrTag(t: TrekData, tagOrCat: string): boolean {
+  if (!tagOrCat || tagOrCat === "All") return true;
+  const target = tagOrCat.toLowerCase().trim();
+  const isDom = isDomesticPackage(t);
+
+  if (target === "domestic" || target === "domestic tours" || target === "domestic packages") return isDom;
+  if (target === "himalayan treks" || target === "treks") return !isDom;
+
+  const allTokens = [
+    t.category || "",
+    ...(t.categories || []),
+    t.location || "",
+    t.region || "",
+    t.badge || "",
+  ]
+    .map((s) => s.toLowerCase().trim())
+    .filter(Boolean);
+
+  // Exact match
+  if (allTokens.some((tok) => tok === target)) return true;
+
+  const targetWords = cleanWords(target);
+  if (targetWords.length === 0) return false;
+
+  return allTokens.some((tok) => {
+    const tokWords = cleanWords(tok);
+    return targetWords.some((tw) => tokWords.includes(tw));
+  });
 }
 
 const DOMESTIC_REGIONS = [
@@ -95,6 +157,16 @@ const POPULAR_CATEGORIES = [
   "Winter Snow",
   "Summer Escapes",
   "Expeditions",
+  "Weekend",
+  "Summit",
+  "Heritage",
+  "Northeast",
+  "Road Trip",
+  "Adventure",
+  "Wildlife",
+  "Desert",
+  "Beach",
+  "Honeymoon",
 ];
 
 function getDefaultItinerary(daysCount: number = 5): TrekItineraryDay[] {
@@ -185,6 +257,13 @@ export default function AdminTreksPage() {
   // Sales Customizer & PDF States
   const [salesModalTrek, setSalesModalTrek] = useState<TrekData | null>(null);
   const [pdfModalTrek, setPdfModalTrek] = useState<TrekData | null>(null);
+
+  // Quick Tag Modal & Dropdown States
+  const [quickTagModalTrek, setQuickTagModalTrek] = useState<TrekData | null>(null);
+  const [quickTagCategories, setQuickTagCategories] = useState<string[]>([]);
+  const [quickTagInput, setQuickTagInput] = useState("");
+  const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
+  const [tagDropdownSearch, setTagDropdownSearch] = useState("");
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -311,6 +390,52 @@ export default function AdminTreksPage() {
       await fetchTreks();
     } catch (err: any) {
       showToast(`❌ Bulk move error: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Open Quick Tag Management Modal
+  const handleOpenQuickTagModal = (trek: TrekData) => {
+    setQuickTagModalTrek(trek);
+    const existing = trek.categories && trek.categories.length > 0
+      ? [...trek.categories]
+      : trek.category
+      ? [trek.category]
+      : ["Himalayas"];
+    setQuickTagCategories(Array.from(new Set(existing)));
+    setQuickTagInput("");
+  };
+
+  // Save Quick Tags
+  const handleSaveQuickTags = async () => {
+    if (!quickTagModalTrek) return;
+    setActionLoading(true);
+    try {
+      const updatedCategories = Array.from(new Set(quickTagCategories.filter(Boolean)));
+      const updatedTrek: TrekData = {
+        ...quickTagModalTrek,
+        categories: updatedCategories,
+      };
+
+      const res = await fetch("/api/admin/treks", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTrek),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to update tags");
+      }
+
+      setTreks((prev) =>
+        prev.map((t) => (String(t.id) === String(quickTagModalTrek.id) ? updatedTrek : t))
+      );
+      showToast(`🏷️ Updated tags for "${quickTagModalTrek.name}"`);
+      setQuickTagModalTrek(null);
+    } catch (err: any) {
+      showToast(`❌ Failed to update tags: ${err.message}`);
     } finally {
       setActionLoading(false);
     }
@@ -594,6 +719,29 @@ export default function AdminTreksPage() {
   const trekCount = treks.filter((t) => !isDomesticPackage(t)).length;
   const domesticCount = treks.filter((t) => isDomesticPackage(t)).length;
 
+  // Dynamically extract all available tags across all packages
+  const availableTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    treks.forEach((t) => {
+      if (t.category) tagSet.add(t.category);
+      (t.categories || []).forEach((c) => {
+        if (c && c.trim()) tagSet.add(c.trim());
+      });
+      if (t.badge && !["Published", "Draft"].includes(t.badge)) tagSet.add(t.badge);
+    });
+
+    POPULAR_CATEGORIES.forEach((c) => tagSet.add(c));
+
+    const list = Array.from(tagSet);
+    // Sort by matching package count (highest first), then alphabetical
+    return list.sort((a, b) => {
+      const countA = treks.filter((t) => matchesCategoryOrTag(t, a)).length;
+      const countB = treks.filter((t) => matchesCategoryOrTag(t, b)).length;
+      if (countB !== countA) return countB - countA;
+      return a.localeCompare(b);
+    });
+  }, [treks]);
+
   const filtered = treks.filter((t) => {
     const isDom = isDomesticPackage(t);
 
@@ -602,18 +750,21 @@ export default function AdminTreksPage() {
       (classificationFilter === "Domestic" && isDom) ||
       (classificationFilter === "Treks" && !isDom);
 
+    const cleanSearch = search.trim().toLowerCase().replace(/^#/, "");
     const matchesSearch =
-      t.name.toLowerCase().includes(search.toLowerCase()) ||
-      t.location.toLowerCase().includes(search.toLowerCase()) ||
-      t.slug.toLowerCase().includes(search.toLowerCase()) ||
-      (t.category || "").toLowerCase().includes(search.toLowerCase()) ||
-      (t.tagline || "").toLowerCase().includes(search.toLowerCase());
+      !cleanSearch ||
+      t.name.toLowerCase().includes(cleanSearch) ||
+      t.location.toLowerCase().includes(cleanSearch) ||
+      (t.region || "").toLowerCase().includes(cleanSearch) ||
+      t.slug.toLowerCase().includes(cleanSearch) ||
+      (t.category || "").toLowerCase().includes(cleanSearch) ||
+      (t.badge || "").toLowerCase().includes(cleanSearch) ||
+      (t.difficulty || "").toLowerCase().includes(cleanSearch) ||
+      (t.tagline || "").toLowerCase().includes(cleanSearch) ||
+      (t.categories || []).some((c) => c.toLowerCase().includes(cleanSearch)) ||
+      (t.highlights || []).some((h) => h.toLowerCase().includes(cleanSearch));
 
-    const matchesCategory =
-      selectedCategory === "All" ||
-      (selectedCategory === "Domestic" && isDom) ||
-      (t.category && t.category.toLowerCase() === selectedCategory.toLowerCase()) ||
-      (t.categories && t.categories.some((c) => c.toLowerCase() === selectedCategory.toLowerCase()));
+    const matchesCategory = matchesCategoryOrTag(t, selectedCategory);
 
     return matchesClassification && matchesSearch && matchesCategory;
   });
@@ -755,41 +906,174 @@ export default function AdminTreksPage() {
         </div>
       )}
 
-      {/* Granular Category Filter Bar */}
+      {/* Granular Tag & Category Filter Bar */}
       <div className="flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-x-auto">
-        <span className="text-[11px] font-bold text-slate-400 px-2 flex items-center gap-1">
-          <Filter className="w-3 h-3" />
-          <span>Category:</span>
+        <span className="text-[11px] font-bold text-slate-500 px-2 flex items-center gap-1.5 shrink-0">
+          <Filter className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Category & Tags:</span>
         </span>
-        {["All", ...POPULAR_CATEGORIES].map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-              selectedCategory === cat
-                ? "bg-[#0F3A2E] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+
+        {/* All Filter Pill */}
+        <button
+          onClick={() => setSelectedCategory("All")}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
+            selectedCategory === "All"
+              ? "bg-[#0F3A2E] text-white shadow-xs"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+          }`}
+        >
+          <span>All</span>
+          <span
+            className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+              selectedCategory === "All" ? "bg-emerald-950 text-emerald-300" : "bg-slate-200 text-slate-700"
             }`}
           >
-            {cat} {cat === "All" ? `(${treks.length})` : ""}
-          </button>
-        ))}
+            {treks.length}
+          </span>
+        </button>
+
+        {/* Dynamic & Popular Tags */}
+        {availableTags.slice(0, 16).map((cat) => {
+          const count = treks.filter((t) => matchesCategoryOrTag(t, cat)).length;
+          const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+
+          return (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(isSelected ? "All" : cat)}
+              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
+                isSelected
+                  ? "bg-[#0F3A2E] text-white shadow-xs"
+                  : count > 0
+                  ? "text-slate-700 hover:text-slate-900 hover:bg-slate-100 bg-slate-50/80"
+                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-50 opacity-60"
+              }`}
+            >
+              <span>{cat}</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+                  isSelected
+                    ? "bg-emerald-950 text-emerald-300"
+                    : count > 0
+                    ? "bg-slate-200 text-slate-700"
+                    : "bg-slate-100 text-slate-400"
+                }`}
+              >
+                {count}
+              </span>
+              {isSelected && <X className="w-3 h-3 ml-0.5 text-emerald-300" />}
+            </button>
+          );
+        })}
+
+        {/* More Tags Dropdown */}
+        {availableTags.length > 16 && (
+          <div className="relative">
+            <button
+              onClick={() => setIsTagDropdownOpen(!isTagDropdownOpen)}
+              className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 bg-emerald-50/50 border border-emerald-200/80 transition flex items-center gap-1 shrink-0"
+            >
+              <Tag className="w-3 h-3 text-emerald-600" />
+              <span>More Tags ({availableTags.length - 16}+)</span>
+              <ChevronDown className="w-3 h-3" />
+            </button>
+
+            {isTagDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 z-40 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 w-72 max-h-80 overflow-y-auto space-y-2 animate-fade-in">
+                <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  Select Tag to Filter
+                </div>
+                <input
+                  type="text"
+                  value={tagDropdownSearch}
+                  onChange={(e) => setTagDropdownSearch(e.target.value)}
+                  placeholder="Search tags..."
+                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 outline-none focus:border-emerald-500"
+                />
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {availableTags
+                    .filter((tag) =>
+                      tag.toLowerCase().includes(tagDropdownSearch.toLowerCase())
+                    )
+                    .map((tag) => {
+                      const count = treks.filter((t) => matchesCategoryOrTag(t, tag)).length;
+                      const isSelected = selectedCategory.toLowerCase() === tag.toLowerCase();
+                      return (
+                        <button
+                          key={tag}
+                          onClick={() => {
+                            setSelectedCategory(isSelected ? "All" : tag);
+                            setIsTagDropdownOpen(false);
+                          }}
+                          className={`text-xs px-2 py-1 rounded-lg font-semibold flex items-center gap-1 transition ${
+                            isSelected
+                              ? "bg-[#0F3A2E] text-white"
+                              : "bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800"
+                          }`}
+                        >
+                          <span>#{tag}</span>
+                          <span className="text-[10px] opacity-70">({count})</span>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Search Filter */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search package by name, destination region, or slug..."
-          className="w-full text-xs sm:text-sm bg-transparent outline-none text-slate-800 placeholder-slate-400"
-        />
-        {search && (
-          <button onClick={() => setSearch("")} className="text-xs text-slate-400 hover:text-slate-600">
-            Clear
-          </button>
-        )}
+      {/* Search & Tag Filter Bar */}
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center gap-3">
+        <div className="flex-1 flex items-center gap-2.5 min-w-[240px]">
+          <Search className="w-4 h-4 text-slate-400 shrink-0" />
+          
+          {/* Active Tag Filter Chip inside Search */}
+          {selectedCategory !== "All" && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-bold shrink-0">
+              <Tag className="w-3 h-3 text-emerald-600" />
+              <span>#{selectedCategory}</span>
+              <button
+                onClick={() => setSelectedCategory("All")}
+                className="text-emerald-700 hover:text-rose-600 transition"
+                title="Clear tag filter"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={
+              selectedCategory !== "All"
+                ? `Search within #${selectedCategory} (name, region, slug)...`
+                : "Search package by name, destination region, #tag, or slug..."
+            }
+            className="w-full text-xs sm:text-sm bg-transparent outline-none text-slate-800 placeholder-slate-400"
+          />
+        </div>
+
+        {/* Clear buttons & result count */}
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[11px] font-semibold text-slate-400 hidden sm:inline">
+            Showing {filtered.length} of {treks.length}
+          </span>
+
+          {(search || selectedCategory !== "All") && (
+            <button
+              onClick={() => {
+                setSearch("");
+                setSelectedCategory("All");
+              }}
+              className="text-xs text-rose-600 hover:text-rose-700 font-semibold px-2 py-1 rounded-lg hover:bg-rose-50 transition"
+            >
+              Reset Filters
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Treks Table */}
@@ -880,6 +1164,48 @@ export default function AdminTreksPage() {
                             <span className="text-emerald-700 font-medium">
                               {t.itinerary?.length || 0} Days Itinerary
                             </span>
+                          </div>
+
+                          {/* Interactive Tags Row */}
+                          <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                            <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                              <Tag className="w-3 h-3 text-slate-400" />
+                              <span>Tags:</span>
+                            </span>
+                            {((t.categories && t.categories.length > 0 ? t.categories : [t.category]).filter(Boolean) as string[]).map((cat) => {
+                              const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                              return (
+                                <button
+                                  key={cat}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedCategory(isSelected ? "All" : cat);
+                                  }}
+                                  title={isSelected ? `Clear filter for #${cat}` : `Filter list by #${cat}`}
+                                  className={`text-[10px] px-2 py-0.5 rounded-md font-semibold transition cursor-pointer flex items-center gap-1 ${
+                                    isSelected
+                                      ? "bg-[#0F3A2E] text-white shadow-2xs"
+                                      : "bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 border border-slate-200/70 hover:border-emerald-300"
+                                  }`}
+                                >
+                                  <span>#{cat}</span>
+                                  {isSelected && <X className="w-2.5 h-2.5 ml-0.5" />}
+                                </button>
+                              );
+                            })}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenQuickTagModal(t);
+                              }}
+                              title="Add or edit tags for this package"
+                              className="text-[10px] px-1.5 py-0.5 rounded-md text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 font-bold transition flex items-center gap-0.5 cursor-pointer"
+                            >
+                              <Plus className="w-2.5 h-2.5" />
+                              <span>Tag</span>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -2443,6 +2769,148 @@ export default function AdminTreksPage() {
           onClose={() => setPdfModalTrek(null)}
           tour={pdfModalTrek}
         />
+      )}
+
+      {/* Quick Tag Editor Modal */}
+      {quickTagModalTrek && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Tag className="w-5 h-5 text-emerald-600" />
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">Manage Tags & Categories</h3>
+                  <p className="text-[11px] text-slate-500 line-clamp-1">{quickTagModalTrek.name}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setQuickTagModalTrek(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Current Active Tags */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Active Tags on this Package ({quickTagCategories.length})
+              </label>
+              <div className="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                {quickTagCategories.length === 0 ? (
+                  <span className="text-xs text-slate-400 italic">No tags assigned yet. Add below.</span>
+                ) : (
+                  quickTagCategories.map((cat, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 text-xs font-bold border border-emerald-300 shadow-2xs"
+                    >
+                      <span>#{cat}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setQuickTagCategories((prev) => prev.filter((_, i) => i !== idx))
+                        }
+                        className="text-emerald-700 hover:text-rose-600 ml-0.5 cursor-pointer"
+                        title="Remove tag"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Add Custom Tag Input */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-700">Add New Tag</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={quickTagInput}
+                  onChange={(e) => setQuickTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const trimmed = quickTagInput.trim().replace(/^#/, "");
+                      if (trimmed && !quickTagCategories.includes(trimmed)) {
+                        setQuickTagCategories((prev) => [...prev, trimmed]);
+                        setQuickTagInput("");
+                      }
+                    }
+                  }}
+                  placeholder="Type tag (e.g. Weekend, Monsoon, Couple) and press Enter..."
+                  className="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-xl outline-none focus:border-emerald-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const trimmed = quickTagInput.trim().replace(/^#/, "");
+                    if (trimmed && !quickTagCategories.includes(trimmed)) {
+                      setQuickTagCategories((prev) => [...prev, trimmed]);
+                      setQuickTagInput("");
+                    }
+                  }}
+                  className="px-4 py-2 bg-[#0F3A2E] text-white text-xs font-bold rounded-xl hover:bg-[#164e3f] transition"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+
+            {/* Quick-Select Suggestions */}
+            <div className="space-y-1.5 pt-1">
+              <label className="block text-xs font-bold text-slate-700">Quick-Select Popular Tags</label>
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1">
+                {POPULAR_CATEGORIES.map((preset) => {
+                  const isSelected = quickTagCategories.includes(preset);
+                  return (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          setQuickTagCategories((prev) => prev.filter((c) => c !== preset));
+                        } else {
+                          setQuickTagCategories((prev) => [...prev, preset]);
+                        }
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1 ${
+                        isSelected
+                          ? "bg-[#0F3A2E] text-white shadow-2xs font-bold"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200/60"
+                      }`}
+                    >
+                      <span>{isSelected ? "✓" : "+"}</span>
+                      <span>#{preset}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setQuickTagModalTrek(null)}
+                className="px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveQuickTags}
+                disabled={actionLoading}
+                className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5 disabled:opacity-60 cursor-pointer"
+              >
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{actionLoading ? "Saving..." : "Save Tags"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Mic,
   MicOff,
@@ -50,6 +50,13 @@ const VOICE_CHIPS = [
 
 export function VoiceAssistant() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Hide floating voice assistant on admin CMS pages
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");

@@ -7,10 +7,10 @@ import { Eye, EyeOff, Lock, Mail, ShieldAlert } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@kradind.com");
-  const [password, setPassword] = useState("Admin@Kradind2026");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -87,10 +87,11 @@ export default function AdminLoginPage() {
               <input
                 type="email"
                 required
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@kradind.com"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent transition"
+                placeholder="Enter your admin email"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent transition placeholder-slate-500"
               />
             </div>
           </div>
@@ -106,10 +107,11 @@ export default function AdminLoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 required
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full pl-10 pr-11 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent transition"
+                placeholder="Enter password"
+                className="w-full pl-10 pr-11 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent transition placeholder-slate-500"
               />
               <button
                 type="button"
@@ -137,7 +139,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-[#FF6B35] hover:bg-[#e8590c] text-white font-semibold text-sm rounded-xl transition shadow-lg shadow-orange-950/40 disabled:opacity-60 flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-[#FF6B35] hover:bg-[#e8590c] text-white font-semibold text-sm rounded-xl transition shadow-lg shadow-orange-950/40 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
           >
             {loading ? (
               <>
@@ -153,10 +155,14 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        {/* Demo Credentials Note */}
+        {/* Security Notice */}
         <div className="mt-8 pt-5 border-t border-slate-700/60 text-center">
-          <p className="text-[11px] text-slate-400">
-            Default credentials: <code className="text-amber-400 font-mono">admin@kradind.com</code> / <code className="text-amber-400 font-mono">Admin@Kradind2026</code>
+          <div className="flex items-center justify-center gap-1.5 text-slate-400 text-xs font-medium">
+            <Lock className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Encrypted Admin Session</span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1">
+            Restricted access. Authorized personnel only.
           </p>
         </div>
 

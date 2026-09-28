@@ -680,30 +680,6 @@ export default function TrekDetailPage() {
             </div>
           </div>
 
-          {/* Highlights Section */}
-          {trek.highlights && trek.highlights.length > 0 && (
-            <div id="highlights" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-              <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
-                <Star className="w-5 h-5 text-[#FF6B35]" />
-                <span>EXPEDITION HIGHLIGHTS</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 brand-font">
-                Why You Will Love This Trip
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                {trek.highlights.map((highlight: string, index: number) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-2.5 bg-emerald-50/60 border border-emerald-100 p-3.5 rounded-xl text-xs sm:text-sm text-slate-800"
-                  >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>{highlight}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Itinerary Section */}
           <div id="itinerary" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
@@ -771,6 +747,30 @@ export default function TrekDetailPage() {
               )}
             </div>
           </div>
+
+          {/* Highlights Section (Why You Will Love This Trip) */}
+          {trek.highlights && trek.highlights.length > 0 && (
+            <div id="highlights" className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <div className="flex items-center gap-2 text-[#0F3A2E] font-bold text-sm">
+                <Star className="w-5 h-5 text-[#FF6B35]" />
+                <span>EXPEDITION HIGHLIGHTS</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 brand-font">
+                Why You Will Love This Trip
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {trek.highlights.map((highlight: string, index: number) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-2.5 bg-emerald-50/60 border border-emerald-100 p-3.5 rounded-xl text-xs sm:text-sm text-slate-800"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{highlight}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Photo Gallery */}
           {trek.gallery && trek.gallery.length > 0 && (

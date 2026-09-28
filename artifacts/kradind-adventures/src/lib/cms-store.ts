@@ -2551,7 +2551,7 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       supportEmail: "support@kradind.com",
       supportPhone: "+91 75002 22141",
       whatsappLink: "https://wa.link/n3u8c0",
-      address: "Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India",
+      address: "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
       officeHours: "Open 24/7 for Expedition & Ground Support",
       instagramUrl: "https://www.instagram.com/kradglobal/",
       facebookUrl: "https://www.facebook.com/share/189E2RUcH4/",
@@ -2778,7 +2778,14 @@ export function readStore(): CMSStoreData {
         supportEmail: rawHome?.contactAndFooter?.supportEmail || defaultSections.contactAndFooter.supportEmail,
         supportPhone: rawHome?.contactAndFooter?.supportPhone || defaultSections.contactAndFooter.supportPhone,
         whatsappLink: rawHome?.contactAndFooter?.whatsappLink || defaultSections.contactAndFooter.whatsappLink,
-        address: rawHome?.contactAndFooter?.address || defaultSections.contactAndFooter.address,
+        address: (() => {
+          const addr = rawHome?.contactAndFooter?.address || defaultSections.contactAndFooter.address;
+          if (!addr || addr.includes("Rajpur Road") || addr.includes("401 Pratap Palace")) {
+            updated = true;
+            return defaultSections.contactAndFooter.address;
+          }
+          return addr;
+        })(),
         officeHours: rawHome?.contactAndFooter?.officeHours || defaultSections.contactAndFooter.officeHours,
         instagramUrl: rawHome?.contactAndFooter?.instagramUrl || defaultSections.contactAndFooter.instagramUrl,
         facebookUrl: rawHome?.contactAndFooter?.facebookUrl || defaultSections.contactAndFooter.facebookUrl,

@@ -108,7 +108,7 @@ export async function PUT(request: NextRequest) {
         supportEmail: body.contactAndFooter?.supportEmail ?? currentSections?.contactAndFooter?.supportEmail ?? "support@kradind.com",
         supportPhone: body.contactAndFooter?.supportPhone ?? currentSections?.contactAndFooter?.supportPhone ?? "+91 75002 22141",
         whatsappLink: body.contactAndFooter?.whatsappLink ?? currentSections?.contactAndFooter?.whatsappLink ?? "https://wa.link/n3u8c0",
-        address: body.contactAndFooter?.address ?? currentSections?.contactAndFooter?.address ?? "Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India",
+        address: body.contactAndFooter?.address ?? currentSections?.contactAndFooter?.address ?? "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
         officeHours: body.contactAndFooter?.officeHours ?? currentSections?.contactAndFooter?.officeHours ?? "Open 24/7 for Expedition & Ground Support",
         instagramUrl: body.contactAndFooter?.instagramUrl ?? currentSections?.contactAndFooter?.instagramUrl ?? "https://www.instagram.com/kradglobal/",
         facebookUrl: body.contactAndFooter?.facebookUrl ?? currentSections?.contactAndFooter?.facebookUrl ?? "https://www.facebook.com/share/189E2RUcH4/",

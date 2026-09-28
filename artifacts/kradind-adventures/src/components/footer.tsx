@@ -31,7 +31,10 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
   const cleanPhone = supportPhone.replace(/\s+/g, "");
   const supportEmail = config?.supportEmail || "support@kradind.com";
   const address =
-    config?.address || "Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India";
+    config?.address ||
+    "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand – 248001, India";
+  const addressGoogleLink =
+    "https://www.google.com/search?sca_esv=080dae4805299e94&sxsrf=APpeQntb4GvbjjeiOalE3kSH4CzAWMmSiQ:1790599408087&q=krad+global+dehradun+address&ludocid=2851661435002339716&sa=X&sqi=2&ved=2ahUKEwigpZ3NppGXAxWs1jgGHefSJU4Q6BN6BAgmEAI";
   const whatsappUrl =
     config?.whatsappLink ||
     `https://wa.me/917500222141?text=${encodeURIComponent(
@@ -185,19 +188,23 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
 
               <ProtectedEmailLink email={supportEmail} />
 
-              <div
-                className="flex items-start gap-2.5 text-slate-400"
+              <a
+                href={addressGoogleLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2.5 text-slate-400 hover:text-emerald-300 transition group"
                 itemProp="address"
                 itemScope
                 itemType="https://schema.org/PostalAddress"
+                title="View KRAD Global location on Google Maps / Search"
               >
-                <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 shrink-0 mt-0.5">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition shrink-0 mt-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-400 group-hover:text-white" />
                 </div>
                 <span className="leading-relaxed text-[11px] sm:text-xs">
                   {address}
                 </span>
-              </div>
+              </a>
             </address>
           </div>
 

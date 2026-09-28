@@ -260,7 +260,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                 <div className="flex items-start gap-2">
                   <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">
-                    Hall No. H-04, 401 Pratap Palace, Indiranagar Colony, Dehradun, Uttarakhand – 248001, India
+                    Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -701,7 +701,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                       <p className="m-0"><strong>Designation:</strong> Data Protection &amp; Grievance Redressal Officer</p>
                       <p className="m-0"><strong>Operating Entity:</strong> KRADIND Adventures Private Limited &amp; KRAD Global</p>
                       <p className="m-0"><strong>Official Website:</strong> <a href="https://kradind.com" className="text-emerald-400 underline">www.kradind.com</a></p>
-                      <p className="m-0"><strong>Registered Office:</strong> Hall No. H-04, 401 Pratap Palace, Indiranagar Colony, Dehradun, Uttarakhand – 248001, India</p>
+                      <p className="m-0"><strong>Registered Office:</strong> Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                     </div>
 
                     <div className="space-y-2">
@@ -893,7 +893,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <p className="m-0">Website: www.kradind.com</p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
                     <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
-                    <p className="m-0">Address: Hall No. H-04, 401 Pratap Palace, Indiranagar Colony, Dehradun, Uttarakhand – 248001, India</p>
+                    <p className="m-0">Address: Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                   </div>
                 </section>
               </div>
@@ -1096,7 +1096,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <p className="m-0"><strong>KRAD Global</strong></p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
                     <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
-                    <p className="m-0">Address: Hall No. H-04, 401 Pratap Palace, Indiranagar Colony, Dehradun, Uttarakhand – 248001, India</p>
+                    <p className="m-0">Address: Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                   </div>
                 </section>
               </div>
@@ -1315,7 +1315,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <h4 className="font-bold text-slate-900 text-sm m-0">Contact</h4>
                   <div className="pt-2 text-slate-800 space-y-1 font-medium">
                     <p className="m-0"><strong>KRAD Global</strong></p>
-                    <p className="m-0">Hall No. H-04, 401 Pratap Palace, Indiranagar Colony, Dehradun, Uttarakhand – 248001, India</p>
+                    <p className="m-0">Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
                     <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
                     <p className="m-0">Website: www.kradind.com</p>
@@ -1383,7 +1383,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <div className="pt-2 text-slate-800 space-y-1 font-medium">
                     <p className="m-0"><strong>Chief Expedition Directorate:</strong> KRADIND Expedition Team</p>
                     <p className="m-0"><strong>Organization:</strong> KRADIND Adventures Private Limited</p>
-                    <p className="m-0"><strong>Address:</strong> Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India</p>
+                    <p className="m-0"><strong>Address:</strong> Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                     <p className="m-0"><strong>Email:</strong> support@kradind.com / kradglobalind@gmail.com</p>
                     <p className="m-0"><strong>Last Reviewed:</strong> 14 September 2026</p>
                   </div>

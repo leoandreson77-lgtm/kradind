@@ -1408,7 +1408,7 @@ export default function AdminSectionsPage() {
               <label className="block font-bold text-slate-700 mb-1.5">Registered Office Address</label>
               <textarea
                 rows={2}
-                value={sections.contactAndFooter?.address || "Rajpur Road, Jakhan, Dehradun, Uttarakhand – 248001, India"}
+                value={sections.contactAndFooter?.address || "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001"}
                 onChange={(e) =>
                   setSections({
                     ...sections,

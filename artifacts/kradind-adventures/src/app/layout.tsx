@@ -134,7 +134,7 @@ const globalStructuredData = {
       },
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Rajpur Road, Jakhan",
+        streetAddress: "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony",
         addressLocality: "Dehradun",
         addressRegion: "Uttarakhand",
         postalCode: "248001",
@@ -171,12 +171,13 @@ const globalStructuredData = {
       paymentAccepted: "Credit Card, UPI, Net Banking",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Hall No. H-04, 401 Pratap Palace, Indiranagar Colony",
+        streetAddress: "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony",
         addressLocality: "Dehradun",
         addressRegion: "Uttarakhand",
         postalCode: "248001",
         addressCountry: "IN",
       },
+      hasMap: "https://www.google.com/search?sca_esv=080dae4805299e94&sxsrf=APpeQntb4GvbjjeiOalE3kSH4CzAWMmSiQ:1790599408087&q=krad+global+dehradun+address&ludocid=2851661435002339716&sa=X&sqi=2&ved=2ahUKEwigpZ3NppGXAxWs1jgGHefSJU4Q6BN6BAgmEAI",
       areaServed: [
         { "@type": "AdministrativeArea", name: "Dehradun" },
         { "@type": "AdministrativeArea", name: "Uttarakhand" },
@@ -243,12 +244,13 @@ const globalStructuredData = {
       paymentAccepted: "Cash, Credit Card, UPI, Net Banking",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Rajpur Road, Jakhan",
+        streetAddress: "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony",
         addressLocality: "Dehradun",
         addressRegion: "Uttarakhand",
         postalCode: "248001",
         addressCountry: "IN",
       },
+      hasMap: "https://www.google.com/search?sca_esv=080dae4805299e94&sxsrf=APpeQntb4GvbjjeiOalE3kSH4CzAWMmSiQ:1790599408087&q=krad+global+dehradun+address&ludocid=2851661435002339716&sa=X&sqi=2&ved=2ahUKEwigpZ3NppGXAxWs1jgGHefSJU4Q6BN6BAgmEAI",
       geo: {
         "@type": "GeoCoordinates",
         latitude: 30.3165,

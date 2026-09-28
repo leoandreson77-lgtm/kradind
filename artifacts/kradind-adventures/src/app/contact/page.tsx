@@ -5,7 +5,7 @@ import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
-import { Phone, Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Phone, Mail, MapPin, Send, CheckCircle2, ArrowRight } from "lucide-react";
 import { ProtectedContactCardEmail } from "@/components/protected-email";
 
 export default function ContactPage() {
@@ -115,13 +115,24 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-sm text-slate-900">Headquarters & Basecamp Office</h3>
                 <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                  <span itemProp="streetAddress">Rajpur Road, Jakhan</span>,{" "}
+                  <span itemProp="streetAddress">Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony</span>,{" "}
                   <span itemProp="addressLocality">Dehradun</span>,{" "}
                   <span itemProp="addressRegion">Uttarakhand</span>{" "}
                   <span itemProp="postalCode">248001</span>,{" "}
                   <span itemProp="addressCountry">India</span>
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
+                <div className="mt-2.5">
+                  <a
+                    href="https://www.google.com/search?sca_esv=080dae4805299e94&sxsrf=APpeQntb4GvbjjeiOalE3kSH4CzAWMmSiQ:1790599408087&q=krad+global+dehradun+address&ludocid=2851661435002339716&sa=X&sqi=2&ved=2ahUKEwigpZ3NppGXAxWs1jgGHefSJU4Q6BN6BAgmEAI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline"
+                  >
+                    <span>📍 View on Google Maps / Search</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-2">
                   Expedition base operations: Sankri Village (Uttarakhand), Manali (HP) & Srinagar (J&K).
                 </p>
               </div>

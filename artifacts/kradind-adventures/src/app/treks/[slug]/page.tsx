@@ -558,9 +558,9 @@ export default function TrekDetailPage() {
           </h1>
 
           {/* Tagline */}
-          <p className="text-slate-100 text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.85)]">
-            {trek.tagline}
-          </p>
+          <div className="text-slate-100 text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.85)]">
+            <FormattedText text={trek.tagline} />
+          </div>
 
           {/* Stats Bar with Frosted Glassmorphism Card */}
           <div className="pt-2">

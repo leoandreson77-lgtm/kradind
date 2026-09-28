@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Search, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { MountainAtmosphere, AtmosphereMode } from "@/components/mountain-atmosphere";
+import { FormattedText } from "@/components/formatted-text";
 
 interface CarouselSlide {
   id: string;
@@ -205,9 +206,9 @@ export function HeroSearch({
           </h1>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg text-slate-100 max-w-2xl mx-auto font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
-            {subtitle}
-          </p>
+          <div className="text-base sm:text-lg text-slate-100 max-w-2xl mx-auto font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
+            <FormattedText text={subtitle} />
+          </div>
         </div>
 
         {/* Carousel Slide Switcher Pills with smooth progress */}

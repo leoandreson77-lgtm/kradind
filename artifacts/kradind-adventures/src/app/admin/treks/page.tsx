@@ -2128,16 +2128,15 @@ export default function AdminTreksPage() {
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Tagline</label>
-                      <input
-                        type="text"
-                        value={editingTrek.tagline || ""}
-                        onChange={(e) => setEditingTrek({ ...editingTrek, tagline: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                        placeholder="Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti."
-                      />
-                    </div>
+                    <RichTextEditor
+                      compact
+                      label="Tagline / Short Summary"
+                      value={editingTrek.tagline || ""}
+                      onChange={(val) => setEditingTrek({ ...editingTrek, tagline: val })}
+                      rows={2}
+                      placeholder="Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti."
+                      helperText="Supports formatting (Bold, Italic, Sizing, Colors, Badge) for hero card & header."
+                    />
                   </div>
                 )}
 
@@ -2335,6 +2334,7 @@ export default function AdminTreksPage() {
 
                           {/* Day Description */}
                           <RichTextEditor
+                            compact
                             label="Day Narrative & Activities"
                             value={day.description || ""}
                             onChange={(val) => {
@@ -2904,15 +2904,16 @@ export default function AdminTreksPage() {
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <textarea
-                            rows={2}
-                            value={faq.answer}
-                            onChange={(e) => {
+                          <RichTextEditor
+                            compact
+                            label="Answer"
+                            value={faq.answer || ""}
+                            onChange={(val) => {
                               const faqs = [...(editingTrek.faqs || [])];
-                              faqs[idx] = { ...faqs[idx], answer: e.target.value };
+                              faqs[idx] = { ...faqs[idx], answer: val };
                               setEditingTrek({ ...editingTrek, faqs });
                             }}
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs leading-relaxed"
+                            rows={2}
                             placeholder="Provide a clear, helpful answer..."
                           />
                         </div>

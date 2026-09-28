@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { CloudRain, Check } from "lucide-react";
+import { FormattedText } from "@/components/formatted-text";
 
 export function MonsoonSpecials({
   onClaimCoupon,
   config,
 }: {
   onClaimCoupon?: (code: string) => void;
-  config?: { enabled?: boolean; title?: string; promoCode?: string; discountPercent?: number };
+  config?: { enabled?: boolean; title?: string; subtitle?: string; promoCode?: string; discountPercent?: number; badge?: string };
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -42,6 +43,11 @@ export function MonsoonSpecials({
             <h2 className="text-2xl sm:text-3xl font-extrabold mt-1 brand-font">
               {title}
             </h2>
+            {config?.subtitle && (
+              <div className="text-xs sm:text-sm text-emerald-100/90 mt-1 max-w-2xl leading-relaxed">
+                <FormattedText text={config.subtitle} />
+              </div>
+            )}
           </div>
 
           <button

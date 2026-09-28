@@ -93,7 +93,7 @@ export function FormattedText({ text, className = "" }: FormattedTextProps) {
 
 /**
  * Parses inline formatting tags:
- * **bold**, *italic*, [size=...], [color=...], [highlight], <b>, <i>
+ * **bold**, *italic*, <u>underline</u>, <s>strikethrough</s>, [badge]badge[/badge], [size=...], [color=...], [highlight], <b>, <i>
  */
 export function parseInlineFormatting(str: string): React.ReactNode[] {
   if (!str) return [];
@@ -102,10 +102,13 @@ export function parseInlineFormatting(str: string): React.ReactNode[] {
   // 1. [size=...]...[/size]
   // 2. [color=...]...[/color]
   // 3. [highlight]...[/highlight]
-  // 4. **...** or <b>...</b> or <strong>...</strong>
-  // 5. *...* or <i>...</i> or <em>...</em>
+  // 4. [badge]...[/badge]
+  // 5. <u>...</u> or [u]...[/u]
+  // 6. <s>...</s> or [strike]...[/strike] or ~~...~~
+  // 7. **...** or <b>...</b> or <strong>...</strong>
+  // 8. *...* or <i>...</i> or <em>...</em>
   const pattern =
-    /(\[size=(xs|sm|base|lg|xl|2xl)\]([\s\S]*?)\[\/size\]|\[color=(orange|emerald|blue|rose)\]([\s\S]*?)\[\/color\]|\[highlight\]([\s\S]*?)\[\/highlight\]|\*\*([\s\S]+?)\*\*|<b>([\s\S]+?)<\/b>|<strong>([\s\S]+?)<\/strong>|\*([\s\S]+?)\*|<i>([\s\S]+?)<\/i>|<em>([\s\S]+?)<\/em>)/g;
+    /(\[size=(xs|sm|base|lg|xl|2xl)\]([\s\S]*?)\[\/size\]|\[color=(orange|emerald|blue|rose)\]([\s\S]*?)\[\/color\]|\[highlight\]([\s\S]*?)\[\/highlight\]|\[badge\]([\s\S]*?)\[\/badge\]|<u>([\s\S]+?)<\/u>|\[u\]([\s\S]+?)\[\/u\]|<s>([\s\S]+?)<\/s>|\[strike\]([\s\S]+?)\[\/strike\]|~~([\s\S]+?)~~|\*\*([\s\S]+?)\*\*|<b>([\s\S]+?)<\/b>|<strong>([\s\S]+?)<\/strong>|\*([\s\S]+?)\*|<i>([\s\S]+?)<\/i>|<em>([\s\S]+?)<\/em>)/g;
 
   const result: React.ReactNode[] = [];
   let lastIndex = 0;
@@ -123,8 +126,11 @@ export function parseInlineFormatting(str: string): React.ReactNode[] {
     const colorType = match[4];
     const colorContent = match[5];
     const highlightContent = match[6];
-    const boldContent = match[7] || match[8] || match[9];
-    const italicContent = match[10] || match[11] || match[12];
+    const badgeContent = match[7];
+    const underlineContent = match[8] || match[9];
+    const strikeContent = match[10] || match[11] || match[12];
+    const boldContent = match[13] || match[14] || match[15];
+    const italicContent = match[16] || match[17] || match[18];
 
     const key = `${match.index}-${lastIndex}`;
 
@@ -159,6 +165,27 @@ export function parseInlineFormatting(str: string): React.ReactNode[] {
         <mark key={key} className="bg-amber-100 text-amber-950 px-1 py-0.5 rounded font-medium">
           {parseInlineFormatting(highlightContent)}
         </mark>
+      );
+    } else if (badgeContent !== undefined) {
+      result.push(
+        <span
+          key={key}
+          className="inline-flex items-center px-2 py-0.5 mx-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200/60 align-baseline"
+        >
+          {parseInlineFormatting(badgeContent)}
+        </span>
+      );
+    } else if (underlineContent !== undefined) {
+      result.push(
+        <span key={key} className="underline decoration-[#FF6B35]/70 underline-offset-2 font-medium">
+          {parseInlineFormatting(underlineContent)}
+        </span>
+      );
+    } else if (strikeContent !== undefined) {
+      result.push(
+        <span key={key} className="line-through text-slate-400">
+          {parseInlineFormatting(strikeContent)}
+        </span>
       );
     } else if (boldContent !== undefined) {
       result.push(

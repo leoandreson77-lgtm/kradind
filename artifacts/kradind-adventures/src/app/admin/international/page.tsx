@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 const POPULAR_COUNTRY_EMOJIS = ["🇳🇵", "🇮🇩", "🇹🇭", "🇦🇪", "🇻🇳", "🇸🇬", "🇲🇻", "🇱🇰", "🇲🇾", "🇲🇺", "🇪🇺", "🇬🇧", "✈️", "🏝️", "🏔️"];
 const COUNTRY_PRESETS = [
@@ -1065,18 +1066,15 @@ export default function AdminInternationalPage() {
                   </div>
 
                   {/* Tagline */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">
-                      Catchy Tagline / Subtitle
-                    </label>
-                    <input
-                      type="text"
-                      value={editingItem.tagline || ""}
-                      onChange={(e) => setEditingItem({ ...editingItem, tagline: e.target.value })}
-                      placeholder="e.g. Tropical Island Paradise: Ubud Terraces, Uluwatu Sunsets & Nusa Penida Cliffs"
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                    />
-                  </div>
+                  <RichTextEditor
+                    compact
+                    label="Catchy Tagline / Subtitle"
+                    value={editingItem.tagline || ""}
+                    onChange={(val) => setEditingItem({ ...editingItem, tagline: val })}
+                    placeholder="e.g. Tropical Island Paradise: Ubud Terraces, Uluwatu Sunsets & Nusa Penida Cliffs"
+                    rows={2}
+                    helperText="Supports formatting (Bold, Italic, Sizing, Colors, Badge) for card and hero."
+                  />
 
                   {/* Hero Cover Image (Using Resilient ImageUploader) */}
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
@@ -1198,15 +1196,14 @@ export default function AdminInternationalPage() {
                           </div>
 
                           {/* Description */}
-                          <div>
-                            <textarea
-                              rows={2}
-                              value={day.description}
-                              onChange={(e) => handleUpdateDay(idx, "description", e.target.value)}
-                              placeholder="Comprehensive description of the day's journey, monuments, cultural visits, and highlights..."
-                              className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                            />
-                          </div>
+                          <RichTextEditor
+                            compact
+                            label="Day Schedule & Highlights"
+                            rows={3}
+                            value={day.description || ""}
+                            onChange={(val) => handleUpdateDay(idx, "description", val)}
+                            placeholder="Comprehensive description of the day's journey, monuments, cultural visits, and highlights..."
+                          />
 
                           {/* Meals, Stay, Activities */}
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
@@ -1393,18 +1390,14 @@ export default function AdminInternationalPage() {
               {/* TAB 4: OVERVIEW & VISA INFO */}
               {modalTab === "overview" && (
                 <div className="space-y-5 animate-in fade-in">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">
-                      Comprehensive Destination Overview &amp; Narrative
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={editingItem.overview || ""}
-                      onChange={(e) => setEditingItem({ ...editingItem, overview: e.target.value })}
-                      placeholder="Describe what makes this international destination extraordinary: cultural heritage, landscapes, beach experiences, and why travelers should choose KRADIND..."
-                      className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                    />
-                  </div>
+                  <RichTextEditor
+                    label="Comprehensive Destination Overview & Narrative"
+                    rows={5}
+                    value={editingItem.overview || ""}
+                    onChange={(val) => setEditingItem({ ...editingItem, overview: val })}
+                    placeholder="Describe what makes this international destination extraordinary: cultural heritage, landscapes, beach experiences, and why travelers should choose KRADIND..."
+                    helperText="Supports Headings (##), Bullet Lists (•), Bold, Italic, Color Highlights, Underline, and Badges."
+                  />
 
                   {/* Travel Tips & Visa Guidance */}
                   <div className="space-y-3">
@@ -1519,12 +1512,13 @@ export default function AdminInternationalPage() {
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                          <textarea
+                          <RichTextEditor
+                            compact
+                            label="Answer"
                             rows={2}
-                            value={faq.answer}
-                            onChange={(e) => handleUpdateFaq(idx, "answer", e.target.value)}
+                            value={faq.answer || ""}
+                            onChange={(val) => handleUpdateFaq(idx, "answer", val)}
                             placeholder="Clear, factual, and reassuring answer..."
-                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                           />
                         </div>
                       ))}

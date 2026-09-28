@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { HomeSectionsConfig, SectionFaqItem, TrustSignalItem, TrekData, DestinationData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 type SectionTab = "topBar" | "hero" | "monsoon" | "treks" | "international" | "eeat" | "footer";
 
@@ -334,21 +335,20 @@ export default function AdminSectionsPage() {
               />
             </div>
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Hero Subtitle Description</label>
-              <textarea
-                rows={3}
-                value={sections.hero.subtitle || ""}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    hero: { ...sections.hero, subtitle: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none leading-relaxed"
-                placeholder="Explore handpicked Himalayan treks, tropical road trips, and sacred pilgrimages..."
-              />
-            </div>
+            <RichTextEditor
+              compact
+              label="Hero Subtitle Description"
+              rows={2}
+              value={sections.hero.subtitle || ""}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  hero: { ...sections.hero, subtitle: val },
+                })
+              }
+              placeholder="Explore handpicked Himalayan treks, tropical road trips, and sacred pilgrimages..."
+              helperText="Format key phrases with bold, colors, or highlights for hero title emphasis."
+            />
 
             <div>
               <label className="block font-bold text-slate-700 mb-1.5">Search Placeholder Text</label>
@@ -621,17 +621,17 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Banner Subtitle / Description</label>
-              <textarea
+              <RichTextEditor
+                compact
+                label="Banner Subtitle / Description"
                 rows={2}
                 value={sections.monsoon.subtitle || ""}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
-                    monsoon: { ...sections.monsoon, subtitle: e.target.value },
+                    monsoon: { ...sections.monsoon, subtitle: val },
                   })
                 }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
                 placeholder="Unlock exclusive rainy season discounts on UNESCO Valley of Flowers, Hampta Pass, and Kashmir circuits."
               />
             </div>
@@ -982,23 +982,23 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Section Subtitle / Description</label>
-              <textarea
+              <RichTextEditor
+                compact
+                label="Section Subtitle / Description"
                 rows={2}
                 value={sections.international?.subtitle || ""}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
                     international: {
                       enabled: sections.international?.enabled ?? true,
                       badge: sections.international?.badge || "",
                       title: sections.international?.title || "",
-                      subtitle: e.target.value,
+                      subtitle: val,
                       featuredSlugs: sections.international?.featuredSlugs || [],
                     },
                   })
                 }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
                 placeholder="Handcrafted overseas journeys with verified accommodations, local English-speaking guides, seamless visa assistance, and 24/7 on-trip concierge."
               />
             </div>
@@ -1310,15 +1310,14 @@ export default function AdminSectionsPage() {
                     />
                   </div>
 
-                  <div>
-                    <textarea
-                      rows={3}
-                      value={faq.a}
-                      onChange={(e) => handleUpdateFaq(idx, "a", e.target.value)}
-                      className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 focus:ring-1 focus:ring-emerald-500 outline-none leading-relaxed"
-                      placeholder="Enter detailed answer..."
-                    />
-                  </div>
+                  <RichTextEditor
+                    compact
+                    label="Answer"
+                    rows={2}
+                    value={faq.a || ""}
+                    onChange={(val) => handleUpdateFaq(idx, "a", val)}
+                    placeholder="Enter detailed answer..."
+                  />
                 </div>
               ))}
             </div>

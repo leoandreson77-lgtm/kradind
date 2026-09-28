@@ -4,6 +4,8 @@ import React, { useRef, useState } from "react";
 import {
   Bold,
   Italic,
+  Underline as UnderlineIcon,
+  Tag,
   Type,
   Highlighter,
   Palette,
@@ -26,6 +28,7 @@ interface RichTextEditorProps {
   minHeight?: string;
   className?: string;
   helperText?: string;
+  compact?: boolean;
 }
 
 export function RichTextEditor({
@@ -33,11 +36,13 @@ export function RichTextEditor({
   onChange,
   label,
   placeholder = "Type your text here. Select text to apply formatting (Bold, Italic, Custom Font Size, Color, Highlights)...",
-  rows = 5,
-  minHeight = "120px",
+  rows,
+  minHeight,
   className = "",
   helperText,
+  compact = false,
 }: RichTextEditorProps) {
+  const actualRows = rows !== undefined ? rows : compact ? 2 : 5;
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
   const [showSizeMenu, setShowSizeMenu] = useState(false);
@@ -131,25 +136,34 @@ export function RichTextEditor({
       e.preventDefault();
       wrapSelection("*", "*", "Italic Text");
     }
+    // Ctrl+U / Cmd+U for Underline
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
+      e.preventDefault();
+      wrapSelection("<u>", "</u>", "Underlined Text");
+    }
   };
 
+  const minHClass = compact ? "min-h-[58px]" : "min-h-[120px]";
+
   return (
-    <div className={`space-y-1.5 ${className}`}>
+    <div className={`space-y-1 ${className}`}>
       {/* Label and Header Row */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-1.5">
         {label && (
-          <label className="block text-xs font-bold text-slate-800">
+          <label className={`block font-bold text-slate-800 ${compact ? "text-[11px]" : "text-xs"}`}>
             {label}
           </label>
         )}
 
         <div className="flex items-center gap-1 ml-auto">
           {/* Write / Preview Tab Switcher */}
-          <div className="inline-flex items-center p-0.5 bg-slate-100 border border-slate-200 rounded-lg text-[11px] font-semibold">
+          <div className="inline-flex items-center p-0.5 bg-slate-100 border border-slate-200 rounded-lg text-[10px] sm:text-[11px] font-semibold">
             <button
               type="button"
               onClick={() => setActiveTab("write")}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 ${
+              className={`rounded-md transition flex items-center gap-1 ${
+                compact ? "px-2 py-0.5" : "px-2.5 py-1"
+              } ${
                 activeTab === "write"
                   ? "bg-white text-slate-900 shadow-2xs font-bold"
                   : "text-slate-500 hover:text-slate-900"
@@ -161,14 +175,16 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => setActiveTab("preview")}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 ${
+              className={`rounded-md transition flex items-center gap-1 ${
+                compact ? "px-2 py-0.5" : "px-2.5 py-1"
+              } ${
                 activeTab === "preview"
                   ? "bg-white text-[#0F3A2E] shadow-2xs font-bold"
                   : "text-slate-500 hover:text-slate-900"
               }`}
             >
               <Eye className="w-3 h-3 text-emerald-600" />
-              <span>Live Preview</span>
+              <span>Preview</span>
             </button>
           </div>
 
@@ -187,12 +203,14 @@ export function RichTextEditor({
       {/* Editor Container */}
       <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs focus-within:ring-2 focus-within:ring-[#0F3A2E]/20 focus-within:border-[#0F3A2E] transition">
         {/* Formatting Toolbar */}
-        <div className="bg-slate-50/90 border-b border-slate-200/80 p-1.5 flex flex-wrap items-center gap-1 text-slate-700">
+        <div className={`bg-slate-50/90 border-b border-slate-200/80 flex flex-wrap items-center gap-0.5 sm:gap-1 text-slate-700 ${
+          compact ? "p-1" : "p-1.5"
+        }`}>
           {/* Bold Button */}
           <button
             type="button"
             onClick={() => wrapSelection("**", "**", "Bold Text")}
-            className="p-1.5 rounded-lg hover:bg-slate-200/80 hover:text-slate-900 transition text-xs font-black flex items-center gap-1"
+            className="p-1 rounded-lg hover:bg-slate-200/80 hover:text-slate-900 transition text-xs font-black flex items-center gap-1"
             title="Bold (Ctrl+B) - **text**"
           >
             <Bold className="w-3.5 h-3.5" />
@@ -202,13 +220,34 @@ export function RichTextEditor({
           <button
             type="button"
             onClick={() => wrapSelection("*", "*", "Italic Text")}
-            className="p-1.5 rounded-lg hover:bg-slate-200/80 hover:text-slate-900 transition text-xs italic font-serif flex items-center gap-1"
+            className="p-1 rounded-lg hover:bg-slate-200/80 hover:text-slate-900 transition text-xs italic font-serif flex items-center gap-1"
             title="Italic (Ctrl+I) - *text*"
           >
             <Italic className="w-3.5 h-3.5" />
           </button>
 
-          <span className="w-px h-4 bg-slate-300 mx-0.5" />
+          {/* Underline Button */}
+          <button
+            type="button"
+            onClick={() => wrapSelection("<u>", "</u>", "Underlined Text")}
+            className="p-1 rounded-lg hover:bg-slate-200/80 hover:text-slate-900 transition text-xs flex items-center gap-1"
+            title="Underline (Ctrl+U) - <u>text</u>"
+          >
+            <UnderlineIcon className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Badge Pill Button */}
+          <button
+            type="button"
+            onClick={() => wrapSelection("[badge]", "[/badge]", "Special Badge")}
+            className="p-1 rounded-lg hover:bg-emerald-100 hover:text-emerald-900 transition text-xs flex items-center gap-1"
+            title="Badge Tag - [badge]text[/badge]"
+          >
+            <Tag className="w-3.5 h-3.5 text-emerald-700" />
+            <span className="text-[10px] hidden md:inline font-bold text-emerald-800">Badge</span>
+          </button>
+
+          <span className="w-px h-3.5 bg-slate-300 mx-0.5" />
 
           {/* Custom Font Sizing Dropdown */}
           <div className="relative">
@@ -218,7 +257,7 @@ export function RichTextEditor({
                 setShowSizeMenu(!showSizeMenu);
                 setShowColorMenu(false);
               }}
-              className="px-2 py-1 rounded-lg hover:bg-slate-200/80 transition text-xs font-semibold flex items-center gap-1 text-slate-700"
+              className="px-1.5 py-0.5 rounded-lg hover:bg-slate-200/80 transition text-xs font-semibold flex items-center gap-1 text-slate-700"
               title="Custom Text Size"
             >
               <Type className="w-3.5 h-3.5 text-[#0F3A2E]" />
@@ -295,13 +334,13 @@ export function RichTextEditor({
             )}
           </div>
 
-          <span className="w-px h-4 bg-slate-300 mx-0.5" />
+          <span className="w-px h-3.5 bg-slate-300 mx-0.5" />
 
           {/* Yellow Marker Highlight */}
           <button
             type="button"
             onClick={() => wrapSelection("[highlight]", "[/highlight]", "Highlighted Text")}
-            className="p-1.5 rounded-lg hover:bg-amber-100 hover:text-amber-900 transition text-xs font-semibold flex items-center gap-1"
+            className="p-1 rounded-lg hover:bg-amber-100 hover:text-amber-900 transition text-xs font-semibold flex items-center gap-1"
             title="Yellow Marker Highlight - [highlight]text[/highlight]"
           >
             <Highlighter className="w-3.5 h-3.5 text-amber-600" />
@@ -316,7 +355,7 @@ export function RichTextEditor({
                 setShowColorMenu(!showColorMenu);
                 setShowSizeMenu(false);
               }}
-              className="px-2 py-1 rounded-lg hover:bg-slate-200/80 transition text-xs font-semibold flex items-center gap-1 text-slate-700"
+              className="px-1.5 py-0.5 rounded-lg hover:bg-slate-200/80 transition text-xs font-semibold flex items-center gap-1 text-slate-700"
               title="Text Color"
             >
               <Palette className="w-3.5 h-3.5 text-rose-500" />
@@ -373,13 +412,13 @@ export function RichTextEditor({
             )}
           </div>
 
-          <span className="w-px h-4 bg-slate-300 mx-0.5" />
+          <span className="w-px h-3.5 bg-slate-300 mx-0.5" />
 
           {/* Heading 2 */}
           <button
             type="button"
             onClick={() => insertLinePrefix("## ")}
-            className="p-1.5 rounded-lg hover:bg-slate-200/80 transition text-xs font-bold"
+            className="p-1 rounded-lg hover:bg-slate-200/80 transition text-xs font-bold"
             title="Heading 2 - ## Heading"
           >
             <Heading2 className="w-3.5 h-3.5" />
@@ -389,7 +428,7 @@ export function RichTextEditor({
           <button
             type="button"
             onClick={() => insertLinePrefix("### ")}
-            className="p-1.5 rounded-lg hover:bg-slate-200/80 transition text-xs font-bold"
+            className="p-1 rounded-lg hover:bg-slate-200/80 transition text-xs font-bold"
             title="Heading 3 - ### Heading"
           >
             <Heading3 className="w-3.5 h-3.5" />
@@ -399,7 +438,7 @@ export function RichTextEditor({
           <button
             type="button"
             onClick={() => insertLinePrefix("• ")}
-            className="p-1.5 rounded-lg hover:bg-slate-200/80 transition text-xs font-bold"
+            className="p-1 rounded-lg hover:bg-slate-200/80 transition text-xs font-bold"
             title="Bullet point - • item"
           >
             <List className="w-3.5 h-3.5" />
@@ -434,15 +473,21 @@ export function RichTextEditor({
               </div>
               <div>
                 <code className="bg-white/80 px-1 py-0.5 rounded text-[#0F3A2E] font-bold">
-                  [size=lg]Text[/size]
+                  &lt;u&gt;Underline&lt;/u&gt;
                 </code>{" "}
-                ➔ <span className="font-bold text-sm">Large Text</span>
+                ➔ <span className="underline decoration-[#FF6B35]">Underline</span>
               </div>
               <div>
                 <code className="bg-white/80 px-1 py-0.5 rounded text-[#0F3A2E] font-bold">
-                  [size=2xl]Text[/size]
+                  [badge]Tag[/badge]
                 </code>{" "}
-                ➔ <span className="font-black text-base">Big 26px</span>
+                ➔ <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">Tag</span>
+              </div>
+              <div>
+                <code className="bg-white/80 px-1 py-0.5 rounded text-[#0F3A2E] font-bold">
+                  [size=lg]Text[/size]
+                </code>{" "}
+                ➔ <span className="font-bold text-sm">Large Text</span>
               </div>
               <div>
                 <code className="bg-white/80 px-1 py-0.5 rounded text-[#0F3A2E] font-bold">
@@ -464,16 +509,16 @@ export function RichTextEditor({
         {activeTab === "write" ? (
           <textarea
             ref={textareaRef}
-            rows={rows}
+            rows={actualRows}
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="w-full p-3 text-xs sm:text-sm font-sans leading-relaxed focus:outline-none resize-y text-slate-800 placeholder:text-slate-400 min-h-[120px]"
+            className={`w-full p-2.5 sm:p-3 text-xs sm:text-sm font-sans leading-relaxed focus:outline-none resize-y text-slate-800 placeholder:text-slate-400 ${minHClass}`}
           />
         ) : (
           <div
-            className="p-4 bg-slate-50/50 min-h-[120px] text-xs sm:text-sm text-slate-800 overflow-y-auto leading-relaxed border-t border-slate-100"
+            className={`p-3 sm:p-4 bg-slate-50/50 text-xs sm:text-sm text-slate-800 overflow-y-auto leading-relaxed border-t border-slate-100 ${minHClass}`}
           >
             {value && value.trim() ? (
               <FormattedText text={value} />

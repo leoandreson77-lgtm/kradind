@@ -822,9 +822,9 @@ export default function LandingPageRoute({
                     <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="text-sm text-slate-300 italic leading-relaxed">
-                  "{t.text}"
-                </p>
+                <div className="text-sm text-slate-300 italic leading-relaxed">
+                  <FormattedText text={t.text} />
+                </div>
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-800/80">
                   <div>
                     <span className="font-bold text-white block">{t.name}</span>

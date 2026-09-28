@@ -37,6 +37,7 @@ import { treks } from "@/lib/travel-data";
 import { getImageAlt } from "@/lib/image-alt";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
+import { FormattedText } from "@/components/formatted-text";
 
 export function DestinationDetailView({
   destination,
@@ -165,9 +166,9 @@ export function DestinationDetailView({
               <span>{destination.icon || "📍"}</span>
               <span>{destination.name}</span>
             </h1>
-            <p className="text-base sm:text-xl text-slate-200 font-medium leading-relaxed drop-shadow-sm">
-              {destination.tagline}
-            </p>
+            <div className="text-base sm:text-xl text-slate-200 font-medium leading-relaxed drop-shadow-sm">
+              <FormattedText text={destination.tagline} />
+            </div>
           </div>
 
           {/* Logistics Chips Row */}
@@ -298,10 +299,14 @@ export function DestinationDetailView({
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 brand-font">
                 Destination Overview & Travel Guide
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal whitespace-pre-line">
-                {destination.overview ||
-                  `${destination.name} is one of India's most cherished holiday and adventure getaways. Discover timeless landmarks, serene natural settings, verified stays, and private transfers curated by KRADIND Adventures.`}
-              </p>
+              <div className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                <FormattedText
+                  text={
+                    destination.overview ||
+                    `${destination.name} is one of India's most cherished holiday and adventure getaways. Discover timeless landmarks, serene natural settings, verified stays, and private transfers curated by KRADIND Adventures.`
+                  }
+                />
+              </div>
             </div>
 
             {/* Highlights Box */}
@@ -438,9 +443,9 @@ export function DestinationDetailView({
                   )}
 
                   {/* Description */}
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal whitespace-pre-line">
-                    {day.description}
-                  </p>
+                  <div className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    <FormattedText text={day.description} />
+                  </div>
 
                   {/* Meals & Stay Badges */}
                   {(day.meal || day.stay) && (
@@ -574,7 +579,7 @@ export function DestinationDetailView({
 
                     {isOpen && (
                       <div className="px-5 pb-5 pt-1 text-xs text-slate-600 leading-relaxed font-normal border-t border-slate-100 bg-slate-50/50">
-                        {faq.answer}
+                        <FormattedText text={faq.answer} />
                       </div>
                     )}
                   </div>

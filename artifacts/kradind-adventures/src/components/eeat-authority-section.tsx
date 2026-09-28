@@ -16,6 +16,7 @@ import {
   FileCheck,
 } from "lucide-react";
 import { HomeSectionsConfig } from "@/lib/cms-store";
+import { FormattedText } from "@/components/formatted-text";
 
 export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["eeat"] }) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -215,7 +216,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                   </button>
                   {isOpen && (
                     <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 bg-white">
-                      {item.a}
+                      <FormattedText text={item.a} />
                     </div>
                   )}
                 </div>

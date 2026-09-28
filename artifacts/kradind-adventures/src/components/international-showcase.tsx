@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Globe, ArrowRight, Plane, Clock, ShieldCheck, Star } from "lucide-react";
 import { DestinationData, HomeSectionsConfig } from "@/lib/cms-store";
+import { FormattedText } from "@/components/formatted-text";
 
 export function InternationalShowcase({
   config,
@@ -67,10 +68,14 @@ export function InternationalShowcase({
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 brand-font">
             {config?.title || "International Holiday Packages"}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-            {config?.subtitle ||
-              "Explore handpicked global destinations with complete visa assistance, verified stays, and private transfers across Bali, Thailand, Dubai, Nepal, Vietnam, Singapore, and Maldives."}
-          </p>
+          <div className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+            <FormattedText
+              text={
+                config?.subtitle ||
+                "Explore handpicked global destinations with complete visa assistance, verified stays, and private transfers across Bali, Thailand, Dubai, Nepal, Vietnam, Singapore, and Maldives."
+              }
+            />
+          </div>
         </div>
 
         <Link
@@ -137,9 +142,9 @@ export function InternationalShowcase({
                 <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition line-clamp-1">
                   {dest.name}
                 </h3>
-                <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                  {dest.tagline || `Explore customized international holidays in ${dest.name}.`}
-                </p>
+                <div className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                  <FormattedText text={dest.tagline || `Explore customized international holidays in ${dest.name}.`} />
+                </div>
 
                 {/* Highlights */}
                 {dest.highlights && dest.highlights.length > 0 && (

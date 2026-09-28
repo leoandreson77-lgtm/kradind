@@ -1235,16 +1235,17 @@ export default function AdminLandingPagesPage() {
                               </button>
                             </div>
                           </div>
-                          <textarea
+                          <RichTextEditor
+                            compact
+                            label="Review Content"
                             rows={2}
-                            value={test.text}
-                            onChange={(e) => {
+                            value={test.text || ""}
+                            onChange={(val) => {
                               const copy = [...editingPage.testimonials!];
-                              copy[idx].text = e.target.value;
+                              copy[idx].text = val;
                               setEditingPage({ ...editingPage, testimonials: copy });
                             }}
                             placeholder="Review content..."
-                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs"
                           />
                         </div>
                       ))}

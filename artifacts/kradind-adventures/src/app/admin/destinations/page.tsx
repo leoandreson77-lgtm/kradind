@@ -48,6 +48,7 @@ import {
 } from "lucide-react";
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 
@@ -1672,19 +1673,17 @@ export default function AdminDestinationsPage() {
                   </div>
 
                   {/* Tagline / Short Summary */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700">Tagline / Short Summary *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g., Royal Forts, Palaces, Camel Safaris & Golden Sand Dunes"
-                      value={editingDestination.tagline}
-                      onChange={(e) =>
-                        setEditingDestination({ ...editingDestination, tagline: e.target.value })
-                      }
-                      className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] transition font-medium"
-                    />
-                  </div>
+                  <RichTextEditor
+                    compact
+                    label="Tagline / Short Summary *"
+                    placeholder="e.g., Royal Forts, Palaces, Camel Safaris & Golden Sand Dunes"
+                    value={editingDestination.tagline || ""}
+                    onChange={(val) =>
+                      setEditingDestination({ ...editingDestination, tagline: val })
+                    }
+                    rows={2}
+                    helperText="Format key phrases with bold, colors, or highlights for hero title emphasis."
+                  />
 
                   {/* Cover Image Upload & Publish Status */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
@@ -1889,18 +1888,14 @@ export default function AdminDestinationsPage() {
                           </div>
 
                           {/* Description */}
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase">
-                              Full Day Detailed Itinerary & Route Plan
-                            </label>
-                            <textarea
-                              rows={3}
-                              placeholder="Describe today's travel schedule, scenic highlights, local stops, viewpoints, and evening activities..."
-                              value={day.description}
-                              onChange={(e) => handleUpdateDay(idx, "description", e.target.value)}
-                              className="w-full p-2.5 text-xs bg-white rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] leading-relaxed"
-                            />
-                          </div>
+                          <RichTextEditor
+                            compact
+                            label="Full Day Detailed Itinerary & Route Plan"
+                            placeholder="Describe today's travel schedule, scenic highlights, local stops, viewpoints, and evening activities..."
+                            value={day.description || ""}
+                            onChange={(val) => handleUpdateDay(idx, "description", val)}
+                            rows={3}
+                          />
 
                           {/* Extra Details: Meals, Stays, Distance, Altitude */}
                           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
@@ -2131,20 +2126,16 @@ export default function AdminDestinationsPage() {
               {modalTab === "overview" && (
                 <div className="space-y-5">
                   {/* Detailed Overview */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700">
-                      Destination About & Circuit Overview Guide
-                    </label>
-                    <textarea
-                      rows={6}
-                      placeholder="Write a comprehensive overview about this travel destination, landscape, history, unique culture, must-try cuisines, and travel atmosphere..."
-                      value={editingDestination.overview || ""}
-                      onChange={(e) =>
-                        setEditingDestination({ ...editingDestination, overview: e.target.value })
-                      }
-                      className="w-full p-3 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] leading-relaxed"
-                    />
-                  </div>
+                  <RichTextEditor
+                    label="Destination About & Circuit Overview Guide"
+                    placeholder="Write a comprehensive overview about this travel destination, landscape, history, unique culture, must-try cuisines, and travel atmosphere..."
+                    value={editingDestination.overview || ""}
+                    onChange={(val) =>
+                      setEditingDestination({ ...editingDestination, overview: val })
+                    }
+                    rows={6}
+                    helperText="Supports Headings (##), Bullet Lists (•), Bold, Italic, Color Highlights, Underline, and Badges."
+                  />
 
                   {/* Highlights */}
                   <div className="space-y-1.5">
@@ -2275,12 +2266,13 @@ export default function AdminDestinationsPage() {
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                          <textarea
-                            rows={2}
+                          <RichTextEditor
+                            compact
+                            label="Answer"
                             placeholder="Write comprehensive answer..."
-                            value={faq.answer}
-                            onChange={(e) => handleUpdateFaq(idx, "answer", e.target.value)}
-                            className="w-full p-2.5 text-xs bg-white rounded-lg border border-slate-200 focus:outline-hidden focus:border-[#FF6B35]"
+                            value={faq.answer || ""}
+                            onChange={(val) => handleUpdateFaq(idx, "answer", val)}
+                            rows={2}
                           />
                         </div>
                       ))}

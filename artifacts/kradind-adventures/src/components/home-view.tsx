@@ -72,24 +72,24 @@ export function HomeView({
         {/* Hero Banner with Filter Widget */}
         <HeroSearch config={sections?.hero} />
 
-        {/* Dynamic Campaigns & Landing Pages Section */}
-        <CampaignSection initialCampaigns={initialCampaigns} />
-
-        {/* 4.9+ Rated Best Treks */}
+        {/* 4.9+ Rated Best Treks & Popular Packages (Instant Discovery) */}
         <BestTreks
           treks={treks}
           onSelectTrek={(slug) => handleOpenBooking(slug)}
           config={sections?.bestTreks}
         />
 
+        {/* Zero Work Leave Weekend Treks */}
+        <WeekendTreks treks={treks} config={sections?.weekendTreks} />
+
+        {/* Dynamic Campaigns & Landing Pages Section */}
+        <CampaignSection initialCampaigns={initialCampaigns} />
+
         {/* Monsoon Specials & Valley Blooms Banner */}
         <MonsoonSpecials
           config={sections?.monsoon}
           onClaimCoupon={(code) => handleOpenBooking("Valley of Flowers & Hemkund")}
         />
-
-        {/* Zero Work Leave Weekend Treks */}
-        <WeekendTreks treks={treks} config={sections?.weekendTreks} />
 
         {/* International Holidays & World Tours Showcase */}
         <InternationalShowcase config={sections?.international} />

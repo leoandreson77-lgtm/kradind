@@ -2270,10 +2270,11 @@ export default function AdminTreksPage() {
                         <div key={idx} className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white space-y-3 shadow-2xs">
                           {/* Day Header */}
                           <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
-                            <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                              <span className="w-7 h-7 rounded-xl bg-[#0F3A2E] text-white text-xs font-extrabold flex items-center justify-center shrink-0">
-                                {day.day}
-                              </span>
+                            <div className="flex items-center gap-2.5 flex-1 min-w-[200px]">
+                              <div className="w-10 h-10 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shrink-0 border border-white ring-2 ring-[#0F3A2E]/20 shadow-xs select-none">
+                                <span className="text-[8px] font-bold uppercase leading-none">Day</span>
+                                <span className="text-xs font-black leading-none mt-0.5">{day.day}</span>
+                              </div>
                               <input
                                 type="text"
                                 value={day.title}

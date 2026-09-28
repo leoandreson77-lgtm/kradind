@@ -186,12 +186,7 @@ function ItineraryDayCard({ dayItem }: { dayItem: any }) {
   const parsed = parseItineraryDay(dayItem);
 
   return (
-    <div className="relative bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden">
-      {/* Timeline Node Pin on left line */}
-      <div className="absolute -left-[35px] sm:-left-[43px] top-5 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0F3A2E] text-white flex items-center justify-center font-black text-xs shadow-md border-2 border-white ring-2 ring-emerald-600/30">
-        D{dayItem.day}
-      </div>
-
+    <div className="bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden">
       <div className="p-5 sm:p-6 space-y-3.5">
         {/* Top Header: Day Badge & Route Transit */}
         <div className="flex flex-wrap items-center justify-between gap-2.5">
@@ -747,11 +742,29 @@ export default function TrekDetailPage() {
               </div>
             </div>
 
-            {/* Timeline track */}
-            <div className="relative pl-6 sm:pl-8 border-l-2 border-emerald-600/30 ml-3 sm:ml-4 space-y-6 pt-2">
+            {/* Timeline track with Connected Circular Badges */}
+            <div className="relative space-y-6 pt-2">
+              {/* Continuous Vertical Timeline Line running through center of circular badges */}
+              <div className="absolute left-[23px] sm:left-[27px] top-6 bottom-8 w-[2px] sm:w-[3px] bg-gradient-to-b from-[#0F3A2E] via-emerald-600/35 to-emerald-600/15 rounded-full" />
+
               {trek.itinerary && trek.itinerary.length > 0 ? (
                 trek.itinerary.map((dayItem: any) => (
-                  <ItineraryDayCard key={dayItem.day} dayItem={dayItem} />
+                  <div key={dayItem.day} className="relative flex items-start gap-3.5 sm:gap-5 group">
+                    {/* Circular Day Badge Centered on Vertical Line */}
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shadow-md border-2 border-white ring-4 ring-[#0F3A2E]/15 shrink-0 z-10 select-none group-hover:scale-105 group-hover:ring-[#FF6B35]/30 group-hover:border-[#FF6B35] transition-all">
+                      <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider leading-none">
+                        Day
+                      </span>
+                      <span className="text-sm sm:text-base font-black leading-none mt-0.5">
+                        {dayItem.day}
+                      </span>
+                    </div>
+
+                    {/* Day Content Card */}
+                    <div className="flex-1 min-w-0">
+                      <ItineraryDayCard dayItem={dayItem} />
+                    </div>
+                  </div>
                 ))
               ) : (
                 <p className="text-slate-500 text-sm">Itinerary details available upon request.</p>

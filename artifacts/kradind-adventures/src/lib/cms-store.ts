@@ -60,6 +60,8 @@ export interface TrekData {
   travelTips?: { title: string; desc: string }[];
   bookingPolicy?: string[];
   costFactors?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface TrailRadarReport {

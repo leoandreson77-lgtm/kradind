@@ -88,6 +88,8 @@ export async function POST(request: NextRequest) {
       inclusions: body.inclusions || [],
       exclusions: body.exclusions || [],
       faqs: body.faqs || [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     store.treks.unshift(newTrek);
@@ -120,7 +122,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Trek not found" }, { status: 404 });
     }
 
-    store.treks[index] = { ...store.treks[index], ...body };
+    store.treks[index] = {
+      ...store.treks[index],
+      ...body,
+      updatedAt: new Date().toISOString(),
+    };
     writeStore(store);
 
     // Sync to MongoDB

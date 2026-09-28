@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
   Plus,
   Edit,
@@ -36,6 +36,7 @@ import {
   Sliders,
   Search,
   ChevronDown,
+  ArrowUpDown,
   Hash,
 } from "lucide-react";
 import { TrekData, TrekBatch, TrekItineraryDay } from "@/lib/cms-store";
@@ -43,6 +44,152 @@ import { ImageUploader } from "@/components/admin/image-uploader";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+
+type DateFilterType = "all" | "today" | "7days" | "30days" | "this_month" | "custom";
+type SortOptionType = "newest" | "updated" | "oldest" | "name_asc" | "name_desc" | "price_desc" | "price_asc";
+
+function parseItemDate(
+  item: { createdAt?: string; updatedAt?: string; id?: any },
+  fallbackIdx = 0
+): { createdDate: Date; updatedDate: Date } {
+  let createdDate: Date | null = null;
+  if (item.createdAt) {
+    const d = new Date(item.createdAt);
+    if (!isNaN(d.getTime())) createdDate = d;
+  }
+  if (!createdDate && typeof item.id === "number" && item.id > 1600000000000) {
+    createdDate = new Date(item.id);
+  }
+  if (!createdDate && typeof item.id === "string") {
+    const match = item.id.match(/\d{10,13}/);
+    if (match) {
+      const num = parseInt(match[0], 10);
+      if (num > 1600000000) {
+        createdDate = new Date(num > 1000000000000 ? num : num * 1000);
+      }
+    }
+  }
+  if (!createdDate) {
+    createdDate = new Date(Date.now() - (fallbackIdx + 2) * 86400000);
+  }
+
+  let updatedDate = item.updatedAt ? new Date(item.updatedAt) : createdDate;
+  if (isNaN(updatedDate.getTime())) updatedDate = createdDate;
+
+  return { createdDate, updatedDate };
+}
+
+function formatRelativeOrDate(date: Date): string {
+  const now = Date.now();
+  const diffMs = now - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+  if (diffHours < 1) return "Just now";
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+
+  return date.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function isRecentlyAdded(date: Date, days = 7): boolean {
+  const diff = Date.now() - date.getTime();
+  return diff >= 0 && diff <= days * 86400000;
+}
+
+function matchesDateFilter(
+  createdDate: Date,
+  filterType: DateFilterType,
+  customStart: string,
+  customEnd: string
+): boolean {
+  if (filterType === "all") return true;
+
+  const now = new Date();
+  const itemTime = createdDate.getTime();
+
+  if (filterType === "today") {
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    return itemTime >= startOfToday;
+  }
+
+  if (filterType === "7days") {
+    const sevenDaysAgo = Date.now() - 7 * 86400000;
+    return itemTime >= sevenDaysAgo;
+  }
+
+  if (filterType === "30days") {
+    const thirtyDaysAgo = Date.now() - 30 * 86400000;
+    return itemTime >= thirtyDaysAgo;
+  }
+
+  if (filterType === "this_month") {
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    return itemTime >= startOfMonth;
+  }
+
+  if (filterType === "custom") {
+    let matchesStart = true;
+    let matchesEnd = true;
+    if (customStart) {
+      const s = new Date(customStart + "T00:00:00").getTime();
+      if (!isNaN(s)) matchesStart = itemTime >= s;
+    }
+    if (customEnd) {
+      const e = new Date(customEnd + "T23:59:59").getTime();
+      if (!isNaN(e)) matchesEnd = itemTime <= e;
+    }
+    return matchesStart && matchesEnd;
+  }
+
+  return true;
+}
+
+function getDateFilterLabel(filterType: DateFilterType, customStart: string, customEnd: string): string {
+  switch (filterType) {
+    case "today":
+      return "Added Today";
+    case "7days":
+      return "Last 7 Days";
+    case "30days":
+      return "Last 30 Days";
+    case "this_month":
+      return "This Month";
+    case "custom":
+      if (customStart && customEnd) return `${customStart} to ${customEnd}`;
+      if (customStart) return `From ${customStart}`;
+      if (customEnd) return `Until ${customEnd}`;
+      return "Custom Range";
+    default:
+      return "All Dates";
+  }
+}
+
+function getSortLabel(sort: SortOptionType): string {
+  switch (sort) {
+    case "newest":
+      return "Recently Added";
+    case "updated":
+      return "Recently Updated";
+    case "oldest":
+      return "Oldest First";
+    case "name_asc":
+      return "Name: A → Z";
+    case "name_desc":
+      return "Name: Z → A";
+    case "price_desc":
+      return "Price: High to Low";
+    case "price_asc":
+      return "Price: Low to High";
+    default:
+      return "Sort By";
+  }
+}
 
 function isDomesticPackage(trek?: { category?: string; categories?: string[] } | null): boolean {
   if (!trek) return false;
@@ -276,6 +423,29 @@ export default function AdminTreksPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | number | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+
+  const [sortBy, setSortBy] = useState<SortOptionType>("newest");
+  const [dateFilter, setDateFilter] = useState<DateFilterType>("all");
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
+  const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+
+  const dateFilterRef = useRef<HTMLDivElement>(null);
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dateFilterRef.current && !dateFilterRef.current.contains(event.target as Node)) {
+        setIsDateFilterOpen(false);
+      }
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
+        setIsSortDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -743,32 +913,69 @@ export default function AdminTreksPage() {
     });
   }, [treks]);
 
-  const filtered = treks.filter((t) => {
-    const isDom = isDomesticPackage(t);
+  // Recently added count (within 7 days)
+  const recentlyAddedCount = useMemo(() => {
+    return treks.filter((t) => {
+      const { createdDate } = parseItemDate(t);
+      return isRecentlyAdded(createdDate, 7);
+    }).length;
+  }, [treks]);
 
-    const matchesClassification =
-      classificationFilter === "All" ||
-      (classificationFilter === "Domestic" && isDom) ||
-      (classificationFilter === "Treks" && !isDom);
+  const filtered = useMemo(() => {
+    return treks
+      .filter((t) => {
+        const isDom = isDomesticPackage(t);
 
-    const cleanSearch = search.trim().toLowerCase().replace(/^#/, "");
-    const matchesSearch =
-      !cleanSearch ||
-      t.name.toLowerCase().includes(cleanSearch) ||
-      t.location.toLowerCase().includes(cleanSearch) ||
-      (t.region || "").toLowerCase().includes(cleanSearch) ||
-      t.slug.toLowerCase().includes(cleanSearch) ||
-      (t.category || "").toLowerCase().includes(cleanSearch) ||
-      (t.badge || "").toLowerCase().includes(cleanSearch) ||
-      (t.difficulty || "").toLowerCase().includes(cleanSearch) ||
-      (t.tagline || "").toLowerCase().includes(cleanSearch) ||
-      (t.categories || []).some((c) => c.toLowerCase().includes(cleanSearch)) ||
-      (t.highlights || []).some((h) => h.toLowerCase().includes(cleanSearch));
+        const matchesClassification =
+          classificationFilter === "All" ||
+          (classificationFilter === "Domestic" && isDom) ||
+          (classificationFilter === "Treks" && !isDom);
 
-    const matchesCategory = matchesCategoryOrTag(t, selectedCategory);
+        const cleanSearch = search.trim().toLowerCase().replace(/^#/, "");
+        const matchesSearch =
+          !cleanSearch ||
+          t.name.toLowerCase().includes(cleanSearch) ||
+          t.location.toLowerCase().includes(cleanSearch) ||
+          (t.region || "").toLowerCase().includes(cleanSearch) ||
+          t.slug.toLowerCase().includes(cleanSearch) ||
+          (t.category || "").toLowerCase().includes(cleanSearch) ||
+          (t.badge || "").toLowerCase().includes(cleanSearch) ||
+          (t.difficulty || "").toLowerCase().includes(cleanSearch) ||
+          (t.tagline || "").toLowerCase().includes(cleanSearch) ||
+          (t.categories || []).some((c) => c.toLowerCase().includes(cleanSearch)) ||
+          (t.highlights || []).some((h) => h.toLowerCase().includes(cleanSearch));
 
-    return matchesClassification && matchesSearch && matchesCategory;
-  });
+        const matchesCategory = matchesCategoryOrTag(t, selectedCategory);
+
+        const { createdDate } = parseItemDate(t);
+        const matchesDate = matchesDateFilter(createdDate, dateFilter, customStartDate, customEndDate);
+
+        return matchesClassification && matchesSearch && matchesCategory && matchesDate;
+      })
+      .sort((a, b) => {
+        const aDates = parseItemDate(a);
+        const bDates = parseItemDate(b);
+
+        switch (sortBy) {
+          case "newest":
+            return bDates.createdDate.getTime() - aDates.createdDate.getTime();
+          case "updated":
+            return bDates.updatedDate.getTime() - aDates.updatedDate.getTime();
+          case "oldest":
+            return aDates.createdDate.getTime() - bDates.createdDate.getTime();
+          case "name_asc":
+            return a.name.localeCompare(b.name);
+          case "name_desc":
+            return b.name.localeCompare(a.name);
+          case "price_desc":
+            return (b.price || 0) - (a.price || 0);
+          case "price_asc":
+            return (a.price || 0) - (b.price || 0);
+          default:
+            return 0;
+        }
+      });
+  }, [treks, classificationFilter, search, selectedCategory, dateFilter, customStartDate, customEndDate, sortBy]);
 
   const allFilteredIds = filtered.map((t) => t.id);
   const isAllSelected = allFilteredIds.length > 0 && allFilteredIds.every((id) => selectedTrekIds.includes(id));
@@ -1025,53 +1232,246 @@ export default function AdminTreksPage() {
       </div>
 
       {/* Search & Tag Filter Bar */}
-      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center gap-3">
-        <div className="flex-1 flex items-center gap-2.5 min-w-[240px]">
-          <Search className="w-4 h-4 text-slate-400 shrink-0" />
-          
-          {/* Active Tag Filter Chip inside Search */}
-          {selectedCategory !== "All" && (
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-bold shrink-0">
-              <Tag className="w-3 h-3 text-emerald-600" />
-              <span>#{selectedCategory}</span>
-              <button
-                onClick={() => setSelectedCategory("All")}
-                className="text-emerald-700 hover:text-rose-600 transition"
-                title="Clear tag filter"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex-1 flex items-center gap-2.5 min-w-[240px]">
+            <Search className="w-4 h-4 text-slate-400 shrink-0" />
+            
+            {/* Active Tag Filter Chip inside Search */}
+            {selectedCategory !== "All" && (
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-bold shrink-0">
+                <Tag className="w-3 h-3 text-emerald-600" />
+                <span>#{selectedCategory}</span>
+                <button
+                  onClick={() => setSelectedCategory("All")}
+                  className="text-emerald-700 hover:text-rose-600 transition"
+                  title="Clear tag filter"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
 
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={
-              selectedCategory !== "All"
-                ? `Search within #${selectedCategory} (name, region, slug)...`
-                : "Search package by name, destination region, #tag, or slug..."
-            }
-            className="w-full text-xs sm:text-sm bg-transparent outline-none text-slate-800 placeholder-slate-400"
-          />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={
+                selectedCategory !== "All"
+                  ? `Search within #${selectedCategory} (name, region, slug)...`
+                  : "Search package by name, destination region, #tag, or slug..."
+              }
+              className="w-full text-xs sm:text-sm bg-transparent outline-none text-slate-800 placeholder-slate-400"
+            />
+          </div>
+
+          {/* Result count */}
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[11px] font-semibold text-slate-400 hidden sm:inline">
+              Showing {filtered.length} of {treks.length}
+            </span>
+          </div>
         </div>
 
-        {/* Clear buttons & result count */}
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[11px] font-semibold text-slate-400 hidden sm:inline">
-            Showing {filtered.length} of {treks.length}
-          </span>
+        {/* Date Filter & Sort Controls Row */}
+        <div className="pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Quick 1-Click "Recently Added" Filter Toggle */}
+            <button
+              onClick={() => {
+                if (dateFilter === "7days" && sortBy === "newest") {
+                  setDateFilter("all");
+                } else {
+                  setDateFilter("7days");
+                  setSortBy("newest");
+                }
+              }}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                dateFilter === "7days" && sortBy === "newest"
+                  ? "bg-[#0F3A2E] text-white border-emerald-500/40 shadow-xs"
+                  : "bg-emerald-50/70 hover:bg-emerald-100/70 text-emerald-900 border-emerald-200/80"
+              }`}
+              title="Quick Filter: Show packages added in the last 7 days"
+            >
+              <Clock className="w-3.5 h-3.5 text-emerald-500" />
+              <span>🕒 Recently Added</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
+                  dateFilter === "7days" && sortBy === "newest"
+                    ? "bg-emerald-950 text-emerald-300"
+                    : "bg-emerald-200/80 text-emerald-900"
+                }`}
+              >
+                {recentlyAddedCount}
+              </span>
+            </button>
 
-          {(search || selectedCategory !== "All") && (
+            {/* Date-Wise Filter Dropdown */}
+            <div className="relative" ref={dateFilterRef}>
+              <button
+                onClick={() => {
+                  setIsDateFilterOpen(!isDateFilterOpen);
+                  setIsSortDropdownOpen(false);
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                  dateFilter !== "all"
+                    ? "bg-amber-500 text-white border-amber-600 shadow-xs"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200"
+                }`}
+                title="Filter packages by creation date"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Date: {getDateFilterLabel(dateFilter, customStartDate, customEndDate)}</span>
+                <ChevronDown className="w-3 h-3 ml-0.5" />
+              </button>
+
+              {/* Date Filter Popover */}
+              {isDateFilterOpen && (
+                <div className="absolute top-full left-0 mt-2 z-40 bg-white rounded-2xl shadow-xl border border-slate-200 p-3.5 w-72 space-y-3 animate-in fade-in zoom-in-95">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <span>Filter by Date Added</span>
+                    {dateFilter !== "all" && (
+                      <button
+                        onClick={() => {
+                          setDateFilter("all");
+                          setCustomStartDate("");
+                          setCustomEndDate("");
+                          setIsDateFilterOpen(false);
+                        }}
+                        className="text-rose-600 hover:underline capitalize font-semibold"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-1">
+                    {[
+                      { key: "all", label: "🌟 All Time" },
+                      { key: "today", label: "⚡ Added Today (Last 24h)" },
+                      { key: "7days", label: "🕒 Last 7 Days (Recent)" },
+                      { key: "30days", label: "🗓️ Last 30 Days" },
+                      { key: "this_month", label: "📆 This Month" },
+                      { key: "custom", label: "🛠️ Custom Date Range" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.key}
+                        onClick={() => {
+                          setDateFilter(opt.key as DateFilterType);
+                          if (opt.key !== "custom") {
+                            setIsDateFilterOpen(false);
+                          }
+                        }}
+                        className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center justify-between ${
+                          dateFilter === opt.key
+                            ? "bg-[#0F3A2E] text-white"
+                            : "text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>{opt.label}</span>
+                        {dateFilter === opt.key && <Check className="w-3.5 h-3.5" />}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Custom Date Inputs if "custom" selected */}
+                  {dateFilter === "custom" && (
+                    <div className="pt-2 border-t border-slate-100 space-y-2">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 block">From Date</label>
+                        <input
+                          type="date"
+                          value={customStartDate}
+                          onChange={(e) => setCustomStartDate(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 outline-none focus:border-[#0F3A2E]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 block">To Date</label>
+                        <input
+                          type="date"
+                          value={customEndDate}
+                          onChange={(e) => setCustomEndDate(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 outline-none focus:border-[#0F3A2E]"
+                        />
+                      </div>
+                      <button
+                        onClick={() => setIsDateFilterOpen(false)}
+                        className="w-full mt-1 py-1.5 bg-[#0F3A2E] text-white text-xs font-bold rounded-lg shadow-xs hover:bg-[#154d3d] transition text-center"
+                      >
+                        Apply Date Range
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="relative" ref={sortDropdownRef}>
+              <button
+                onClick={() => {
+                  setIsSortDropdownOpen(!isSortDropdownOpen);
+                  setIsDateFilterOpen(false);
+                }}
+                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition flex items-center gap-1.5"
+                title="Sort packages"
+              >
+                <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                <span>Sort: {getSortLabel(sortBy)}</span>
+                <ChevronDown className="w-3 h-3 ml-0.5 text-slate-400" />
+              </button>
+
+              {isSortDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 z-40 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 w-56 space-y-1 animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Sort Packages By
+                  </div>
+                  {[
+                    { key: "newest", label: "🕒 Recently Added (Newest)" },
+                    { key: "updated", label: "🔄 Recently Updated" },
+                    { key: "oldest", label: "⏳ Oldest First" },
+                    { key: "name_asc", label: "🔤 Name (A → Z)" },
+                    { key: "name_desc", label: "🔤 Name (Z → A)" },
+                    { key: "price_desc", label: "💰 Price (High to Low)" },
+                    { key: "price_asc", label: "🏷️ Price (Low to High)" },
+                  ].map((s) => (
+                    <button
+                      key={s.key}
+                      onClick={() => {
+                        setSortBy(s.key as SortOptionType);
+                        setIsSortDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center justify-between ${
+                        sortBy === s.key
+                          ? "bg-[#0F3A2E] text-white"
+                          : "text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>{s.label}</span>
+                      {sortBy === s.key && <Check className="w-3.5 h-3.5" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Reset button if any filter or sort is applied */}
+          {(search || selectedCategory !== "All" || dateFilter !== "all" || sortBy !== "newest") && (
             <button
               onClick={() => {
                 setSearch("");
                 setSelectedCategory("All");
+                setDateFilter("all");
+                setCustomStartDate("");
+                setCustomEndDate("");
+                setSortBy("newest");
               }}
-              className="text-xs text-rose-600 hover:text-rose-700 font-semibold px-2 py-1 rounded-lg hover:bg-rose-50 transition"
+              className="text-xs text-rose-600 hover:text-rose-700 font-bold px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 transition flex items-center gap-1"
             >
-              Reset Filters
+              <X className="w-3 h-3" />
+              <span>Reset Filters</span>
             </button>
           )}
         </div>
@@ -1101,9 +1501,11 @@ export default function AdminTreksPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filtered.map((t) => {
+              {filtered.map((t, idx) => {
                 const isDom = isDomesticPackage(t);
                 const isSelected = selectedTrekIds.includes(t.id);
+                const { createdDate, updatedDate } = parseItemDate(t, idx);
+                const isRecent = isRecentlyAdded(createdDate, 7);
 
                 return (
                   <tr
@@ -1139,6 +1541,12 @@ export default function AdminTreksPage() {
                         <div>
                           <div className="font-bold text-slate-900 text-sm flex flex-wrap items-center gap-2">
                             <span>{t.name}</span>
+                            {isRecent && (
+                              <span className="text-[10px] px-2 py-0.5 rounded-md bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black flex items-center gap-1 shrink-0 border border-amber-300/30">
+                                <Sparkles className="w-2.5 h-2.5" />
+                                <span>NEW</span>
+                              </span>
+                            )}
                             {/* Classification Badge */}
                             {isDom ? (
                               <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 font-bold border border-amber-200 flex items-center gap-1 shrink-0">
@@ -1157,13 +1565,18 @@ export default function AdminTreksPage() {
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                          <div className="text-[11px] text-slate-400 flex flex-wrap items-center gap-2 mt-0.5">
                             <span className="font-mono">/{t.slug}</span>
                             <span>•</span>
                             <span>{t.duration}</span>
                             <span>•</span>
                             <span className="text-emerald-700 font-medium">
                               {t.itinerary?.length || 0} Days Itinerary
+                            </span>
+                            <span>•</span>
+                            <span className="text-slate-500 font-medium flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-emerald-600" />
+                              <span>Added {formatRelativeOrDate(createdDate)}</span>
                             </span>
                           </div>
 

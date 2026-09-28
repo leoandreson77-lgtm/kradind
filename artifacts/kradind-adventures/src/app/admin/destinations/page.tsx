@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -42,11 +42,160 @@ import {
   ArrowRightLeft,
   FileDown,
   Sliders,
+  ChevronDown,
+  ArrowUpDown,
+  CalendarDays,
 } from "lucide-react";
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
+
+type DateFilterType = "all" | "today" | "7days" | "30days" | "this_month" | "custom";
+type SortOptionType = "newest" | "updated" | "oldest" | "name_asc" | "name_desc" | "price_desc" | "price_asc";
+
+function parseItemDate(
+  item: { createdAt?: string; updatedAt?: string; id?: any },
+  fallbackIdx = 0
+): { createdDate: Date; updatedDate: Date } {
+  let createdDate: Date | null = null;
+  if (item.createdAt) {
+    const d = new Date(item.createdAt);
+    if (!isNaN(d.getTime())) createdDate = d;
+  }
+  if (!createdDate && typeof item.id === "number" && item.id > 1600000000000) {
+    createdDate = new Date(item.id);
+  }
+  if (!createdDate && typeof item.id === "string") {
+    const match = item.id.match(/\d{10,13}/);
+    if (match) {
+      const num = parseInt(match[0], 10);
+      if (num > 1600000000) {
+        createdDate = new Date(num > 1000000000000 ? num : num * 1000);
+      }
+    }
+  }
+  if (!createdDate) {
+    createdDate = new Date(Date.now() - (fallbackIdx + 2) * 86400000);
+  }
+
+  let updatedDate = item.updatedAt ? new Date(item.updatedAt) : createdDate;
+  if (isNaN(updatedDate.getTime())) updatedDate = createdDate;
+
+  return { createdDate, updatedDate };
+}
+
+function formatRelativeOrDate(date: Date): string {
+  const now = Date.now();
+  const diffMs = now - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+  if (diffHours < 1) return "Just now";
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+
+  return date.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function isRecentlyAdded(date: Date, days = 7): boolean {
+  const diff = Date.now() - date.getTime();
+  return diff >= 0 && diff <= days * 86400000;
+}
+
+function matchesDateFilter(
+  createdDate: Date,
+  filterType: DateFilterType,
+  customStart: string,
+  customEnd: string
+): boolean {
+  if (filterType === "all") return true;
+
+  const now = new Date();
+  const itemTime = createdDate.getTime();
+
+  if (filterType === "today") {
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    return itemTime >= startOfToday;
+  }
+
+  if (filterType === "7days") {
+    const sevenDaysAgo = Date.now() - 7 * 86400000;
+    return itemTime >= sevenDaysAgo;
+  }
+
+  if (filterType === "30days") {
+    const thirtyDaysAgo = Date.now() - 30 * 86400000;
+    return itemTime >= thirtyDaysAgo;
+  }
+
+  if (filterType === "this_month") {
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    return itemTime >= startOfMonth;
+  }
+
+  if (filterType === "custom") {
+    let matchesStart = true;
+    let matchesEnd = true;
+    if (customStart) {
+      const s = new Date(customStart + "T00:00:00").getTime();
+      if (!isNaN(s)) matchesStart = itemTime >= s;
+    }
+    if (customEnd) {
+      const e = new Date(customEnd + "T23:59:59").getTime();
+      if (!isNaN(e)) matchesEnd = itemTime <= e;
+    }
+    return matchesStart && matchesEnd;
+  }
+
+  return true;
+}
+
+function getDateFilterLabel(filterType: DateFilterType, customStart: string, customEnd: string): string {
+  switch (filterType) {
+    case "today":
+      return "Added Today";
+    case "7days":
+      return "Last 7 Days";
+    case "30days":
+      return "Last 30 Days";
+    case "this_month":
+      return "This Month";
+    case "custom":
+      if (customStart && customEnd) return `${customStart} to ${customEnd}`;
+      if (customStart) return `From ${customStart}`;
+      if (customEnd) return `Until ${customEnd}`;
+      return "Custom Range";
+    default:
+      return "All Dates";
+  }
+}
+
+function getSortLabel(sort: SortOptionType): string {
+  switch (sort) {
+    case "newest":
+      return "Recently Added";
+    case "updated":
+      return "Recently Updated";
+    case "oldest":
+      return "Oldest First";
+    case "name_asc":
+      return "Name: A → Z";
+    case "name_desc":
+      return "Name: Z → A";
+    case "price_desc":
+      return "Price: High to Low";
+    case "price_asc":
+      return "Price: Low to High";
+    default:
+      return "Sort By";
+  }
+}
 
 const POPULAR_EMOJIS = ["🏔️", "🌲", "❄️", "🏰", "🌴", "🌊", "🇳🇵", "🏝️", "✈️", "🛕", "⛺", "📍"];
 const CATEGORIES = ["All", "Domestic", "International", "Trek", "Heritage", "Beach", "Spiritual"];
@@ -111,6 +260,29 @@ export default function AdminDestinationsPage() {
   const [newGalleryUrl, setNewGalleryUrl] = useState("");
   const [salesModalDest, setSalesModalDest] = useState<DestinationData | null>(null);
   const [pdfModalDest, setPdfModalDest] = useState<DestinationData | null>(null);
+
+  const [sortBy, setSortBy] = useState<SortOptionType>("newest");
+  const [dateFilter, setDateFilter] = useState<DateFilterType>("all");
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
+  const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+
+  const dateFilterRef = useRef<HTMLDivElement>(null);
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dateFilterRef.current && !dateFilterRef.current.contains(event.target as Node)) {
+        setIsDateFilterOpen(false);
+      }
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
+        setIsSortDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -588,18 +760,57 @@ export default function AdminDestinationsPage() {
     }
   };
 
-  // Filtered destinations
-  const filteredDestinations = destinations.filter((dest) => {
-    const matchesSearch =
-      dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      dest.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (dest.tagline && dest.tagline.toLowerCase().includes(searchQuery.toLowerCase()));
+  // Recently added count (within 7 days)
+  const recentlyAddedCount = useMemo(() => {
+    return destinations.filter((d) => {
+      const { createdDate } = parseItemDate(d);
+      return isRecentlyAdded(createdDate, 7);
+    }).length;
+  }, [destinations]);
 
-    const matchesCategory =
-      categoryFilter === "All" || (dest.category || "Domestic").toLowerCase() === categoryFilter.toLowerCase();
+  // Filtered and sorted destinations
+  const filteredDestinations = useMemo(() => {
+    return destinations
+      .filter((dest) => {
+        const matchesSearch =
+          !searchQuery.trim() ||
+          dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          dest.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (dest.tagline && dest.tagline.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (dest.highlights && dest.highlights.some((h) => h.toLowerCase().includes(searchQuery.toLowerCase())));
 
-    return matchesSearch && matchesCategory;
-  });
+        const matchesCategory =
+          categoryFilter === "All" || (dest.category || "Domestic").toLowerCase() === categoryFilter.toLowerCase();
+
+        const { createdDate } = parseItemDate(dest);
+        const matchesDate = matchesDateFilter(createdDate, dateFilter, customStartDate, customEndDate);
+
+        return matchesSearch && matchesCategory && matchesDate;
+      })
+      .sort((a, b) => {
+        const aDates = parseItemDate(a);
+        const bDates = parseItemDate(b);
+
+        switch (sortBy) {
+          case "newest":
+            return bDates.createdDate.getTime() - aDates.createdDate.getTime();
+          case "updated":
+            return bDates.updatedDate.getTime() - aDates.updatedDate.getTime();
+          case "oldest":
+            return aDates.createdDate.getTime() - bDates.createdDate.getTime();
+          case "name_asc":
+            return a.name.localeCompare(b.name);
+          case "name_desc":
+            return b.name.localeCompare(a.name);
+          case "price_desc":
+            return (b.price || 0) - (a.price || 0);
+          case "price_asc":
+            return (a.price || 0) - (b.price || 0);
+          default:
+            return 0;
+        }
+      });
+  }, [destinations, searchQuery, categoryFilter, dateFilter, customStartDate, customEndDate, sortBy]);
 
   return (
     <div className="space-y-6">
@@ -645,42 +856,256 @@ export default function AdminDestinationsPage() {
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-        {/* Search */}
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Search by destination name, slug..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] focus:ring-2 focus:ring-[#FF6B35]/15 transition font-medium"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-3.5">
+        {/* Primary Row: Search & Category Pills */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+          {/* Search */}
+          <div className="relative w-full lg:w-96">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search by destination name, slug, highlights..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#0F3A2E] focus:ring-2 focus:ring-[#0F3A2E]/10 transition font-medium"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Category Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0 scrollbar-none">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setCategoryFilter(cat)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                  categoryFilter === cat
+                    ? "bg-[#0F3A2E] text-white shadow-xs"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          {CATEGORIES.map((cat) => (
+        {/* Secondary Row: Recently Added Quick Filter, Date-Wise Filter, Sort Dropdown & Active Status */}
+        <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2.5">
+          {/* Left Controls: Recently Added + Date Filter + Sort */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Quick 1-Click "Recently Added" Filter Toggle */}
             <button
-              key={cat}
-              onClick={() => setCategoryFilter(cat)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-                categoryFilter === cat
-                  ? "bg-[#0F3A2E] text-white shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              onClick={() => {
+                if (dateFilter === "7days" && sortBy === "newest") {
+                  setDateFilter("all");
+                } else {
+                  setDateFilter("7days");
+                  setSortBy("newest");
+                }
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                dateFilter === "7days" && sortBy === "newest"
+                  ? "bg-[#0F3A2E] text-white border-emerald-500/40 shadow-xs"
+                  : "bg-emerald-50/70 hover:bg-emerald-100/70 text-emerald-900 border-emerald-200/80"
               }`}
+              title="Quick Filter: Show packages added in the last 7 days"
             >
-              {cat}
+              <Clock className="w-3.5 h-3.5 text-emerald-500" />
+              <span>🕒 Recently Added</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
+                  dateFilter === "7days" && sortBy === "newest"
+                    ? "bg-emerald-950 text-emerald-300"
+                    : "bg-emerald-200/80 text-emerald-900"
+                }`}
+              >
+                {recentlyAddedCount}
+              </span>
             </button>
-          ))}
+
+            {/* Date-Wise Filter Dropdown */}
+            <div className="relative" ref={dateFilterRef}>
+              <button
+                onClick={() => {
+                  setIsDateFilterOpen(!isDateFilterOpen);
+                  setIsSortDropdownOpen(false);
+                }}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                  dateFilter !== "all"
+                    ? "bg-amber-500 text-white border-amber-600 shadow-xs"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200"
+                }`}
+                title="Filter packages by creation date"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Date: {getDateFilterLabel(dateFilter, customStartDate, customEndDate)}</span>
+                <ChevronDown className="w-3 h-3 ml-0.5" />
+              </button>
+
+              {/* Date Filter Popover */}
+              {isDateFilterOpen && (
+                <div className="absolute top-full left-0 mt-2 z-40 bg-white rounded-2xl shadow-xl border border-slate-200 p-3.5 w-72 space-y-3 animate-in fade-in zoom-in-95">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <span>Filter by Date Added</span>
+                    {dateFilter !== "all" && (
+                      <button
+                        onClick={() => {
+                          setDateFilter("all");
+                          setCustomStartDate("");
+                          setCustomEndDate("");
+                          setIsDateFilterOpen(false);
+                        }}
+                        className="text-rose-600 hover:underline capitalize font-semibold"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-1">
+                    {[
+                      { key: "all", label: "🌟 All Time" },
+                      { key: "today", label: "⚡ Added Today (Last 24h)" },
+                      { key: "7days", label: "🕒 Last 7 Days (Recent)" },
+                      { key: "30days", label: "🗓️ Last 30 Days" },
+                      { key: "this_month", label: "📆 This Month" },
+                      { key: "custom", label: "🛠️ Custom Date Range" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.key}
+                        onClick={() => {
+                          setDateFilter(opt.key as DateFilterType);
+                          if (opt.key !== "custom") {
+                            setIsDateFilterOpen(false);
+                          }
+                        }}
+                        className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center justify-between ${
+                          dateFilter === opt.key
+                            ? "bg-[#0F3A2E] text-white"
+                            : "text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>{opt.label}</span>
+                        {dateFilter === opt.key && <Check className="w-3.5 h-3.5" />}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Custom Date Inputs if "custom" selected */}
+                  {dateFilter === "custom" && (
+                    <div className="pt-2 border-t border-slate-100 space-y-2">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 block">From Date</label>
+                        <input
+                          type="date"
+                          value={customStartDate}
+                          onChange={(e) => setCustomStartDate(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 outline-none focus:border-[#0F3A2E]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 block">To Date</label>
+                        <input
+                          type="date"
+                          value={customEndDate}
+                          onChange={(e) => setCustomEndDate(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 outline-none focus:border-[#0F3A2E]"
+                        />
+                      </div>
+                      <button
+                        onClick={() => setIsDateFilterOpen(false)}
+                        className="w-full mt-1 py-1.5 bg-[#0F3A2E] text-white text-xs font-bold rounded-lg shadow-xs hover:bg-[#154d3d] transition text-center"
+                      >
+                        Apply Date Range
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="relative" ref={sortDropdownRef}>
+              <button
+                onClick={() => {
+                  setIsSortDropdownOpen(!isSortDropdownOpen);
+                  setIsDateFilterOpen(false);
+                }}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition flex items-center gap-1.5"
+                title="Sort package circuits"
+              >
+                <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                <span>Sort: {getSortLabel(sortBy)}</span>
+                <ChevronDown className="w-3 h-3 ml-0.5 text-slate-400" />
+              </button>
+
+              {isSortDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 z-40 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 w-56 space-y-1 animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Sort Packages By
+                  </div>
+                  {[
+                    { key: "newest", label: "🕒 Recently Added (Newest)" },
+                    { key: "updated", label: "🔄 Recently Updated" },
+                    { key: "oldest", label: "⏳ Oldest First" },
+                    { key: "name_asc", label: "🔤 Name (A → Z)" },
+                    { key: "name_desc", label: "🔤 Name (Z → A)" },
+                    { key: "price_desc", label: "💰 Price (High to Low)" },
+                    { key: "price_asc", label: "🏷️ Price (Low to High)" },
+                  ].map((s) => (
+                    <button
+                      key={s.key}
+                      onClick={() => {
+                        setSortBy(s.key as SortOptionType);
+                        setIsSortDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center justify-between ${
+                        sortBy === s.key
+                          ? "bg-[#0F3A2E] text-white"
+                          : "text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>{s.label}</span>
+                      {sortBy === s.key && <Check className="w-3.5 h-3.5" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Summary & Reset Button */}
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+            <span>
+              Showing <strong className="text-slate-800 font-bold">{filteredDestinations.length}</strong> of {destinations.length}
+            </span>
+
+            {(searchQuery || categoryFilter !== "All" || dateFilter !== "all" || sortBy !== "newest") && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setCategoryFilter("All");
+                  setDateFilter("all");
+                  setCustomStartDate("");
+                  setCustomEndDate("");
+                  setSortBy("newest");
+                }}
+                className="px-2.5 py-1 text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg font-bold transition flex items-center gap-1"
+                title="Reset all search, category, date filters, and sort"
+              >
+                <X className="w-3 h-3" />
+                <span>Reset Filters</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -712,114 +1137,137 @@ export default function AdminDestinationsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDestinations.map((dest) => (
-            <div
-              key={dest.id || dest.slug}
-              className="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group"
-            >
-              {/* Card Image Banner */}
-              <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
-                <Image
-                  src={dest.image}
-                  alt={dest.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition duration-500 opacity-90"
-                  sizes="(max-width: 768px) 100vw, 400px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+          {filteredDestinations.map((dest, idx) => {
+            const { createdDate, updatedDate } = parseItemDate(dest, idx);
+            const isRecent = isRecentlyAdded(createdDate, 7);
 
-                {/* Badge & Emoji */}
-                <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                  <span className="w-8 h-8 rounded-xl bg-white/90 backdrop-blur-xs flex items-center justify-center text-base shadow-sm">
-                    {dest.icon || "📍"}
-                  </span>
-                  {dest.badge && (
-                    <span className="bg-[#0F3A2E]/90 backdrop-blur-xs text-emerald-300 border border-emerald-500/30 text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider">
-                      {dest.badge}
+            return (
+              <div
+                key={dest.id || dest.slug}
+                className="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group"
+              >
+                {/* Card Image Banner */}
+                <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
+                  <Image
+                    src={dest.image}
+                    alt={dest.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition duration-500 opacity-90"
+                    sizes="(max-width: 768px) 100vw, 400px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+                  {/* Badge & Emoji */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                    <span className="w-8 h-8 rounded-xl bg-white/90 backdrop-blur-xs flex items-center justify-center text-base shadow-sm">
+                      {dest.icon || "📍"}
                     </span>
-                  )}
-                </div>
-
-                {/* Live Site Link & Status */}
-                <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                  <button
-                    onClick={() => handleToggleStatus(dest)}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider backdrop-blur-xs transition ${
-                      dest.status === "Published"
-                        ? "bg-emerald-500/90 text-white hover:bg-emerald-600"
-                        : "bg-amber-500/90 text-white hover:bg-amber-600"
-                    }`}
-                  >
-                    {dest.status}
-                  </button>
-
-                  <Link
-                    href={`/destinations/${dest.slug}`}
-                    target="_blank"
-                    className="p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg backdrop-blur-xs transition"
-                    title="View live destination page"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-
-                {/* Title & Slug */}
-                <div className="absolute bottom-3 left-4 right-4 text-white">
-                  <h3 className="text-xl font-black brand-font drop-shadow-sm flex items-center gap-1.5">
-                    <span>{dest.name}</span>
-                  </h3>
-                  <p className="text-[11px] text-slate-300 font-mono">/destinations/{dest.slug}</p>
-                </div>
-              </div>
-
-              {/* Card Body */}
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
-                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-medium">
-                  {dest.tagline || "No description specified."}
-                </p>
-
-                <div className="space-y-2">
-                  {/* Duration & Price & Itinerary days */}
-                  <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <span className="font-bold text-emerald-900 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>{dest.duration || `${dest.itinerary?.length || 0} Days`}</span>
-                    </span>
-
-                    {dest.itinerary && dest.itinerary.length > 0 && (
-                      <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-emerald-600" />
-                        <span>{dest.itinerary.length} Days Itinerary</span>
+                    {dest.badge && (
+                      <span className="bg-[#0F3A2E]/90 backdrop-blur-xs text-emerald-300 border border-emerald-500/30 text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                        {dest.badge}
                       </span>
                     )}
-
-                    {dest.price && (
-                      <span className="font-extrabold text-slate-900">
-                        ₹{dest.price.toLocaleString("en-IN")}
+                    {isRecent && (
+                      <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xs text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1 border border-amber-300/30">
+                        <Sparkles className="w-3 h-3" />
+                        <span>NEW</span>
                       </span>
                     )}
                   </div>
 
-                  {/* Highlights Tags */}
-                  {dest.highlights && dest.highlights.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {dest.highlights.slice(0, 3).map((h, i) => (
-                        <span
-                          key={i}
-                          className="text-[10px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md"
-                        >
-                          {h}
+                  {/* Live Site Link & Status */}
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleToggleStatus(dest)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider backdrop-blur-xs transition ${
+                        dest.status === "Published"
+                          ? "bg-emerald-500/90 text-white hover:bg-emerald-600"
+                          : "bg-amber-500/90 text-white hover:bg-amber-600"
+                      }`}
+                    >
+                      {dest.status}
+                    </button>
+
+                    <Link
+                      href={`/destinations/${dest.slug}`}
+                      target="_blank"
+                      className="p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg backdrop-blur-xs transition"
+                      title="View live destination page"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+
+                  {/* Title & Slug */}
+                  <div className="absolute bottom-3 left-4 right-4 text-white">
+                    <h3 className="text-xl font-black brand-font drop-shadow-sm flex items-center gap-1.5">
+                      <span>{dest.name}</span>
+                    </h3>
+                    <p className="text-[11px] text-slate-300 font-mono">/destinations/{dest.slug}</p>
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-medium">
+                    {dest.tagline || "No description specified."}
+                  </p>
+
+                  <div className="space-y-2">
+                    {/* Duration & Price & Itinerary days */}
+                    <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <span className="font-bold text-emerald-900 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>{dest.duration || `${dest.itinerary?.length || 0} Days`}</span>
+                      </span>
+
+                      {dest.itinerary && dest.itinerary.length > 0 && (
+                        <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-emerald-600" />
+                          <span>{dest.itinerary.length} Days Itinerary</span>
                         </span>
-                      ))}
-                      {dest.highlights.length > 3 && (
-                        <span className="text-[10px] font-bold text-slate-400 px-1 py-0.5">
-                          +{dest.highlights.length - 3} more
+                      )}
+
+                      {dest.price && (
+                        <span className="font-extrabold text-slate-900">
+                          ₹{dest.price.toLocaleString("en-IN")}
                         </span>
                       )}
                     </div>
-                  )}
+
+                    {/* Highlights Tags */}
+                    {dest.highlights && dest.highlights.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {dest.highlights.slice(0, 3).map((h, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md"
+                          >
+                            {h}
+                          </span>
+                        ))}
+                        {dest.highlights.length > 3 && (
+                          <span className="text-[10px] font-bold text-slate-400 px-1 py-0.5">
+                            +{dest.highlights.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Added / Updated Date Metadata Stamp */}
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+                      <span className="flex items-center gap-1.5 font-medium text-slate-600">
+                        <Calendar className="w-3 h-3 text-emerald-600" />
+                        <span>Added {formatRelativeOrDate(createdDate)}</span>
+                      </span>
+                      {dest.updatedAt && (
+                        <span className="text-[10px] text-slate-400">
+                          Updated {formatRelativeOrDate(updatedDate)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
 
               {/* Card Footer Actions */}
               <div className="px-4 py-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
@@ -890,7 +1338,8 @@ export default function AdminDestinationsPage() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

@@ -261,6 +261,14 @@ export function ItineraryPdfModal({
             break-inside: avoid !important;
             page-break-inside: avoid !important;
           }
+          *, *::before, *::after {
+            box-shadow: none !important;
+            text-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            transition: none !important;
+            animation: none !important;
+          }
         }
       `}</style>
 

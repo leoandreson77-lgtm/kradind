@@ -234,7 +234,7 @@ export function SalesItineraryCustomizer({
 
   return (
     <>
-      <div className="fixed inset-0 z-[9990] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+      <div className="fixed inset-0 z-[9990] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto print:hidden">
         <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
           {/* Header */}
           <div className="bg-[#0F3A2E] text-white px-5 sm:px-7 py-4 flex items-center justify-between gap-3 shrink-0">

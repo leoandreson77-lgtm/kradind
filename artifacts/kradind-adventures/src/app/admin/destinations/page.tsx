@@ -823,8 +823,41 @@ export default function AdminDestinationsPage() {
         </div>
       )}
 
+      {/* Print-Only Professional Catalog Header */}
+      <div className="hidden print:flex items-center justify-between pb-4 mb-4 border-b-2 border-[#0F3A2E]">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="KRADIND Adventures"
+            width={160}
+            height={50}
+            className="h-10 w-auto object-contain"
+            priority
+          />
+          <div>
+            <h1 className="text-base font-extrabold text-[#0F3A2E]">
+              Destination Packages & Circuit Catalog
+            </h1>
+            <p className="text-[10px] text-slate-500">
+              Official KRAD Global Travels & KRADIND Adventures Portfolio
+            </p>
+          </div>
+        </div>
+        <div className="text-right text-[11px] text-slate-600 space-y-0.5">
+          <span className="font-bold text-slate-900 block">
+            Total Circuits: {filteredDestinations.length}
+          </span>
+          <span className="text-[10px] text-slate-500 block">
+            Generated on {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+          </span>
+          <span className="text-[10px] text-emerald-700 font-semibold block">
+            www.kradind.com • +91 7500222141
+          </span>
+        </div>
+      </div>
+
       {/* Header Banner */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-black tracking-widest text-[#FF6B35] uppercase mb-1">
             <Compass className="w-4 h-4" />
@@ -839,6 +872,16 @@ export default function AdminDestinationsPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-2 cursor-pointer"
+            title="Export clean, lightweight PDF catalog of destinations"
+          >
+            <FileDown className="w-4 h-4 text-emerald-700" />
+            <span>Export Clean PDF</span>
+          </button>
+
           <Link
             href="/admin/treks"
             className="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold rounded-2xl transition flex items-center gap-2"
@@ -857,7 +900,7 @@ export default function AdminDestinationsPage() {
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-3.5">
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-3.5 print:hidden">
         {/* Primary Row: Search & Category Pills */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
           {/* Search */}
@@ -1137,7 +1180,7 @@ export default function AdminDestinationsPage() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-2 print:gap-4">
           {filteredDestinations.map((dest, idx) => {
             const { createdDate, updatedDate } = parseItemDate(dest, idx);
             const isRecent = isRecentlyAdded(createdDate, 7);
@@ -1145,10 +1188,10 @@ export default function AdminDestinationsPage() {
             return (
               <div
                 key={dest.id || dest.slug}
-                className="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group"
+                className="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group break-inside-avoid page-break-inside-avoid print-card-item print:rounded-2xl print:border-slate-300 print:shadow-none"
               >
                 {/* Card Image Banner */}
-                <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
+                <div className="relative h-48 print:h-32 w-full bg-slate-900 overflow-hidden">
                   <Image
                     src={dest.image}
                     alt={dest.name}
@@ -1177,7 +1220,7 @@ export default function AdminDestinationsPage() {
                   </div>
 
                   {/* Live Site Link & Status */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5 print:hidden">
                     <button
                       onClick={() => handleToggleStatus(dest)}
                       className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider backdrop-blur-xs transition ${
@@ -1271,12 +1314,12 @@ export default function AdminDestinationsPage() {
                 </div>
 
               {/* Card Footer Actions */}
-              <div className="px-4 py-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
+              <div className="px-4 py-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between print:py-2">
                 <span className="text-[11px] font-medium text-slate-500">
                   Category: <span className="font-bold text-slate-800">{dest.category || "Domestic"}</span>
                 </span>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 print:hidden">
                   {/* Switch between Domestic and Trek */}
                   <button
                     onClick={() => handleToggleCategory(dest)}
@@ -1346,7 +1389,7 @@ export default function AdminDestinationsPage() {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmId !== null && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 print:hidden">
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95">
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
@@ -1378,7 +1421,7 @@ export default function AdminDestinationsPage() {
 
       {/* Add / Edit Destination Modal with 5 Comprehensive Tabs */}
       {isModalOpen && editingDestination && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto print:hidden">
           <div className="bg-white rounded-3xl max-w-5xl w-full p-5 sm:p-8 space-y-5 shadow-2xl border border-slate-200 my-6 animate-in fade-in zoom-in-95 max-h-[92vh] flex flex-col">
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">

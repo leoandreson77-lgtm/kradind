@@ -40,6 +40,7 @@ import {
   Plane,
   ShieldCheck,
   FileCheck,
+  FileDown,
 } from "lucide-react";
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
@@ -456,8 +457,41 @@ export default function AdminInternationalPage() {
         </div>
       )}
 
+      {/* Print-Only International Catalog Header */}
+      <div className="hidden print:flex items-center justify-between pb-4 mb-4 border-b-2 border-[#0F3A2E]">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="KRADIND Adventures"
+            width={160}
+            height={50}
+            className="h-10 w-auto object-contain"
+            priority
+          />
+          <div>
+            <h1 className="text-base font-extrabold text-[#0F3A2E]">
+              International Tours & Holiday Packages Catalog
+            </h1>
+            <p className="text-[10px] text-slate-500">
+              Official KRAD Global Travels Portfolio
+            </p>
+          </div>
+        </div>
+        <div className="text-right text-[11px] text-slate-600 space-y-0.5">
+          <span className="font-bold text-slate-900 block">
+            Total Tours: {filtered.length}
+          </span>
+          <span className="text-[10px] text-slate-500 block">
+            Generated on {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+          </span>
+          <span className="text-[10px] text-emerald-700 font-semibold block">
+            www.kradind.com • +91 7500222141
+          </span>
+        </div>
+      </div>
+
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden print:hidden">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -475,6 +509,16 @@ export default function AdminInternationalPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="px-4 py-2.5 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-2 backdrop-blur-xs cursor-pointer"
+              title="Export clean, lightweight PDF catalog of international tours"
+            >
+              <FileDown className="w-4 h-4 text-emerald-300" />
+              <span>Export Clean PDF</span>
+            </button>
+
             <Link
               href="/international-trips"
               target="_blank"
@@ -519,7 +563,7 @@ export default function AdminInternationalPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3 print:hidden">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="relative w-full sm:w-80">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -611,11 +655,11 @@ export default function AdminInternationalPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 print:grid-cols-2 print:gap-4">
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs hover:shadow-md transition duration-200 flex flex-col justify-between group"
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs hover:shadow-md transition duration-200 flex flex-col justify-between group break-inside-avoid page-break-inside-avoid print-card-item print:border-slate-300 print:shadow-none"
             >
               <div>
                 {/* Visual Image Header with Badges */}
@@ -737,7 +781,7 @@ export default function AdminInternationalPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div className="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-2 print:hidden">
                 <div className="flex items-center gap-1">
                   <button
                     type="button"

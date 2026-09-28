@@ -1004,8 +1004,38 @@ export default function AdminTreksPage() {
         </div>
       )}
 
+      {/* Print-Only Treks & Tours Catalog Header */}
+      <div className="hidden print:flex items-center justify-between pb-4 mb-4 border-b-2 border-[#0F3A2E]">
+        <div className="flex items-center gap-3">
+          <img
+            src="/logo.png"
+            alt="KRADIND Adventures"
+            className="h-10 w-auto object-contain"
+          />
+          <div>
+            <h1 className="text-base font-extrabold text-[#0F3A2E]">
+              Treks &amp; Domestic Tour Packages Catalog
+            </h1>
+            <p className="text-[10px] text-slate-500">
+              Official KRAD Global Travels &amp; KRADIND Adventures Portfolio
+            </p>
+          </div>
+        </div>
+        <div className="text-right text-[11px] text-slate-600 space-y-0.5">
+          <span className="font-bold text-slate-900 block">
+            Total Packages: {filtered.length}
+          </span>
+          <span className="text-[10px] text-slate-500 block">
+            Generated on {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+          </span>
+          <span className="text-[10px] text-emerald-700 font-semibold block">
+            www.kradind.com • +91 7500222141
+          </span>
+        </div>
+      </div>
+
       {/* Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Treks & Domestic Packages CMS
@@ -1015,17 +1045,29 @@ export default function AdminTreksPage() {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm"
-        >
-          <Plus className="w-4 h-4 text-emerald-400" />
-          <span>Add New Package / Trek</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
+            title="Export clean, lightweight PDF catalog of treks and tour packages"
+          >
+            <FileDown className="w-4 h-4 text-emerald-700" />
+            <span>Export Clean PDF</span>
+          </button>
+
+          <button
+            onClick={handleOpenAdd}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+          >
+            <Plus className="w-4 h-4 text-emerald-400" />
+            <span>Add New Package / Trek</span>
+          </button>
+        </div>
       </div>
 
       {/* Primary Classification Filter Bar (Treks vs Domestic Packages) */}
-      <div className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none w-full sm:w-auto">
           <button
             onClick={() => setClassificationFilter("All")}
@@ -1232,7 +1274,7 @@ export default function AdminTreksPage() {
       </div>
 
       {/* Search & Tag Filter Bar */}
-      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3 print:hidden">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex-1 flex items-center gap-2.5 min-w-[240px]">
             <Search className="w-4 h-4 text-slate-400 shrink-0" />
@@ -1483,7 +1525,7 @@ export default function AdminTreksPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-100">
               <tr>
-                <th className="px-3.5 py-3.5 w-10 text-center">
+                <th className="px-3.5 py-3.5 w-10 text-center print:hidden">
                   <input
                     type="checkbox"
                     checked={isAllSelected}
@@ -1497,7 +1539,7 @@ export default function AdminTreksPage() {
                 <th className="px-5 py-3.5">Altitude / Style</th>
                 <th className="px-5 py-3.5">Price</th>
                 <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5 text-right">Actions</th>
+                <th className="px-5 py-3.5 text-right print:hidden">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -1510,11 +1552,11 @@ export default function AdminTreksPage() {
                 return (
                   <tr
                     key={t.id}
-                    className={`hover:bg-slate-50/70 transition ${
+                    className={`hover:bg-slate-50/70 transition break-inside-avoid page-break-inside-avoid print-card-item ${
                       isSelected ? "bg-emerald-50/40" : ""
                     }`}
                   >
-                    <td className="px-3.5 py-3.5 text-center">
+                    <td className="px-3.5 py-3.5 text-center print:hidden">
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -1648,7 +1690,7 @@ export default function AdminTreksPage() {
                         <span>{t.status}</span>
                       </button>
                     </td>
-                    <td className="px-5 py-3.5 text-right space-x-1 whitespace-nowrap">
+                    <td className="px-5 py-3.5 text-right space-x-1 whitespace-nowrap print:hidden">
                       {/* One-Click Move Action Button */}
                       {isDom ? (
                         <button

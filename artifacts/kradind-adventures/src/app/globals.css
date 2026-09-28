@@ -109,3 +109,75 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   }
 }
 
+/* ========================================================================= */
+/* GLOBAL HIGH-PERFORMANCE PRINT & PDF EXPORT OPTIMIZATIONS                  */
+/* ========================================================================= */
+@media print {
+  @page {
+    margin: 10mm 10mm 10mm 10mm;
+    size: auto;
+  }
+
+  /* Reset layout and backgrounds */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    font-size: 10.5pt !important;
+  }
+
+  /* Strip expensive GPU filters, blurs, and shadows that bloat PDF size and cause lag */
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Ensure containers do not cause unwanted clipping or scrollbars */
+  body, main, div {
+    overflow: visible !important;
+  }
+
+  /* Prevent split / cut-off cards across pages */
+  .break-inside-avoid,
+  .page-break-inside-avoid,
+  .print-card-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Hide admin shells, sidebars, buttons, toolbars, and floaters */
+  aside,
+  header:not(.print-header),
+  nav,
+  .no-print,
+  .print-hidden,
+  .admin-sidebar,
+  .floating-whatsapp {
+    display: none !important;
+  }
+
+  /* Ensure full printable width on main content */
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Images rendering optimization */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid !important;
+  }
+}
+

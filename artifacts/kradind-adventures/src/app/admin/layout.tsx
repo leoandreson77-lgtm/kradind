@@ -131,7 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row text-slate-800 font-sans">
       
       {/* Mobile Top Navigation */}
-      <div className="md:hidden sticky top-0 z-30 bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 shadow-sm">
+      <div className="md:hidden sticky top-0 z-30 bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 shadow-sm print:hidden">
         <div className="flex items-center gap-2.5">
           <Image
             src="/logo-emblem.png"
@@ -154,13 +154,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-40 transition-opacity"
+          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-40 transition-opacity print:hidden"
         />
       )}
 
       {/* Admin Sidebar - Permanently FIXED on Desktop, Smooth Slide Drawer on Mobile */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col justify-between overflow-y-auto transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col justify-between overflow-y-auto transition-transform duration-300 ease-in-out print:hidden ${
           sidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -249,7 +249,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content Area - with offset to respect fixed sidebar */}
-      <main className="flex-1 min-w-0 md:ml-64 p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 min-w-0 md:ml-64 p-4 sm:p-6 lg:p-8 print:m-0 print:p-0 print:ml-0 print:w-full">
         {children}
       </main>
 

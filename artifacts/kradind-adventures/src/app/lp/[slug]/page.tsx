@@ -40,6 +40,7 @@ import {
   Tag,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { FormattedText } from "@/components/formatted-text";
 
 export default function LandingPageRoute({
   params,
@@ -267,9 +268,9 @@ export default function LandingPageRoute({
                 </h1>
 
                 {/* Subtitle */}
-                <p className="text-sm sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl">
-                  {page.subtitle}
-                </p>
+                <div className="text-sm sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl">
+                  <FormattedText text={page.subtitle} />
+                </div>
 
                 {/* Trust Points Grid */}
                 <div className="grid grid-cols-2 gap-3 pt-2">
@@ -558,9 +559,9 @@ export default function LandingPageRoute({
                   <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition">
                     {hl.title}
                   </h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    {hl.desc}
-                  </p>
+                  <div className="text-xs text-slate-400 leading-relaxed">
+                    <FormattedText text={hl.desc} />
+                  </div>
                 </div>
               </div>
             ))}
@@ -870,7 +871,7 @@ export default function LandingPageRoute({
                   </button>
                   {isOpen && (
                     <div className="px-5 pb-5 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/50 pt-3">
-                      {faq.answer}
+                      <FormattedText text={faq.answer} />
                     </div>
                   )}
                 </div>

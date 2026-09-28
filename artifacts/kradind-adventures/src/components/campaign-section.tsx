@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { LandingPageData } from "@/lib/cms-store";
 import { getImageAlt } from "@/lib/image-alt";
+import { FormattedText } from "@/components/formatted-text";
 
 function getCampaignAlt(camp: any) {
   return camp.heroImageAlt || camp.imageAlt || getImageAlt(camp, "trekking");
@@ -74,10 +75,10 @@ export function CampaignSection({
           </div>
 
           <Link
-            href="/treks"
+            href="/lp"
             className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-emerald-400 hover:text-emerald-300 transition group"
           >
-            <span>Browse All Domestic &amp; Alpine Treks</span>
+            <span>View All Signature Expeditions</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
           </Link>
         </div>
@@ -137,9 +138,9 @@ export function CampaignSection({
                   <h3 className="text-xl sm:text-2xl font-black text-white group-hover:text-emerald-400 transition leading-tight">
                     {camp.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-300 mt-2 line-clamp-2 leading-relaxed">
-                    {camp.subtitle}
-                  </p>
+                  <div className="text-xs sm:text-sm text-slate-300 mt-2 line-clamp-2 leading-relaxed">
+                    <FormattedText text={camp.subtitle} />
+                  </div>
                 </div>
 
                 {/* Highlights preview */}

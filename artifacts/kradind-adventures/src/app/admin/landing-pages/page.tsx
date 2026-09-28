@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { LandingPageData, TrekData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 const DEFAULT_NEW_PAGE: LandingPageData = {
   id: "",
@@ -651,16 +652,14 @@ export default function AdminLandingPagesPage() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Subtitle / Summary</label>
-                    <textarea
-                      rows={3}
-                      value={editingPage.subtitle}
-                      onChange={(e) => setEditingPage({ ...editingPage, subtitle: e.target.value })}
-                      placeholder="Compelling subheading explaining the expedition experience..."
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
-                    />
-                  </div>
+                  <RichTextEditor
+                    label="Subtitle / Summary"
+                    value={editingPage.subtitle || ""}
+                    onChange={(val) => setEditingPage({ ...editingPage, subtitle: val })}
+                    rows={3}
+                    placeholder="Compelling subheading explaining the expedition experience... Format with Bold, Italic, Sizing, Colors..."
+                    helperText="You can bold key stats, italicize taglines, or highlight discounts."
+                  />
 
                   <div>
                     <ImageUploader
@@ -910,16 +909,16 @@ export default function AdminLandingPagesPage() {
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <textarea
-                            rows={2}
-                            value={hl.desc}
-                            onChange={(e) => {
+                          <RichTextEditor
+                            label="Feature Narrative"
+                            value={hl.desc || ""}
+                            onChange={(val) => {
                               const copy = [...editingPage.highlights];
-                              copy[idx].desc = e.target.value;
+                              copy[idx].desc = val;
                               setEditingPage({ ...editingPage, highlights: copy });
                             }}
-                            placeholder="Detailed description..."
-                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs"
+                            rows={2}
+                            placeholder="Detailed description with bold, italic, or custom sizing..."
                           />
                         </div>
                       ))}
@@ -1060,20 +1059,18 @@ export default function AdminLandingPagesPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Form Subtitle</label>
-                    <textarea
-                      rows={2}
-                      value={editingPage.leadFormConfig.subtitle}
-                      onChange={(e) =>
-                        setEditingPage({
-                          ...editingPage,
-                          leadFormConfig: { ...editingPage.leadFormConfig, subtitle: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
-                    />
-                  </div>
+                  <RichTextEditor
+                    label="Form Subtitle"
+                    value={editingPage.leadFormConfig.subtitle || ""}
+                    onChange={(val) =>
+                      setEditingPage({
+                        ...editingPage,
+                        leadFormConfig: { ...editingPage.leadFormConfig, subtitle: val },
+                      })
+                    }
+                    rows={2}
+                    placeholder="Subtitle for lead form with bold, highlights, or discounts..."
+                  />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-200">
                     <div>
@@ -1151,16 +1148,16 @@ export default function AdminLandingPagesPage() {
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <textarea
-                            rows={2}
-                            value={faq.answer}
-                            onChange={(e) => {
+                          <RichTextEditor
+                            label="FAQ Detailed Answer"
+                            value={faq.answer || ""}
+                            onChange={(val) => {
                               const copy = [...editingPage.faqs!];
-                              copy[idx].answer = e.target.value;
+                              copy[idx].answer = val;
                               setEditingPage({ ...editingPage, faqs: copy });
                             }}
-                            placeholder="Answer..."
-                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs"
+                            rows={2}
+                            placeholder="Answer formatted with bold, italic, or custom sizing..."
                           />
                         </div>
                       ))}

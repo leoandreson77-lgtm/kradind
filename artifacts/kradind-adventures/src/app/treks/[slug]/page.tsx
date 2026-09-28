@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
+import { FormattedText } from "@/components/formatted-text";
 
 interface ParsedItineraryDay {
   cleanTitle: string;
@@ -287,9 +288,7 @@ function ItineraryDayCard({ dayItem }: { dayItem: any }) {
         {/* Narrative Description */}
         <div className="space-y-2.5 pt-1.5 text-slate-700 text-xs sm:text-sm leading-relaxed">
           {parsed.paragraphs.map((para, pIdx) => (
-            <p key={pIdx} className="leading-relaxed">
-              {para}
-            </p>
+            <FormattedText key={pIdx} text={para} />
           ))}
         </div>
 
@@ -681,8 +680,8 @@ export default function TrekDetailPage() {
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 brand-font">
               About the Journey
             </h2>
-            <div className="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line space-y-3">
-              {trek.overview}
+            <div className="text-slate-600 text-sm sm:text-base leading-relaxed space-y-3">
+              <FormattedText text={trek.overview} />
             </div>
           </div>
 

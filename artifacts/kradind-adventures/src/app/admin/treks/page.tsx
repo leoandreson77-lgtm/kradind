@@ -42,6 +42,7 @@ import { TrekData, TrekBatch, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 function isDomesticPackage(trek?: { category?: string; categories?: string[] } | null): boolean {
   if (!trek) return false;
@@ -1920,22 +1921,17 @@ export default function AdminTreksPage() {
                           </div>
 
                           {/* Day Description */}
-                          <div>
-                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-                              Day Narrative & Activities
-                            </label>
-                            <textarea
-                              rows={3}
-                              value={day.description}
-                              onChange={(e) => {
-                                const days = [...(editingTrek.itinerary || [])];
-                                days[idx] = { ...days[idx], description: e.target.value };
-                                setEditingTrek({ ...editingTrek, itinerary: days });
-                              }}
-                              className="w-full px-3 py-2 bg-slate-50/50 border border-slate-200 rounded-xl text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                              placeholder="Describe the trail terrain, river crossings, views, and resting points..."
-                            />
-                          </div>
+                          <RichTextEditor
+                            label="Day Narrative & Activities"
+                            value={day.description || ""}
+                            onChange={(val) => {
+                              const days = [...(editingTrek.itinerary || [])];
+                              days[idx] = { ...days[idx], description: val };
+                              setEditingTrek({ ...editingTrek, itinerary: days });
+                            }}
+                            rows={3}
+                            placeholder="Describe the trail terrain, river crossings, views, and resting points..."
+                          />
 
                           {/* 4 Metrics: Distance, Altitude, Meals, Stay */}
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
@@ -2284,18 +2280,14 @@ export default function AdminTreksPage() {
                 {/* TAB 6: OVERVIEW & HIGHLIGHTS */}
                 {modalTab === "overview" && (
                   <div className="space-y-5">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        About the Journey (Overview Narrative)
-                      </label>
-                      <textarea
-                        rows={6}
-                        value={editingTrek.overview || ""}
-                        onChange={(e) => setEditingTrek({ ...editingTrek, overview: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm leading-relaxed"
-                        placeholder="Write the detailed overview, landscape description, and trek story here..."
-                      />
-                    </div>
+                    <RichTextEditor
+                      label="About the Journey (Overview Narrative)"
+                      value={editingTrek.overview || ""}
+                      onChange={(val) => setEditingTrek({ ...editingTrek, overview: val })}
+                      rows={6}
+                      placeholder="Write the detailed overview, landscape description, and trek story here. Format with Bold, Italic, Sizing, Colors..."
+                      helperText="Use toolbar buttons to format headings, bold/italic text, custom font sizes, or colors."
+                    />
 
                     <div>
                       <div className="flex items-center justify-between mb-2">

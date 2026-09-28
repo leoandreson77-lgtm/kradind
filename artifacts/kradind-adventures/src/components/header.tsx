@@ -253,6 +253,20 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                       <span className="text-[11px] text-slate-500">2-3 Days Quick Escapes</span>
                     </div>
                   </Link>
+
+                  <Link
+                    href="/lp"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/80 transition group border border-emerald-200/80"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-bold shrink-0 text-sm">
+                      ⚡
+                    </div>
+                    <div>
+                      <span className="font-extrabold text-[#0F3A2E] group-hover:text-emerald-950 block">Signature Expeditions</span>
+                      <span className="text-[11px] text-emerald-700">Special Campaigns & Early Bird</span>
+                    </div>
+                  </Link>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
@@ -854,6 +868,20 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             className="block text-sm font-bold text-[#0F3A2E] py-2"
           >
             Home
+          </Link>
+
+          <Link
+            href="/lp"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center justify-between text-xs font-extrabold text-[#0F3A2E] bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl my-1"
+          >
+            <span className="flex items-center gap-1.5">
+              <span>⚡</span>
+              <span>Signature Expeditions</span>
+            </span>
+            <span className="text-[10px] bg-[#FF6B35] text-white px-2 py-0.5 rounded-full font-bold">
+              CAMPAIGNS
+            </span>
           </Link>
 
           {/* 1. Mobile Treks Accordion */}

@@ -219,6 +219,11 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                 </Link>
               </li>
               <li>
+                <Link href="/lp" className="hover:text-white transition flex items-center gap-1 text-emerald-400 font-bold">
+                  <span>⚡ Signature Expeditions</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/treks/category/domestic" className="hover:text-white transition">
                   Domestic Trips
                 </Link>

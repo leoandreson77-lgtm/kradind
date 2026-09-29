@@ -80,7 +80,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           className="flex items-center gap-2 shrink-0 group py-1"
         >
           <img
-            src="/logo-horizontal.png"
+            src="/logo-horizontal.webp"
             alt="KRAD Global tour and travel company logo"
             width={195}
             height={50}

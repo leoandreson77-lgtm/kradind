@@ -57,7 +57,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-emerald-400/60 shadow-lg bg-emerald-950 shrink-0">
                 <img
-                  src="/logo-emblem.png"
+                  src="/logo-emblem.webp"
                   alt="KRAD Global tour and travel company logo"
                   width={96}
                   height={96}
@@ -90,7 +90,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                 </p>
 
                 <p className="text-xs text-slate-400 max-w-2xl leading-relaxed pt-1">
-                  {config?.description || "Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring."}
+                  {config?.description || "We lead safe Himalayan treks across Uttarakhand, Himachal, and Ladakh. Our mountain guides bring 10+ years of trail experience, daily weather checks, and top safety care to every group."}
                 </p>
               </div>
             </div>
@@ -121,7 +121,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
             </div>
             <h4 className="font-extrabold text-sm text-slate-900">4.9 / 5 Verified Rating</h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Consistently rated top-tier by over 2,480+ trekkers across India for certified safety, authentic trail guidance, and hygienic summit camps.
+              Rated 4.9 stars by over 2,480+ happy travelers across India for safety, friendly guides, and comfortable mountain stays.
             </p>
           </div>
 
@@ -131,7 +131,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
             </div>
             <h4 className="font-extrabold text-sm text-slate-900">Wilderness First Aid (WFA)</h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              All guides undergo rigorous Wilderness First Aid training, carry dedicated oxygen canisters, pulse oximeters, and adhere to strict AMS protocols.
+              Our guides are Wilderness First Aid certified. We carry emergency oxygen, health kits, and monitor acclimatization daily.
             </p>
           </div>
 
@@ -141,7 +141,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
             </div>
             <h4 className="font-extrabold text-sm text-slate-900">Leave No Trace (LNT)</h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              We operate small-batch departures under strict LNT eco-principles, keeping alpine bugyals, high passes, and pristine water streams plastic-free.
+              We keep the mountains clean with small groups, zero plastic disposal, and full Leave No Trace eco-care on every trail.
             </p>
           </div>
 
@@ -151,7 +151,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                 <Compass className="w-5 h-5 text-purple-700" />
               </div>
               <img
-                src="/logo-horizontal.png"
+                src="/logo-horizontal.webp"
                 alt="Dehradun travel and tour services by KRAD Global"
                 width={120}
                 height={30}
@@ -177,7 +177,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
               Himalayan Expeditions &amp; Trail Readiness
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Planning your high-altitude trek requires thorough understanding of elevation gains, weather windows, acclimatization, and local trail regulations. Here are essential insights verified by our expedition desk.
+              Get ready for your Himalayan trip with clear advice on packing, best seasons, fitness prep, and safety steps from our team.
             </p>
             <div className="pt-2">
               <Link

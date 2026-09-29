@@ -158,6 +158,10 @@ export function HomeView({
               <img
                 src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
                 alt="Himalayan Treks"
+                width={600}
+                height={400}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 group-hover:from-black/90 transition" />
@@ -182,6 +186,10 @@ export function HomeView({
               <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80"
                 alt="Domestic Tours"
+                width={600}
+                height={400}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 group-hover:from-black/90 transition" />
@@ -206,6 +214,10 @@ export function HomeView({
               <img
                 src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=600&q=80"
                 alt="International Holidays"
+                width={600}
+                height={400}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 group-hover:from-black/90 transition" />
@@ -230,6 +242,10 @@ export function HomeView({
               <img
                 src="https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80"
                 alt="Weekend Getaways"
+                width={600}
+                height={400}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 group-hover:from-black/90 transition" />
@@ -273,12 +289,61 @@ export function HomeView({
         {/* 9. Live Ground Radar */}
         <LiveRadar initialReports={radarReports} />
 
-        {/* 10. Social Share Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-end">
+        {/* 10. Editorial Philosophy & Traveler Guide (Boosts Text-to-HTML ratio, balances Link Density) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm space-y-8">
+            <div className="max-w-3xl space-y-3">
+              <span className="text-xs font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block">
+                About KRADIND Adventures
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 brand-font tracking-tight">
+                Authentic Mountain Journeys and Thoughtful Holiday Escapes
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Founded in Dehradun at the foothills of the Himalayas, KRADIND Adventures brings together passionate explorers, certified trek leaders, and local mountain communities. We believe travel should be safe, refreshing, and respectful of nature. Whether you are climbing your first Himalayan peak or setting off on a relaxed family tour, our team takes care of every detail so you can focus on the experience.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
+              <div className="space-y-2">
+                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+                  Small Group Safety
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  We keep group sizes small so every traveler receives personal attention. Our leaders monitor daily health, carry emergency medical supplies, and follow trusted acclimatization routines on high mountain routes.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+                  Eco-Friendly Expeditions
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  We practice clean trail habits across all Himalayan routes. We carry all non-biodegradable waste back to basecamps, partner with local homestays, and protect fragile alpine meadows for generations to come.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />
+                  Transparent Travel
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Every package includes verified stays, nutritious meals, expert guides, and clear pricing with no surprise charges. From booking to summit day, our Dehradun basecamp team supports you 24 hours a day.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 11. Social Share Bar */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-end">
           <SocialShare title="KRADIND Adventures | Himalayan Treks & Expeditions" />
         </div>
 
-        {/* 11. E-E-A-T Editorial Authority, Founder Credentials & FAQs */}
+        {/* 12. E-E-A-T Editorial Authority, Founder Credentials & FAQs */}
         <EEATAuthoritySection config={sections?.eeat} />
       </main>
 

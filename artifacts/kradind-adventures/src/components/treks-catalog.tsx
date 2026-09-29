@@ -279,8 +279,11 @@ export function TreksContent({
                   <img
                     src={trek.image}
                     alt={trek.imageAlt || getTrekCatalogAlt(trek)}
+                    width={600}
+                    height={375}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
                   <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">

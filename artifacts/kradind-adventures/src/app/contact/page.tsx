@@ -85,7 +85,6 @@ export default function ContactPage() {
                 <h3 className="font-bold text-sm text-slate-900">Emergency Ground Desk</h3>
                 <a
                   href="tel:+917500222141"
-                  itemProp="telephone"
                   className="text-xs text-slate-600 hover:text-emerald-700 font-medium mt-1 block"
                 >
                   +91 75002 22141 (24/7 Helpline & WhatsApp)
@@ -103,23 +102,18 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div
-              className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4"
-              itemProp="address"
-              itemScope
-              itemType="https://schema.org/PostalAddress"
-            >
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
               <div className="p-3 bg-blue-100 text-blue-700 rounded-xl shrink-0">
                 <MapPin className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="font-bold text-sm text-slate-900">Headquarters & Basecamp Office</h3>
                 <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                  <span itemProp="streetAddress">Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony</span>,{" "}
-                  <span itemProp="addressLocality">Dehradun</span>,{" "}
-                  <span itemProp="addressRegion">Uttarakhand</span>{" "}
-                  <span itemProp="postalCode">248001</span>,{" "}
-                  <span itemProp="addressCountry">India</span>
+                  <span>Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony</span>,{" "}
+                  <span>Dehradun</span>,{" "}
+                  <span>Uttarakhand</span>{" "}
+                  <span>248001</span>,{" "}
+                  <span>India</span>
                 </p>
                 <div className="mt-2.5">
                   <a

@@ -125,7 +125,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
             <a
               href={whatsappUrl}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition text-[11px] shadow-sm shadow-emerald-950"
             >
               <MessageCircle className="w-3 h-3" />
@@ -144,7 +144,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
             <div className="flex items-center gap-3">
               <div className="relative p-1.5 bg-white/5 rounded-2xl border border-white/10 shadow-inner">
                 <img
-                  src="/logo-emblem.png"
+                  src="/logo-emblem.webp"
                   alt="KRADIND Adventures - Official Himalayan Tour & Trek Operator Emblem"
                   width={44}
                   height={44}
@@ -178,7 +178,6 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
               <a
                 href={`tel:${cleanPhone}`}
                 className="flex items-center gap-2.5 hover:text-emerald-400 transition group"
-                itemProp="telephone"
               >
                 <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition">
                   <Phone className="w-3.5 h-3.5" />
@@ -191,11 +190,8 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
               <a
                 href={addressGoogleLink}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="nofollow noopener noreferrer"
                 className="flex items-start gap-2.5 text-slate-400 hover:text-emerald-300 transition group"
-                itemProp="address"
-                itemScope
-                itemType="https://schema.org/PostalAddress"
                 title="View KRAD Global location on Google Maps / Search"
               >
                 <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition shrink-0 mt-0.5">
@@ -350,7 +346,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                     key={s.name}
                     href={s.url}
                     target="_blank"
-                    rel="me noopener noreferrer"
+                    rel="me nofollow noopener noreferrer"
                     aria-label={s.name}
                     title={s.name}
                     className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm ${s.bg} ${s.color}`}

@@ -12,7 +12,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "KRAD Global | Tour & Travel Company in Dehradun | India",
   description:
-    "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
+    "KRAD Global is a leading travel company in Dehradun offering Himalayan treks, domestic holidays, and international tours with certified guides.",
   keywords: [
     "tour and travel company in Dehradun",
     "travel agency in Dehradun",
@@ -34,14 +34,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "KRAD Global | Tour & Travel Company in Dehradun | India",
     description:
-      "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
+      "KRAD Global is a leading travel company in Dehradun offering Himalayan treks, domestic holidays, and international tours with certified guides.",
     url: "https://kradind.com",
     siteName: "KRAD Global",
     images: [
       {
-        url: "/logo.png",
-        width: 1475,
-        height: 950,
+        url: "/logo.webp",
+        width: 1200,
+        height: 630,
         alt: "KRAD Global tour and travel company logo",
       },
     ],
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "KRAD Global | Tour & Travel Company in Dehradun | India",
     description:
-      "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
-    images: ["/logo.png"],
+      "KRAD Global is a leading travel company in Dehradun offering Himalayan treks, domestic holidays, and international tours with certified guides.",
+    images: ["/logo.webp"],
   },
 };
 
@@ -69,8 +69,8 @@ export default async function HomePage() {
     ]);
 
     const publishedTreks = (treks || []).filter((t) => t.status === "Published");
-    // Strip heavy itinerary, inclusions, faqs to shrink inline JS payload from 152KB to <25KB
-    const lightweightHomeTreks: TrekData[] = publishedTreks.map((t) => ({
+    // Limit to top 16 packages for homepage discovery to keep page weight < 80KB & inline JS < 30KB
+    const lightweightHomeTreks: TrekData[] = publishedTreks.slice(0, 16).map((t) => ({
       id: t.id,
       slug: t.slug,
       name: t.name,
@@ -108,7 +108,7 @@ export default async function HomePage() {
     console.error("HomePage SSR load error:", err);
     const store = readStore();
     const publishedTreks = (store.treks || []).filter((t) => t.status === "Published");
-    const lightweightHomeTreks: TrekData[] = publishedTreks.map((t) => ({
+    const lightweightHomeTreks: TrekData[] = publishedTreks.slice(0, 16).map((t) => ({
       id: t.id,
       slug: t.slug,
       name: t.name,

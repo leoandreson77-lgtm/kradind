@@ -80,6 +80,8 @@ export function MonsoonSpecials({
               <img
                 src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=600&q=80"
                 alt="Popular India holiday destination featured by KRAD Global"
+                width={600}
+                height={350}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -121,6 +123,8 @@ export function MonsoonSpecials({
               <img
                 src="/monsoon-rain.webp"
                 alt="Himalayan trekking package by KRAD Global"
+                width={600}
+                height={350}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -162,6 +166,8 @@ export function MonsoonSpecials({
               <img
                 src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80"
                 alt="Customized holiday package by KRAD Global"
+                width={600}
+                height={350}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

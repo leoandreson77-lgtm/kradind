@@ -228,6 +228,8 @@ export function BestTreks({
                   <img
                     src={trek.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"}
                     alt={trek.imageAlt || getTopTrekAlt(trek)}
+                    width={600}
+                    height={400}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

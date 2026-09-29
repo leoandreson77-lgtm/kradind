@@ -149,7 +149,7 @@ export function HeroSearch({
                 width={1376}
                 height={768}
                 className="w-full h-full object-cover object-center"
-                loading={idx === 0 ? "eager" : "lazy"}
+                loading={idx < 3 ? "eager" : "lazy"}
                 fetchPriority={idx === 0 ? "high" : "low"}
                 decoding={idx === 0 ? "sync" : "async"}
               />

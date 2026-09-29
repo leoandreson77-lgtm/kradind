@@ -54,6 +54,9 @@ export async function POST(request: NextRequest) {
         id: admin.id,
         email: admin.email,
         name: admin.name,
+        role: admin.role || "Super Admin",
+        department: admin.department || "Executive & Strategy",
+        permissions: admin.permissions || ["all"],
       },
     });
 

@@ -17,6 +17,9 @@ export function createSessionToken(user: AdminUser): string {
       id: user.id,
       email: user.email,
       name: user.name,
+      role: user.role || "Super Admin",
+      department: user.department || "Executive & Strategy",
+      permissions: user.permissions || ["all"],
       issuedAt: Date.now(),
     }),
   ).toString("base64url");

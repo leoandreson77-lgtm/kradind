@@ -278,13 +278,131 @@ export interface DestinationData {
   travelTips?: string[];
 }
 
+export type AdminRole =
+  | "Super Admin"
+  | "Operations Manager"
+  | "Sales / CRM Agent"
+  | "Expedition Leader";
+
 export interface AdminUser {
   id: string;
   email: string;
   name: string;
+  role?: AdminRole;
+  department?: string;
+  status?: "Active" | "Suspended" | "Pending";
+  permissions?: string[];
+  phone?: string;
+  avatar?: string;
+  lastLogin?: string;
   passwordHash: string;
   salt: string;
   createdAt: string;
+}
+
+export type CustomerLifecycleStage =
+  | "Lead"
+  | "Prospect"
+  | "First-Time Explorer"
+  | "Repeat Customer"
+  | "VIP Explorer"
+  | "Inactive"
+  | "Blacklisted";
+
+export type CustomerStatus =
+  | "Active"
+  | "Follow-Up Needed"
+  | "Won"
+  | "Lost"
+  | "Dormant";
+
+export type LoyaltyTier =
+  | "Explorer (Bronze)"
+  | "Summiteer (Silver)"
+  | "Alpinist (Gold)"
+  | "Legend (Platinum)";
+
+export interface CustomerEmergencyContact {
+  name: string;
+  relation: string;
+  phone: string;
+}
+
+export interface CustomerRecord {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  state?: string;
+  country: string;
+  avatar?: string;
+  lifecycleStage: CustomerLifecycleStage;
+  status: CustomerStatus;
+  source: string;
+  tags: string[];
+  assignedTo: string;
+  priority: "Low" | "Medium" | "High" | "Urgent / VIP";
+  totalSpent: number;
+  totalTrips: number;
+  loyaltyTier: LoyaltyTier;
+  emergencyContact?: CustomerEmergencyContact;
+  medicalNotes?: string;
+  dietaryPreference?: "Vegetarian" | "Non-Vegetarian" | "Jain" | "Vegan" | "Any";
+  tShirtSize?: "S" | "M" | "L" | "XL" | "XXL";
+  idProofVerified: boolean;
+  notesCount: number;
+  lastContactDate?: string;
+  nextFollowUpDate?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type TimelineEventType =
+  | "lead_created"
+  | "booking_created"
+  | "payment_received"
+  | "call_logged"
+  | "whatsapp_sent"
+  | "email_sent"
+  | "note_added"
+  | "stage_changed"
+  | "followup_scheduled"
+  | "trek_completed";
+
+export interface CustomerTimelineEvent {
+  id: string;
+  customerId: string;
+  type: TimelineEventType;
+  title: string;
+  description: string;
+  author: string;
+  metadata?: Record<string, any>;
+  timestamp: string;
+}
+
+export interface CustomerTask {
+  id: string;
+  customerId: string;
+  customerName: string;
+  customerPhone: string;
+  title: string;
+  dueDate: string;
+  priority: "Low" | "Medium" | "High";
+  status: "Pending" | "Completed" | "Overdue";
+  assignedTo: string;
+  createdAt: string;
+}
+
+export interface AuditLogRecord {
+  id: string;
+  actorName: string;
+  actorEmail: string;
+  action: string;
+  targetEntity: "Customer" | "Lead" | "Booking" | "User" | "CMS";
+  targetId?: string;
+  details: string;
+  timestamp: string;
 }
 
 export interface CMSStoreData {
@@ -296,6 +414,10 @@ export interface CMSStoreData {
   leads: LeadRecord[];
   landingPages: LandingPageData[];
   destinations?: DestinationData[];
+  customers?: CustomerRecord[];
+  customerTimeline?: CustomerTimelineEvent[];
+  customerTasks?: CustomerTask[];
+  auditLogs?: AuditLogRecord[];
 }
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
@@ -2566,6 +2688,288 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
   };
 }
 
+
+export function seedInitialCRM(
+  bookings: BookingRecord[] = [],
+  leads: LeadRecord[] = []
+): {
+  customers: CustomerRecord[];
+  timeline: CustomerTimelineEvent[];
+  tasks: CustomerTask[];
+  auditLogs: AuditLogRecord[];
+} {
+  const customers: CustomerRecord[] = [];
+  const timeline: CustomerTimelineEvent[] = [];
+  const tasks: CustomerTask[] = [];
+  const auditLogs: AuditLogRecord[] = [];
+  const emailMap = new Set<string>();
+
+  // 1. Convert bookings to customer profiles
+  bookings.forEach((b, idx) => {
+    const emailKey = (b.email || "").toLowerCase().trim();
+    if (!emailKey || emailMap.has(emailKey)) return;
+    emailMap.add(emailKey);
+
+    const custId = `CUST-${1000 + idx + 1}`;
+    const stage: CustomerLifecycleStage = b.status === "Completed" ? "Repeat Customer" : "First-Time Explorer";
+    const status: CustomerStatus = "Active";
+
+    customers.push({
+      id: custId,
+      name: b.customerName,
+      email: b.email,
+      phone: b.phone,
+      city: idx % 2 === 0 ? "Mumbai" : "Bengaluru",
+      state: idx % 2 === 0 ? "Maharashtra" : "Karnataka",
+      country: "India",
+      lifecycleStage: stage,
+      status: status,
+      source: "Website Booking",
+      tags: ["High Altitude", "Confirmed Booking", "Verified Explorer"],
+      assignedTo: "Priya Sharma",
+      priority: b.totalAmount > 20000 ? "High" : "Medium",
+      totalSpent: b.totalAmount,
+      totalTrips: 1,
+      loyaltyTier: b.totalAmount > 30000 ? "Summiteer (Silver)" : "Explorer (Bronze)",
+      emergencyContact: {
+        name: `${b.customerName.split(" ")[0]} Kin`,
+        relation: "Family",
+        phone: "+91 99887 76655",
+      },
+      medicalNotes: "No reported chronic issues; cleared for high-altitude trekking.",
+      dietaryPreference: "Vegetarian",
+      tShirtSize: "L",
+      idProofVerified: true,
+      notesCount: 2,
+      lastContactDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+      nextFollowUpDate: new Date(Date.now() + 86400000 * 3).toISOString(),
+      createdAt: b.createdAt || new Date(Date.now() - 86400000 * 10).toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    timeline.push(
+      {
+        id: `TL-${custId}-1`,
+        customerId: custId,
+        type: "lead_created",
+        title: "Website Inquiry Received",
+        description: `Customer submitted booking interest for ${b.trekName} (${b.travelers} travelers).`,
+        author: "System Automated",
+        metadata: { trek: b.trekName, travelers: b.travelers },
+        timestamp: new Date(new Date(b.createdAt || Date.now()).getTime() - 3600000).toISOString(),
+      },
+      {
+        id: `TL-${custId}-2`,
+        customerId: custId,
+        type: "booking_created",
+        title: `Booking Confirmed #${b.id}`,
+        description: `Reserved ${b.trekName} for ${b.batchDate}. Total amount: ₹${b.totalAmount.toLocaleString("en-IN")}.`,
+        author: "Priya Sharma",
+        metadata: { bookingId: b.id, amount: b.totalAmount },
+        timestamp: b.createdAt || new Date().toISOString(),
+      },
+      {
+        id: `TL-${custId}-3`,
+        customerId: custId,
+        type: "payment_received",
+        title: "Advance Payment Verified",
+        description: `Full payment of ₹${b.totalAmount.toLocaleString("en-IN")} received via Net Banking/UPI. Invoice generated.`,
+        author: "Finance Desk",
+        metadata: { amount: b.totalAmount },
+        timestamp: new Date(new Date(b.createdAt || Date.now()).getTime() + 1800000).toISOString(),
+      }
+    );
+  });
+
+  // 2. Convert leads to customer profiles
+  leads.forEach((l, idx) => {
+    const emailKey = (l.email || "").toLowerCase().trim();
+    if (!emailKey || emailMap.has(emailKey)) return;
+    emailMap.add(emailKey);
+
+    const custId = `CUST-${2000 + idx + 1}`;
+    customers.push({
+      id: custId,
+      name: l.name,
+      email: l.email,
+      phone: l.phone,
+      city: idx % 2 === 0 ? "New Delhi" : "Pune",
+      state: idx % 2 === 0 ? "Delhi NCR" : "Maharashtra",
+      country: "India",
+      lifecycleStage: l.status === "Qualified" ? "Prospect" : "Lead",
+      status: "Follow-Up Needed",
+      source: l.source || "Landing Page Lead",
+      tags: ["Incoming Lead", "Needs Follow-up"],
+      assignedTo: "Priya Sharma",
+      priority: "Medium",
+      totalSpent: 0,
+      totalTrips: 0,
+      loyaltyTier: "Explorer (Bronze)",
+      medicalNotes: "Awaiting pre-trek fitness declaration.",
+      dietaryPreference: "Any",
+      tShirtSize: "M",
+      idProofVerified: false,
+      notesCount: 1,
+      lastContactDate: l.createdAt,
+      nextFollowUpDate: new Date(Date.now() + 86400000).toISOString(),
+      createdAt: l.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    timeline.push(
+      {
+        id: `TL-${custId}-1`,
+        customerId: custId,
+        type: "lead_created",
+        title: `Lead Captured from ${l.source}`,
+        description: `Customer inquired about ${l.trekInterest || "Himalayan Treks"}: "${l.message}"`,
+        author: "System Lead Intake",
+        timestamp: l.createdAt || new Date().toISOString(),
+      },
+      {
+        id: `TL-${custId}-2`,
+        customerId: custId,
+        type: "call_logged",
+        title: "Outbound Qualification Call",
+        description: "Called customer to understand group size and fitness background. Requested detailed itinerary via WhatsApp.",
+        author: "Priya Sharma",
+        timestamp: new Date(new Date(l.createdAt || Date.now()).getTime() + 3600000).toISOString(),
+      }
+    );
+  });
+
+  // 3. Add notable VIP explorer profile
+  const vipCustId = "CUST-3001";
+  customers.unshift({
+    id: vipCustId,
+    name: "Dr. Siddharth Kapoor",
+    email: "dr.siddharth.k@aiims.edu",
+    phone: "+91 98200 11223",
+    city: "Chandigarh",
+    state: "Punjab",
+    country: "India",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+    lifecycleStage: "VIP Explorer",
+    status: "Active",
+    source: "Referral",
+    tags: ["VIP Explorer", "High Altitude Veteran", "Expedition Doctor", "Photographer"],
+    assignedTo: "Vikram Rawat",
+    priority: "Urgent / VIP",
+    totalSpent: 84500,
+    totalTrips: 4,
+    loyaltyTier: "Legend (Platinum)",
+    emergencyContact: {
+      name: "Meera Kapoor",
+      relation: "Spouse",
+      phone: "+91 98200 44556",
+    },
+    medicalNotes: "Certified medical practitioner. Carries personal high-altitude first aid kit. Excellent summit fitness.",
+    dietaryPreference: "Vegetarian",
+    tShirtSize: "XL",
+    idProofVerified: true,
+    notesCount: 4,
+    lastContactDate: new Date(Date.now() - 86400000).toISOString(),
+    nextFollowUpDate: new Date(Date.now() + 86400000 * 2).toISOString(),
+    createdAt: "2025-04-12T10:00:00.000Z",
+    updatedAt: new Date().toISOString(),
+  });
+
+  timeline.push(
+    {
+      id: `TL-${vipCustId}-1`,
+      customerId: vipCustId,
+      type: "trek_completed",
+      title: "Summit Achieved: Kedarkantha Winter Snow",
+      description: "Successfully summitted with Batch #KW-04. Stellar review left on Google.",
+      author: "Tashi Dorje",
+      timestamp: "2025-12-28T14:30:00.000Z",
+    },
+    {
+      id: `TL-${vipCustId}-2`,
+      customerId: vipCustId,
+      type: "trek_completed",
+      title: "Summit Achieved: Hampta Pass Crossover",
+      description: "Crossed Hampta Pass into Spiti with 3 colleagues. Expressed strong interest in Bali or Ladakh next.",
+      author: "Vikram Rawat",
+      timestamp: "2026-06-18T16:00:00.000Z",
+    },
+    {
+      id: `TL-${vipCustId}-3`,
+      customerId: vipCustId,
+      type: "note_added",
+      title: "VIP Status Upgrade to Legend Platinum",
+      description: "Granted complimentary alpine equipment rental and direct access to founder expedition desk.",
+      author: "Head of Expeditions",
+      timestamp: "2026-07-01T11:00:00.000Z",
+    }
+  );
+
+  // 4. Sample Tasks
+  tasks.push(
+    {
+      id: "TSK-101",
+      customerId: vipCustId,
+      customerName: "Dr. Siddharth Kapoor",
+      customerPhone: "+91 98200 11223",
+      title: "VIP Briefing: Share early access dates for Ladakh Chadar & Winter Summit 2026",
+      dueDate: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+      priority: "High",
+      status: "Pending",
+      assignedTo: "Vikram Rawat",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "TSK-102",
+      customerId: customers[1]?.id || "CUST-1001",
+      customerName: customers[1]?.name || "Pooja Hegde",
+      customerPhone: customers[1]?.phone || "+91 97112 23344",
+      title: "Send WhatsApp gear checklist & pickup coordination point for Dehradun arrival",
+      dueDate: new Date().toISOString().split("T")[0],
+      priority: "High",
+      status: "Pending",
+      assignedTo: "Priya Sharma",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "TSK-103",
+      customerId: customers[2]?.id || "CUST-2001",
+      customerName: customers[2]?.name || "Aman Shrivastava",
+      customerPhone: customers[2]?.phone || "+91 98223 34455",
+      title: "Follow up on custom group quotation (4 people) for Autumn Roopkund",
+      dueDate: new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0],
+      priority: "Medium",
+      status: "Pending",
+      assignedTo: "Priya Sharma",
+      createdAt: new Date().toISOString(),
+    }
+  );
+
+  // 5. Initial Audit Logs
+  auditLogs.push(
+    {
+      id: "AUD-1",
+      actorName: "Head of Expeditions",
+      actorEmail: "admin@kradind.com",
+      action: "Configured Enterprise CRM & RBAC Module",
+      targetEntity: "CMS",
+      details: "Initialized Customer 360 directory, pipeline stages, and staff role permissions.",
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: "AUD-2",
+      actorName: "Priya Sharma",
+      actorEmail: "priya.sales@kradind.com",
+      action: "Created Customer Follow-up Task",
+      targetEntity: "Customer",
+      targetId: vipCustId,
+      details: "Scheduled VIP outreach for winter alpine circuit.",
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+    }
+  );
+
+  return { customers, timeline, tasks, auditLogs };
+}
+
 function getInitialStore(): CMSStoreData {
   const defaultAdmin = hashPassword("Admin@Kradind2026");
 
@@ -2575,6 +2979,54 @@ function getInitialStore(): CMSStoreData {
         id: "admin-1",
         email: "admin@kradind.com",
         name: "Head of Expeditions",
+        role: "Super Admin",
+        department: "Executive & Strategy",
+        status: "Active",
+        permissions: ["all"],
+        phone: "+91 75002 22141",
+        lastLogin: new Date().toISOString(),
+        passwordHash: defaultAdmin.hash,
+        salt: defaultAdmin.salt,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "admin-sales",
+        name: "Priya Sharma",
+        email: "priya.sales@kradind.com",
+        role: "Sales / CRM Agent",
+        department: "Sales & Expeditions",
+        status: "Active",
+        permissions: ["crm:read", "crm:write", "leads:manage", "bookings:read", "bookings:write"],
+        phone: "+91 98101 22334",
+        lastLogin: new Date(Date.now() - 3600000).toISOString(),
+        passwordHash: defaultAdmin.hash,
+        salt: defaultAdmin.salt,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "admin-ops",
+        name: "Vikram Rawat",
+        email: "vikram.ops@kradind.com",
+        role: "Operations Manager",
+        department: "Ground Operations & Safety",
+        status: "Active",
+        permissions: ["crm:read", "crm:write", "bookings:manage", "radar:manage", "cms:edit", "treks:manage"],
+        phone: "+91 97200 44556",
+        lastLogin: new Date(Date.now() - 7200000).toISOString(),
+        passwordHash: defaultAdmin.hash,
+        salt: defaultAdmin.salt,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "admin-guide",
+        name: "Tashi Dorje",
+        email: "tashi.guide@kradind.com",
+        role: "Expedition Leader",
+        department: "Field Leadership & Medical Desk",
+        status: "Active",
+        permissions: ["crm:read", "bookings:read", "radar:manage"],
+        phone: "+91 94190 77889",
+        lastLogin: new Date(Date.now() - 86400000).toISOString(),
         passwordHash: defaultAdmin.hash,
         salt: defaultAdmin.salt,
         createdAt: new Date().toISOString(),
@@ -2657,6 +3109,7 @@ function getInitialStore(): CMSStoreData {
     ],
     landingPages: getDefaultLandingPages(),
     destinations: getDefaultDestinations(),
+    ...seedInitialCRM(),
   };
 }
 
@@ -2798,6 +3251,80 @@ export function readStore(): CMSStoreData {
         copyrightText: rawHome?.contactAndFooter?.copyrightText || defaultSections.contactAndFooter.copyrightText,
       },
     };
+
+
+    // 1. Upgrade existing admins with RBAC roles & permissions
+    if (parsed.admins && parsed.admins.length > 0) {
+      let adminUpdated = false;
+      parsed.admins.forEach((admin) => {
+        if (!admin.role) {
+          admin.role = "Super Admin";
+          admin.department = "Executive & Strategy";
+          admin.status = "Active";
+          admin.permissions = ["all"];
+          adminUpdated = true;
+        }
+      });
+      if (parsed.admins.length === 1) {
+        const defaultStaff = hashPassword("Team@Kradind2026");
+        parsed.admins.push(
+          {
+            id: "admin-sales",
+            name: "Priya Sharma",
+            email: "priya.sales@kradind.com",
+            role: "Sales / CRM Agent",
+            department: "Sales & Expeditions",
+            status: "Active",
+            permissions: ["crm:read", "crm:write", "leads:manage", "bookings:read", "bookings:write"],
+            phone: "+91 98101 22334",
+            lastLogin: new Date(Date.now() - 3600000).toISOString(),
+            passwordHash: defaultStaff.hash,
+            salt: defaultStaff.salt,
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: "admin-ops",
+            name: "Vikram Rawat",
+            email: "vikram.ops@kradind.com",
+            role: "Operations Manager",
+            department: "Ground Operations & Safety",
+            status: "Active",
+            permissions: ["crm:read", "crm:write", "bookings:manage", "radar:manage", "cms:edit", "treks:manage"],
+            phone: "+91 97200 44556",
+            lastLogin: new Date(Date.now() - 7200000).toISOString(),
+            passwordHash: defaultStaff.hash,
+            salt: defaultStaff.salt,
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: "admin-guide",
+            name: "Tashi Dorje",
+            email: "tashi.guide@kradind.com",
+            role: "Expedition Leader",
+            department: "Field Leadership & Medical Desk",
+            status: "Active",
+            permissions: ["crm:read", "bookings:read", "radar:manage"],
+            phone: "+91 94190 77889",
+            lastLogin: new Date(Date.now() - 86400000).toISOString(),
+            passwordHash: defaultStaff.hash,
+            salt: defaultStaff.salt,
+            createdAt: new Date().toISOString(),
+          }
+        );
+        adminUpdated = true;
+      }
+      if (adminUpdated) updated = true;
+    }
+
+    // 2. Initialize Customers & Full History if missing or empty
+    if (!parsed.customers || parsed.customers.length === 0) {
+      const seeded = seedInitialCRM(parsed.bookings || [], parsed.leads || []);
+      parsed.customers = seeded.customers;
+      parsed.customerTimeline = seeded.timeline;
+      parsed.customerTasks = seeded.tasks;
+      parsed.auditLogs = seeded.auditLogs;
+      updated = true;
+    }
 
     if (updated) {
       writeStore(parsed);
@@ -3034,3 +3561,239 @@ export async function getInternationalDestinationsAsync(): Promise<DestinationDa
 }
 
 
+
+
+// ==========================================
+// ENTERPRISE CRM & RBAC ASYNC DATA SERVICES
+// ==========================================
+
+export async function getCustomersAsync(): Promise<CustomerRecord[]> {
+  try {
+    const db = await getDb();
+    const doc = await db.collection("kradind_config").findOne({ configKey: "customers" });
+    if (doc && Array.isArray((doc as any).customers) && (doc as any).customers.length > 0) {
+      const store = readStore();
+      store.customers = (doc as any).customers;
+      return (doc as any).customers;
+    }
+  } catch (err) {
+    console.warn("MongoDB getCustomers error, fallback to local store:", err);
+  }
+  return readStore().customers || [];
+}
+
+export async function saveCustomerAsync(cust: CustomerRecord, actorName = "Admin User"): Promise<CustomerRecord> {
+  const store = readStore();
+  if (!store.customers) store.customers = [];
+  const idx = store.customers.findIndex((c) => c.id === cust.id);
+  const isNew = idx === -1;
+  const now = new Date().toISOString();
+
+  if (isNew) {
+    cust.createdAt = cust.createdAt || now;
+    cust.updatedAt = now;
+    store.customers.unshift(cust);
+  } else {
+    cust.updatedAt = now;
+    store.customers[idx] = cust;
+  }
+
+  // Add timeline entry
+  if (!store.customerTimeline) store.customerTimeline = [];
+  store.customerTimeline.unshift({
+    id: `TL-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    customerId: cust.id,
+    type: isNew ? "lead_created" : "stage_changed",
+    title: isNew ? "Customer Profile Created" : `Profile Updated (${cust.lifecycleStage})`,
+    description: isNew
+      ? `Profile registered with stage "${cust.lifecycleStage}" and status "${cust.status}". Source: ${cust.source}.`
+      : `Customer details updated by ${actorName}. Priority: ${cust.priority}, Stage: ${cust.lifecycleStage}.`,
+    author: actorName,
+    timestamp: now,
+  });
+
+  // Add audit log
+  if (!store.auditLogs) store.auditLogs = [];
+  store.auditLogs.unshift({
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    actorName,
+    actorEmail: "admin@kradind.com",
+    action: isNew ? "Created Customer" : "Updated Customer",
+    targetEntity: "Customer",
+    targetId: cust.id,
+    details: `${cust.name} (${cust.phone}) set to stage ${cust.lifecycleStage}.`,
+    timestamp: now,
+  });
+
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    await db.collection("kradind_config").updateOne(
+      { configKey: "customers" },
+      { $set: { configKey: "customers", customers: store.customers } },
+      { upsert: true }
+    );
+  } catch {}
+
+  return cust;
+}
+
+export async function deleteCustomerAsync(id: string, actorName = "Admin User"): Promise<boolean> {
+  const store = readStore();
+  if (!store.customers) return false;
+  const idx = store.customers.findIndex((c) => c.id === id);
+  if (idx === -1) return false;
+
+  const removed = store.customers.splice(idx, 1)[0];
+  if (!store.auditLogs) store.auditLogs = [];
+  store.auditLogs.unshift({
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    actorName,
+    actorEmail: "admin@kradind.com",
+    action: "Deleted Customer",
+    targetEntity: "Customer",
+    targetId: id,
+    details: `Customer ${removed.name} (${removed.email}) was removed.`,
+    timestamp: new Date().toISOString(),
+  });
+
+  writeStore(store);
+  return true;
+}
+
+export async function getCustomerTimelineAsync(customerId?: string): Promise<CustomerTimelineEvent[]> {
+  const store = readStore();
+  const all = store.customerTimeline || [];
+  if (customerId) {
+    return all.filter((e) => e.customerId === customerId);
+  }
+  return all;
+}
+
+export async function addTimelineEventAsync(event: Omit<CustomerTimelineEvent, "id" | "timestamp">): Promise<CustomerTimelineEvent> {
+  const store = readStore();
+  if (!store.customerTimeline) store.customerTimeline = [];
+  const fullEvent: CustomerTimelineEvent = {
+    ...event,
+    id: `TL-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: new Date().toISOString(),
+  };
+  store.customerTimeline.unshift(fullEvent);
+
+  if (["note_added", "call_logged", "whatsapp_sent", "email_sent"].includes(event.type) && store.customers) {
+    const cust = store.customers.find((c) => c.id === event.customerId);
+    if (cust) {
+      cust.notesCount = (cust.notesCount || 0) + 1;
+      cust.lastContactDate = fullEvent.timestamp;
+    }
+  }
+
+  writeStore(store);
+  return fullEvent;
+}
+
+export async function getCustomerTasksAsync(): Promise<CustomerTask[]> {
+  const store = readStore();
+  return store.customerTasks || [];
+}
+
+export async function saveCustomerTaskAsync(task: CustomerTask): Promise<CustomerTask> {
+  const store = readStore();
+  if (!store.customerTasks) store.customerTasks = [];
+  const idx = store.customerTasks.findIndex((t) => t.id === task.id);
+  if (idx === -1) {
+    store.customerTasks.unshift(task);
+  } else {
+    store.customerTasks[idx] = task;
+  }
+  writeStore(store);
+  return task;
+}
+
+export async function deleteCustomerTaskAsync(id: string): Promise<boolean> {
+  const store = readStore();
+  if (!store.customerTasks) return false;
+  const idx = store.customerTasks.findIndex((t) => t.id === id);
+  if (idx === -1) return false;
+  store.customerTasks.splice(idx, 1);
+  writeStore(store);
+  return true;
+}
+
+export async function getAuditLogsAsync(): Promise<AuditLogRecord[]> {
+  const store = readStore();
+  return store.auditLogs || [];
+}
+
+export async function addAuditLogAsync(log: Omit<AuditLogRecord, "id" | "timestamp">): Promise<AuditLogRecord> {
+  const store = readStore();
+  if (!store.auditLogs) store.auditLogs = [];
+  const fullLog: AuditLogRecord = {
+    ...log,
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: new Date().toISOString(),
+  };
+  store.auditLogs.unshift(fullLog);
+  writeStore(store);
+  return fullLog;
+}
+
+export async function getAdminUsersAsync(): Promise<AdminUser[]> {
+  const store = readStore();
+  return store.admins || [];
+}
+
+export async function saveAdminUserAsync(user: AdminUser, actorName = "Admin User"): Promise<AdminUser> {
+  const store = readStore();
+  if (!store.admins) store.admins = [];
+  const idx = store.admins.findIndex((a) => a.id === user.id || a.email.toLowerCase() === user.email.toLowerCase());
+  const isNew = idx === -1;
+  if (isNew) {
+    store.admins.push(user);
+  } else {
+    store.admins[idx] = { ...store.admins[idx], ...user };
+  }
+
+  if (!store.auditLogs) store.auditLogs = [];
+  store.auditLogs.unshift({
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    actorName,
+    actorEmail: "admin@kradind.com",
+    action: isNew ? "Added Team Member" : "Updated Team Member Permissions",
+    targetEntity: "User",
+    targetId: user.id,
+    details: `${user.name} (${user.role} - ${user.department || "Operations"}) status: ${user.status || "Active"}.`,
+    timestamp: new Date().toISOString(),
+  });
+
+  writeStore(store);
+  return user;
+}
+
+export async function deleteAdminUserAsync(id: string, actorName = "Admin User"): Promise<boolean> {
+  const store = readStore();
+  if (!store.admins) return false;
+  const idx = store.admins.findIndex((a) => a.id === id);
+  if (idx === -1) return false;
+  const user = store.admins[idx];
+  if (user.email === "admin@kradind.com") {
+    throw new Error("Primary Super Admin account cannot be deleted.");
+  }
+  store.admins.splice(idx, 1);
+
+  if (!store.auditLogs) store.auditLogs = [];
+  store.auditLogs.unshift({
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    actorName,
+    actorEmail: "admin@kradind.com",
+    action: "Removed Team Member",
+    targetEntity: "User",
+    targetId: id,
+    details: `Staff member ${user.name} (${user.email}) was removed from organization.`,
+    timestamp: new Date().toISOString(),
+  });
+
+  writeStore(store);
+  return true;
+}

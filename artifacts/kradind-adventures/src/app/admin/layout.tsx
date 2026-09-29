@@ -20,13 +20,22 @@ import {
   Sparkles,
   MapPin,
   Globe,
+  Users,
+  UserCheck,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
-  const [adminUser, setAdminUser] = useState<{ name: string; email: string } | null>(null);
+  const [adminUser, setAdminUser] = useState<{
+    id?: string;
+    name: string;
+    email: string;
+    role?: string;
+    department?: string;
+    permissions?: string[];
+  } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // If on login page, render children directly without admin shell
@@ -116,14 +125,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { label: "CRM & Customers", href: "/admin/crm", icon: Users, badge: "New" },
     { label: "Customer Leads", href: "/admin/leads", icon: Inbox },
+    { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
     { label: "Treks CMS", href: "/admin/treks", icon: Mountain },
     { label: "Destinations CMS", href: "/admin/destinations", icon: MapPin },
     { label: "International CMS", href: "/admin/international", icon: Globe },
     { label: "Landing Pages", href: "/admin/landing-pages", icon: Sparkles },
     { label: "Live Trail Radar", href: "/admin/radar", icon: Radio },
     { label: "Home Sections", href: "/admin/sections", icon: Sliders },
-    { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
+    { label: "Team & RBAC", href: "/admin/users", icon: UserCheck },
     { label: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
@@ -134,7 +145,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="md:hidden sticky top-0 z-30 bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 shadow-sm print:hidden">
         <div className="flex items-center gap-2.5">
           <Image
-            src="/logo-emblem.png"
+            src="/logo-emblem.webp"
             alt="KRAD Global tour and travel company logo"
             width={32}
             height={32}
@@ -169,7 +180,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/80">
             <div className="flex items-center gap-3">
               <Image
-                src="/logo-emblem.png"
+                src="/logo-emblem.webp"
                 alt="KRAD Global tour and travel company logo"
                 width={40}
                 height={40}
@@ -202,14 +213,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.href}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
                     active
                       ? "bg-[#0F3A2E] text-emerald-300 shadow-sm"
                       : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${active ? "text-emerald-400" : "text-slate-400"}`} />
-                  <span>{item.label}</span>
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${active ? "text-emerald-400" : "text-slate-400"}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -218,9 +236,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* User Info & Footer Actions */}
         <div className="p-4 border-t border-slate-800/80 space-y-3 shrink-0 bg-slate-900">
-          <div className="px-2">
-            <div className="text-xs font-semibold text-white truncate">
-              {adminUser?.name || "Head of Expeditions"}
+          <div className="px-2 space-y-1">
+            <div className="flex items-center justify-between gap-1.5">
+              <div className="text-xs font-bold text-white truncate">
+                {adminUser?.name || "Head of Expeditions"}
+              </div>
+              <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                {adminUser?.role || "Super Admin"}
+              </span>
             </div>
             <div className="text-[11px] text-slate-400 truncate">
               {adminUser?.email || "admin@kradind.com"}

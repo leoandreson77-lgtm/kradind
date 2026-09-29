@@ -6,7 +6,72 @@
       "name": "Head of Expeditions",
       "passwordHash": "676b435dfc378662a1f50080905dc429d9efc83060daad5153c90cb0f7f89fc2e37b050f6fd12db753acc9fbf92765bc7494fb7a711ba5cfcf409a8c519b71b5",
       "salt": "a37e3df587c960d6e91bca921280fb4b",
-      "createdAt": "2026-09-02T12:03:29.874Z"
+      "createdAt": "2026-09-02T12:03:29.874Z",
+      "role": "Super Admin",
+      "department": "Executive & Strategy",
+      "status": "Active",
+      "permissions": [
+        "all"
+      ]
+    },
+    {
+      "id": "admin-sales",
+      "name": "Priya Sharma",
+      "email": "priya.sales@kradind.com",
+      "role": "Sales / CRM Agent",
+      "department": "Sales & Expeditions",
+      "status": "Active",
+      "permissions": [
+        "crm:read",
+        "crm:write",
+        "leads:manage",
+        "bookings:read",
+        "bookings:write"
+      ],
+      "phone": "+91 98101 22334",
+      "lastLogin": "2026-09-29T16:50:32.006Z",
+      "passwordHash": "13c4d8d31e261cffdf071ca1ffcd0592dfbc34a91fd45a92f2cfadf683b38a963e9778b16f42ba05103765b4bde7127286b1e62407025e7a00dc3c23b812551f",
+      "salt": "d41270cecd22435cf5341b2571a244f0",
+      "createdAt": "2026-09-29T17:50:32.006Z"
+    },
+    {
+      "id": "admin-ops",
+      "name": "Vikram Rawat",
+      "email": "vikram.ops@kradind.com",
+      "role": "Operations Manager",
+      "department": "Ground Operations & Safety",
+      "status": "Active",
+      "permissions": [
+        "crm:read",
+        "crm:write",
+        "bookings:manage",
+        "radar:manage",
+        "cms:edit",
+        "treks:manage"
+      ],
+      "phone": "+91 97200 44556",
+      "lastLogin": "2026-09-29T15:50:32.006Z",
+      "passwordHash": "13c4d8d31e261cffdf071ca1ffcd0592dfbc34a91fd45a92f2cfadf683b38a963e9778b16f42ba05103765b4bde7127286b1e62407025e7a00dc3c23b812551f",
+      "salt": "d41270cecd22435cf5341b2571a244f0",
+      "createdAt": "2026-09-29T17:50:32.006Z"
+    },
+    {
+      "id": "admin-guide",
+      "name": "Tashi Dorje",
+      "email": "tashi.guide@kradind.com",
+      "role": "Expedition Leader",
+      "department": "Field Leadership & Medical Desk",
+      "status": "Active",
+      "permissions": [
+        "crm:read",
+        "bookings:read",
+        "radar:manage"
+      ],
+      "phone": "+91 94190 77889",
+      "lastLogin": "2026-09-28T17:50:32.006Z",
+      "passwordHash": "13c4d8d31e261cffdf071ca1ffcd0592dfbc34a91fd45a92f2cfadf683b38a963e9778b16f42ba05103765b4bde7127286b1e62407025e7a00dc3c23b812551f",
+      "salt": "d41270cecd22435cf5341b2571a244f0",
+      "createdAt": "2026-09-29T17:50:32.007Z"
     }
   ],
   "homeSections": {
@@ -15,17 +80,139 @@
       "title": "Experience the Himalayas",
       "subtitle": "handpicked expeditions led by certified mountaineers.",
       "bgImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
-      "imageAlt": "Domestic and international tour packages by KRAD Global in Dehradun"
+      "imageAlt": "Domestic and international tour packages by KRAD Global in Dehradun",
+      "searchPlaceholder": "Search by trek name, state, pass or elevation...",
+      "popularTags": [
+        "Kedarkantha",
+        "Chopta Tungnath",
+        "Hampta Pass",
+        "Leh Ladakh",
+        "Char Dham"
+      ]
     },
     "monsoon": {
       "enabled": true,
       "title": "Monsoon Specials & Valley Blooms",
+      "subtitle": "Unlock exclusive rainy season discounts on UNESCO Valley of Flowers, Hampta Pass, and Kashmir circuits.",
       "promoCode": "MONSOON2026",
-      "discountPercent": 20
+      "discountPercent": 20,
+      "badge": "Limited Season Offer"
     },
     "topBar": {
       "supportPhone": "+91 7500222141",
-      "leaveNoTrace": "🌱 Leave No Trace Certified Operator"
+      "leaveNoTrace": "🌱 Leave No Trace Certified Operator",
+      "whatsappNumber": "+91 75002 22141",
+      "announcementText": "🔥 2026 Himalayan Batches Now Live with Early-Bird Discounts",
+      "announcementLink": "/treks"
+    },
+    "bestTreks": {
+      "badge": "4.9+ Rated Flagship Expeditions",
+      "title": "Top Himalayan Treks & High Passes",
+      "subtitle": "Highest rated high-altitude alpine routes led by NIM-certified leaders.",
+      "featuredSlugs": [
+        "chopta-tungnath-chandrashila",
+        "hampta-pass",
+        "kheerganga-trek",
+        "leh-ladakh-tour-package"
+      ]
+    },
+    "weekendTreks": {
+      "badge": "Zero Work Leave Needed",
+      "title": "Weekend Escapes & Short Breaks",
+      "subtitle": "Quick Himalayan recharges designed to fit comfortably into Friday to Sunday departures.",
+      "featuredSlugs": [
+        "chopta-tungnath-chandrashila",
+        "kheerganga-trek",
+        "nainital-tour-package",
+        "jaipur-tour-package"
+      ]
+    },
+    "international": {
+      "enabled": true,
+      "badge": "World Expeditions & Island Escapes",
+      "title": "International Holiday Packages",
+      "subtitle": "Explore handpicked global destinations with complete visa assistance, verified stays, and private transfers.",
+      "featuredSlugs": [
+        "nepal",
+        "bali",
+        "thailand",
+        "dubai",
+        "vietnam",
+        "singapore",
+        "maldives"
+      ]
+    },
+    "eeat": {
+      "badge": "Expedition Authority & Curation",
+      "title": "Curated by KRADIND Expedition Team",
+      "role": "Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified",
+      "description": "Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring.",
+      "lastReviewed": "14 September 2026",
+      "policyLinkText": "Read Our Editorial & Safety Policy",
+      "policyLinkUrl": "/editorial-policy",
+      "auditBadgeText": "Fact-Checked & NIM/HMI Audited",
+      "trustCards": [
+        {
+          "title": "4.9 / 5 Verified Rating",
+          "desc": "Consistently rated top-tier by over 2,480+ trekkers across India for certified safety, authentic trail guidance, and hygienic summit camps.",
+          "badge": "Award",
+          "icon": "Award"
+        },
+        {
+          "title": "Wilderness First Aid (WFA)",
+          "desc": "All guides undergo rigorous Wilderness First Aid training, carry dedicated oxygen canisters, pulse oximeters, and adhere to strict AMS protocols.",
+          "badge": "Activity",
+          "icon": "Activity"
+        },
+        {
+          "title": "Leave No Trace (LNT)",
+          "desc": "We adhere to strict zero-waste alpine ethics. All non-biodegradable waste is catalogued and packed down for eco-certified recycling in Dehradun.",
+          "badge": "Compass",
+          "icon": "Compass"
+        },
+        {
+          "title": "Small Batches (Max 15)",
+          "desc": "We limit departures to small groups for personalized guiding, optimal safety management, and uncompromised silence on pristine Himalayan ridges.",
+          "badge": "HeartHandshake",
+          "icon": "HeartHandshake"
+        }
+      ],
+      "faqs": [
+        {
+          "q": "How does KRADIND Adventures verify high-altitude trail safety and weather?",
+          "a": "Our certified expedition leaders maintain direct VHF radio and satellite communication with base camps across Uttarakhand, Himachal Pradesh, and Ladakh. Every 24 hours, our ground coordinators inspect ridge stability, avalanche risks, and fresh snow levels before batch movements. When conditions change, updates are posted immediately to our Live Ground Radar."
+        },
+        {
+          "q": "What medical and safety equipment is carried on Himalayan treks?",
+          "a": "Every departure carries high-altitude medical oxygen cylinders, pulse oximeters, automated first-aid trauma kits, and Gamow hyperbaric emergency protocols. All expedition directors are graduates of the Nehru Institute of Mountaineering (NIM) and hold Wilderness First Aid (WFA) certification to manage Acute Mountain Sickness (AMS) and high-altitude emergencies."
+        },
+        {
+          "q": "What is your batch size policy and Leave No Trace (LNT) standard?",
+          "a": "We operate with a strict cap of 15 trekkers per batch to preserve trail silence, minimize alpine degradation, and provide 1:5 guide-to-trekker safety ratios. Under our Leave No Trace protocol, our teams collect and pack back all non-biodegradable waste from camps and mountain ridges for certified recycling in Dehradun."
+        },
+        {
+          "q": "Why choose KRAD Global as your tour and travel company in Dehradun?",
+          "a": "KRAD Global is a trusted Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, Himalayan treks, and complete travel planning. We provide local Himalayan expertise, verified accommodations, licensed wilderness leaders, and 24/7 ground assistance."
+        },
+        {
+          "q": "How can beginner trekkers prepare for their first Himalayan summit?",
+          "a": "We recommend four to six weeks of cardiovascular conditioning, including stair climbing, brisk walking, and core strengthening. Our trek desk provides customized training guides, gear rental checklists, and personalized consultations to ensure you have the correct footwear, layered clothing, and physical stamina before your departure."
+        }
+      ]
+    },
+    "contactAndFooter": {
+      "supportEmail": "support@kradind.com",
+      "supportPhone": "+91 75002 22141",
+      "whatsappLink": "https://wa.link/n3u8c0",
+      "address": "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
+      "officeHours": "Open 24/7 for Expedition & Ground Support",
+      "instagramUrl": "https://www.instagram.com/kradglobal/",
+      "facebookUrl": "https://www.facebook.com/share/189E2RUcH4/",
+      "youtubeUrl": "https://www.youtube.com/@kradglobaltravels",
+      "twitterUrl": "https://x.com/KradGlobalTour",
+      "threadsUrl": "https://www.threads.net/@kradglobal",
+      "pinterestUrl": "https://in.pinterest.com/KradGlobalTravels/",
+      "copyrightText": "© 2026 KRADIND Adventures Private Limited. All rights reserved. Registered under Ministry of Tourism."
     }
   },
   "treks": [
@@ -3837,6 +4024,622 @@
       "status": "Published",
       "createdAt": "2026-09-16T10:52:34.929Z",
       "updatedAt": "2026-09-16T10:52:34.929Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": "CUST-3001",
+      "name": "Dr. Siddharth Kapoor",
+      "email": "dr.siddharth.k@aiims.edu",
+      "phone": "+91 98200 11223",
+      "city": "Chandigarh",
+      "state": "Punjab",
+      "country": "India",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "lifecycleStage": "VIP Explorer",
+      "status": "Active",
+      "source": "Referral",
+      "tags": [
+        "VIP Explorer",
+        "High Altitude Veteran",
+        "Expedition Doctor",
+        "Photographer"
+      ],
+      "assignedTo": "Vikram Rawat",
+      "priority": "Urgent / VIP",
+      "totalSpent": 84500,
+      "totalTrips": 4,
+      "loyaltyTier": "Legend (Platinum)",
+      "emergencyContact": {
+        "name": "Meera Kapoor",
+        "relation": "Spouse",
+        "phone": "+91 98200 44556"
+      },
+      "medicalNotes": "Certified medical practitioner. Carries personal high-altitude first aid kit. Excellent summit fitness.",
+      "dietaryPreference": "Vegetarian",
+      "tShirtSize": "XL",
+      "idProofVerified": true,
+      "notesCount": 4,
+      "lastContactDate": "2026-09-28T17:50:32.028Z",
+      "nextFollowUpDate": "2026-10-01T17:50:32.028Z",
+      "createdAt": "2025-04-12T10:00:00.000Z",
+      "updatedAt": "2026-09-29T17:50:32.028Z"
+    },
+    {
+      "id": "CUST-1001",
+      "name": "Pooja Hegde",
+      "email": "pooja.hegde@example.com",
+      "phone": "+91 97112 23344",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "country": "India",
+      "lifecycleStage": "First-Time Explorer",
+      "status": "Active",
+      "source": "Website Booking",
+      "tags": [
+        "High Altitude",
+        "Confirmed Booking",
+        "Verified Explorer"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "High",
+      "totalSpent": 26878,
+      "totalTrips": 1,
+      "loyaltyTier": "Explorer (Bronze)",
+      "emergencyContact": {
+        "name": "Pooja Kin",
+        "relation": "Family",
+        "phone": "+91 99887 76655"
+      },
+      "medicalNotes": "No reported chronic issues; cleared for high-altitude trekking.",
+      "dietaryPreference": "Vegetarian",
+      "tShirtSize": "L",
+      "idProofVerified": true,
+      "notesCount": 2,
+      "lastContactDate": "2026-09-27T17:50:32.007Z",
+      "nextFollowUpDate": "2026-10-02T17:50:32.007Z",
+      "createdAt": "2026-09-02T13:11:02.483Z",
+      "updatedAt": "2026-09-29T17:50:32.007Z"
+    },
+    {
+      "id": "CUST-1002",
+      "name": "Simran Kaur",
+      "email": "simran.k@example.com",
+      "phone": "+91 99887 66554",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "country": "India",
+      "lifecycleStage": "First-Time Explorer",
+      "status": "Active",
+      "source": "Website Booking",
+      "tags": [
+        "High Altitude",
+        "Confirmed Booking",
+        "Verified Explorer"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "Medium",
+      "totalSpent": 15998,
+      "totalTrips": 1,
+      "loyaltyTier": "Explorer (Bronze)",
+      "emergencyContact": {
+        "name": "Simran Kin",
+        "relation": "Family",
+        "phone": "+91 99887 76655"
+      },
+      "medicalNotes": "No reported chronic issues; cleared for high-altitude trekking.",
+      "dietaryPreference": "Vegetarian",
+      "tShirtSize": "L",
+      "idProofVerified": true,
+      "notesCount": 2,
+      "lastContactDate": "2026-09-27T17:50:32.027Z",
+      "nextFollowUpDate": "2026-10-02T17:50:32.027Z",
+      "createdAt": "2026-09-02T12:09:17.456Z",
+      "updatedAt": "2026-09-29T17:50:32.027Z"
+    },
+    {
+      "id": "CUST-1003",
+      "name": "Aarav Sharma",
+      "email": "aarav@gmail.com",
+      "phone": "+91 98765 43210",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "country": "India",
+      "lifecycleStage": "First-Time Explorer",
+      "status": "Active",
+      "source": "Website Booking",
+      "tags": [
+        "High Altitude",
+        "Confirmed Booking",
+        "Verified Explorer"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "Medium",
+      "totalSpent": 17998,
+      "totalTrips": 1,
+      "loyaltyTier": "Explorer (Bronze)",
+      "emergencyContact": {
+        "name": "Aarav Kin",
+        "relation": "Family",
+        "phone": "+91 99887 76655"
+      },
+      "medicalNotes": "No reported chronic issues; cleared for high-altitude trekking.",
+      "dietaryPreference": "Vegetarian",
+      "tShirtSize": "L",
+      "idProofVerified": true,
+      "notesCount": 2,
+      "lastContactDate": "2026-09-27T17:50:32.027Z",
+      "nextFollowUpDate": "2026-10-02T17:50:32.027Z",
+      "createdAt": "2026-09-02T11:03:29.874Z",
+      "updatedAt": "2026-09-29T17:50:32.027Z"
+    },
+    {
+      "id": "CUST-1004",
+      "name": "Priya Verma",
+      "email": "priya.v@outlook.com",
+      "phone": "+91 91234 56789",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "country": "India",
+      "lifecycleStage": "First-Time Explorer",
+      "status": "Active",
+      "source": "Website Booking",
+      "tags": [
+        "High Altitude",
+        "Confirmed Booking",
+        "Verified Explorer"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "Medium",
+      "totalSpent": 7999,
+      "totalTrips": 1,
+      "loyaltyTier": "Explorer (Bronze)",
+      "emergencyContact": {
+        "name": "Priya Kin",
+        "relation": "Family",
+        "phone": "+91 99887 76655"
+      },
+      "medicalNotes": "No reported chronic issues; cleared for high-altitude trekking.",
+      "dietaryPreference": "Vegetarian",
+      "tShirtSize": "L",
+      "idProofVerified": true,
+      "notesCount": 2,
+      "lastContactDate": "2026-09-27T17:50:32.027Z",
+      "nextFollowUpDate": "2026-10-02T17:50:32.027Z",
+      "createdAt": "2026-09-02T10:03:29.874Z",
+      "updatedAt": "2026-09-29T17:50:32.027Z"
+    },
+    {
+      "id": "CUST-2001",
+      "name": "Aman Shrivastava",
+      "email": "aman.s@example.com",
+      "phone": "+91 98223 34455",
+      "city": "New Delhi",
+      "state": "Delhi NCR",
+      "country": "India",
+      "lifecycleStage": "Lead",
+      "status": "Follow-Up Needed",
+      "source": "Contact Page",
+      "tags": [
+        "Incoming Lead",
+        "Needs Follow-up"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "Medium",
+      "totalSpent": 0,
+      "totalTrips": 0,
+      "loyaltyTier": "Explorer (Bronze)",
+      "medicalNotes": "Awaiting pre-trek fitness declaration.",
+      "dietaryPreference": "Any",
+      "tShirtSize": "M",
+      "idProofVerified": false,
+      "notesCount": 1,
+      "lastContactDate": "2026-09-02T13:10:38.445Z",
+      "nextFollowUpDate": "2026-09-30T17:50:32.028Z",
+      "createdAt": "2026-09-02T13:10:38.445Z",
+      "updatedAt": "2026-09-29T17:50:32.028Z"
+    },
+    {
+      "id": "CUST-2002",
+      "name": "Vikram Malhotra",
+      "email": "vikram.m@gmail.com",
+      "phone": "+91 98765 11223",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "country": "India",
+      "lifecycleStage": "Lead",
+      "status": "Follow-Up Needed",
+      "source": "Contact Page",
+      "tags": [
+        "Incoming Lead",
+        "Needs Follow-up"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "Medium",
+      "totalSpent": 0,
+      "totalTrips": 0,
+      "loyaltyTier": "Explorer (Bronze)",
+      "medicalNotes": "Awaiting pre-trek fitness declaration.",
+      "dietaryPreference": "Any",
+      "tShirtSize": "M",
+      "idProofVerified": false,
+      "notesCount": 1,
+      "lastContactDate": "2026-09-02T12:37:46.658Z",
+      "nextFollowUpDate": "2026-09-30T17:50:32.028Z",
+      "createdAt": "2026-09-02T12:37:46.658Z",
+      "updatedAt": "2026-09-29T17:50:32.028Z"
+    },
+    {
+      "id": "CUST-2003",
+      "name": "Rahul Verma",
+      "email": "rahul.verma@gmail.com",
+      "phone": "+91 98112 23344",
+      "city": "New Delhi",
+      "state": "Delhi NCR",
+      "country": "India",
+      "lifecycleStage": "Lead",
+      "status": "Follow-Up Needed",
+      "source": "Contact Page",
+      "tags": [
+        "Incoming Lead",
+        "Needs Follow-up"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "Medium",
+      "totalSpent": 0,
+      "totalTrips": 0,
+      "loyaltyTier": "Explorer (Bronze)",
+      "medicalNotes": "Awaiting pre-trek fitness declaration.",
+      "dietaryPreference": "Any",
+      "tShirtSize": "M",
+      "idProofVerified": false,
+      "notesCount": 1,
+      "lastContactDate": "2026-09-02T12:07:46.656Z",
+      "nextFollowUpDate": "2026-09-30T17:50:32.028Z",
+      "createdAt": "2026-09-02T12:07:46.656Z",
+      "updatedAt": "2026-09-29T17:50:32.028Z"
+    },
+    {
+      "id": "CUST-2004",
+      "name": "Ananya Iyer",
+      "email": "ananya.iyer@techindia.com",
+      "phone": "+91 97654 32109",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "country": "India",
+      "lifecycleStage": "Lead",
+      "status": "Follow-Up Needed",
+      "source": "Contact Page",
+      "tags": [
+        "Incoming Lead",
+        "Needs Follow-up"
+      ],
+      "assignedTo": "Priya Sharma",
+      "priority": "Medium",
+      "totalSpent": 0,
+      "totalTrips": 0,
+      "loyaltyTier": "Explorer (Bronze)",
+      "medicalNotes": "Awaiting pre-trek fitness declaration.",
+      "dietaryPreference": "Any",
+      "tShirtSize": "M",
+      "idProofVerified": false,
+      "notesCount": 1,
+      "lastContactDate": "2026-09-02T08:37:46.656Z",
+      "nextFollowUpDate": "2026-09-30T17:50:32.028Z",
+      "createdAt": "2026-09-02T08:37:46.656Z",
+      "updatedAt": "2026-09-29T17:50:32.028Z"
+    }
+  ],
+  "customerTimeline": [
+    {
+      "id": "TL-CUST-1001-1",
+      "customerId": "CUST-1001",
+      "type": "lead_created",
+      "title": "Website Inquiry Received",
+      "description": "Customer submitted booking interest for Hampta Pass Crossover (3 travelers).",
+      "author": "System Automated",
+      "metadata": {
+        "trek": "Hampta Pass Crossover",
+        "travelers": 3
+      },
+      "timestamp": "2026-09-02T12:11:02.483Z"
+    },
+    {
+      "id": "TL-CUST-1001-2",
+      "customerId": "CUST-1001",
+      "type": "booking_created",
+      "title": "Booking Confirmed #KR-ZISD4F",
+      "description": "Reserved Hampta Pass Crossover for Aug 10 - Aug 15, 2026. Total amount: ₹26,878.",
+      "author": "Priya Sharma",
+      "metadata": {
+        "bookingId": "KR-ZISD4F",
+        "amount": 26878
+      },
+      "timestamp": "2026-09-02T13:11:02.483Z"
+    },
+    {
+      "id": "TL-CUST-1001-3",
+      "customerId": "CUST-1001",
+      "type": "payment_received",
+      "title": "Advance Payment Verified",
+      "description": "Full payment of ₹26,878 received via Net Banking/UPI. Invoice generated.",
+      "author": "Finance Desk",
+      "metadata": {
+        "amount": 26878
+      },
+      "timestamp": "2026-09-02T13:41:02.483Z"
+    },
+    {
+      "id": "TL-CUST-1002-1",
+      "customerId": "CUST-1002",
+      "type": "lead_created",
+      "title": "Website Inquiry Received",
+      "description": "Customer submitted booking interest for Valley of Flowers & Hemkund (2 travelers).",
+      "author": "System Automated",
+      "metadata": {
+        "trek": "Valley of Flowers & Hemkund",
+        "travelers": 2
+      },
+      "timestamp": "2026-09-02T11:09:17.456Z"
+    },
+    {
+      "id": "TL-CUST-1002-2",
+      "customerId": "CUST-1002",
+      "type": "booking_created",
+      "title": "Booking Confirmed #KR-YJWXVB",
+      "description": "Reserved Valley of Flowers & Hemkund for Jul 04 - Jul 09, 2026. Total amount: ₹15,998.",
+      "author": "Priya Sharma",
+      "metadata": {
+        "bookingId": "KR-YJWXVB",
+        "amount": 15998
+      },
+      "timestamp": "2026-09-02T12:09:17.456Z"
+    },
+    {
+      "id": "TL-CUST-1002-3",
+      "customerId": "CUST-1002",
+      "type": "payment_received",
+      "title": "Advance Payment Verified",
+      "description": "Full payment of ₹15,998 received via Net Banking/UPI. Invoice generated.",
+      "author": "Finance Desk",
+      "metadata": {
+        "amount": 15998
+      },
+      "timestamp": "2026-09-02T12:39:17.456Z"
+    },
+    {
+      "id": "TL-CUST-1003-1",
+      "customerId": "CUST-1003",
+      "type": "lead_created",
+      "title": "Website Inquiry Received",
+      "description": "Customer submitted booking interest for Kedarkantha Summit Trek (2 travelers).",
+      "author": "System Automated",
+      "metadata": {
+        "trek": "Kedarkantha Summit Trek",
+        "travelers": 2
+      },
+      "timestamp": "2026-09-02T10:03:29.874Z"
+    },
+    {
+      "id": "TL-CUST-1003-2",
+      "customerId": "CUST-1003",
+      "type": "booking_created",
+      "title": "Booking Confirmed #KR-8849",
+      "description": "Reserved Kedarkantha Summit Trek for Jun 14 - Jun 18, 2026. Total amount: ₹17,998.",
+      "author": "Priya Sharma",
+      "metadata": {
+        "bookingId": "KR-8849",
+        "amount": 17998
+      },
+      "timestamp": "2026-09-02T11:03:29.874Z"
+    },
+    {
+      "id": "TL-CUST-1003-3",
+      "customerId": "CUST-1003",
+      "type": "payment_received",
+      "title": "Advance Payment Verified",
+      "description": "Full payment of ₹17,998 received via Net Banking/UPI. Invoice generated.",
+      "author": "Finance Desk",
+      "metadata": {
+        "amount": 17998
+      },
+      "timestamp": "2026-09-02T11:33:29.874Z"
+    },
+    {
+      "id": "TL-CUST-1004-1",
+      "customerId": "CUST-1004",
+      "type": "lead_created",
+      "title": "Website Inquiry Received",
+      "description": "Customer submitted booking interest for Valley of Flowers & Hemkund (1 travelers).",
+      "author": "System Automated",
+      "metadata": {
+        "trek": "Valley of Flowers & Hemkund",
+        "travelers": 1
+      },
+      "timestamp": "2026-09-02T09:03:29.874Z"
+    },
+    {
+      "id": "TL-CUST-1004-2",
+      "customerId": "CUST-1004",
+      "type": "booking_created",
+      "title": "Booking Confirmed #KR-8850",
+      "description": "Reserved Valley of Flowers & Hemkund for Jul 04 - Jul 09, 2026. Total amount: ₹7,999.",
+      "author": "Priya Sharma",
+      "metadata": {
+        "bookingId": "KR-8850",
+        "amount": 7999
+      },
+      "timestamp": "2026-09-02T10:03:29.874Z"
+    },
+    {
+      "id": "TL-CUST-1004-3",
+      "customerId": "CUST-1004",
+      "type": "payment_received",
+      "title": "Advance Payment Verified",
+      "description": "Full payment of ₹7,999 received via Net Banking/UPI. Invoice generated.",
+      "author": "Finance Desk",
+      "metadata": {
+        "amount": 7999
+      },
+      "timestamp": "2026-09-02T10:33:29.874Z"
+    },
+    {
+      "id": "TL-CUST-2001-1",
+      "customerId": "CUST-2001",
+      "type": "lead_created",
+      "title": "Lead Captured from Contact Page",
+      "description": "Customer inquired about Roopkund Mystery Lake: \"Inquiring about autumn departures to Roopkund with 4 people.\"",
+      "author": "System Lead Intake",
+      "timestamp": "2026-09-02T13:10:38.445Z"
+    },
+    {
+      "id": "TL-CUST-2001-2",
+      "customerId": "CUST-2001",
+      "type": "call_logged",
+      "title": "Outbound Qualification Call",
+      "description": "Called customer to understand group size and fitness background. Requested detailed itinerary via WhatsApp.",
+      "author": "Priya Sharma",
+      "timestamp": "2026-09-02T14:10:38.445Z"
+    },
+    {
+      "id": "TL-CUST-2002-1",
+      "customerId": "CUST-2002",
+      "type": "lead_created",
+      "title": "Lead Captured from Contact Page",
+      "description": "Customer inquired about Kashmir Great Lakes: \"Planning a customized expedition to Kashmir Great Lakes in August for 8 trekkers. Need guide details.\"",
+      "author": "System Lead Intake",
+      "timestamp": "2026-09-02T12:37:46.658Z"
+    },
+    {
+      "id": "TL-CUST-2002-2",
+      "customerId": "CUST-2002",
+      "type": "call_logged",
+      "title": "Outbound Qualification Call",
+      "description": "Called customer to understand group size and fitness background. Requested detailed itinerary via WhatsApp.",
+      "author": "Priya Sharma",
+      "timestamp": "2026-09-02T13:37:46.658Z"
+    },
+    {
+      "id": "TL-CUST-2003-1",
+      "customerId": "CUST-2003",
+      "type": "lead_created",
+      "title": "Lead Captured from Contact Page",
+      "description": "Customer inquired about Kedarkantha Summit Trek: \"Hi team, we are a group of 6 looking for a private batch in late October. Is snow gear included?\"",
+      "author": "System Lead Intake",
+      "timestamp": "2026-09-02T12:07:46.656Z"
+    },
+    {
+      "id": "TL-CUST-2003-2",
+      "customerId": "CUST-2003",
+      "type": "call_logged",
+      "title": "Outbound Qualification Call",
+      "description": "Called customer to understand group size and fitness background. Requested detailed itinerary via WhatsApp.",
+      "author": "Priya Sharma",
+      "timestamp": "2026-09-02T13:07:46.656Z"
+    },
+    {
+      "id": "TL-CUST-2004-1",
+      "customerId": "CUST-2004",
+      "type": "lead_created",
+      "title": "Lead Captured from Contact Page",
+      "description": "Customer inquired about Hampta Pass Crossover: \"Can beginners do the Hampta Pass crossover in July? Please share fitness prep details.\"",
+      "author": "System Lead Intake",
+      "timestamp": "2026-09-02T08:37:46.656Z"
+    },
+    {
+      "id": "TL-CUST-2004-2",
+      "customerId": "CUST-2004",
+      "type": "call_logged",
+      "title": "Outbound Qualification Call",
+      "description": "Called customer to understand group size and fitness background. Requested detailed itinerary via WhatsApp.",
+      "author": "Priya Sharma",
+      "timestamp": "2026-09-02T09:37:46.656Z"
+    },
+    {
+      "id": "TL-CUST-3001-1",
+      "customerId": "CUST-3001",
+      "type": "trek_completed",
+      "title": "Summit Achieved: Kedarkantha Winter Snow",
+      "description": "Successfully summitted with Batch #KW-04. Stellar review left on Google.",
+      "author": "Tashi Dorje",
+      "timestamp": "2025-12-28T14:30:00.000Z"
+    },
+    {
+      "id": "TL-CUST-3001-2",
+      "customerId": "CUST-3001",
+      "type": "trek_completed",
+      "title": "Summit Achieved: Hampta Pass Crossover",
+      "description": "Crossed Hampta Pass into Spiti with 3 colleagues. Expressed strong interest in Bali or Ladakh next.",
+      "author": "Vikram Rawat",
+      "timestamp": "2026-06-18T16:00:00.000Z"
+    },
+    {
+      "id": "TL-CUST-3001-3",
+      "customerId": "CUST-3001",
+      "type": "note_added",
+      "title": "VIP Status Upgrade to Legend Platinum",
+      "description": "Granted complimentary alpine equipment rental and direct access to founder expedition desk.",
+      "author": "Head of Expeditions",
+      "timestamp": "2026-07-01T11:00:00.000Z"
+    }
+  ],
+  "customerTasks": [
+    {
+      "id": "TSK-101",
+      "customerId": "CUST-3001",
+      "customerName": "Dr. Siddharth Kapoor",
+      "customerPhone": "+91 98200 11223",
+      "title": "VIP Briefing: Share early access dates for Ladakh Chadar & Winter Summit 2026",
+      "dueDate": "2026-09-30",
+      "priority": "High",
+      "status": "Pending",
+      "assignedTo": "Vikram Rawat",
+      "createdAt": "2026-09-29T17:50:32.028Z"
+    },
+    {
+      "id": "TSK-102",
+      "customerId": "CUST-1001",
+      "customerName": "Pooja Hegde",
+      "customerPhone": "+91 97112 23344",
+      "title": "Send WhatsApp gear checklist & pickup coordination point for Dehradun arrival",
+      "dueDate": "2026-09-29",
+      "priority": "High",
+      "status": "Pending",
+      "assignedTo": "Priya Sharma",
+      "createdAt": "2026-09-29T17:50:32.028Z"
+    },
+    {
+      "id": "TSK-103",
+      "customerId": "CUST-1002",
+      "customerName": "Simran Kaur",
+      "customerPhone": "+91 99887 66554",
+      "title": "Follow up on custom group quotation (4 people) for Autumn Roopkund",
+      "dueDate": "2026-10-01",
+      "priority": "Medium",
+      "status": "Pending",
+      "assignedTo": "Priya Sharma",
+      "createdAt": "2026-09-29T17:50:32.028Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "AUD-1",
+      "actorName": "Head of Expeditions",
+      "actorEmail": "admin@kradind.com",
+      "action": "Configured Enterprise CRM & RBAC Module",
+      "targetEntity": "CMS",
+      "details": "Initialized Customer 360 directory, pipeline stages, and staff role permissions.",
+      "timestamp": "2026-09-29T17:50:32.028Z"
+    },
+    {
+      "id": "AUD-2",
+      "actorName": "Priya Sharma",
+      "actorEmail": "priya.sales@kradind.com",
+      "action": "Created Customer Follow-up Task",
+      "targetEntity": "Customer",
+      "targetId": "CUST-3001",
+      "details": "Scheduled VIP outreach for winter alpine circuit.",
+      "timestamp": "2026-09-29T16:50:32.028Z"
     }
   ]
 }

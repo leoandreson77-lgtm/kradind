@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Search, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Sparkles, ArrowRight, MapPin, Compass } from "lucide-react";
 import { MountainAtmosphere, AtmosphereMode } from "@/components/mountain-atmosphere";
 import { FormattedText } from "@/components/formatted-text";
 
@@ -211,280 +211,95 @@ export function HeroSearch({
           </div>
         </div>
 
-        {/* Carousel Slide Switcher Pills with smooth progress */}
-        <div className="flex items-center justify-center gap-2 pt-1 flex-wrap">
-          {CAROUSEL_SLIDES.map((slide, idx) => {
-            const isActive = slideIndex === idx;
-            return (
+        {/* Modern, Clean & High-Impact Floating Search Bar */}
+        <div className="pt-2 max-w-4xl mx-auto">
+          <form
+            onSubmit={handleSearch}
+            className="bg-white/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-full shadow-2xl border border-white/40 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-slate-800"
+          >
+            {/* 1. Destination / Trek input */}
+            <div className="flex-1 flex items-center gap-2.5 px-3 py-1.5 w-full sm:w-auto">
+              <Search className="w-5 h-5 text-emerald-700 shrink-0" />
+              <input
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Where to? (e.g. Kedarkantha, Kerala, Goa, Bali)..."
+                className="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none"
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="hidden sm:block w-px h-8 bg-slate-200" />
+
+            {/* 2. Category Dropdown */}
+            <div className="w-full sm:w-48 px-3 py-1.5 flex items-center">
+              <select
+                value={tripType}
+                onChange={(e) => setTripType(e.target.value)}
+                className="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 outline-none cursor-pointer"
+              >
+                <option value="All">All Categories</option>
+                <option value="Trek">🏔️ Himalayan Treks</option>
+                <option value="Domestic">🚗 Domestic Tours</option>
+                <option value="International">✈️ International Trips</option>
+                <option value="Weekend">⚡ Weekend Getaways</option>
+              </select>
+            </div>
+
+            {/* 3. Search Button */}
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-7 py-3.5 bg-[#FF6B35] hover:bg-[#e8590c] text-white text-xs sm:text-sm font-extrabold rounded-xl sm:rounded-full shadow-lg hover:shadow-orange-500/25 transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+            >
+              <span>Explore Trips</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          {/* Quick Discovery Pills (Easy 1-Tap Access) */}
+          <div className="mt-4 flex items-center justify-center gap-2 flex-wrap text-xs">
+            <span className="text-white/80 font-medium text-[11px] hidden sm:inline">Popular:</span>
+            {[
+              { label: "🏔️ Himalayan Treks", query: "Trek", isType: true },
+              { label: "🚗 Kerala Backwaters", query: "Kerala", isType: false },
+              { label: "🏰 Royal Rajasthan", query: "Rajasthan", isType: false },
+              { label: "⚡ Weekend Escapes", query: "Weekend", isType: true },
+              { label: "✈️ International Tours", query: "International", isType: true },
+            ].map((tag) => (
+              <button
+                key={tag.label}
+                type="button"
+                onClick={() => {
+                  if (tag.isType) {
+                    router.push(`/treks?type=${encodeURIComponent(tag.query)}`);
+                  } else {
+                    router.push(`/treks?search=${encodeURIComponent(tag.query)}`);
+                  }
+                }}
+                className="px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white font-medium text-xs transition transform hover:scale-105 cursor-pointer shadow-xs"
+              >
+                {tag.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Subtle Carousel Dots Indicator */}
+          <div className="mt-5 flex items-center justify-center gap-2">
+            {CAROUSEL_SLIDES.map((slide, idx) => (
               <button
                 key={slide.id}
                 type="button"
                 onClick={() => handleSelectSlide(idx)}
-                className={`relative overflow-hidden transition-all duration-500 rounded-full cursor-pointer px-4 py-1.5 text-xs font-semibold backdrop-blur-md border ${
-                  isActive
-                    ? "bg-white text-slate-900 border-white shadow-xl scale-105"
-                    : "bg-slate-950/60 hover:bg-slate-900/80 text-slate-200 border-white/20 hover:border-white/40"
+                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                  slideIndex === idx
+                    ? "w-8 h-2 bg-white"
+                    : "w-2 h-2 bg-white/40 hover:bg-white/70"
                 }`}
-              >
-                {/* Smooth GPU-Accelerated Progress Fill inside active pill */}
-                {isActive && isAutoPlaying && (
-                  <span
-                    key={slideIndex}
-                    className="absolute inset-0 bg-emerald-500/20 pointer-events-none origin-left hero-progress-fill"
-                  />
-                )}
-                <span className="relative z-10">{slide.title}</span>
-              </button>
-            );
-          })}
-        </div>
-        <form
-          onSubmit={handleSearch}
-          className="mt-8 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-2xl text-slate-800 max-w-5xl mx-auto border border-white/30 text-left"
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            
-            {/* Field 1: Keyword Input */}
-            <div>
-              <label htmlFor="hero-keyword" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                Keyword / Search
-              </label>
-              <input
-                id="hero-keyword"
-                name="keyword"
-                type="text"
-                aria-label="Search trips by keyword or destination"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="e.g. Domestic, Kerala, Chopta..."
-                className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
+                aria-label={`Slide ${idx + 1}: ${slide.title}`}
               />
-            </div>
-
-            {/* Field 2: Trip Type */}
-            <div>
-              <label htmlFor="hero-trip-type" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                Trip Type
-              </label>
-              <select
-                id="hero-trip-type"
-                name="tripType"
-                aria-label="Trip Type"
-                value={tripType}
-                onChange={(e) => setTripType(e.target.value)}
-                className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
-              >
-                <option value="All">🌟 All Trips & Treks</option>
-                <option value="Domestic">🚗 Domestic Tours & Road Trips</option>
-                <option value="Trek">🏔️ Himalayan & Alpine Treks</option>
-                <option value="Weekend">⛺ Weekend Getaways</option>
-                <option value="International">✈️ International Backpacking</option>
-              </select>
-            </div>
-
-            {/* Field 3: Destination */}
-            <div>
-              <label htmlFor="hero-destination" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                Destination
-              </label>
-              <select
-                id="hero-destination"
-                name="destination"
-                aria-label="Destination Region or State"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
-              >
-                <option value="All">All Regions & States</option>
-                <option value="Uttarakhand">Uttarakhand (Chopta, Nainital & Kedarnath)</option>
-                <option value="Himachal">Himachal (Hampta & Kasol)</option>
-                <option value="Ladakh">Leh Ladakh (Pangong & Nubra)</option>
-                <option value="Kerala">Kerala (Munnar & Backwaters)</option>
-                <option value="Rajasthan">Rajasthan (Jaipur & Jaisalmer)</option>
-                <option value="Goa">Goa (Beaches & Forts)</option>
-                <option value="Maharashtra">Maharashtra (Hills & Ghats)</option>
-                <option value="Meghalaya">Meghalaya (Living Roots & Cherrapunji)</option>
-                <option value="Sikkim">Sikkim & Gangtok</option>
-                <option value="Assam">Assam & Kaziranga</option>
-              </select>
-            </div>
-
-            {/* Field 4: Season */}
-            <div>
-              <label htmlFor="hero-season" className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                Month / Season
-              </label>
-              <select
-                id="hero-season"
-                name="season"
-                aria-label="Month or Travel Season"
-                value={season}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setSeason(val);
-                  setIsAutoPlaying(false);
-                  if (val === "Winter") {
-                    setSlideIndex(1); // Himalayan Snow Peaks
-                  } else if (val === "Monsoon") {
-                    setSlideIndex(2); // Monsoon Rain & Stormy Mountains
-                  } else if (val === "Autumn" || val === "Weekend") {
-                    setSlideIndex(3); // Clear Backwaters & Palms
-                  } else {
-                    setSlideIndex(0); // Golden Ocean Sunrise
-                  }
-                }}
-                className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#0F3A2E] outline-none"
-              >
-                <option value="All">All Months / Any Time</option>
-                <option value="Weekend">Quick Weekend Breaks</option>
-                <option value="Monsoon">July - Sept (Monsoon & Blooms)</option>
-                <option value="Autumn">Oct - Nov (Clear Peaks)</option>
-                <option value="Winter">Dec - Feb (Winter & Snow)</option>
-              </select>
-            </div>
-
-            {/* Field 5: Search Button */}
-            <div className="flex items-end">
-              <button
-                type="submit"
-                className="w-full bg-[#FF6B35] hover:bg-[#e8590c] text-white font-bold p-2.5 rounded-lg text-xs tracking-wide transition flex items-center justify-center gap-2 shadow-lg transform active:scale-95"
-              >
-                <Search className="w-4 h-4" /> Search Trips
-              </button>
-            </div>
-
+            ))}
           </div>
-        </form>
-
-        {/* Region Story Avatars */}
-        <div className="pt-6 flex justify-start sm:justify-center items-center gap-4 sm:gap-8 overflow-x-auto scrollbar-none px-2 sm:px-0">
-          
-          <div
-            onClick={() => handleCategoryClick("Domestic")}
-            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
-          >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-emerald-400 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg bg-emerald-800">
-              <img
-                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
-                alt="Domestic tour packages across India by KRADIND"
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <span className="text-xs font-bold text-emerald-300 group-hover:text-white">Domestic</span>
-          </div>
-
-          <div
-            onClick={() => handleCategoryClick("Himalayas")}
-            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
-          >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=150&q=80"
-                alt="Himalayan mountain trekking destinations by KRADIND"
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Himalayas</span>
-          </div>
-
-          <div
-            onClick={() => handleCategoryClick("Kerala")}
-            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
-          >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=150&q=80"
-                alt="Kerala backwaters and holiday destinations by KRADIND"
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Kerala</span>
-          </div>
-
-          <div
-            onClick={() => handleCategoryClick("Ladakh")}
-            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
-          >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=150&q=80"
-                alt="Ladakh mountain and high altitude travel destination"
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Ladakh</span>
-          </div>
-
-          <div
-            onClick={() => handleCategoryClick("Meghalaya")}
-            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
-          >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=150&q=80"
-                alt="Meghalaya waterfalls and natural travel destinations"
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Meghalaya</span>
-          </div>
-
-          <div
-            onClick={() => handleCategoryClick("Rajasthan")}
-            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
-          >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=150&q=80"
-                alt="Rajasthan heritage forts and palace tour destination"
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Rajasthan</span>
-          </div>
-
-          <div
-            onClick={() => handleCategoryClick("Goa")}
-            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
-          >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white/80 p-0.5 overflow-hidden group-hover:scale-105 transition shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=150&q=80"
-                alt="Goa beaches and holiday destinations"
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <span className="text-xs font-semibold text-slate-200 group-hover:text-white">Goa</span>
-          </div>
-
         </div>
 
       </div>

@@ -405,6 +405,30 @@ export interface AuditLogRecord {
   timestamp: string;
 }
 
+export interface InternalChatMessage {
+  id: string;
+  channelId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: AdminRole;
+  senderAvatar?: string;
+  content: string;
+  timestamp: string;
+  taggedCustomerId?: string;
+  taggedCustomerName?: string;
+  isUrgent?: boolean;
+  reactions?: Record<string, string[]>;
+}
+
+export interface InternalChatChannel {
+  id: string;
+  name: string;
+  description: string;
+  type: "channel" | "direct";
+  allowedRoles?: AdminRole[];
+  icon: string;
+}
+
 export interface CMSStoreData {
   admins: AdminUser[];
   homeSections: HomeSectionsConfig;
@@ -418,6 +442,8 @@ export interface CMSStoreData {
   customerTimeline?: CustomerTimelineEvent[];
   customerTasks?: CustomerTask[];
   auditLogs?: AuditLogRecord[];
+  chatMessages?: InternalChatMessage[];
+  chatChannels?: InternalChatChannel[];
 }
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
@@ -3326,6 +3352,114 @@ export function readStore(): CMSStoreData {
       updated = true;
     }
 
+    // 3. Initialize Multi-Role Team Internal Chat Channels & Seeds
+    if (!parsed.chatChannels || parsed.chatChannels.length === 0) {
+      parsed.chatChannels = [
+        {
+          id: "general",
+          name: "all-team-ops",
+          description: "Company-wide operations, morning briefings & staff announcements",
+          type: "channel",
+          icon: "📢",
+        },
+        {
+          id: "sales",
+          name: "sales-and-inquiries",
+          description: "Inbound leads, custom quotes, payment receipts & conversions",
+          type: "channel",
+          allowedRoles: ["Super Admin", "Operations Manager", "Sales / CRM Agent"],
+          icon: "🎯",
+        },
+        {
+          id: "operations",
+          name: "ground-expeditions",
+          description: "Guides, porter teams, trail weather, summit camps & departure batches",
+          type: "channel",
+          allowedRoles: ["Super Admin", "Operations Manager", "Expedition Leader"],
+          icon: "🏔️",
+        },
+        {
+          id: "emergency",
+          name: "emergency-medical-alerts",
+          description: "Priority high-altitude AMS logs, mountain SOS & rescue coordination",
+          type: "channel",
+          icon: "🚨",
+        },
+      ];
+      updated = true;
+    }
+
+    if (!parsed.chatMessages || parsed.chatMessages.length === 0) {
+      const now = new Date();
+      parsed.chatMessages = [
+        {
+          id: "msg-1",
+          channelId: "general",
+          senderId: "admin-root",
+          senderName: "Admin User",
+          senderRole: "Super Admin",
+          content: "Welcome to KRADIND Internal Communications. Cross-functional team chat between Sales, Ground Ops, Guides, and Leadership is live.",
+          timestamp: new Date(now.getTime() - 14400000).toISOString(),
+          reactions: { "👍": ["Priya Sharma", "Vikram Rawat"] },
+        },
+        {
+          id: "msg-2",
+          channelId: "operations",
+          senderId: "admin-ops",
+          senderName: "Vikram Rawat",
+          senderRole: "Operations Manager",
+          content: "Next week Rupin Pass departure batch is 85% full. Ensure all medical fitness forms and ID proofs are verified by Wednesday 6 PM.",
+          timestamp: new Date(now.getTime() - 10800000).toISOString(),
+          reactions: { "🏔️": ["Tashi Dorje"] },
+        },
+        {
+          id: "msg-3",
+          channelId: "operations",
+          senderId: "admin-guide",
+          senderName: "Tashi Dorje",
+          senderRole: "Expedition Leader",
+          content: "Kedarkantha Base Camp check-in: Approx 8 inches fresh snow yesterday. Trail is firm and safe, microspikes recommended for summit ridge. Kitchen tent fully stocked.",
+          timestamp: new Date(now.getTime() - 7200000).toISOString(),
+          reactions: { "❤️": ["Vikram Rawat", "Priya Sharma"] },
+        },
+        {
+          id: "msg-4",
+          channelId: "sales",
+          senderId: "admin-sales",
+          senderName: "Priya Sharma",
+          senderRole: "Sales / CRM Agent",
+          content: "Inquiry from Dr. Siddharth Kapoor (VIP Explorer): requesting private 2-night extension in Sangla Valley with Innova. Can ground ops arrange driver allowance?",
+          taggedCustomerId: "CUST-0001",
+          taggedCustomerName: "Dr. Siddharth Kapoor",
+          timestamp: new Date(now.getTime() - 3600000).toISOString(),
+          reactions: { "👀": ["Vikram Rawat"] },
+        },
+        {
+          id: "msg-5",
+          channelId: "sales",
+          senderId: "admin-ops",
+          senderName: "Vikram Rawat",
+          senderRole: "Operations Manager",
+          content: "@Priya Confirmed with Shimla fleet manager. Driver allowance + fuel is ₹6,800 total. You can send the revised booking link.",
+          taggedCustomerId: "CUST-0001",
+          taggedCustomerName: "Dr. Siddharth Kapoor",
+          timestamp: new Date(now.getTime() - 1800000).toISOString(),
+          reactions: { "🚀": ["Priya Sharma"] },
+        },
+        {
+          id: "msg-6",
+          channelId: "emergency",
+          senderId: "admin-guide",
+          senderName: "Tashi Dorje",
+          senderRole: "Expedition Leader",
+          content: "Safety Status: All current field batches at Har Ki Dun and Kuari Pass report normal pulse oximeter readings (SpO2 > 88%). First-aid kits inspected.",
+          timestamp: new Date(now.getTime() - 900000).toISOString(),
+          reactions: { "✅": ["Vikram Rawat"] },
+        },
+      ];
+      updated = true;
+    }
+
     if (updated) {
       writeStore(parsed);
     }
@@ -3797,3 +3931,95 @@ export async function deleteAdminUserAsync(id: string, actorName = "Admin User")
   writeStore(store);
   return true;
 }
+
+// ==========================================
+// MULTI-ROLE INTERNAL CHAT ASYNC SERVICES
+// ==========================================
+
+export async function getChatChannelsAsync(): Promise<InternalChatChannel[]> {
+  const store = readStore();
+  return store.chatChannels || [];
+}
+
+export async function getChatMessagesAsync(channelId?: string): Promise<InternalChatMessage[]> {
+  try {
+    const db = await getDb();
+    const doc = await db.collection("kradind_config").findOne({ configKey: "chatMessages" });
+    if (doc && Array.isArray((doc as any).messages) && (doc as any).messages.length > 0) {
+      const store = readStore();
+      store.chatMessages = (doc as any).messages;
+      const all = (doc as any).messages as InternalChatMessage[];
+      return channelId ? all.filter((m) => m.channelId === channelId) : all;
+    }
+  } catch (err) {
+    console.warn("MongoDB getChatMessages error, fallback to local store:", err);
+  }
+  const all = readStore().chatMessages || [];
+  return channelId ? all.filter((m) => m.channelId === channelId) : all;
+}
+
+export async function saveChatMessageAsync(
+  msg: Omit<InternalChatMessage, "id" | "timestamp">
+): Promise<InternalChatMessage> {
+  const store = readStore();
+  if (!store.chatMessages) store.chatMessages = [];
+
+  const fullMsg: InternalChatMessage = {
+    ...msg,
+    id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: new Date().toISOString(),
+  };
+
+  store.chatMessages.push(fullMsg);
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    await db.collection("kradind_config").updateOne(
+      { configKey: "chatMessages" },
+      { $set: { configKey: "chatMessages", messages: store.chatMessages } },
+      { upsert: true }
+    );
+  } catch {}
+
+  return fullMsg;
+}
+
+export async function toggleChatReactionAsync(
+  messageId: string,
+  emoji: string,
+  userName: string
+): Promise<InternalChatMessage | null> {
+  const store = readStore();
+  if (!store.chatMessages) return null;
+
+  const msg = store.chatMessages.find((m) => m.id === messageId);
+  if (!msg) return null;
+
+  if (!msg.reactions) msg.reactions = {};
+  if (!msg.reactions[emoji]) msg.reactions[emoji] = [];
+
+  const existingIdx = msg.reactions[emoji].indexOf(userName);
+  if (existingIdx > -1) {
+    msg.reactions[emoji].splice(existingIdx, 1);
+    if (msg.reactions[emoji].length === 0) {
+      delete msg.reactions[emoji];
+    }
+  } else {
+    msg.reactions[emoji].push(userName);
+  }
+
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    await db.collection("kradind_config").updateOne(
+      { configKey: "chatMessages" },
+      { $set: { configKey: "chatMessages", messages: store.chatMessages } },
+      { upsert: true }
+    );
+  } catch {}
+
+  return msg;
+}
+

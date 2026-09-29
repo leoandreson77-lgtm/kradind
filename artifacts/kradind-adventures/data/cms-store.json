@@ -4641,5 +4641,137 @@
       "details": "Scheduled VIP outreach for winter alpine circuit.",
       "timestamp": "2026-09-29T16:50:32.028Z"
     }
+  ],
+  "chatChannels": [
+    {
+      "id": "general",
+      "name": "all-team-ops",
+      "description": "Company-wide operations, morning briefings & staff announcements",
+      "type": "channel",
+      "icon": "📢"
+    },
+    {
+      "id": "sales",
+      "name": "sales-and-inquiries",
+      "description": "Inbound leads, custom quotes, payment receipts & conversions",
+      "type": "channel",
+      "allowedRoles": [
+        "Super Admin",
+        "Operations Manager",
+        "Sales / CRM Agent"
+      ],
+      "icon": "🎯"
+    },
+    {
+      "id": "operations",
+      "name": "ground-expeditions",
+      "description": "Guides, porter teams, trail weather, summit camps & departure batches",
+      "type": "channel",
+      "allowedRoles": [
+        "Super Admin",
+        "Operations Manager",
+        "Expedition Leader"
+      ],
+      "icon": "🏔️"
+    },
+    {
+      "id": "emergency",
+      "name": "emergency-medical-alerts",
+      "description": "Priority high-altitude AMS logs, mountain SOS & rescue coordination",
+      "type": "channel",
+      "icon": "🚨"
+    }
+  ],
+  "chatMessages": [
+    {
+      "id": "msg-1",
+      "channelId": "general",
+      "senderId": "admin-root",
+      "senderName": "Admin User",
+      "senderRole": "Super Admin",
+      "content": "Welcome to KRADIND Internal Communications. Cross-functional team chat between Sales, Ground Ops, Guides, and Leadership is live.",
+      "timestamp": "2026-09-29T14:44:16.473Z",
+      "reactions": {
+        "👍": [
+          "Priya Sharma",
+          "Vikram Rawat"
+        ]
+      }
+    },
+    {
+      "id": "msg-2",
+      "channelId": "operations",
+      "senderId": "admin-ops",
+      "senderName": "Vikram Rawat",
+      "senderRole": "Operations Manager",
+      "content": "Next week Rupin Pass departure batch is 85% full. Ensure all medical fitness forms and ID proofs are verified by Wednesday 6 PM.",
+      "timestamp": "2026-09-29T15:44:16.473Z",
+      "reactions": {
+        "🏔️": [
+          "Tashi Dorje"
+        ]
+      }
+    },
+    {
+      "id": "msg-3",
+      "channelId": "operations",
+      "senderId": "admin-guide",
+      "senderName": "Tashi Dorje",
+      "senderRole": "Expedition Leader",
+      "content": "Kedarkantha Base Camp check-in: Approx 8 inches fresh snow yesterday. Trail is firm and safe, microspikes recommended for summit ridge. Kitchen tent fully stocked.",
+      "timestamp": "2026-09-29T16:44:16.473Z",
+      "reactions": {
+        "❤️": [
+          "Vikram Rawat",
+          "Priya Sharma"
+        ]
+      }
+    },
+    {
+      "id": "msg-4",
+      "channelId": "sales",
+      "senderId": "admin-sales",
+      "senderName": "Priya Sharma",
+      "senderRole": "Sales / CRM Agent",
+      "content": "Inquiry from Dr. Siddharth Kapoor (VIP Explorer): requesting private 2-night extension in Sangla Valley with Innova. Can ground ops arrange driver allowance?",
+      "taggedCustomerId": "CUST-0001",
+      "taggedCustomerName": "Dr. Siddharth Kapoor",
+      "timestamp": "2026-09-29T17:44:16.473Z",
+      "reactions": {
+        "👀": [
+          "Vikram Rawat"
+        ]
+      }
+    },
+    {
+      "id": "msg-5",
+      "channelId": "sales",
+      "senderId": "admin-ops",
+      "senderName": "Vikram Rawat",
+      "senderRole": "Operations Manager",
+      "content": "@Priya Confirmed with Shimla fleet manager. Driver allowance + fuel is ₹6,800 total. You can send the revised booking link.",
+      "taggedCustomerId": "CUST-0001",
+      "taggedCustomerName": "Dr. Siddharth Kapoor",
+      "timestamp": "2026-09-29T18:14:16.473Z",
+      "reactions": {
+        "🚀": [
+          "Priya Sharma"
+        ]
+      }
+    },
+    {
+      "id": "msg-6",
+      "channelId": "emergency",
+      "senderId": "admin-guide",
+      "senderName": "Tashi Dorje",
+      "senderRole": "Expedition Leader",
+      "content": "Safety Status: All current field batches at Har Ki Dun and Kuari Pass report normal pulse oximeter readings (SpO2 > 88%). First-aid kits inspected.",
+      "timestamp": "2026-09-29T18:29:16.473Z",
+      "reactions": {
+        "✅": [
+          "Vikram Rawat"
+        ]
+      }
+    }
   ]
 }

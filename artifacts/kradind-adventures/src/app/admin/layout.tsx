@@ -22,6 +22,7 @@ import {
   Globe,
   Users,
   UserCheck,
+  MessageSquare,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -135,6 +136,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Live Trail Radar", href: "/admin/radar", icon: Radio },
     { label: "Home Sections", href: "/admin/sections", icon: Sliders },
     { label: "Team & RBAC", href: "/admin/users", icon: UserCheck },
+    { label: "Team Internal Chat", href: "/admin/chat", icon: MessageSquare, badge: "Live" },
     { label: "Settings", href: "/admin/settings", icon: Settings },
   ];
 

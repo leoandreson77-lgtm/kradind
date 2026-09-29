@@ -81,9 +81,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const userRole = (session.user?.role as AdminRole) || "Super Admin";
-    const userName = session.user?.name || "Staff Member";
-    const userId = session.user?.id || `user-${Date.now().toString().slice(-4)}`;
+    const userRole = (body.senderRole as AdminRole) || (session.user?.role as AdminRole) || "Super Admin";
+    const userName = body.senderName || session.user?.name || "Staff Member";
+    const userId = body.senderId || session.user?.id || `user-${Date.now().toString().slice(-4)}`;
 
     // Handle reaction toggle
     if (body.action === "react") {
@@ -92,6 +92,26 @@ export async function POST(request: NextRequest) {
       }
       const updated = await toggleChatReactionAsync(body.messageId, body.emoji, userName);
       return NextResponse.json(updated);
+    }
+
+    // Handle multi-agent dialogue dispatch (conversations between multiple agents)
+    if (body.action === "multi_agent_dialogue" && Array.isArray(body.dialogue)) {
+      const savedMessages = [];
+      for (const item of body.dialogue) {
+        const msg = await saveChatMessageAsync({
+          channelId: item.channelId || body.channelId || "general",
+          senderId: item.senderId || `agent-${Date.now()}`,
+          senderName: item.senderName,
+          senderRole: item.senderRole,
+          content: item.content.trim(),
+          taggedCustomerId: item.taggedCustomerId || undefined,
+          taggedCustomerName: item.taggedCustomerName || undefined,
+          isUrgent: Boolean(item.isUrgent),
+          reactions: item.reactions || {},
+        });
+        savedMessages.push(msg);
+      }
+      return NextResponse.json(savedMessages, { status: 201 });
     }
 
     // Default action: Send message

@@ -48,6 +48,7 @@ import {
   CustomerTask,
   AuditLogRecord,
   TimelineEventType,
+  AdminRole,
 } from "@/lib/cms-store";
 
 export default function AdminCRMPage() {
@@ -68,9 +69,22 @@ export default function AdminCRMPage() {
 
   // Customer 360 Slide-Over
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
-  const [drawerTab, setDrawerTab] = useState<"timeline" | "medical" | "edit">("timeline");
+  const [drawerTab, setDrawerTab] = useState<"timeline" | "collab" | "medical" | "edit">("timeline");
   const [customerTimeline, setCustomerTimeline] = useState<CustomerTimelineEvent[]>([]);
   const [loadingTimeline, setLoadingTimeline] = useState(false);
+
+  // Multi-Agent Collaboration & Handover state
+  const [collabMessages, setCollabMessages] = useState<any[]>([]);
+  const [loadingCollab, setLoadingCollab] = useState(false);
+  const [collabInput, setCollabInput] = useState("");
+  const [collabPersona, setCollabPersona] = useState<{ id: string; name: string; role: AdminRole }>({
+    id: "admin-sales",
+    name: "Priya Sharma",
+    role: "Sales / CRM Agent",
+  });
+  const [handoverAgent, setHandoverAgent] = useState("Vikram Rawat");
+  const [handoverNote, setHandoverNote] = useState("");
+  const [submittingHandover, setSubmittingHandover] = useState(false);
 
   // New Interaction Form
   const [newLogType, setNewLogType] = useState<TimelineEventType>("note_added");
@@ -171,7 +185,24 @@ export default function AdminCRMPage() {
       }
     };
 
+    const fetchCollab = async () => {
+      setLoadingCollab(true);
+      try {
+        const res = await fetch("/api/admin/chat?channelId=all-team-ops");
+        if (res.ok) {
+          const data = await res.json();
+          const msgs = data.messages || [];
+          setCollabMessages(msgs.filter((m: any) => m.taggedCustomerId === selectedCustomerId));
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingCollab(false);
+      }
+    };
+
     fetchTimeline();
+    fetchCollab();
   }, [selectedCustomerId, customers]);
 
   // Selected customer computed
@@ -313,6 +344,82 @@ export default function AdminCRMPage() {
       }
     } catch {
       alert("Stage update failed");
+    }
+  };
+
+  const handleTransferLead = async () => {
+    if (!selectedCustomerId || !handoverAgent) return;
+    setSubmittingHandover(true);
+    try {
+      const res = await fetch("/api/admin/crm/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: selectedCustomerId, assignedTo: handoverAgent }),
+      });
+
+      if (res.ok) {
+        await fetch("/api/admin/crm/timeline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId: selectedCustomerId,
+            type: "stage_changed",
+            title: `Lead Transferred to ${handoverAgent}`,
+            description: handoverNote || `Case assigned to ${handoverAgent} by ${collabPersona.name}.`,
+            author: collabPersona.name,
+          }),
+        });
+
+        await fetch("/api/admin/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            channelId: "multi-agent-lead-handover",
+            senderId: collabPersona.id,
+            senderName: collabPersona.name,
+            senderRole: collabPersona.role,
+            content: `🤝 Customer Handover: @${handoverAgent} Customer ${selectedCustomer?.name} transferred to your queue. Instructions: ${handoverNote || "Please review itinerary and confirm."}`,
+            taggedCustomerId: selectedCustomerId,
+            taggedCustomerName: selectedCustomer?.name,
+          }),
+        });
+
+        showToast(`Customer assigned to ${handoverAgent}!`);
+        setHandoverNote("");
+        fetchData();
+      }
+    } catch {
+      alert("Handover failed");
+    } finally {
+      setSubmittingHandover(false);
+    }
+  };
+
+  const handlePostCollabNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!collabInput.trim() || !selectedCustomerId) return;
+    try {
+      const res = await fetch("/api/admin/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          channelId: "multi-agent-lead-handover",
+          senderId: collabPersona.id,
+          senderName: collabPersona.name,
+          senderRole: collabPersona.role,
+          content: collabInput.trim(),
+          taggedCustomerId: selectedCustomerId,
+          taggedCustomerName: selectedCustomer?.name,
+        }),
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setCollabMessages((prev) => [...prev, saved]);
+        setCollabInput("");
+        showToast("Multi-Agent note saved!");
+      }
+    } catch {
+      alert("Failed to save note");
     }
   };
 
@@ -524,6 +631,21 @@ export default function AdminCRMPage() {
         return "bg-emerald-100 text-emerald-700 border-emerald-200";
       default:
         return "bg-slate-100 text-slate-600 border-slate-200";
+    }
+  };
+
+  const getRoleBadgeClasses = (role?: AdminRole | string) => {
+    switch (role) {
+      case "Super Admin":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      case "Operations Manager":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "Sales / CRM Agent":
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "Expedition Leader":
+        return "bg-amber-100 text-amber-800 border-amber-200";
+      default:
+        return "bg-slate-100 text-slate-700 border-slate-200";
     }
   };
 
@@ -1353,6 +1475,18 @@ export default function AdminCRMPage() {
               </button>
 
               <button
+                onClick={() => setDrawerTab("collab")}
+                className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 transition-colors ${
+                  drawerTab === "collab"
+                    ? "border-emerald-600 text-emerald-800"
+                    : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>Multi-Agent Notes ({collabMessages.length})</span>
+              </button>
+
+              <button
                 onClick={() => setDrawerTab("medical")}
                 className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 transition-colors ${
                   drawerTab === "medical"
@@ -1485,6 +1619,142 @@ export default function AdminCRMPage() {
                               <span className="uppercase tracking-wider">{item.type.replace("_", " ")}</span>
                             </div>
                           </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* SUBTAB 2: MULTI-AGENT INTERNAL NOTES & HANDOVER */}
+              {drawerTab === "collab" && (
+                <div className="space-y-4">
+                  {/* Lead Handover Box */}
+                  <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                        <UserCheck className="w-4 h-4 text-emerald-600" />
+                        <span>Multi-Agent Lead Handover</span>
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-medium">
+                        Current: <strong className="text-slate-800">{selectedCustomer.assignedTo || "Unassigned"}</strong>
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          Transfer Case To
+                        </label>
+                        <select
+                          value={handoverAgent}
+                          onChange={(e) => setHandoverAgent(e.target.value)}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 font-bold mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                        >
+                          <option value="Vikram Rawat">Vikram Rawat (Operations Manager)</option>
+                          <option value="Priya Sharma">Priya Sharma (Sales / CRM Agent)</option>
+                          <option value="Tashi Dorje">Tashi Dorje (Expedition Leader)</option>
+                          <option value="Admin User">Admin User (Super Admin)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          Handover Instructions / Note
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Quotation accepted, verify hotel slot..."
+                          value={handoverNote}
+                          onChange={(e) => setHandoverNote(e.target.value)}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 font-medium mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleTransferLead}
+                      disabled={submittingHandover}
+                      className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-xs"
+                    >
+                      {submittingHandover ? "Transferring..." : `Transfer Case to ${handoverAgent}`}
+                    </button>
+                  </div>
+
+                  {/* Multi-Agent Speaking Persona Switcher */}
+                  <div className="p-3.5 bg-slate-100 rounded-2xl border border-slate-200 flex items-center justify-between gap-2 text-xs">
+                    <span className="font-bold text-slate-600 text-[11px]">Post Internal Note As:</span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {[
+                        { id: "admin-sales", name: "Priya Sharma", role: "Sales / CRM Agent" as AdminRole },
+                        { id: "admin-ops", name: "Vikram Rawat", role: "Operations Manager" as AdminRole },
+                        { id: "admin-guide", name: "Tashi Dorje", role: "Expedition Leader" as AdminRole },
+                        { id: "admin-root", name: "Admin User", role: "Super Admin" as AdminRole },
+                      ].map((p) => {
+                        const isSelected = collabPersona.name === p.name;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => setCollabPersona(p)}
+                            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border ${
+                              isSelected
+                                ? "bg-slate-900 text-white border-slate-900"
+                                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-200"
+                            }`}
+                          >
+                            {p.name.split(" ")[0]} ({p.role.split(" ")[0]})
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Post Internal Note Input */}
+                  <form onSubmit={handlePostCollabNote} className="space-y-2">
+                    <textarea
+                      rows={2}
+                      value={collabInput}
+                      onChange={(e) => setCollabInput(e.target.value)}
+                      placeholder={`Add internal agent note as ${collabPersona.name} (e.g. @Vikram Rawat cab quotes finalized)...`}
+                      className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 shadow-xs resize-none"
+                    />
+                    <div className="flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={!collabInput.trim()}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-xs flex items-center gap-1.5"
+                      >
+                        <Send className="w-3 h-3" />
+                        <span>Post Multi-Agent Note</span>
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* Multi-Agent Conversation Thread */}
+                  <div className="space-y-2.5">
+                    {loadingCollab ? (
+                      <div className="py-8 text-center text-slate-400 text-xs">Loading notes...</div>
+                    ) : collabMessages.length === 0 ? (
+                      <div className="py-8 text-center text-slate-400 text-xs bg-white rounded-xl border border-slate-200">
+                        No internal multi-agent notes recorded for this customer yet. Post the first one above!
+                      </div>
+                    ) : (
+                      collabMessages.map((m: any) => (
+                        <div key={m.id} className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-extrabold text-slate-900">{m.senderName}</span>
+                              <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border ${getRoleBadgeClasses(m.senderRole)}`}>
+                                {m.senderRole}
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-medium">
+                              {new Date(m.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-700 whitespace-pre-wrap">{m.content}</p>
                         </div>
                       ))
                     )}

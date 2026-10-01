@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import {
   readStore,
   writeStore,
@@ -129,6 +130,15 @@ export async function POST(request: NextRequest) {
 
     await syncDestinationsToMongo(store.destinations);
 
+    try {
+      revalidatePath("/");
+      revalidatePath("/international-trips");
+      revalidatePath("/destinations");
+      revalidatePath(`/destinations/${newDest.slug}`);
+      revalidatePath(`/international-trips/${newDest.slug}`);
+      revalidatePath("/", "layout");
+    } catch {}
+
     return NextResponse.json({ success: true, destination: newDest }, { status: 201 });
   } catch (err: any) {
     console.error("Error creating international tour:", err);
@@ -219,6 +229,15 @@ export async function PUT(request: NextRequest) {
 
     await syncDestinationsToMongo(store.destinations);
 
+    try {
+      revalidatePath("/");
+      revalidatePath("/international-trips");
+      revalidatePath("/destinations");
+      revalidatePath(`/destinations/${updated.slug}`);
+      revalidatePath(`/international-trips/${updated.slug}`);
+      revalidatePath("/", "layout");
+    } catch {}
+
     return NextResponse.json({ success: true, destination: updated });
   } catch (err: any) {
     console.error("Error updating international package:", err);
@@ -262,6 +281,13 @@ export async function DELETE(request: NextRequest) {
 
     writeStore(store);
     await syncDestinationsToMongo(store.destinations);
+
+    try {
+      revalidatePath("/");
+      revalidatePath("/international-trips");
+      revalidatePath("/destinations");
+      revalidatePath("/", "layout");
+    } catch {}
 
     return NextResponse.json({ success: true, message: "Package removed successfully" });
   } catch (err: any) {

@@ -440,7 +440,9 @@ export default function TrekDetailPage() {
     treks.find((t) => t.slug.includes(slug)) ||
     treks[0];
 
+  const isPresetMatch = defaultTrek.slug === slug || defaultTrek.slug.includes(slug);
   const [trek, setTrek] = useState<TrekData>(defaultTrek as unknown as TrekData);
+  const [loadingTrek, setLoadingTrek] = useState(!isPresetMatch);
 
   useEffect(() => {
     async function fetchDynamicTrek() {
@@ -454,10 +456,25 @@ export default function TrekDetailPage() {
         }
       } catch (err) {
         console.error("Failed to fetch dynamic trek details:", err);
+      } finally {
+        setLoadingTrek(false);
       }
     }
     fetchDynamicTrek();
   }, [slug]);
+
+  if (loadingTrek) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-9 h-9 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-bold text-slate-500 tracking-wide uppercase">
+            Loading tour details...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   const [bookingOpen, setBookingOpen] = useState(false);
   const [isPdfOpen, setIsPdfOpen] = useState(false);

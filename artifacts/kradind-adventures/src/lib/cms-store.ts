@@ -3562,12 +3562,25 @@ export async function getTreksAsync(): Promise<TrekData[]> {
     const db = await getDb();
     const docs = await db.collection("kradind_treks").find({}).toArray();
     if (docs && docs.length > 0) {
-      const cleanTreks = docs.map((doc: any) => {
+      const slugMap = new Map<string, TrekData>();
+      for (const doc of docs) {
         const { _id, ...rest } = doc;
-        return rest as TrekData;
-      });
+        const trek = rest as TrekData;
+        if (!slugMap.has(trek.slug)) {
+          slugMap.set(trek.slug, trek);
+        } else {
+          const existing = slugMap.get(trek.slug)!;
+          if (existing.status !== "Published" && trek.status === "Published") {
+            slugMap.set(trek.slug, trek);
+          }
+        }
+      }
+      const cleanTreks = Array.from(slugMap.values());
       const store = readStore();
       store.treks = cleanTreks;
+      try {
+        writeStore(store);
+      } catch {}
       return cleanTreks;
     }
   } catch (err) {
@@ -3582,7 +3595,13 @@ export async function syncTreksToMongo(treks: TrekData[]): Promise<void> {
     const col = db.collection("kradind_treks");
     await col.deleteMany({});
     if (treks.length > 0) {
-      await col.insertMany(treks);
+      const uniqueMap = new Map<string, TrekData>();
+      for (const t of treks) {
+        if (!uniqueMap.has(t.slug)) {
+          uniqueMap.set(t.slug, t);
+        }
+      }
+      await col.insertMany(Array.from(uniqueMap.values()));
     }
   } catch (err) {
     console.error("Failed to sync treks to MongoDB:", err);

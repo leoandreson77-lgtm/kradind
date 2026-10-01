@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import {
   readStore,
   writeStore,
@@ -124,6 +125,15 @@ export async function POST(request: NextRequest) {
 
     await syncDestinationsToMongo(store.destinations);
 
+    try {
+      revalidatePath("/");
+      revalidatePath("/destinations");
+      revalidatePath(`/destinations/${newDest.slug}`);
+      revalidatePath("/domestic-trips");
+      revalidatePath("/international-trips");
+      revalidatePath("/", "layout");
+    } catch {}
+
     return NextResponse.json(newDest, { status: 201 });
   } catch (error: any) {
     console.error("Failed to add destination:", error);
@@ -231,6 +241,15 @@ export async function PUT(request: NextRequest) {
 
     await syncDestinationsToMongo(store.destinations);
 
+    try {
+      revalidatePath("/");
+      revalidatePath("/destinations");
+      revalidatePath(`/destinations/${updated.slug}`);
+      revalidatePath("/domestic-trips");
+      revalidatePath("/international-trips");
+      revalidatePath("/", "layout");
+    } catch {}
+
     return NextResponse.json(updated);
   } catch (error: any) {
     console.error("Failed to update destination:", error);
@@ -272,6 +291,14 @@ export async function DELETE(request: NextRequest) {
     writeStore(store);
 
     await syncDestinationsToMongo(store.destinations);
+
+    try {
+      revalidatePath("/");
+      revalidatePath("/destinations");
+      revalidatePath("/domestic-trips");
+      revalidatePath("/international-trips");
+      revalidatePath("/", "layout");
+    } catch {}
 
     return NextResponse.json({ success: true, message: "Destination deleted" });
   } catch (error: any) {

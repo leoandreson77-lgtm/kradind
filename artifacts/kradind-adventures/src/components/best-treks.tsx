@@ -73,11 +73,11 @@ export function BestTreks({
   // Curated list based on active tab
   const displayedTreks = useMemo(() => {
     if (activeTab === "treks") return trekList;
-    if (activeTab === "domestic") return domesticList.slice(0, 8);
-    if (activeTab === "international") return internationalList.slice(0, 8);
-    if (activeTab === "weekend") return weekendList.slice(0, 8);
+    if (activeTab === "domestic") return domesticList.slice(0, 12);
+    if (activeTab === "international") return internationalList.slice(0, 12);
+    if (activeTab === "weekend") return weekendList.slice(0, 12);
 
-    // "all": Default flagship picks (top Himalayan treks + top domestic packages)
+    // "all": Default flagship picks + all new / custom packages added via Admin CMS
     const flagshipSlugs = [
       "chopta-tungnath-chandrashila",
       "hampta-pass",
@@ -89,16 +89,23 @@ export function BestTreks({
       "meghalaya-abode-of-clouds",
     ];
 
-    const matched = flagshipSlugs
+    // Newly added or custom packages that are not in the standard baseline flagship list
+    const customOrNewTreks = availableTreks.filter((t: any) => {
+      return !flagshipSlugs.some((s) => t.slug === s || t.slug.includes(s.split("-")[0]));
+    });
+
+    const matchedFlagships = flagshipSlugs
       .map((slug) => availableTreks.find((t: any) => t.slug === slug || t.slug.includes(slug.split("-")[0])))
       .filter(Boolean);
 
-    if (matched.length >= 4) {
-      return matched;
+    // Priority: New/Custom admin packages first, followed by flagship journeys
+    const combined = [...customOrNewTreks, ...matchedFlagships];
+    if (combined.length > 0) {
+      return combined.slice(0, 12);
     }
 
-    return [...trekList.slice(0, 4), ...domesticList.slice(0, 4)];
-  }, [activeTab, availableTreks, trekList, domesticList, weekendList]);
+    return [...trekList.slice(0, 6), ...domesticList.slice(0, 6)];
+  }, [activeTab, availableTreks, trekList, domesticList, weekendList, internationalList]);
 
   return (
     <section id="best-treks" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">

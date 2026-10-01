@@ -25,7 +25,7 @@ const REGION_MAP: Record<string, { name: string; title: string; subtitle: string
     name: "Kashmir",
     title: "Kashmir Tour Packages & Honeymoon Escapes",
     subtitle: "Enjoy Dal Lake shikara rides, Gulmarg gondolas, and pristine meadows of Pahalgam and Sonamarg.",
-    category: "Ladakh",
+    category: "Kashmir",
   },
   ladakh: {
     name: "Ladakh",
@@ -88,6 +88,11 @@ export async function generateMetadata({
   };
 }
 
+import { getTreksAsync } from "@/lib/cms-store";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function DomesticRegionPage({
   params,
 }: {
@@ -95,11 +100,14 @@ export default async function DomesticRegionPage({
 }) {
   const { region } = await params;
   const info = getRegionInfo(region);
+  const treks = await getTreksAsync();
+  const publishedTreks = (treks || []).filter((t) => t.status === "Published");
 
   return (
     <Suspense fallback={<div className="min-h-screen bg-slate-50 animate-pulse" />}>
       <TreksContent
         initialCategory={info.category}
+        initialTreks={publishedTreks}
         titleOverride={info.title}
         subtitleOverride={info.subtitle}
       />

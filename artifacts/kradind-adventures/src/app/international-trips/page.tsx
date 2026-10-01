@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { TreksContent } from "@/components/treks-catalog";
+import { getTreksAsync } from "@/lib/cms-store";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "International Trips & Holiday Tour Packages | KRADIND Adventures",
@@ -18,11 +22,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InternationalTripsPage() {
+export default async function InternationalTripsPage() {
+  const treks = await getTreksAsync();
+  const publishedTreks = (treks || []).filter((t) => t.status === "Published");
+
   return (
     <Suspense fallback={<div className="min-h-screen bg-slate-50 animate-pulse" />}>
       <TreksContent
         initialCategory="International"
+        initialTreks={publishedTreks}
         titleOverride="International Holiday Trips & World Tours"
         subtitleOverride="Immerse yourself in vibrant global destinations — from the Himalayas of Nepal and tropical shores of Bali to futuristic Dubai and serene Maldives."
       />

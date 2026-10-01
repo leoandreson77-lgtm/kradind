@@ -91,7 +91,8 @@ export function TreksContent({
     { label: "🏔️ Himalayan Treks", value: "Himalayas" },
     { label: "🌲 Uttarakhand", value: "Uttarakhand" },
     { label: "🌲 Himachal", value: "Himachal" },
-    { label: "❄️ Ladakh & Kashmir", value: "Ladakh" },
+    { label: "❄️ Kashmir", value: "Kashmir" },
+    { label: "🏔️ Ladakh", value: "Ladakh" },
     { label: "🏰 Rajasthan", value: "Rajasthan" },
     { label: "🌴 Kerala", value: "Kerala" },
     { label: "🌿 Northeast", value: "Northeast" },
@@ -109,15 +110,31 @@ export function TreksContent({
 
       const isDomesticTrek =
         (trek.category || "").toLowerCase() === "domestic" ||
-        trek.categories.some((c) => c.toLowerCase() === "domestic");
+        (trek.categories || []).some((c) => c.toLowerCase() === "domestic");
+
+      const isKashmirOrLadakhCat =
+        catLower === "ladakh" ||
+        catLower === "kashmir" ||
+        catLower.includes("ladakh") ||
+        catLower.includes("kashmir");
+
+      const isKashmirOrLadakhTrek =
+        (trek.location || "").toLowerCase().includes("kashmir") ||
+        (trek.location || "").toLowerCase().includes("ladakh") ||
+        (trek.region || "").toLowerCase().includes("kashmir") ||
+        (trek.region || "").toLowerCase().includes("ladakh") ||
+        (trek.categories || []).some(
+          (c) => c.toLowerCase().includes("kashmir") || c.toLowerCase().includes("ladakh")
+        );
 
       const matchesCategory =
         selectedCategory === "All" ||
         (isDomesticCat && isDomesticTrek) ||
+        (isKashmirOrLadakhCat && isKashmirOrLadakhTrek) ||
         (trek.category || "").toLowerCase().includes(catLower) ||
-        trek.categories.some((c) => c.toLowerCase().includes(catLower)) ||
-        trek.location.toLowerCase().includes(catLower) ||
-        trek.region.toLowerCase().includes(catLower);
+        (trek.categories || []).some((c) => c.toLowerCase().includes(catLower)) ||
+        (trek.location || "").toLowerCase().includes(catLower) ||
+        (trek.region || "").toLowerCase().includes(catLower);
 
       const queryLower = searchQuery.toLowerCase().trim();
       const isDomesticQuery = queryLower === "domestic" || queryLower.includes("domestic");
@@ -127,9 +144,9 @@ export function TreksContent({
         (isDomesticQuery && isDomesticTrek) ||
         trek.name.toLowerCase().includes(queryLower) ||
         (trek.category || "").toLowerCase().includes(queryLower) ||
-        trek.categories.some((c) => c.toLowerCase().includes(queryLower)) ||
-        trek.location.toLowerCase().includes(queryLower) ||
-        trek.region.toLowerCase().includes(queryLower) ||
+        (trek.categories || []).some((c) => c.toLowerCase().includes(queryLower)) ||
+        (trek.location || "").toLowerCase().includes(queryLower) ||
+        (trek.region || "").toLowerCase().includes(queryLower) ||
         (trek.tagline || "").toLowerCase().includes(queryLower) ||
         (trek.overview || "").toLowerCase().includes(queryLower);
 

@@ -76,978 +76,23 @@
   ],
   "homeSections": {
     "hero": {
-      "badge": "Certified Himalayan Guides • Small Safe Batches",
-      "title": "Experience the Himalayas",
-      "subtitle": "handpicked expeditions led by certified mountaineers.",
-      "bgImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
-      "imageAlt": "Domestic and international tour packages by KRAD Global in Dehradun",
-      "searchPlaceholder": "Search by trek name, state, pass or elevation...",
-      "popularTags": [
-        "Kedarkantha",
-        "Chopta Tungnath",
-        "Hampta Pass",
-        "Leh Ladakh",
-        "Char Dham"
-      ]
+      "badge": "Certified Himalayan Guides . Small Safe Batches",
+      "title": "Explore New Horizons",
+      "subtitle": "Where Every Journey Becomes a Story",
+      "bgImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
     },
     "monsoon": {
       "enabled": true,
       "title": "Monsoon Specials & Valley Blooms",
-      "subtitle": "Unlock exclusive rainy season discounts on UNESCO Valley of Flowers, Hampta Pass, and Kashmir circuits.",
       "promoCode": "MONSOON2026",
-      "discountPercent": 20,
-      "badge": "Limited Season Offer"
+      "discountPercent": 20
     },
     "topBar": {
       "supportPhone": "+91 7500222141",
-      "leaveNoTrace": "🌱 Leave No Trace Certified Operator",
-      "whatsappNumber": "+91 75002 22141",
-      "announcementText": "🔥 2026 Himalayan Batches Now Live with Early-Bird Discounts",
-      "announcementLink": "/treks"
-    },
-    "bestTreks": {
-      "badge": "4.9+ Rated Flagship Expeditions",
-      "title": "Top Himalayan Treks & High Passes",
-      "subtitle": "Highest rated high-altitude alpine routes led by NIM-certified leaders.",
-      "featuredSlugs": [
-        "chopta-tungnath-chandrashila",
-        "hampta-pass",
-        "kheerganga-trek",
-        "leh-ladakh-tour-package"
-      ]
-    },
-    "weekendTreks": {
-      "badge": "Zero Work Leave Needed",
-      "title": "Weekend Escapes & Short Breaks",
-      "subtitle": "Quick Himalayan recharges designed to fit comfortably into Friday to Sunday departures.",
-      "featuredSlugs": [
-        "chopta-tungnath-chandrashila",
-        "kheerganga-trek",
-        "nainital-tour-package",
-        "jaipur-tour-package"
-      ]
-    },
-    "international": {
-      "enabled": true,
-      "badge": "World Expeditions & Island Escapes",
-      "title": "International Holiday Packages",
-      "subtitle": "Explore handpicked global destinations with complete visa assistance, verified stays, and private transfers.",
-      "featuredSlugs": [
-        "nepal",
-        "bali",
-        "thailand",
-        "dubai",
-        "vietnam",
-        "singapore",
-        "maldives"
-      ]
-    },
-    "eeat": {
-      "badge": "Expedition Authority & Curation",
-      "title": "Curated by KRADIND Expedition Team",
-      "role": "Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified",
-      "description": "Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring.",
-      "lastReviewed": "14 September 2026",
-      "policyLinkText": "Read Our Editorial & Safety Policy",
-      "policyLinkUrl": "/editorial-policy",
-      "auditBadgeText": "Fact-Checked & NIM/HMI Audited",
-      "trustCards": [
-        {
-          "title": "4.9 / 5 Verified Rating",
-          "desc": "Consistently rated top-tier by over 2,480+ trekkers across India for certified safety, authentic trail guidance, and hygienic summit camps.",
-          "badge": "Award",
-          "icon": "Award"
-        },
-        {
-          "title": "Wilderness First Aid (WFA)",
-          "desc": "All guides undergo rigorous Wilderness First Aid training, carry dedicated oxygen canisters, pulse oximeters, and adhere to strict AMS protocols.",
-          "badge": "Activity",
-          "icon": "Activity"
-        },
-        {
-          "title": "Leave No Trace (LNT)",
-          "desc": "We adhere to strict zero-waste alpine ethics. All non-biodegradable waste is catalogued and packed down for eco-certified recycling in Dehradun.",
-          "badge": "Compass",
-          "icon": "Compass"
-        },
-        {
-          "title": "Small Batches (Max 15)",
-          "desc": "We limit departures to small groups for personalized guiding, optimal safety management, and uncompromised silence on pristine Himalayan ridges.",
-          "badge": "HeartHandshake",
-          "icon": "HeartHandshake"
-        }
-      ],
-      "faqs": [
-        {
-          "q": "How does KRADIND Adventures verify high-altitude trail safety and weather?",
-          "a": "Our certified expedition leaders maintain direct VHF radio and satellite communication with base camps across Uttarakhand, Himachal Pradesh, and Ladakh. Every 24 hours, our ground coordinators inspect ridge stability, avalanche risks, and fresh snow levels before batch movements. When conditions change, updates are posted immediately to our Live Ground Radar."
-        },
-        {
-          "q": "What medical and safety equipment is carried on Himalayan treks?",
-          "a": "Every departure carries high-altitude medical oxygen cylinders, pulse oximeters, automated first-aid trauma kits, and Gamow hyperbaric emergency protocols. All expedition directors are graduates of the Nehru Institute of Mountaineering (NIM) and hold Wilderness First Aid (WFA) certification to manage Acute Mountain Sickness (AMS) and high-altitude emergencies."
-        },
-        {
-          "q": "What is your batch size policy and Leave No Trace (LNT) standard?",
-          "a": "We operate with a strict cap of 15 trekkers per batch to preserve trail silence, minimize alpine degradation, and provide 1:5 guide-to-trekker safety ratios. Under our Leave No Trace protocol, our teams collect and pack back all non-biodegradable waste from camps and mountain ridges for certified recycling in Dehradun."
-        },
-        {
-          "q": "Why choose KRAD Global as your tour and travel company in Dehradun?",
-          "a": "KRAD Global is a trusted Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, Himalayan treks, and complete travel planning. We provide local Himalayan expertise, verified accommodations, licensed wilderness leaders, and 24/7 ground assistance."
-        },
-        {
-          "q": "How can beginner trekkers prepare for their first Himalayan summit?",
-          "a": "We recommend four to six weeks of cardiovascular conditioning, including stair climbing, brisk walking, and core strengthening. Our trek desk provides customized training guides, gear rental checklists, and personalized consultations to ensure you have the correct footwear, layered clothing, and physical stamina before your departure."
-        }
-      ]
-    },
-    "contactAndFooter": {
-      "supportEmail": "support@kradind.com",
-      "supportPhone": "+91 75002 22141",
-      "whatsappLink": "https://wa.link/n3u8c0",
-      "address": "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
-      "officeHours": "Open 24/7 for Expedition & Ground Support",
-      "instagramUrl": "https://www.instagram.com/kradglobal/",
-      "facebookUrl": "https://www.facebook.com/share/189E2RUcH4/",
-      "youtubeUrl": "https://www.youtube.com/@kradglobaltravels",
-      "twitterUrl": "https://x.com/KradGlobalTour",
-      "threadsUrl": "https://www.threads.net/@kradglobal",
-      "pinterestUrl": "https://in.pinterest.com/KradGlobalTravels/",
-      "copyrightText": "© 2026 KRADIND Adventures Private Limited. All rights reserved. Registered under Ministry of Tourism."
+      "leaveNoTrace": "🌱 Leave No Trace Certified Operator"
     }
   },
   "treks": [
-    {
-      "id": 1,
-      "slug": "chopta-tungnath-chandrashila",
-      "name": "Chopta Tungnath Chandrashila Trek",
-      "file": "doc_1_1PEEEp0FsslyonEIreUtqTAgQvlC8rpsLsuF3hSshc3A.txt",
-      "category": "Himalayas",
-      "categories": [
-        "Himalayas",
-        "Trek",
-        "Weekend",
-        "Summit"
-      ],
-      "location": "Rudraprayag, Uttarakhand",
-      "region": "Garhwal Himalayas",
-      "duration": "3 Days / 2 Nights",
-      "altitude": "13,000 Ft",
-      "difficulty": "Easy to Moderate",
-      "price": 5499,
-      "originalPrice": 7499,
-      "badge": "Most Popular",
-      "rating": 4.9,
-      "reviewCount": 320,
-      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85",
-      "gallery": [
-        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "Alpine meadows of Chopta, the highest Shiva temple at Tungnath, and panoramic 360° summit views.",
-      "defaultHighlights": [
-        "Trek to sacred Tungnath Temple, the highest Shiva shrine in the world.",
-        "Reach the Chandrashila Summit (13,000 ft) for 360° views of Nanda Devi, Trishul, and Chaukhamba.",
-        "Camp amidst the pristine rhododendron forests and alpine meadows of Chopta.",
-        "Beginner-friendly trail ideal for first-time Himalayan trekkers."
-      ],
-      "highlights": [
-        "Visit the beautiful meadows of Chopta.",
-        "Trek to the sacred Tungnath Temple.",
-        "Reach the Chandrashila Summit for breathtaking Himalayan views.",
-        "Experience scenic mountain roads and the beauty of Garhwal.",
-        "Enjoy sunrise and panoramic mountain landscapes, weather permitting.",
-        "Suitable for beginners with a reasonable level of fitness.",
-        "Explore the natural beauty, forests and Himalayan landscapes of Uttarakhand.",
-        "Opportunity to visit Deoria Tal, depending on the selected itinerary and package."
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Arrival at Chopta | Journey Through the Himalayas",
-          "description": "Your Himalayan adventure begins with your journey towards Chopta. As you travel through the beautiful landscapes of Uttarakhand, enjoy changing views of rivers, valleys, forests and mountain roads. On arrival in Chopta, check in to your campsite or accommodation and take some time to relax. The fresh mountain air and peaceful surroundings provide the perfect introduction to the Himalayas. In the evening, enjoy dinner, interact with fellow travelers and prepare for the next day's trek.",
-          "altitude": "13,000 Ft",
-          "meal": "Dinner",
-          "stay": "Campsite / Homestay / Hotel at Chopta"
-        },
-        {
-          "day": 2,
-          "title": "Chopta to Tungnath and Chandrashila Summit | Trek Day",
-          "description": "Wake up early and get ready for the most exciting day of the trip. After breakfast, begin your trek from Chopta towards Tungnath Temple. The trail gradually takes you through beautiful Himalayan landscapes and offers incredible views of the surrounding mountains. Reach Tungnath Temple and spend some time exploring this sacred Himalayan destination. After visiting Tungnath, continue towards the Chandrashila Summit. The final section of the trek can be steep, but reaching the summit is a rewarding experience. From Chandrashila, enjoy panoramic views of the Himalayan ranges, subject to weather and visibility. After spending time at the summit, begin your descent back towards Chopta. In the evening, relax at your accommodation and enjoy dinner.",
-          "altitude": "13,000 Ft",
-          "meal": "Breakfast & Dinner",
-          "stay": "Campsite / Homestay / Hotel at Chopta",
-          "distance": "Approx. 8–10 km round trip"
-        },
-        {
-          "day": 3,
-          "title": "Chopta to Departure Point | Memories for a Lifetime",
-          "description": "Wake up to another beautiful Himalayan morning. After breakfast, check out from your accommodation and begin your return journey with unforgettable memories of Chopta, Tungnath and Chandrashila. The trip concludes with memories of mountain views, peaceful landscapes, new friendships and an incredible trekking experience. Optional Add-On: Deoria Tal visit can be included based on your selected itinerary, route and available time.",
-          "altitude": "13,000 Ft",
-          "meal": "Breakfast",
-          "stay": "Hotel / Resort / Campsite"
-        }
-      ],
-      "inclusions": [
-        "Accommodation for the specified number of nights.",
-        "Meals as mentioned in the itinerary.",
-        "Transportation as per the selected package.",
-        "Experienced trek leader or trip coordinator.",
-        "Guided trek to Tungnath and Chandrashila, subject to weather and safety conditions.",
-        "Basic first-aid support.",
-        "Trekking permits and entry charges, where specifically included in the package.",
-        "All applicable assistance during the trek as mentioned in the itinerary."
-      ],
-      "exclusions": [
-        "Any transportation not specifically mentioned under inclusions.",
-        "Meals not mentioned in the itinerary.",
-        "Personal expenses such as shopping, snacks, beverages and tips.",
-        "Travel or medical insurance.",
-        "Personal trekking equipment and clothing.",
-        "Any expenses caused by roadblocks, landslides, bad weather, natural disasters or unforeseen circumstances.",
-        "Emergency evacuation or additional transportation expenses, if required.",
-        "Pony, palki or porter services unless specifically mentioned.",
-        "Any additional stay or meals caused by delays beyond the control of KradInd.",
-        "GST or other applicable taxes, if not mentioned in the package price.",
-        "Anything not specifically mentioned under Package Inclusions."
-      ],
-      "faqs": [
-        {
-          "question": "Is the Chopta Tungnath Chandrashila Trek suitable for beginners?",
-          "answer": "Yes. The trek is generally suitable for beginners with a reasonable level of fitness. However, the final climb towards Chandrashila can be challenging."
-        },
-        {
-          "question": "What is the best time for the trek?",
-          "answer": "March to June and September to November are generally popular periods for pleasant weather and mountain views. Winter departures offer a different experience, with snow possible depending on conditions."
-        },
-        {
-          "question": "Will we definitely reach Chandrashila Summit?",
-          "answer": "The summit attempt depends on weather, snow and trail conditions. The trek leader's decision regarding safety will be final."
-        },
-        {
-          "question": "What type of accommodation is provided?",
-          "answer": "Accommodation may be provided in camps, homestays or hotels, depending on the package selected and availability."
-        },
-        {
-          "question": "Is transportation included?",
-          "answer": "Transportation inclusion depends on the package selected. Please check the package details before booking."
-        },
-        {
-          "question": "Is mobile network available in Chopta?",
-          "answer": "Mobile connectivity can be limited or unavailable in some areas. Travelers should inform their family and friends accordingly."
-        },
-        {
-          "question": "What should I wear for the trek?",
-          "answer": "Carry comfortable trekking clothes, warm layers, a jacket, trekking shoes with good grip and rain protection."
-        },
-        {
-          "question": "Can children join the trek?",
-          "answer": "Children may join depending on their age, fitness level and the package requirements. Parents or guardians should consult KradInd before booking. Suggested website sections For the KradInd trek page, I recommend this order: 1. Hero Banner – “Chopta Tungnath Chandrashila Trek” 2. Price + Book Now button 3. Quick Information – Duration, Difficulty, Altitude, Location 4. Overview 5. Trek Highlights 6. Photo Gallery 7. Detailed Itinerary 8. Inclusions & Exclusions 9. Things to Carry 10. Fitness Requirement 11. Cancellation Policy"
-        }
-      ],
-      "overview": "Experience the beauty of the Garhwal Himalayas with the Chopta Tungnath Chandrashila Trek, one of Uttarakhand's most popular Himalayan adventures.\n\nFrom the beautiful alpine meadows of Chopta to the sacred Tungnath Temple and the breathtaking Chandrashila Summit, this journey offers a perfect combination of adventure, spirituality, nature and Himalayan views.\n\nThe trek takes you through scenic mountain roads, dense forests and high-altitude trails. Tungnath, one of the sacred Panch Kedar temples, is an important spiritual destination, while Chandrashila offers spectacular panoramic views of the surrounding Himalayan peaks.\n\nWhether you are a first-time trekker, a nature lover or an adventure enthusiast, the Chopta Tungnath Chandrashila Trek promises an unforgettable Himalayan experience.",
-      "batches": [
-        {
-          "id": 11,
-          "startDate": "Upcoming Weekend",
-          "endDate": "Confirming Batch",
-          "slotsLeft": 6,
-          "price": 5499
-        },
-        {
-          "id": 12,
-          "startDate": "Next Week",
-          "endDate": "Open Batch",
-          "slotsLeft": 10,
-          "price": 5499
-        },
-        {
-          "id": 13,
-          "startDate": "Following Weekend",
-          "endDate": "Filling Fast",
-          "slotsLeft": 4,
-          "price": 5499
-        }
-      ],
-      "status": "Published",
-      "travelTips": [
-        {
-          "title": "Dress in Multi-Weather Layers",
-          "desc": "Chopta meadows experience cool breezes while Chandrashila summit at 13,100 ft can be very windy and cold. Carry thermals, fleece, and a windbreaker."
-        },
-        {
-          "title": "Sturdy Trekking Shoes with Grip",
-          "desc": "The paved path from Chopta to Tungnath has steep inclines, while the trail from Tungnath to Chandrashila is rocky. Deep-tread shoes are mandatory."
-        },
-        {
-          "title": "Pace Your Summit Ascent",
-          "desc": "Start early by 5:00 AM from Chopta to catch the golden sunrise over Nanda Devi, Chaukhamba, and Trishul from the Chandrashila peak."
-        },
-        {
-          "title": "Carry Reusable Hydration Flask",
-          "desc": "Plastic bottles are discouraged in the Kedarnath Wildlife Sanctuary. Carry a reusable thermos for warm drinking water."
-        }
-      ],
-      "imageAlt": "Himalayan trekking package by KRAD Global",
-      "createdAt": "2026-09-27T17:08:45.013Z",
-      "updatedAt": "2026-09-27T17:08:45.013Z"
-    },
-    {
-      "id": 2,
-      "slug": "hampta-pass",
-      "name": "Hampta Pass Crossover Trek",
-      "file": "doc_2_1AB7hyt6O2r0WinqZSGTsULtkuJd3tYHb1pJuXgPXPXY.txt",
-      "category": "Himalayas",
-      "categories": [
-        "Himalayas",
-        "Trek",
-        "High Pass"
-      ],
-      "location": "Manali to Lahaul, Himachal Pradesh",
-      "region": "Pir Panjal & Zanskar",
-      "duration": "5 Days / 4 Nights",
-      "altitude": "14,000 Ft",
-      "difficulty": "Moderate",
-      "price": 9999,
-      "originalPrice": 12999,
-      "badge": "High Pass Epic",
-      "rating": 4.9,
-      "reviewCount": 245,
-      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=85",
-      "gallery": [
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti and Lahaul.",
-      "defaultHighlights": [
-        "Dramatic landscape change from emerald pine glades into barren high-altitude desert.",
-        "Stand atop Hampta Pass at 14,000 ft overlooking towering Himalayan glaciers.",
-        "Camp at Shea Goru along crystalline glacial streams.",
-        "Special excursion to the mystical turquoise crescent of Chandratal Lake."
-      ],
-      "highlights": [
-        "Cross the spectacular Hampta Pass at around 14,000 ft",
-        "Experience the dramatic transition from Kullu Valley to Lahaul",
-        "Walk through alpine meadows and mountain forests",
-        "Experience high-altitude river and stream crossings",
-        "Explore the rugged landscape around Balu Ka Ghera and Shea Goru",
-        "Enjoy views of prominent Himalayan peaks including Indrasan and Deo Tibba",
-        "Experience changing terrain within a relatively short trek",
-        "Camp beneath a vast Himalayan sky",
-        "Enjoy the optional Chandratal Lake excursion when conditions permit"
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Drive from Manali to Jobra & Trek to Chika Campsite",
-          "description": "Your Hampta Pass crossover adventure begins with a picturesque mountain drive from Manali towards Jobra, winding through fragrant pine, cedar and deodar forests along the Pir Panjal foothills.\n\nFrom the Jobra roadhead (9,800 ft), step onto the trail for a gentle 3 km hike towards Chika. Cross the rushing Rani Nallah stream via a sturdy wooden bridge and traverse boulder-speckled alpine pastures fringed with birch and dwarf rhododendrons.\n\nArrive at the lush Chika riverside camp by early afternoon. Settle into high-altitude tents, savor a warm lunch, and enjoy evening acclimatization under towering granite cliffs.",
-          "duration": "1.5–2.5 Hours Trek (2 Hours Drive)",
-          "distance": "3 km Trek | 20 km Drive",
-          "altitude": "10,100 Ft (Jobra: 9,800 Ft)",
-          "meal": "Hot Lunch & Welcome Dinner",
-          "stay": "Chika Riverside Campsite"
-        },
-        {
-          "day": 2,
-          "title": "Chika to Balu Ka Ghera (Valley of Sand)",
-          "description": "After a nutritious hot breakfast, begin the gradual ascent towards Balu Ka Ghera along the gushing course of the Rani River.\n\nThe trail winds gently through expansive alpine valleys, carpeted meadows, and scenic rocky clearings. Depending on the season, the valley is blanketed with vivid wild rhododendrons and Himalayan wildflowers. You will encounter boulder-strewn sections and negotiate refreshing crystal-clear glacial stream crossings.\n\nAs the altitude climbs past 11,000 ft, tree lines recede, revealing massive snow-crowned granite walls and closer views of Indrasan Peak. By late afternoon, arrive at Balu Ka Ghera ('Heap of Sand') — a sheltered, sandy riverbed encircled by towering Himalayan peaks. Settle into high-altitude alpine tents, enjoy hot evening tea, and rest up for summit day.",
-          "duration": "5–6 Hours Trek",
-          "distance": "Approx. 6–7 km",
-          "altitude": "11,900 Ft",
-          "meal": "Breakfast, Packed Lunch & Dinner",
-          "stay": "Balu Ka Ghera Alpine Camp"
-        },
-        {
-          "day": 3,
-          "title": "Balu Ka Ghera to Hampta Pass Summit & Descent to Shea Goru",
-          "description": "The centerpiece and most exhilarating day of the crossover trek! Start before dawn at 6:00 AM as the mountain breeze is calm and snow bridges remain firm.\n\nThe ascent to Hampta Pass involves a sustained, steep climb through moraines, giant boulders, and seasonal snow patches. At 14,065 ft, step onto the summit ridge for an astonishing visual revelation: behind you lies the lush, emerald Kullu Valley, while ahead opens up the stark, sun-bleached moonscape of Lahaul and Spiti.\n\nAfter savoring summit vistas of Mount Indrasan and Deo Tibba, commence the steep, careful descent towards the valley of Shea Goru ('Cold Street'). Cross gentle glacial streams to reach the picturesque campsite nestled next to crystalline waters.",
-          "duration": "8–10 Hours Trek",
-          "distance": "Approx. 7–8 km",
-          "altitude": "14,065 Ft Summit (Shea Goru: 12,900 Ft)",
-          "meal": "Breakfast, Trail Snacks & Dinner",
-          "stay": "Shea Goru Riverside Camp"
-        },
-        {
-          "day": 4,
-          "title": "Shea Goru to Chhatru & Excursion to Chandratal Lake",
-          "description": "Start the morning with an exhilarating icy glacial river crossing near Shea Goru camp — a signature Hampta Pass rite of passage done under expert guide supervision.\n\nThe trail traverses arid moraines down to Chhatru, a rugged roadhead where Pir Panjal meets the Spiti valley. At Chhatru, board 4x4 mountain vehicles for an excursion to the legendary Chandratal Lake ('Moon Lake') at 14,100 ft.\n\nWalk along the sapphire-blue waters of Chandratal, framed by sheer Himalayan peaks. Return to Chhatru campsite by dusk for celebration dinner under a star-dusted Himalayan sky.\n\nImportant: Road accessibility to Chandratal Lake is subject to weather clearance, road condition, and local administrative safety approvals.",
-          "duration": "4–5 Hours Trek + 3 Hours Drive",
-          "distance": "6–7 km Trek + 45 km Drive",
-          "altitude": "11,000 Ft (Chandratal: 14,100 Ft)",
-          "meal": "Breakfast, Packed Lunch & Dinner",
-          "stay": "Chhatru Alpine Campsite"
-        },
-        {
-          "day": 5,
-          "title": "Chhatru to Manali via Atal Tunnel",
-          "description": "Relish a warm camp breakfast surrounded by the rugged, towering gorge walls of Chhatru before boarding your return vehicle.\n\nThe drive winds through the Chandra River valley, passing the high-altitude Chandra-Bhaga river confluence before traversing the engineering marvel of the Atal Tunnel at Rohtang. In minutes, watch the stark barren desert of Lahaul give way back to the verdant deodar and pine forests of Solang Valley.\n\nArrive in Manali by early afternoon, concluding your unforgettable Hampta Pass crossover expedition with lifetime memories.",
-          "duration": "4–6 Hours Scenic Drive",
-          "distance": "Approx. 65 km Mountain Drive",
-          "altitude": "6,725 Ft (Descent to Manali)",
-          "meal": "Warm Camp Breakfast",
-          "stay": "Trip Concludes at Manali Mall Road"
-        }
-      ],
-      "inclusions": [
-        "Trek planning and coordination",
-        "Professional trek leader / experienced guide",
-        "Support staff as applicable",
-        "Accommodation in tents during the trek",
-        "Sleeping arrangements",
-        "Camping equipment",
-        "Trekking meals as mentioned in the package",
-        "Breakfast, lunch and dinner during trek days",
-        "First-aid kit",
-        "Basic emergency support",
-        "Camping and operational logistics",
-        "Necessary local coordination and permissions where applicable",
-        "Group trek support throughout the scheduled itinerary",
-        "Hampta Pass Trek 2026",
-        "Hampta Pass Trek Package",
-        "Hampta Pass Trek Cost",
-        "Hampta Pass Trek Itinerary",
-        "Hampta Pass Trek Distance",
-        "Hampta Pass Trek Difficulty",
-        "Hampta Pass Trek Best Time",
-        "Hampta Pass Trek from Manali",
-        "Hampta Pass Trek Booking",
-        "Hampta Pass Trek Package from Manali",
-        "Hampta Pass and Chandratal Trek",
-        "Hampta Pass Trek Himachal Pradesh",
-        "Hampta Pass Trekking",
-        "Hampta Pass Trek Guide"
-      ],
-      "exclusions": [
-        "Travel from your home city to Manali and back",
-        "Personal expenses",
-        "Travel insurance",
-        "Personal medical expenses",
-        "Personal medicines",
-        "Emergency evacuation costs, unless covered by applicable insurance",
-        "Porter / backpack offloading charges",
-        "Personal trekking gear rental",
-        "Extra hotel stay before or after the trek",
-        "Additional meals outside the stated itinerary",
-        "Any additional transportation caused by itinerary changes",
-        "Expenses caused by delays due to weather, road closure or other unforeseen situations",
-        "Entry fees or local charges not specifically mentioned in inclusions",
-        "Charges for optional activities",
-        "Anything not specifically mentioned under “Inclusions”",
-        "Hampta Pass Trek 2026",
-        "Hampta Pass Trek Package",
-        "Hampta Pass Trek Cost",
-        "Hampta Pass Trek Itinerary",
-        "Hampta Pass Trek Distance",
-        "Hampta Pass Trek Difficulty",
-        "Hampta Pass Trek Best Time",
-        "Hampta Pass Trek from Manali",
-        "Hampta Pass Trek Booking",
-        "Hampta Pass Trek Package from Manali",
-        "Hampta Pass and Chandratal Trek",
-        "Hampta Pass Trek Himachal Pradesh",
-        "Hampta Pass Trekking",
-        "Hampta Pass Trek Guide"
-      ],
-      "faqs": [
-        {
-          "question": "Is Hampta Pass Trek suitable for beginners?",
-          "answer": "Yes. Hampta Pass can be a good introduction to moderate Himalayan trekking for beginners who are physically prepared. The trek still involves altitude, steep sections, river crossings and a demanding summit day, so preparation is important."
-        },
-        {
-          "question": "How difficult is Hampta Pass Trek?",
-          "answer": "Hampta Pass is generally classified as a moderate trek. The summit day is the most demanding part because of the altitude gain, steep climb and long trekking hours."
-        },
-        {
-          "question": "What is the maximum altitude of Hampta Pass?",
-          "answer": "Hampta Pass is approximately 14,000 ft above sea level, with exact figures varying slightly between sources and route conditions."
-        },
-        {
-          "question": "How many days are required for Hampta Pass Trek?",
-          "answer": "A typical organised itinerary takes around 5 days, including the approach from Manali and return. Some operators may use different itinerary structures or add buffer days."
-        },
-        {
-          "question": "What is the best month for Hampta Pass Trek?",
-          "answer": "The main trekking window is generally from June to September, subject to weather and local conditions."
-        },
-        {
-          "question": "Is Hampta Pass Trek safe?",
-          "answer": "Hampta Pass can be undertaken safely with proper preparation, experienced guidance and responsible trekking practices. However, no Himalayan trek is completely risk-free."
-        },
-        {
-          "question": "Can children join the trek?",
-          "answer": "Children should only participate if they meet the trek operator's age, fitness and safety requirements. Parents or guardians should assess the child's ability to manage long mountain walks and altitude."
-        },
-        {
-          "question": "Can senior citizens join Hampta Pass Trek?",
-          "answer": "Age alone should not determine suitability. However, the physical demands and altitude make medical and fitness assessment particularly important for older participants."
-        },
-        {
-          "question": "Is Chandratal included in Hampta Pass Trek?",
-          "answer": "Chandratal is included in some itineraries and offered as an excursion, but access depends on road conditions, weather, local restrictions and the operational itinerary. It should not be assumed to be guaranteed."
-        },
-        {
-          "question": "Will there be snow on Hampta Pass?",
-          "answer": "Snow conditions depend on the time of year and the year's weather. Early-season departures are more likely to encounter snow at higher elevations, but conditions vary every season."
-        },
-        {
-          "question": "What type of accommodation is provided?",
-          "answer": "The trek generally uses camping accommodation. Facilities are basic and intended for rest and shelter in a mountain environment."
-        },
-        {
-          "question": "Do I need trekking shoes?",
-          "answer": "Yes. Proper trekking shoes with good grip are strongly recommended because the trail includes rocky, uneven and potentially wet sections."
-        },
-        {
-          "question": "Is there mobile network during the trek?",
-          "answer": "Mobile connectivity can be intermittent or unavailable across several sections of the route. Do not rely on your phone as your only means of communication."
-        },
-        {
-          "question": "Can I charge my phone during the trek?",
-          "answer": "Charging facilities may be limited or unavailable at campsites. Carry a fully charged power bank."
-        },
-        {
-          "question": "Can I rent trekking equipment?",
-          "answer": "Equipment rental may be available depending on the package and operational arrangements. Confirm availability with KRAD Global before departure."
-        },
-        {
-          "question": "What should I carry for Hampta Pass?",
-          "answer": "Carry suitable trekking shoes, warm layers, rain protection, personal medication, sunscreen, sunglasses, a headlamp, water bottles, personal toiletries and other essentials mentioned in the packing list."
-        },
-        {
-          "question": "How fit should I be for Hampta Pass?",
-          "answer": "You should be able to walk several kilometres for multiple consecutive days and manage uphill and downhill sections comfortably. Regular cardio and strength training before the trek is recommended."
-        }
-      ],
-      "overview": "Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti and Lahaul.",
-      "batches": [
-        {
-          "id": 21,
-          "startDate": "Upcoming Weekend",
-          "endDate": "Confirming Batch",
-          "slotsLeft": 6,
-          "price": 9999
-        },
-        {
-          "id": 22,
-          "startDate": "Next Week",
-          "endDate": "Open Batch",
-          "slotsLeft": 10,
-          "price": 9999
-        },
-        {
-          "id": 23,
-          "startDate": "Following Weekend",
-          "endDate": "Filling Fast",
-          "slotsLeft": 4,
-          "price": 9999
-        }
-      ],
-      "status": "Published",
-      "travelTips": [
-        {
-          "title": "Layered Alpine Clothing",
-          "desc": "Weather on high mountain passes changes rapidly. Dress in 3-4 breathable layers including a thermal base, fleece jacket, and windproof outer shell."
-        },
-        {
-          "title": "Sturdy Trekking Boots",
-          "desc": "Wear broken-in ankle-support trekking boots with deep grip soles. Avoid brand-new footwear to prevent trail blisters."
-        },
-        {
-          "title": "Hydration & Acclimatization",
-          "desc": "Drink 3–4 litres of fluids daily. Gradual pacing and deep breathing help prevent Acute Mountain Sickness (AMS)."
-        },
-        {
-          "title": "Follow River Crossing Protocols",
-          "desc": "Unclip backpack waist belts during stream crossings and strictly follow guide instructions and human-chain formations."
-        },
-        {
-          "title": "Leave No Trace Principles",
-          "desc": "The pristine high-altitude meadows of Balu Ka Ghera and Shea Goru are ecologically sensitive. Pack out all non-biodegradable waste."
-        }
-      ],
-      "bookingPolicy": [
-        "Trek confirmation subject to fitness self-declaration and medical disclaimer.",
-        "Advance booking deposit secures campsite inventory, high-altitude gear, and guide ratio.",
-        "Cancellation charges apply based on notice period prior to trek batch start date.",
-        "Route alterations may be made by the trek leader for trekker safety during adverse weather."
-      ],
-      "costFactors": [
-        "Trek batch departure date and group size",
-        "Rental gear requirements (trekking poles, crampons, waterproof poncho)",
-        "Offloading service for personal backpack on mules",
-        "Chandratal Lake excursion vehicle upgrade"
-      ],
-      "imageAlt": "Himalayan trekking package by KRAD Global",
-      "createdAt": "2026-09-25T17:08:45.014Z",
-      "updatedAt": "2026-09-25T17:08:45.014Z"
-    },
-    {
-      "id": 3,
-      "slug": "kheerganga-trek",
-      "name": "Kheerganga Hot Spring Trek",
-      "file": "doc_3_1k1FMZd43IHiim0Sspx9j6NtiMND0eM_ST7FF1LxNxHQ.txt",
-      "category": "Weekend",
-      "categories": [
-        "Weekend",
-        "Trek",
-        "Hot Springs",
-        "Himachal"
-      ],
-      "location": "Parvati Valley, Kasol, Himachal Pradesh",
-      "region": "Parvati Valley",
-      "duration": "2 Days / 1 Night",
-      "altitude": "9,700 Ft",
-      "difficulty": "Easy to Moderate",
-      "price": 2499,
-      "originalPrice": 3499,
-      "badge": "Bestseller Weekend",
-      "rating": 4.8,
-      "reviewCount": 190,
-      "image": "https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1920&q=85",
-      "gallery": [
-        "https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "Natural hot sulphur springs nestled high amidst pine-covered peaks of Parvati Valley.",
-      "defaultHighlights": [
-        "Natural thermal hot water spring bath overlooking snow-dusted Himalayan peaks.",
-        "Trek through ancient village of Nakthan and the roaring Rudranag waterfall.",
-        "Stargazing around campfire in the magical heights of Parvati Valley.",
-        "Perfect weekend rejuvenation getaway starting from Kasol / Barshaini."
-      ],
-      "highlights": [
-        "Scenic views of the Parvati Valley",
-        "Trek through pine, deodar and mixed Himalayan forests",
-        "Traditional mountain settlements such as Nakthan and Kalga",
-        "Beautiful Rudranag Waterfall",
-        "Himalayan streams and wooden bridges",
-        "Panoramic mountain views from the upper trail",
-        "Visit to Parvati Kund / Kheerganga hot water spring",
-        "A spiritual connection with the legends surrounding Lord Shiva",
-        "Opportunity to explore Kasol, Manikaran, Tosh and nearby Parvati Valley villages"
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Reach Barshaini and Trek to Kheerganga",
-          "description": "Route: Barshaini → Nakthan → Rudranag → Kheerganga | Trek Time: Around 5–6 hours | Altitude: 9,700 Ft\n\nStart early from Barshaini, the scenic roadhead and standard base for the Kheerganga trek. The trail meanders through apple orchards and rustic wooden Himachali homes in Nakthan village, overlooking the roaring Parvati River.\n\nPause at the sacred Rudranag waterfall for refreshing mountain water and local tea. Continue climbing through towering deodar, oak, and pine forests until you emerge into the panoramic alpine meadow of Kheerganga, renowned for its natural geothermal hot water springs with 360-degree valley views.",
-          "altitude": "9,700 Ft",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite",
-          "distance": "Approximately 12 km one way"
-        },
-        {
-          "day": 2,
-          "title": "Return to Barshaini and Departure",
-          "description": "Route: Kheerganga → Rudranag → Nakthan → Barshaini | Trek Time: Around 4–5 hours\n\nWake up to crisp Himalayan morning breezes and golden sunrise rays illuminating the snow-clad peaks. Enjoy a hearty breakfast at the campsite.\n\nBegin the descent retracing the forest trail carefully down towards Barshaini. Step mindfully over rocky roots and downhill stone sections. Arrive at Barshaini by afternoon, where local buses and shared taxis connect to Kasol, Manikaran, and Bhuntar for your onward journey.",
-          "altitude": "9,700 Ft",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        }
-      ],
-      "inclusions": [
-        "Comfortable stay as per selected itinerary (Hotels / Camps / Houseboat)",
-        "Meals as specified (Breakfast & Dinners)",
-        "Dedicated trip coordinator / mountain guide",
-        "Permits, entry passes and ground assistance",
-        "Private transfers as per package route"
-      ],
-      "exclusions": [
-        "Personal expenses (laundry, beverages, tips)",
-        "Airfare or train fare to arrival hub",
-        "Travel insurance and medical emergency coverage",
-        "Anything not mentioned in the inclusions list"
-      ],
-      "faqs": [
-        {
-          "question": "Is the Kheerganga trek suitable for complete beginners?",
-          "answer": "Yes. The Kheerganga Trek is an easy-to-moderate trail and is one of the most accessible Himalayan weekend treks for beginners. The distance is approximately 12 km one-way from Barshaini with gradual climbing. Basic physical fitness and comfortable trekking shoes are recommended."
-        },
-        {
-          "question": "What is the best time to visit Kheerganga?",
-          "answer": "April to June and September to November offer pleasant weather, clear skies, and spectacular valley vistas. The trek also operates during winter (December to February) for snow lovers, though temperatures drop below freezing at the summit."
-        },
-        {
-          "question": "Are the Parvati Kund hot springs open for bathing?",
-          "answer": "Yes, the natural sulphur hot springs at Parvati Kund are accessible year-round and are famous for their rejuvenating warmth and panoramic Himalayan snow-peak views."
-        },
-        {
-          "question": "Is mobile network available during the trek?",
-          "answer": "Mobile connectivity (primarily BSNL, Jio, and Airtel) is generally available up to Barshaini and Nakthan village, but becomes intermittent or unavailable at the Kheerganga top camp."
-        },
-        {
-          "question": "What type of stay is provided at Kheerganga?",
-          "answer": "Comfortable alpine dome tents with warm fleece sleeping bags, insulated ground mats, and shared camp washroom facilities are provided at the meadow campsites."
-        }
-      ],
-      "overview": "Kheerganga is more than just a walk to a hot spring. The trail gives you a compact introduction to the majestic alpine landscapes and vibrant culture of the Parvati Valley.\n\nNestled high amidst the pine and deodar covered slopes of Himachal Pradesh at 9,700 Ft, Kheerganga is renowned for its mystical hot water springs at Parvati Kund, sweeping views of snow-dusted Himalayan ridges, and serene mountain campsites.\n\nThe trail winds past the roaring suspension bridges of Barshaini, authentic wooden hamlets like Nakthan and Kalga, and the sacred waters of Rudranag. The combination of ancient deodar forests, alpine streams, warm mountain hospitality, and therapeutic hot springs makes Kheerganga an unmissable Himalayan adventure.",
-      "batches": [
-        {
-          "id": 31,
-          "startDate": "Upcoming Weekend",
-          "endDate": "Confirming Batch",
-          "slotsLeft": 6,
-          "price": 2499
-        },
-        {
-          "id": 32,
-          "startDate": "Next Week",
-          "endDate": "Open Batch",
-          "slotsLeft": 10,
-          "price": 2499
-        },
-        {
-          "id": 33,
-          "startDate": "Following Weekend",
-          "endDate": "Filling Fast",
-          "slotsLeft": 4,
-          "price": 2499
-        }
-      ],
-      "status": "Published",
-      "travelTips": [
-        {
-          "title": "Start Trail Early",
-          "desc": "Begin your hike from Barshaini by 8:00 AM to comfortably reach Kheerganga meadow well before sunset."
-        },
-        {
-          "title": "Trekker Footwear with Traction",
-          "desc": "Wet boulders near waterfalls and forest mud paths can be slippery. Wear sturdy trekking shoes with reliable rubber lugs."
-        },
-        {
-          "title": "Sanctuary Etiquette at Hot Springs",
-          "desc": "The natural geothermal sulphur bath is revered as a sacred site. Maintain sanctity, follow separate bathing sections, and avoid soap or chemical detergents."
-        },
-        {
-          "title": "Night Warmth & Lighting",
-          "desc": "Temperatures drop sharply after dark at 9,700 ft. Carry a reliable headlamp or torch and warm fleece/thermal wear."
-        },
-        {
-          "title": "Eco-Conscious Travel",
-          "desc": "Parvati Valley has strict anti-littering rules. Carry all plastic wrappers, bottles, and snack packs back down to Barshaini."
-        }
-      ],
-      "bookingPolicy": [
-        "Campsite tent allotment is subject to local village authority regulations.",
-        "Advance deposit confirms alpine tent accommodation, meals, and mountain guide.",
-        "Transfers between Bhuntar/Kasol and Barshaini available on private cab request."
-      ],
-      "costFactors": [
-        "Weekend vs weekday departures",
-        "Tent type (Alpine Dome Tent / Swiss Luxury Tent / Homestay)",
-        "Meals plan (Breakfast & Dinner vs All Meals)",
-        "Kasol to Barshaini pickup and drop options"
-      ],
-      "imageAlt": "Himalayan trekking package by KRAD Global",
-      "createdAt": "2026-09-23T17:08:45.014Z",
-      "updatedAt": "2026-09-23T17:08:45.014Z"
-    },
-    {
-      "id": 4,
-      "slug": "kerala-tour-package",
-      "name": "Kerala Tour Package – 5 Nights / 6 Days",
-      "file": "doc_4_1wb9w7USkShKXZOAv8Mv7SkIwn1hsytHaHXRBmwyR7aY.txt",
-      "category": "Domestic",
-      "categories": [
-        "Domestic",
-        "Holiday Package",
-        "South India",
-        "Honeymoon"
-      ],
-      "location": "Munnar, Thekkady, Alleppey & Kochi, Kerala",
-      "region": "God's Own Country",
-      "duration": "6 Days / 5 Nights",
-      "altitude": "Sea Level to 5,200 Ft",
-      "difficulty": "Leisure / Sightseeing",
-      "price": 30000,
-      "originalPrice": 38000,
-      "badge": "Couple & Honeymoon Choice",
-      "rating": 4.9,
-      "reviewCount": 310,
-      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=85",
-      "gallery": [
-        "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "A well-planned Kerala holiday for couples covering hills, tea gardens, spices and backwaters with private car and 1 night houseboat.",
-      "defaultHighlights": [
-        "Private traditional houseboat cruise through the palm-fringed backwaters of Alleppey with all meals.",
-        "Endless green tea plantations and mist-covered viewpoints of Munnar.",
-        "Spice plantation walk and Periyar Tiger Reserve wildlife boat safari in Thekkady.",
-        "Historic Fort Kochi with Chinese fishing nets and Portuguese heritage."
-      ],
-      "highlights": [
-        "5 nights / 6 days Kerala holiday for 2 adults (₹60,000 total / ₹30,000 per person)",
-        "Private Swift Dzire reserved for the complete 6-day tour",
-        "2 nights in Munnar at verified 3-star hotel",
-        "1 night in Thekkady amidst spice plantations",
-        "1 night on a traditional Alleppey houseboat with full board",
-        "1 night in Kochi with heritage sightseeing",
-        "Daily breakfast and daily dinner at hotel stays",
-        "Houseboat lunch, evening tea/snacks, dinner and breakfast",
-        "Kochi Airport / Railway Station pickup & drop",
-        "Munnar tea gardens, Cheeyappara and Valara waterfalls",
-        "Mattupetty Dam, Echo Point and Kundala Lake",
-        "Thekkady spice plantations & optional Periyar lake activities",
-        "Alleppey backwater cruise & Fort Kochi heritage tour"
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Kochi to Munnar – Waterfalls, Tea Hills & Scenic Drive",
-          "description": "Arrive at Kochi International Airport or Ernakulam Railway Station. Meet your driver and begin your scenic drive towards Munnar (~125-140 km, 4-5 hrs). En-route stops at Cheeyappara Waterfalls, Valara Waterfalls, spice plantations, and viewpoints. Reach Munnar and check in to your 3-star hotel. Spend the evening at a relaxed pace. Overnight: Munnar. Meal Plan: Dinner included.",
-          "altitude": "Sea Level to 5,200 Ft",
-          "meal": "Dinner",
-          "stay": "3-Star Hotel – Munnar"
-        },
-        {
-          "day": 2,
-          "title": "Munnar Full-Day Sightseeing",
-          "description": "Start your day with breakfast and head out for a full day around Munnar: Eravikulam National Park / Rajamalai (subject to Nilgiri tahr calving season closure), Tea Museum, Mattupetty Dam, Echo Point, Kundala Lake, and tea garden photo stops. Return to hotel in the evening. Overnight: Munnar. Meal Plan: Breakfast & Dinner included.",
-          "altitude": "Sea Level to 5,200 Ft",
-          "meal": "Breakfast & Dinner",
-          "stay": "3-Star Hotel – Munnar"
-        },
-        {
-          "day": 3,
-          "title": "Munnar to Thekkady – Hills, Spices & Wildlife",
-          "description": "After breakfast, check out and drive towards Thekkady (~110-125 km, ~4 hrs) through cardamom, pepper and spice plantations. Reach Thekkady, check in to your hotel. Afternoon and evening open for optional Periyar Lake boat ride, spice plantation tour, Kathakali show, or Ayurveda massage. Overnight: Thekkady. Meal Plan: Breakfast & Dinner included.",
-          "altitude": "Sea Level to 5,200 Ft",
-          "meal": "Breakfast & Dinner",
-          "stay": "3-Star Hotel – Thekkady"
-        },
-        {
-          "day": 4,
-          "title": "Thekkady to Alleppey – Overnight Houseboat",
-          "description": "Have breakfast and check out. Drive towards Alleppey (~140-160 km, 4.5-5 hrs). Board your traditional Kerala houseboat. Cruise through Vembanad Lake, canals, paddy fields and villages. Enjoy welcome drink, authentic Kerala lunch, evening tea/snacks, candlelight dinner and breakfast. Overnight: Alleppey Houseboat. Meal Plan: Full Houseboat Board.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast, Lunch, Snacks & Dinner",
-          "stay": "Traditional Kerala Houseboat – Alleppey"
-        },
-        {
-          "day": 5,
-          "title": "Alleppey to Kochi – Backwaters to Fort Kochi",
-          "description": "Morning cruise and breakfast on the houseboat. Check out and drive to Kochi (~55-65 km, 1.5-2 hrs). Check in to your 3-star hotel. Visit Fort Kochi, Chinese Fishing Nets, St. Francis Church, Santa Cruz Basilica, Mattancherry Palace, and Jew Town. Shop for spices and local handicrafts. Overnight: Kochi. Meal Plan: Breakfast & Dinner included.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast & Dinner",
-          "stay": "3-Star Hotel – Kochi"
-        },
-        {
-          "day": 6,
-          "title": "Kochi Sightseeing & Departure",
-          "description": "Enjoy breakfast at the hotel. Check out according to your departure schedule. If time permits, visit Marine Drive or Lulu Mall. Driver transfers you to Cochin International Airport or Ernakulam Railway Station for your onward journey. Meal Plan: Breakfast included.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast",
-          "stay": "Departure"
-        }
-      ],
-      "inclusions": [
-        "5 nights accommodation: 2N Munnar, 1N Thekkady, 1N Alleppey Houseboat, 1N Kochi (3-star category for 2 adults)",
-        "Private air-conditioned Swift Dzire available for the complete 6-day itinerary",
-        "Kochi Airport / Railway Station pickup and drop",
-        "Daily breakfast at hotels",
-        "Daily dinner at hotel stays",
-        "Houseboat lunch, evening tea/snacks, dinner and breakfast",
-        "Fuel charges, driver allowance, tolls, and standard parking",
-        "Intercity transfers and sightseeing as mentioned in the itinerary",
-        "Driver assistance throughout the trip"
-      ],
-      "exclusions": [
-        "Flight or train tickets to/from Kochi",
-        "Monument and attraction entry fees",
-        "Boating charges (Mattupetty Dam, Kundala Lake, Periyar Lake)",
-        "Periyar Tiger Reserve wildlife activities, jeep safari, elephant activities",
-        "Kathakali and Kalaripayattu cultural performance tickets",
-        "Ayurveda massage, spa, wellness treatments, and camera permits",
-        "Lunches outside the scheduled houseboat stay",
-        "Personal expenses, laundry, tips, and travel insurance"
-      ],
-      "faqs": [
-        {
-          "question": "What is the cost of this 5 nights 6 days Kerala tour package?",
-          "answer": "The package costs ₹60,000 for 2 adults, which works out to ₹30,000 per person. It includes 3-star accommodation, private Swift Dzire transportation, breakfast and dinner, plus one night in an Alleppey houseboat with full houseboat meals."
-        },
-        {
-          "question": "What places are covered in this Kerala tour package?",
-          "answer": "The route covers Kochi, Munnar, Thekkady and Alleppey. You get two nights in Munnar, one night in Thekkady, one night on an Alleppey houseboat and one night in Kochi."
-        },
-        {
-          "question": "Is the Kerala tour package private for couples?",
-          "answer": "Yes. This package is planned for 2 adults travelling in a private Swift Dzire. The vehicle is not shared with another tourist group."
-        },
-        {
-          "question": "Is Periyar boating included in the package?",
-          "answer": "No. Periyar Lake boating is an optional activity and is not included in the standard package. Tickets can be paid separately, subject to availability."
-        },
-        {
-          "question": "Is the Alleppey houseboat stay included?",
-          "answer": "Yes. The package includes one night on an Alleppey houseboat with lunch, evening tea/snacks, dinner and breakfast included."
-        },
-        {
-          "question": "What is the best time to visit Kerala?",
-          "answer": "October to February is generally a comfortable period for this route, with pleasant conditions in Munnar and Thekkady and suitable weather for backwater travel."
-        },
-        {
-          "question": "Are Eravikulam National Park and other entry tickets included?",
-          "answer": "No. Attraction entry fees are excluded. Eravikulam National Park is also subject to seasonal closure during calving season (Feb-March)."
-        },
-        {
-          "question": "Can I customize this Kerala tour package?",
-          "answer": "Yes. You can request changes to hotel category, destinations (Kumarakom, Kovalam, Varkala, Marari, Athirappilly), and number of nights."
-        }
-      ],
-      "overview": "Experience the diverse beauty of Kerala with a carefully planned 6 Days 5 Nights Kerala Tour Package covering the scenic hills of Munnar, the wildlife and spice plantations of Thekkady, the peaceful backwaters of Alleppey and the cultural charm of Kochi.\n\nThis Kerala holiday package brings together some of the state's most memorable experiences in one comfortable journey. Walk through lush tea plantations in Munnar, explore the natural surroundings of Thekkady, enjoy a relaxing backwater cruise in Alleppey and discover the heritage of Kochi.\n\nThe route is designed to give you a balance of sightseeing, leisure and scenic road journeys instead of packing too many attractions into a single day. Kerala's popular tour circuits commonly combine Munnar, Thekkady and Alleppey, with Kochi used as a convenient arrival and departure point.\n\nWhether you are planning a family vacation, a romantic Kerala honeymoon, or a refreshing getaway with friends, this itinerary can also be customised according to your travel dates, hotel category and preferred activities.",
-      "batches": [
-        {
-          "id": 41,
-          "startDate": "Upcoming Weekend",
-          "endDate": "Confirming Batch",
-          "slotsLeft": 6,
-          "price": 30000
-        },
-        {
-          "id": 42,
-          "startDate": "Next Week",
-          "endDate": "Open Batch",
-          "slotsLeft": 10,
-          "price": 30000
-        },
-        {
-          "id": 43,
-          "startDate": "Following Weekend",
-          "endDate": "Filling Fast",
-          "slotsLeft": 4,
-          "price": 30000
-        }
-      ],
-      "status": "Published",
-      "travelTips": [
-        {
-          "title": "Light Breathable Clothing",
-          "desc": "Kerala has a warm, tropical climate. Pack loose-fitting cotton clothing, sunglasses, and a lightweight umbrella for brief showers."
-        },
-        {
-          "title": "Warm Layer for Munnar Hills",
-          "desc": "Munnar's tea-clad hills sit at 5,200 ft where evening temperatures drop significantly. Bring a light pullover or jacket."
-        },
-        {
-          "title": "Houseboat Etiquette in Alleppey",
-          "desc": "Houseboats cruise during daylight hours and anchor by 5:30 PM per inland water authority safety regulations. Enjoy the sunset views over the paddy fields."
-        },
-        {
-          "title": "Temple & Cultural Dress Codes",
-          "desc": "Traditional attire is required at several ancient temples like Padmanabhaswamy. Check dress rules in advance."
-        }
-      ],
-      "imageAlt": "Customized holiday package by KRAD Global",
-      "createdAt": "2026-09-21T17:08:45.014Z",
-      "updatedAt": "2026-09-21T17:08:45.014Z"
-    },
     {
       "id": 5,
       "slug": "maharashtra-tour-package",
@@ -1314,220 +359,6 @@
       "updatedAt": "2026-09-19T17:08:45.014Z"
     },
     {
-      "id": 6,
-      "slug": "goa-tour-package",
-      "name": "Goa Beach & Heritage Tour",
-      "file": "doc_6_1iosvpaHclHRApMiTOmQfYjzjv6ILB57kGoyODcwcgtA.txt",
-      "category": "Domestic",
-      "categories": [
-        "Domestic",
-        "Beach",
-        "Holiday Package"
-      ],
-      "location": "North & South Goa",
-      "region": "Konkan Coast",
-      "duration": "4 Days / 3 Nights",
-      "altitude": "Sea Level",
-      "difficulty": "Leisure / Beach Holiday",
-      "price": 11999,
-      "originalPrice": 15499,
-      "badge": "Beach Vacation",
-      "rating": 4.8,
-      "reviewCount": 280,
-      "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1920&q=85",
-      "gallery": [
-        "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "Sun-drenched beaches, Portuguese colonial architecture, sunset cruises and vibrant Goan dining.",
-      "defaultHighlights": [
-        "Explore historic Fort Aguada, Chapora Fort and UNESCO Basilica of Bom Jesus.",
-        "Relax on golden sands of Baga, Calangute, and serene South Goa beaches.",
-        "Evening Mandovi River sunset cruise with live cultural Goan dance.",
-        "Authentic coastal seafood dining and water sports adventures."
-      ],
-      "highlights": [
-        "Explore historic Fort Aguada, Chapora Fort and UNESCO Basilica of Bom Jesus.",
-        "Relax on golden sands of Baga, Calangute, and serene South Goa beaches.",
-        "Evening Mandovi River sunset cruise with live cultural Goan dance.",
-        "Authentic coastal seafood dining and water sports adventures."
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Arrival in Goa & Leisure",
-          "description": "Arrive at Goa Airport, railway station or your preferred arrival point. Our representative will assist you with the transfer to your hotel. Complete the check-in formalities and spend the rest of the day relaxing after your journey. Depending on your arrival time, you can explore a nearby beach, enjoy a sunset or simply relax at your resort. Overnight stay in Goa.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        },
-        {
-          "day": 2,
-          "title": "North Goa Sightseeing",
-          "description": "After breakfast, begin your North Goa sightseeing tour. Explore some of the region's popular attractions and beaches, which may include:\n• Fort Aguada\n• Sinquerim Beach\n• Candolim Beach\n• Calangute Beach\n• Baga Beach\n• Anjuna Beach\n• Vagator Beach\n• Chapora Fort North Goa is ideal for travellers who enjoy a lively atmosphere, beach activities, cafés, shopping and nightlife. Spend the evening at leisure or choose an optional activity depending on your package. Overnight stay in Goa.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        },
-        {
-          "day": 3,
-          "title": "South Goa Exploration",
-          "description": "After breakfast, proceed for a South Goa sightseeing experience. Depending on your selected itinerary, the day can include places such as:\n• Basilica of Bom Jesus\n• Se Cathedral\n• Panaji\n• Dona Paula\n• Miramar Beach\n• Colva Beach\n• Benaulim Beach\n• Cavelossim Beach South Goa offers a different side of the destination, with quieter beaches, heritage attractions and a more relaxed holiday atmosphere. Return to the hotel in the evening. Overnight stay in Goa.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        },
-        {
-          "day": 4,
-          "title": "Goa at Your Own Pace",
-          "description": "Enjoy breakfast and keep the day flexible. You can spend the day relaxing at your hotel, visiting a beach you missed earlier, shopping for souvenirs or choosing optional activities. Depending on availability and weather conditions, activities may include:\n• Water sports\n• Boat trips\n• Dolphin spotting\n• Sunset cruises\n• Scuba diving\n• Kayaking\n• Spice plantation visits\n• Adventure activities\n\nOptional activities are subject to availability, operating conditions and applicable charges. Overnight stay in Goa.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        },
-        {
-          "day": 5,
-          "title": "Departure from Goa",
-          "description": "Enjoy a relaxed breakfast and check out from your hotel according to your flight or train schedule.\n\nYou will be transferred via private vehicle to Goa Airport (Dabolim or Mopa) or the railway station for your onward travel.\n\nTake home sun-kissed beach memories, palm-fringed coastal sunsets, and rich Portuguese heritage experiences from your holiday with KRAD Global.",
-          "altitude": "Sea Level",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        }
-      ],
-      "inclusions": [
-        "Hotel accommodation as selected",
-        "Daily breakfast as per the package plan",
-        "Airport/railway station transfers",
-        "Sightseeing transfers according to the itinerary",
-        "Local transportation by suitable vehicle",
-        "Driver charges",
-        "Parking charges for included sightseeing",
-        "Toll taxes where applicable",
-        "Accommodation on a twin/double/triple sharing basis as selected",
-        "Travel assistance during the tour",
-        "Applicable hotel taxes included in the package quotation"
-      ],
-      "exclusions": [
-        "Flights or train tickets",
-        "Personal expenses",
-        "Lunch and dinner",
-        "Alcoholic beverages",
-        "Room service",
-        "Laundry",
-        "Telephone calls",
-        "Additional sightseeing not mentioned in the itinerary",
-        "Entry tickets to monuments and attractions",
-        "Water sports and adventure activities",
-        "Camera/video charges",
-        "Guide charges unless specifically included",
-        "Additional vehicle usage",
-        "Expenses caused by flight/train delays",
-        "Travel insurance",
-        "Any government tax introduced after the booking",
-        "Anything not specifically mentioned under inclusions"
-      ],
-      "faqs": [
-        {
-          "question": "How many days are enough for a Goa trip?",
-          "answer": "A 4 to 5-day Goa trip is a comfortable option for first-time visitors. It gives you enough time to explore popular North Goa attractions, experience South Goa and still keep some time for relaxation."
-        },
-        {
-          "question": "What is the best Goa tour package for couples?",
-          "answer": "A 4 Nights / 5 Days or 5 Nights / 6 Days package works well for couples because it provides enough time for sightseeing while leaving room for beach and resort experiences."
-        },
-        {
-          "question": "Is Goa suitable for a family holiday?",
-          "answer": "Yes. Goa offers beaches, heritage attractions, sightseeing, resorts, nature experiences and activities that can be included in a family-friendly itinerary."
-        },
-        {
-          "question": "Which is better, North Goa or South Goa?",
-          "answer": "North Goa is generally preferred by travellers looking for nightlife, popular beaches and entertainment. South Goa is better suited to travellers looking for quieter beaches and a more relaxed atmosphere."
-        },
-        {
-          "question": "Can I customise my Goa tour package?",
-          "answer": "Yes. KRAD GLOBAL can customise the duration, hotel category, sightseeing, transfers and optional activities according to availability and your requirements."
-        },
-        {
-          "question": "Are flights included in Goa tour packages?",
-          "answer": "Flights are included only when specifically mentioned in the selected package. Otherwise, flight/train tickets can be arranged separately on request."
-        },
-        {
-          "question": "Are water sports included?",
-          "answer": "Water sports are not automatically included unless mentioned in the package itinerary. They can be added as optional activities depending on availability and weather conditions."
-        },
-        {
-          "question": "What is the best month to visit Goa?",
-          "answer": "October to March is generally preferred for a conventional beach holiday. The monsoon months offer a greener and quieter side of Goa but can affect sea-based activities."
-        },
-        {
-          "question": "Can I book a Goa honeymoon package with KRAD GLOBAL?",
-          "answer": "Yes. Honeymoon packages can be customised with suitable hotels, private transfers, sightseeing and romantic experiences according to your budget."
-        }
-      ],
-      "overview": "Sun-drenched beaches, Portuguese colonial architecture, sunset cruises and vibrant Goan dining.",
-      "batches": [
-        {
-          "id": 61,
-          "startDate": "Upcoming Weekend",
-          "endDate": "Confirming Batch",
-          "slotsLeft": 6,
-          "price": 11999
-        },
-        {
-          "id": 62,
-          "startDate": "Next Week",
-          "endDate": "Open Batch",
-          "slotsLeft": 10,
-          "price": 11999
-        },
-        {
-          "id": 63,
-          "startDate": "Following Weekend",
-          "endDate": "Filling Fast",
-          "slotsLeft": 4,
-          "price": 11999
-        }
-      ],
-      "status": "Published",
-      "travelTips": [
-        {
-          "title": "Beach & Swim Safety",
-          "desc": "Always pay attention to lifeguard flags along the beaches. Avoid swimming in rough seas or during red-flag advisories."
-        },
-        {
-          "title": "Sun & Heat Protection",
-          "desc": "Carry high-SPF sunscreen, sunglasses, light breathable cotton wear, and stay hydrated throughout beach excursions."
-        },
-        {
-          "title": "Licensed Vehicle Rentals",
-          "desc": "When renting scooters or self-drive cars, always inspect vehicle condition, carry a valid driving license, and wear helmets at all times."
-        },
-        {
-          "title": "Respect Heritage Sanctuaries",
-          "desc": "When touring Old Goa churches like Basilica of Bom Jesus, follow the modest dress code and maintain quiet inside."
-        },
-        {
-          "title": "Explore Beyond the Beaches",
-          "desc": "Take time for spice plantation tours, Latin Quarter heritage walks in Fontainhas, and dolphin boat cruises along the Mandovi River."
-        }
-      ],
-      "bookingPolicy": [
-        "Booking confirmation subject to resort room availability.",
-        "Advance deposit required to confirm beachside resorts and airport transfers.",
-        "Cancellation policies vary during peak festive seasons (Christmas / New Year).",
-        "Valid government photo IDs required for all adult guests at hotel check-in."
-      ],
-      "costFactors": [
-        "Travel season (peak New Year/Christmas vs monsoon/summer specials)",
-        "Accommodation tier (Boutique Villa / Beach Resort / 4-Star Luxury)",
-        "Vehicle requirements (Self-drive / Dedicated AC private cab)",
-        "Water sports and island boat cruise inclusions"
-      ],
-      "imageAlt": "Customized holiday package by KRAD Global",
-      "createdAt": "2026-09-17T17:08:45.014Z",
-      "updatedAt": "2026-09-17T17:08:45.014Z"
-    },
-    {
       "id": 7,
       "slug": "jaipur-tour-package",
       "name": "Jaipur Royal Heritage Tour",
@@ -1740,6 +571,454 @@
       "imageAlt": "Domestic tour package in India by KRAD Global",
       "createdAt": "2026-09-15T17:08:45.014Z",
       "updatedAt": "2026-09-15T17:08:45.014Z"
+    },
+    {
+      "id": 13,
+      "slug": "jaisalmer-tour-package",
+      "name": "Jaisalmer Golden City & Desert Safari",
+      "file": "doc_13_1d-q5lbu6az4BKfk7h2z2SxqZb0DySDuGo9RvI6_mbuU.txt",
+      "category": "Domestic",
+      "categories": [
+        "Domestic",
+        "Desert",
+        "Heritage"
+      ],
+      "location": "Jaisalmer Fort & Sam Dunes, Rajasthan",
+      "region": "Thar Desert",
+      "duration": "3 Days / 2 Nights",
+      "altitude": "Desert Terrain",
+      "difficulty": "Desert Safari & Culture",
+      "price": 8999,
+      "originalPrice": 11999,
+      "badge": "Desert Safari Special",
+      "rating": 4.9,
+      "reviewCount": 260,
+      "image": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=85",
+      "gallery": [
+        "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "tagline": "Golden sandstone living fort, thrilling 4x4 desert dune bashing, camel safaris, and folk nights under the stars.",
+      "defaultHighlights": [
+        "Explore Jaisalmer Fort (Sonar Qila), the only living golden fort in India.",
+        "Thrilling camel safari and 4x4 Jeep dune bashing across the shifting Sam Sand Dunes.",
+        "Overnight luxury Swiss desert camp with Kalbeliya folk dance and Rajasthani feast.",
+        "Visit haunted mystery village of Kuldhara and the royal cenotaphs at Bada Bagh."
+      ],
+      "highlights": [
+        "Jaisalmer Fort",
+        "Patwon Ki Haveli",
+        "Nathmal Ki Haveli",
+        "Gadisar Lake",
+        "Sam Sand Dunes",
+        "Camel safari",
+        "Desert sunset",
+        "Rajasthani cultural evening",
+        "Jaisalmer Fort",
+        "Gadisar Lake",
+        "Patwon Ki Haveli",
+        "Local markets",
+        "Sam Sand Dunes",
+        "Camel safari",
+        "Cultural evening",
+        "Desert camp stay",
+        "Luxury or boutique hotel stay",
+        "Desert camp",
+        "Sunset camel ride",
+        "Private sightseeing",
+        "Rajasthani cultural evening",
+        "Desert dinner",
+        "Gadisar Lake",
+        "Fort and haveli exploration",
+        "Leisure time",
+        "Camel safari",
+        "Jeep safari",
+        "Dune bashing",
+        "Sunset at Sam Sand Dunes",
+        "Folk dance",
+        "Traditional music",
+        "Rajasthani dinner",
+        "Desert camp stay",
+        "Stargazing",
+        "Explore Jaisalmer Fort",
+        "Watch the sunset from Sam Sand Dunes",
+        "Take a camel safari",
+        "Try dune bashing",
+        "Stay in a desert camp",
+        "Watch Rajasthani folk performances",
+        "Enjoy traditional Rajasthani cuisine",
+        "Visit Gadisar Lake",
+        "Shop for handicrafts",
+        "Photograph the sandstone architecture",
+        "Explore local markets",
+        "Visit Bada Bagh",
+        "Explore Kuldhara",
+        "Visit Longewala and Tanot Mata on an extended itinerary",
+        "Jaisalmer Fort",
+        "Main havelis",
+        "Gadisar Lake",
+        "Sam Sand Dunes",
+        "Desert camp",
+        "Jaisalmer",
+        "Desert experience",
+        "Longewala",
+        "Tanot Mata",
+        "Additional sightseeing"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrival in Jaisalmer & Desert Experience",
+          "description": "Arrive in Jaisalmer by flight, train or road. After check-in and some rest, head towards the Sam Sand Dunes. Evening activities:\n• Camel safari\n• Sunset over the dunes\n• Desert camp check-in\n• Rajasthani folk music\n• Traditional dinner Overnight: Desert Camp",
+          "altitude": "Desert Terrain",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 2,
+          "title": "Jaisalmer Fort & Heritage Sightseeing",
+          "description": "After breakfast, return towards the city. Explore:\n• Jaisalmer Fort\n• Jain Temples\n• Patwon Ki Haveli\n• Nathmal Ki Haveli\n• Salim Singh Ki Haveli Later, spend some time exploring local markets. Overnight: Jaisalmer",
+          "altitude": "Desert Terrain",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 3,
+          "title": "Bada Bagh, Kuldhara & Gadisar Lake",
+          "description": "After breakfast, explore selected attractions outside the main city. Suggested stops:\n• Bada Bagh\n• Kuldhara\n• Jaisalmer War Museum, subject to route\n• Gadisar Lake Return to your hotel and enjoy a relaxed evening. Overnight: Jaisalmer",
+          "altitude": "Desert Terrain",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 4,
+          "title": "Departure",
+          "description": "Enjoy breakfast at the luxury desert camp or city heritage hotel and complete checkout formalities. Depending on your train or flight schedule, enjoy free time exploring the narrow alleys inside the living Golden Fort or shopping for camel leather goods, block prints, and desert handicrafts.\n\nTransfer to Jaisalmer Railway Station or Airport for your onward journey. Your desert adventure concludes with unforgettable memories of golden dunes, starlit skies, and royal Rajasthani hospitality.",
+          "altitude": "Desert Terrain",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        }
+      ],
+      "inclusions": [
+        "Camel ride",
+        "Jeep safari",
+        "Dune bashing",
+        "Cultural programme",
+        "Dinner",
+        "Camp stay",
+        "Transfers"
+      ],
+      "exclusions": [
+        "Personal expenses (laundry, beverages, tips)",
+        "Airfare or train fare to arrival hub",
+        "Travel insurance and medical emergency coverage",
+        "Anything not mentioned in the inclusions list"
+      ],
+      "faqs": [
+        {
+          "question": "How many days are enough for a Jaisalmer trip?",
+          "answer": "Three days and two nights is the minimum practical duration for Jaisalmer if you want to see the major attractions and experience the desert. For a more relaxed trip, 4 days / 3 nights is a better choice."
+        },
+        {
+          "question": "What is the best time to visit Jaisalmer?",
+          "answer": "October to March is generally the most comfortable period for sightseeing and desert activities. Winter is especially popular, although desert nights can be cold."
+        },
+        {
+          "question": "How much does a Jaisalmer tour package cost?",
+          "answer": "The cost depends on the hotel, number of nights, vehicle, desert camp, activities, meals and travel season. Current marketplace packages show a wide range, so travellers should compare inclusions rather than just the advertised starting price."
+        },
+        {
+          "question": "Is a desert camp included in Jaisalmer tour packages?",
+          "answer": "Many Jaisalmer packages include a desert camp, particularly itineraries designed around Sam Sand Dunes. However, the camp category, meals, camel safari and cultural programme vary by package and should be confirmed before booking."
+        },
+        {
+          "question": "Is Jaisalmer good for a family holiday?",
+          "answer": "Yes. Jaisalmer works well for families when the itinerary balances sightseeing with rest. A 3–4 night package can combine the fort, havelis, Gadisar Lake and a comfortable desert experience."
+        },
+        {
+          "question": "Can I combine Jaisalmer with Jodhpur?",
+          "answer": "Yes. Jodhpur + Jaisalmer is one of the most popular Rajasthan combinations. Allow at least 4–5 days for a comfortable version of the trip."
+        },
+        {
+          "question": "Can I customize my Jaisalmer tour package?",
+          "answer": "Yes. A customized package can be designed around your travel dates, hotel category, vehicle, sightseeing preferences, desert activities, number of nights and additional Rajasthan destinations."
+        }
+      ],
+      "overview": "Golden sandstone living fort, thrilling 4x4 desert dune bashing, camel safaris, and folk nights under the stars.",
+      "batches": [
+        {
+          "id": 131,
+          "startDate": "Upcoming Weekend",
+          "endDate": "Confirming Batch",
+          "slotsLeft": 6,
+          "price": 8999
+        },
+        {
+          "id": 132,
+          "startDate": "Next Week",
+          "endDate": "Open Batch",
+          "slotsLeft": 10,
+          "price": 8999
+        },
+        {
+          "id": 133,
+          "startDate": "Following Weekend",
+          "endDate": "Filling Fast",
+          "slotsLeft": 4,
+          "price": 8999
+        }
+      ],
+      "status": "Published",
+      "travelTips": [
+        {
+          "title": "Desert Sun Protection",
+          "desc": "The Thar Desert receives intense sunlight throughout the year. Always carry broad-spectrum sunscreen (SPF 50), polarized sunglasses, and a lightweight scarf."
+        },
+        {
+          "title": "Warm Layers for Desert Nights",
+          "desc": "From October to March, while desert daytime temperatures are pleasant, temperatures plummet after sunset. Bring warm jackets, shawls, or thermals for the dunes."
+        },
+        {
+          "title": "Hydration on the Dunes",
+          "desc": "Dry desert air leads to fast dehydration. Keep a reusable water bottle handy during camel treks and 4x4 dune bashing."
+        },
+        {
+          "title": "Authentic Golden Fort Shopping",
+          "desc": "Sonamukhi yellow sandstone carvings, mirror-work textiles, and camel leather items are best purchased from local artisan cooperatives with itemized bills."
+        },
+        {
+          "title": "Responsible Dune Tourism",
+          "desc": "Do not leave plastic bottles or wrappers on the sand dunes. Protect the fragile Thar Desert ecosystem and respect local desert folk artists."
+        }
+      ],
+      "bookingPolicy": [
+        "Camp bookings confirmed upon advance deposit clearance.",
+        "Camp inclusions include evening folk music, cultural dance, and Rajasthani buffet dinner.",
+        "Dune safari vehicle slots are pre-allocated according to sunset timings."
+      ],
+      "costFactors": [
+        "Seasonal demand (Desert Festival / New Year vs regular winter dates)",
+        "Camp luxury level (Standard Swiss Tent vs Royal AC Jacuzzi Tent)",
+        "Adventure activities (Parasailing / Quad Biking / Jeep Dune Bashing)",
+        "Private vehicle type for Jodhpur-Jaisalmer highway transfers"
+      ],
+      "imageAlt": "Domestic tour package in India by KRAD Global",
+      "createdAt": "2026-09-03T17:08:45.014Z",
+      "updatedAt": "2026-09-03T17:08:45.014Z"
+    },
+    {
+      "id": 6,
+      "slug": "goa-tour-package",
+      "name": "Goa Beach & Heritage Tour",
+      "file": "doc_6_1iosvpaHclHRApMiTOmQfYjzjv6ILB57kGoyODcwcgtA.txt",
+      "category": "Domestic",
+      "categories": [
+        "Domestic",
+        "Beach",
+        "Holiday Package"
+      ],
+      "location": "North & South Goa",
+      "region": "Konkan Coast",
+      "duration": "4 Days / 3 Nights",
+      "altitude": "Sea Level",
+      "difficulty": "Leisure / Beach Holiday",
+      "price": 11999,
+      "originalPrice": 15499,
+      "badge": "Beach Vacation",
+      "rating": 4.8,
+      "reviewCount": 280,
+      "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1920&q=85",
+      "gallery": [
+        "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "tagline": "Sun-drenched beaches, Portuguese colonial architecture, sunset cruises and vibrant Goan dining.",
+      "defaultHighlights": [
+        "Explore historic Fort Aguada, Chapora Fort and UNESCO Basilica of Bom Jesus.",
+        "Relax on golden sands of Baga, Calangute, and serene South Goa beaches.",
+        "Evening Mandovi River sunset cruise with live cultural Goan dance.",
+        "Authentic coastal seafood dining and water sports adventures."
+      ],
+      "highlights": [
+        "Explore historic Fort Aguada, Chapora Fort and UNESCO Basilica of Bom Jesus.",
+        "Relax on golden sands of Baga, Calangute, and serene South Goa beaches.",
+        "Evening Mandovi River sunset cruise with live cultural Goan dance.",
+        "Authentic coastal seafood dining and water sports adventures."
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrival in Goa & Leisure",
+          "description": "Arrive at Goa Airport, railway station or your preferred arrival point. Our representative will assist you with the transfer to your hotel. Complete the check-in formalities and spend the rest of the day relaxing after your journey. Depending on your arrival time, you can explore a nearby beach, enjoy a sunset or simply relax at your resort. Overnight stay in Goa.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 2,
+          "title": "North Goa Sightseeing",
+          "description": "After breakfast, begin your North Goa sightseeing tour. Explore some of the region's popular attractions and beaches, which may include:\n• Fort Aguada\n• Sinquerim Beach\n• Candolim Beach\n• Calangute Beach\n• Baga Beach\n• Anjuna Beach\n• Vagator Beach\n• Chapora Fort North Goa is ideal for travellers who enjoy a lively atmosphere, beach activities, cafés, shopping and nightlife. Spend the evening at leisure or choose an optional activity depending on your package. Overnight stay in Goa.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 3,
+          "title": "South Goa Exploration",
+          "description": "After breakfast, proceed for a South Goa sightseeing experience. Depending on your selected itinerary, the day can include places such as:\n• Basilica of Bom Jesus\n• Se Cathedral\n• Panaji\n• Dona Paula\n• Miramar Beach\n• Colva Beach\n• Benaulim Beach\n• Cavelossim Beach South Goa offers a different side of the destination, with quieter beaches, heritage attractions and a more relaxed holiday atmosphere. Return to the hotel in the evening. Overnight stay in Goa.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 4,
+          "title": "Goa at Your Own Pace",
+          "description": "Enjoy breakfast and keep the day flexible. You can spend the day relaxing at your hotel, visiting a beach you missed earlier, shopping for souvenirs or choosing optional activities. Depending on availability and weather conditions, activities may include:\n• Water sports\n• Boat trips\n• Dolphin spotting\n• Sunset cruises\n• Scuba diving\n• Kayaking\n• Spice plantation visits\n• Adventure activities\n\nOptional activities are subject to availability, operating conditions and applicable charges. Overnight stay in Goa.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 5,
+          "title": "Departure from Goa",
+          "description": "Enjoy a relaxed breakfast and check out from your hotel according to your flight or train schedule.\n\nYou will be transferred via private vehicle to Goa Airport (Dabolim or Mopa) or the railway station for your onward travel.\n\nTake home sun-kissed beach memories, palm-fringed coastal sunsets, and rich Portuguese heritage experiences from your holiday with KRAD Global.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        }
+      ],
+      "inclusions": [
+        "Hotel accommodation as selected",
+        "Daily breakfast as per the package plan",
+        "Airport/railway station transfers",
+        "Sightseeing transfers according to the itinerary",
+        "Local transportation by suitable vehicle",
+        "Driver charges",
+        "Parking charges for included sightseeing",
+        "Toll taxes where applicable",
+        "Accommodation on a twin/double/triple sharing basis as selected",
+        "Travel assistance during the tour",
+        "Applicable hotel taxes included in the package quotation"
+      ],
+      "exclusions": [
+        "Flights or train tickets",
+        "Personal expenses",
+        "Lunch and dinner",
+        "Alcoholic beverages",
+        "Room service",
+        "Laundry",
+        "Telephone calls",
+        "Additional sightseeing not mentioned in the itinerary",
+        "Entry tickets to monuments and attractions",
+        "Water sports and adventure activities",
+        "Camera/video charges",
+        "Guide charges unless specifically included",
+        "Additional vehicle usage",
+        "Expenses caused by flight/train delays",
+        "Travel insurance",
+        "Any government tax introduced after the booking",
+        "Anything not specifically mentioned under inclusions"
+      ],
+      "faqs": [
+        {
+          "question": "How many days are enough for a Goa trip?",
+          "answer": "A 4 to 5-day Goa trip is a comfortable option for first-time visitors. It gives you enough time to explore popular North Goa attractions, experience South Goa and still keep some time for relaxation."
+        },
+        {
+          "question": "What is the best Goa tour package for couples?",
+          "answer": "A 4 Nights / 5 Days or 5 Nights / 6 Days package works well for couples because it provides enough time for sightseeing while leaving room for beach and resort experiences."
+        },
+        {
+          "question": "Is Goa suitable for a family holiday?",
+          "answer": "Yes. Goa offers beaches, heritage attractions, sightseeing, resorts, nature experiences and activities that can be included in a family-friendly itinerary."
+        },
+        {
+          "question": "Which is better, North Goa or South Goa?",
+          "answer": "North Goa is generally preferred by travellers looking for nightlife, popular beaches and entertainment. South Goa is better suited to travellers looking for quieter beaches and a more relaxed atmosphere."
+        },
+        {
+          "question": "Can I customise my Goa tour package?",
+          "answer": "Yes. KRAD GLOBAL can customise the duration, hotel category, sightseeing, transfers and optional activities according to availability and your requirements."
+        },
+        {
+          "question": "Are flights included in Goa tour packages?",
+          "answer": "Flights are included only when specifically mentioned in the selected package. Otherwise, flight/train tickets can be arranged separately on request."
+        },
+        {
+          "question": "Are water sports included?",
+          "answer": "Water sports are not automatically included unless mentioned in the package itinerary. They can be added as optional activities depending on availability and weather conditions."
+        },
+        {
+          "question": "What is the best month to visit Goa?",
+          "answer": "October to March is generally preferred for a conventional beach holiday. The monsoon months offer a greener and quieter side of Goa but can affect sea-based activities."
+        },
+        {
+          "question": "Can I book a Goa honeymoon package with KRAD GLOBAL?",
+          "answer": "Yes. Honeymoon packages can be customised with suitable hotels, private transfers, sightseeing and romantic experiences according to your budget."
+        }
+      ],
+      "overview": "Sun-drenched beaches, Portuguese colonial architecture, sunset cruises and vibrant Goan dining.",
+      "batches": [
+        {
+          "id": 61,
+          "startDate": "Upcoming Weekend",
+          "endDate": "Confirming Batch",
+          "slotsLeft": 6,
+          "price": 11999
+        },
+        {
+          "id": 62,
+          "startDate": "Next Week",
+          "endDate": "Open Batch",
+          "slotsLeft": 10,
+          "price": 11999
+        },
+        {
+          "id": 63,
+          "startDate": "Following Weekend",
+          "endDate": "Filling Fast",
+          "slotsLeft": 4,
+          "price": 11999
+        }
+      ],
+      "status": "Published",
+      "travelTips": [
+        {
+          "title": "Beach & Swim Safety",
+          "desc": "Always pay attention to lifeguard flags along the beaches. Avoid swimming in rough seas or during red-flag advisories."
+        },
+        {
+          "title": "Sun & Heat Protection",
+          "desc": "Carry high-SPF sunscreen, sunglasses, light breathable cotton wear, and stay hydrated throughout beach excursions."
+        },
+        {
+          "title": "Licensed Vehicle Rentals",
+          "desc": "When renting scooters or self-drive cars, always inspect vehicle condition, carry a valid driving license, and wear helmets at all times."
+        },
+        {
+          "title": "Respect Heritage Sanctuaries",
+          "desc": "When touring Old Goa churches like Basilica of Bom Jesus, follow the modest dress code and maintain quiet inside."
+        },
+        {
+          "title": "Explore Beyond the Beaches",
+          "desc": "Take time for spice plantation tours, Latin Quarter heritage walks in Fontainhas, and dolphin boat cruises along the Mandovi River."
+        }
+      ],
+      "bookingPolicy": [
+        "Booking confirmation subject to resort room availability.",
+        "Advance deposit required to confirm beachside resorts and airport transfers.",
+        "Cancellation policies vary during peak festive seasons (Christmas / New Year).",
+        "Valid government photo IDs required for all adult guests at hotel check-in."
+      ],
+      "costFactors": [
+        "Travel season (peak New Year/Christmas vs monsoon/summer specials)",
+        "Accommodation tier (Boutique Villa / Beach Resort / 4-Star Luxury)",
+        "Vehicle requirements (Self-drive / Dedicated AC private cab)",
+        "Water sports and island boat cruise inclusions"
+      ],
+      "imageAlt": "Customized holiday package by KRAD Global",
+      "createdAt": "2026-09-17T17:08:45.014Z",
+      "updatedAt": "2026-09-17T17:08:45.014Z"
     },
     {
       "id": 8,
@@ -2554,6 +1833,503 @@
       "updatedAt": "2026-09-09T17:08:45.014Z"
     },
     {
+      "id": 12,
+      "slug": "nainital-tour-package-3-nights-4-days",
+      "name": "Nainital Lake District Tour",
+      "file": "doc_12_1sa5ndInl08UDRCUExAgy8kPffNmKAdef4ydmEiKBD6E.txt",
+      "category": "Weekend",
+      "categories": [
+        "Weekend",
+        "Domestic",
+        "Hill Station"
+      ],
+      "location": "Nainital, Bhimtal, Pangot, Uttarakhand",
+      "region": "Kumaon Hills",
+      "duration": "3 Days / 2 Nights",
+      "altitude": "6,837 Ft",
+      "difficulty": "Relaxed Hill Station",
+      "price": 7999,
+      "originalPrice": 10499,
+      "badge": "Quick Hill Getaway",
+      "rating": 4.8,
+      "reviewCount": 230,
+      "image": "https://images.unsplash.com/photo-1610484826967-09c5720778c7?auto=format&fit=crop&w=1920&q=85",
+      "gallery": [
+        "https://images.unsplash.com/photo-1610484826967-09c5720778c7?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "tagline": "Emerald lake boating, scenic Kumaon ridge viewpoints, Mall Road strolls, and peaceful pine forests.",
+      "defaultHighlights": [
+        "Yachting and paddle boating on the crescent-shaped emerald waters of Naini Lake.",
+        "Ropeway cable car ride up to Snow View Point for Himalayan vista views.",
+        "Excursion to surrounding tranquil lakes: Bhimtal, Sattal and Naukuchiatal.",
+        "Colonial hill charm, candle shopping, and evening walks along Mall Road."
+      ],
+      "highlights": [
+        "Naini Lake",
+        "Naina Devi Temple",
+        "Mall Road",
+        "Snow View Point",
+        "The Flats",
+        "Local shopping",
+        "Selected nearby viewpoints",
+        "Naini Lake boating",
+        "Naina Devi Temple",
+        "Snow View Point",
+        "Eco Cave Gardens",
+        "Mall Road",
+        "Bhimtal",
+        "Sattal",
+        "Local shopping",
+        "Naini Lake",
+        "Mall Road evening walk",
+        "Scenic viewpoints",
+        "Bhimtal",
+        "Sattal",
+        "Private sightseeing",
+        "Couple-friendly accommodation",
+        "Leisure time",
+        "Nainital sightseeing",
+        "Bhimtal",
+        "Ranikhet",
+        "Chaubatia",
+        "Jhula Devi Temple",
+        "Kumaon mountain views"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrival in Nainital",
+          "description": "Arrive in Nainital and check into your hotel. After some rest, head out for a relaxed walk around Mall Road and Naini Lake. Overnight: Nainital",
+          "altitude": "6,837 Ft",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 2,
+          "title": "Nainital Sightseeing",
+          "description": "After breakfast, explore the major attractions around the town. Suggested sightseeing:\n• Naina Devi Temple\n• Naini Lake\n• Snow View Point\n• Eco Cave Gardens\n• Tiffin Top, subject to accessibility\n• Mall Road Keep the evening free for shopping and local food. Overnight: Nainital",
+          "altitude": "6,837 Ft",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 3,
+          "title": "Bhimtal & Nearby Lakes",
+          "description": "After breakfast, leave for the nearby lake region. Possible stops:\n• Bhimtal\n• Sattal\n• Naukuchiatal Return to Nainital in the evening. Overnight: Nainital",
+          "altitude": "6,837 Ft",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        },
+        {
+          "day": 4,
+          "title": "Departure",
+          "description": "Enjoy breakfast overlooking the mist-covered Kumaon hills and complete check-out. Depending on your departure schedule from Kathgodam Railway Station, Pantnagar Airport, or Delhi, spend a relaxed morning boating on Naini Lake or shopping for handcrafted candles and woolens along the Mall Road.\n\nTransfer to your departure point according to your travel schedule. Your Nainital lake tour concludes with beautiful memories of emerald waters, colonial architecture, and Himalayan views.",
+          "altitude": "6,837 Ft",
+          "meal": "Breakfast & Dinner",
+          "stay": "Hotel / Resort / Campsite"
+        }
+      ],
+      "inclusions": [
+        "Number of travellers",
+        "Number of nights",
+        "Hotel category",
+        "Travel season",
+        "Vehicle type",
+        "Pickup and drop location",
+        "Number of sightseeing days",
+        "Meal plan",
+        "Additional activities",
+        "Nearby destinations",
+        "Weekend/holiday demand"
+      ],
+      "exclusions": [
+        "Personal expenses (laundry, beverages, tips)",
+        "Airfare or train fare to arrival hub",
+        "Travel insurance and medical emergency coverage",
+        "Anything not mentioned in the inclusions list"
+      ],
+      "faqs": [
+        {
+          "question": "How many days are enough for a Nainital trip?",
+          "answer": "For most travellers, 3 nights and 4 days is a comfortable duration. A 2-night weekend trip works for the major attractions, while 4–6 nights allow you to add destinations such as Bhimtal, Ranikhet or Corbett."
+        },
+        {
+          "question": "What is the best Nainital tour package for a family?",
+          "answer": "A 3–4 night family package with comfortable accommodation, private transportation and relaxed sightseeing is usually a practical choice. Bhimtal and Sattal can be added if you want a little more time around the lakes."
+        },
+        {
+          "question": "What is the best time to visit Nainital?",
+          "answer": "March to June is popular for pleasant summer weather, while October and November offer comfortable sightseeing conditions. Winter is suitable for travellers seeking a colder mountain experience, while monsoon travel requires more flexibility because of rainfall and road conditions."
+        },
+        {
+          "question": "How much does a Nainital tour package cost?",
+          "answer": "The price depends on hotel category, travel dates, number of travellers, vehicle type, duration and inclusions. Current online listings show a broad range, so an exact quotation should be requested for your specific dates rather than relying on a generic package price."
+        },
+        {
+          "question": "Can I customize my Nainital tour package?",
+          "answer": "Yes. A customized itinerary can change the hotel category, number of nights, sightseeing, vehicle type and nearby destinations. KRAD GLOBAL can structure the trip around your preferred travel pace and budget."
+        },
+        {
+          "question": "Can I combine Nainital with Jim Corbett?",
+          "answer": "Yes. Nainital + Corbett is one of the most practical combinations for travellers who want both Himalayan scenery and wildlife. A 4-night or 5-night itinerary can usually accommodate both destinations without making the trip unnecessarily rushed."
+        },
+        {
+          "question": "Is Nainital good for a honeymoon?",
+          "answer": "Yes. Nainital works well for couples who want lake views, mountain weather, scenic drives and relaxed sightseeing. A 3–5 night honeymoon package can be customized around a couple-friendly hotel, private transportation and leisure time."
+        }
+      ],
+      "overview": "Emerald lake boating, scenic Kumaon ridge viewpoints, Mall Road strolls, and peaceful pine forests.",
+      "batches": [
+        {
+          "id": 121,
+          "startDate": "Upcoming Weekend",
+          "endDate": "Confirming Batch",
+          "slotsLeft": 6,
+          "price": 7999
+        },
+        {
+          "id": 122,
+          "startDate": "Next Week",
+          "endDate": "Open Batch",
+          "slotsLeft": 10,
+          "price": 7999
+        },
+        {
+          "id": 123,
+          "startDate": "Following Weekend",
+          "endDate": "Filling Fast",
+          "slotsLeft": 4,
+          "price": 7999
+        }
+      ],
+      "status": "Published",
+      "travelTips": [
+        {
+          "title": "Light Woolens Year-Round",
+          "desc": "Even in peak summer, lake breezes and mountain evenings in Nainital can turn chilly. Always pack a light jacket or cardigan."
+        },
+        {
+          "title": "Comfortable Walking Shoes",
+          "desc": "Nainital's iconic Mall Road, Thandi Sadak, and Tiffin Top viewpoints are pedestrian-centric. Comfortable flat walking shoes are recommended."
+        },
+        {
+          "title": "Buffer Time for Hill Traffic",
+          "desc": "During summer weekends and holiday seasons, Kathgodam-Nainital ghat roads experience heavy traffic. Keep adequate airport/train buffer times."
+        },
+        {
+          "title": "Eco & Lake Regulations",
+          "desc": "Naini Lake is a protected biosphere. Single-use plastic bags are banned, and smoking or littering around the lake promenade attracts penalties."
+        },
+        {
+          "title": "Explore Greater Kumaon Lakes",
+          "desc": "Consider taking day trips to Bhimtal, Naukuchiatal, and Sattal for serene kayaking and quieter pine-fringed waters."
+        }
+      ],
+      "bookingPolicy": [
+        "Room confirmations subject to hotel availability at the time of reservation.",
+        "Advance deposit confirms lake-view hotel and private hill cab.",
+        "Standard 12:00 noon checkout applies unless late checkout is pre-arranged."
+      ],
+      "costFactors": [
+        "Travel season (May-June peak summer vs autumn/winter snow season)",
+        "Hotel category (Lake Facing / Hill View / Luxury Heritage)",
+        "Transport options (Kathgodam transfer vs Delhi roundtrip cab)",
+        "Sightseeing excursions (Mukteshwar, Ranikhet, or Corbett National Park)"
+      ]
+    },
+    {
+      "id": 2,
+      "slug": "hampta-pass",
+      "name": "Hampta Pass Crossover Trek",
+      "file": "doc_2_1AB7hyt6O2r0WinqZSGTsULtkuJd3tYHb1pJuXgPXPXY.txt",
+      "category": "Himalayas",
+      "categories": [
+        "Himalayas",
+        "Trek",
+        "High Pass"
+      ],
+      "location": "Manali to Lahaul, Himachal Pradesh",
+      "region": "Pir Panjal & Zanskar",
+      "duration": "5 Days / 4 Nights",
+      "altitude": "14,000 Ft",
+      "difficulty": "Moderate",
+      "price": 9999,
+      "originalPrice": 12999,
+      "badge": "High Pass Epic",
+      "rating": 4.9,
+      "reviewCount": 245,
+      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=85",
+      "gallery": [
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "tagline": "Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti and Lahaul.",
+      "defaultHighlights": [
+        "Dramatic landscape change from emerald pine glades into barren high-altitude desert.",
+        "Stand atop Hampta Pass at 14,000 ft overlooking towering Himalayan glaciers.",
+        "Camp at Shea Goru along crystalline glacial streams.",
+        "Special excursion to the mystical turquoise crescent of Chandratal Lake."
+      ],
+      "highlights": [
+        "Cross the spectacular Hampta Pass at around 14,000 ft",
+        "Experience the dramatic transition from Kullu Valley to Lahaul",
+        "Walk through alpine meadows and mountain forests",
+        "Experience high-altitude river and stream crossings",
+        "Explore the rugged landscape around Balu Ka Ghera and Shea Goru",
+        "Enjoy views of prominent Himalayan peaks including Indrasan and Deo Tibba",
+        "Experience changing terrain within a relatively short trek",
+        "Camp beneath a vast Himalayan sky",
+        "Enjoy the optional Chandratal Lake excursion when conditions permit"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Drive from Manali to Jobra & Trek to Chika Campsite",
+          "description": "Your Hampta Pass crossover adventure begins with a picturesque mountain drive from Manali towards Jobra, winding through fragrant pine, cedar and deodar forests along the Pir Panjal foothills.\n\nFrom the Jobra roadhead (9,800 ft), step onto the trail for a gentle 3 km hike towards Chika. Cross the rushing Rani Nallah stream via a sturdy wooden bridge and traverse boulder-speckled alpine pastures fringed with birch and dwarf rhododendrons.\n\nArrive at the lush Chika riverside camp by early afternoon. Settle into high-altitude tents, savor a warm lunch, and enjoy evening acclimatization under towering granite cliffs.",
+          "duration": "1.5–2.5 Hours Trek (2 Hours Drive)",
+          "distance": "3 km Trek | 20 km Drive",
+          "altitude": "10,100 Ft (Jobra: 9,800 Ft)",
+          "meal": "Hot Lunch & Welcome Dinner",
+          "stay": "Chika Riverside Campsite"
+        },
+        {
+          "day": 2,
+          "title": "Chika to Balu Ka Ghera (Valley of Sand)",
+          "description": "After a nutritious hot breakfast, begin the gradual ascent towards Balu Ka Ghera along the gushing course of the Rani River.\n\nThe trail winds gently through expansive alpine valleys, carpeted meadows, and scenic rocky clearings. Depending on the season, the valley is blanketed with vivid wild rhododendrons and Himalayan wildflowers. You will encounter boulder-strewn sections and negotiate refreshing crystal-clear glacial stream crossings.\n\nAs the altitude climbs past 11,000 ft, tree lines recede, revealing massive snow-crowned granite walls and closer views of Indrasan Peak. By late afternoon, arrive at Balu Ka Ghera ('Heap of Sand') — a sheltered, sandy riverbed encircled by towering Himalayan peaks. Settle into high-altitude alpine tents, enjoy hot evening tea, and rest up for summit day.",
+          "duration": "5–6 Hours Trek",
+          "distance": "Approx. 6–7 km",
+          "altitude": "11,900 Ft",
+          "meal": "Breakfast, Packed Lunch & Dinner",
+          "stay": "Balu Ka Ghera Alpine Camp"
+        },
+        {
+          "day": 3,
+          "title": "Balu Ka Ghera to Hampta Pass Summit & Descent to Shea Goru",
+          "description": "The centerpiece and most exhilarating day of the crossover trek! Start before dawn at 6:00 AM as the mountain breeze is calm and snow bridges remain firm.\n\nThe ascent to Hampta Pass involves a sustained, steep climb through moraines, giant boulders, and seasonal snow patches. At 14,065 ft, step onto the summit ridge for an astonishing visual revelation: behind you lies the lush, emerald Kullu Valley, while ahead opens up the stark, sun-bleached moonscape of Lahaul and Spiti.\n\nAfter savoring summit vistas of Mount Indrasan and Deo Tibba, commence the steep, careful descent towards the valley of Shea Goru ('Cold Street'). Cross gentle glacial streams to reach the picturesque campsite nestled next to crystalline waters.",
+          "duration": "8–10 Hours Trek",
+          "distance": "Approx. 7–8 km",
+          "altitude": "14,065 Ft Summit (Shea Goru: 12,900 Ft)",
+          "meal": "Breakfast, Trail Snacks & Dinner",
+          "stay": "Shea Goru Riverside Camp"
+        },
+        {
+          "day": 4,
+          "title": "Shea Goru to Chhatru & Excursion to Chandratal Lake",
+          "description": "Start the morning with an exhilarating icy glacial river crossing near Shea Goru camp — a signature Hampta Pass rite of passage done under expert guide supervision.\n\nThe trail traverses arid moraines down to Chhatru, a rugged roadhead where Pir Panjal meets the Spiti valley. At Chhatru, board 4x4 mountain vehicles for an excursion to the legendary Chandratal Lake ('Moon Lake') at 14,100 ft.\n\nWalk along the sapphire-blue waters of Chandratal, framed by sheer Himalayan peaks. Return to Chhatru campsite by dusk for celebration dinner under a star-dusted Himalayan sky.\n\nImportant: Road accessibility to Chandratal Lake is subject to weather clearance, road condition, and local administrative safety approvals.",
+          "duration": "4–5 Hours Trek + 3 Hours Drive",
+          "distance": "6–7 km Trek + 45 km Drive",
+          "altitude": "11,000 Ft (Chandratal: 14,100 Ft)",
+          "meal": "Breakfast, Packed Lunch & Dinner",
+          "stay": "Chhatru Alpine Campsite"
+        },
+        {
+          "day": 5,
+          "title": "Chhatru to Manali via Atal Tunnel",
+          "description": "Relish a warm camp breakfast surrounded by the rugged, towering gorge walls of Chhatru before boarding your return vehicle.\n\nThe drive winds through the Chandra River valley, passing the high-altitude Chandra-Bhaga river confluence before traversing the engineering marvel of the Atal Tunnel at Rohtang. In minutes, watch the stark barren desert of Lahaul give way back to the verdant deodar and pine forests of Solang Valley.\n\nArrive in Manali by early afternoon, concluding your unforgettable Hampta Pass crossover expedition with lifetime memories.",
+          "duration": "4–6 Hours Scenic Drive",
+          "distance": "Approx. 65 km Mountain Drive",
+          "altitude": "6,725 Ft (Descent to Manali)",
+          "meal": "Warm Camp Breakfast",
+          "stay": "Trip Concludes at Manali Mall Road"
+        }
+      ],
+      "inclusions": [
+        "Trek planning and coordination",
+        "Professional trek leader / experienced guide",
+        "Support staff as applicable",
+        "Accommodation in tents during the trek",
+        "Sleeping arrangements",
+        "Camping equipment",
+        "Trekking meals as mentioned in the package",
+        "Breakfast, lunch and dinner during trek days",
+        "First-aid kit",
+        "Basic emergency support",
+        "Camping and operational logistics",
+        "Necessary local coordination and permissions where applicable",
+        "Group trek support throughout the scheduled itinerary",
+        "Hampta Pass Trek 2026",
+        "Hampta Pass Trek Package",
+        "Hampta Pass Trek Cost",
+        "Hampta Pass Trek Itinerary",
+        "Hampta Pass Trek Distance",
+        "Hampta Pass Trek Difficulty",
+        "Hampta Pass Trek Best Time",
+        "Hampta Pass Trek from Manali",
+        "Hampta Pass Trek Booking",
+        "Hampta Pass Trek Package from Manali",
+        "Hampta Pass and Chandratal Trek",
+        "Hampta Pass Trek Himachal Pradesh",
+        "Hampta Pass Trekking",
+        "Hampta Pass Trek Guide"
+      ],
+      "exclusions": [
+        "Travel from your home city to Manali and back",
+        "Personal expenses",
+        "Travel insurance",
+        "Personal medical expenses",
+        "Personal medicines",
+        "Emergency evacuation costs, unless covered by applicable insurance",
+        "Porter / backpack offloading charges",
+        "Personal trekking gear rental",
+        "Extra hotel stay before or after the trek",
+        "Additional meals outside the stated itinerary",
+        "Any additional transportation caused by itinerary changes",
+        "Expenses caused by delays due to weather, road closure or other unforeseen situations",
+        "Entry fees or local charges not specifically mentioned in inclusions",
+        "Charges for optional activities",
+        "Anything not specifically mentioned under “Inclusions”",
+        "Hampta Pass Trek 2026",
+        "Hampta Pass Trek Package",
+        "Hampta Pass Trek Cost",
+        "Hampta Pass Trek Itinerary",
+        "Hampta Pass Trek Distance",
+        "Hampta Pass Trek Difficulty",
+        "Hampta Pass Trek Best Time",
+        "Hampta Pass Trek from Manali",
+        "Hampta Pass Trek Booking",
+        "Hampta Pass Trek Package from Manali",
+        "Hampta Pass and Chandratal Trek",
+        "Hampta Pass Trek Himachal Pradesh",
+        "Hampta Pass Trekking",
+        "Hampta Pass Trek Guide"
+      ],
+      "faqs": [
+        {
+          "question": "Is Hampta Pass Trek suitable for beginners?",
+          "answer": "Yes. Hampta Pass can be a good introduction to moderate Himalayan trekking for beginners who are physically prepared. The trek still involves altitude, steep sections, river crossings and a demanding summit day, so preparation is important."
+        },
+        {
+          "question": "How difficult is Hampta Pass Trek?",
+          "answer": "Hampta Pass is generally classified as a moderate trek. The summit day is the most demanding part because of the altitude gain, steep climb and long trekking hours."
+        },
+        {
+          "question": "What is the maximum altitude of Hampta Pass?",
+          "answer": "Hampta Pass is approximately 14,000 ft above sea level, with exact figures varying slightly between sources and route conditions."
+        },
+        {
+          "question": "How many days are required for Hampta Pass Trek?",
+          "answer": "A typical organised itinerary takes around 5 days, including the approach from Manali and return. Some operators may use different itinerary structures or add buffer days."
+        },
+        {
+          "question": "What is the best month for Hampta Pass Trek?",
+          "answer": "The main trekking window is generally from June to September, subject to weather and local conditions."
+        },
+        {
+          "question": "Is Hampta Pass Trek safe?",
+          "answer": "Hampta Pass can be undertaken safely with proper preparation, experienced guidance and responsible trekking practices. However, no Himalayan trek is completely risk-free."
+        },
+        {
+          "question": "Can children join the trek?",
+          "answer": "Children should only participate if they meet the trek operator's age, fitness and safety requirements. Parents or guardians should assess the child's ability to manage long mountain walks and altitude."
+        },
+        {
+          "question": "Can senior citizens join Hampta Pass Trek?",
+          "answer": "Age alone should not determine suitability. However, the physical demands and altitude make medical and fitness assessment particularly important for older participants."
+        },
+        {
+          "question": "Is Chandratal included in Hampta Pass Trek?",
+          "answer": "Chandratal is included in some itineraries and offered as an excursion, but access depends on road conditions, weather, local restrictions and the operational itinerary. It should not be assumed to be guaranteed."
+        },
+        {
+          "question": "Will there be snow on Hampta Pass?",
+          "answer": "Snow conditions depend on the time of year and the year's weather. Early-season departures are more likely to encounter snow at higher elevations, but conditions vary every season."
+        },
+        {
+          "question": "What type of accommodation is provided?",
+          "answer": "The trek generally uses camping accommodation. Facilities are basic and intended for rest and shelter in a mountain environment."
+        },
+        {
+          "question": "Do I need trekking shoes?",
+          "answer": "Yes. Proper trekking shoes with good grip are strongly recommended because the trail includes rocky, uneven and potentially wet sections."
+        },
+        {
+          "question": "Is there mobile network during the trek?",
+          "answer": "Mobile connectivity can be intermittent or unavailable across several sections of the route. Do not rely on your phone as your only means of communication."
+        },
+        {
+          "question": "Can I charge my phone during the trek?",
+          "answer": "Charging facilities may be limited or unavailable at campsites. Carry a fully charged power bank."
+        },
+        {
+          "question": "Can I rent trekking equipment?",
+          "answer": "Equipment rental may be available depending on the package and operational arrangements. Confirm availability with KRAD Global before departure."
+        },
+        {
+          "question": "What should I carry for Hampta Pass?",
+          "answer": "Carry suitable trekking shoes, warm layers, rain protection, personal medication, sunscreen, sunglasses, a headlamp, water bottles, personal toiletries and other essentials mentioned in the packing list."
+        },
+        {
+          "question": "How fit should I be for Hampta Pass?",
+          "answer": "You should be able to walk several kilometres for multiple consecutive days and manage uphill and downhill sections comfortably. Regular cardio and strength training before the trek is recommended."
+        }
+      ],
+      "overview": "Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti and Lahaul.",
+      "batches": [
+        {
+          "id": 21,
+          "startDate": "Upcoming Weekend",
+          "endDate": "Confirming Batch",
+          "slotsLeft": 6,
+          "price": 9999
+        },
+        {
+          "id": 22,
+          "startDate": "Next Week",
+          "endDate": "Open Batch",
+          "slotsLeft": 10,
+          "price": 9999
+        },
+        {
+          "id": 23,
+          "startDate": "Following Weekend",
+          "endDate": "Filling Fast",
+          "slotsLeft": 4,
+          "price": 9999
+        }
+      ],
+      "status": "Published",
+      "travelTips": [
+        {
+          "title": "Layered Alpine Clothing",
+          "desc": "Weather on high mountain passes changes rapidly. Dress in 3-4 breathable layers including a thermal base, fleece jacket, and windproof outer shell."
+        },
+        {
+          "title": "Sturdy Trekking Boots",
+          "desc": "Wear broken-in ankle-support trekking boots with deep grip soles. Avoid brand-new footwear to prevent trail blisters."
+        },
+        {
+          "title": "Hydration & Acclimatization",
+          "desc": "Drink 3–4 litres of fluids daily. Gradual pacing and deep breathing help prevent Acute Mountain Sickness (AMS)."
+        },
+        {
+          "title": "Follow River Crossing Protocols",
+          "desc": "Unclip backpack waist belts during stream crossings and strictly follow guide instructions and human-chain formations."
+        },
+        {
+          "title": "Leave No Trace Principles",
+          "desc": "The pristine high-altitude meadows of Balu Ka Ghera and Shea Goru are ecologically sensitive. Pack out all non-biodegradable waste."
+        }
+      ],
+      "bookingPolicy": [
+        "Trek confirmation subject to fitness self-declaration and medical disclaimer.",
+        "Advance booking deposit secures campsite inventory, high-altitude gear, and guide ratio.",
+        "Cancellation charges apply based on notice period prior to trek batch start date.",
+        "Route alterations may be made by the trek leader for trekker safety during adverse weather."
+      ],
+      "costFactors": [
+        "Trek batch departure date and group size",
+        "Rental gear requirements (trekking poles, crampons, waterproof poncho)",
+        "Offloading service for personal backpack on mules",
+        "Chandratal Lake excursion vehicle upgrade"
+      ],
+      "imageAlt": "Himalayan trekking package by KRAD Global",
+      "createdAt": "2026-09-25T17:08:45.014Z",
+      "updatedAt": "2026-09-25T17:08:45.014Z"
+    },
+    {
       "id": 11,
       "slug": "assam-tour-package",
       "name": "Assam Wildlife & Heritage Tour",
@@ -2976,140 +2752,140 @@
       "updatedAt": "2026-09-05T17:08:45.014Z"
     },
     {
-      "id": 13,
-      "slug": "jaisalmer-tour-package",
-      "name": "Jaisalmer Golden City & Desert Safari",
-      "file": "doc_13_1d-q5lbu6az4BKfk7h2z2SxqZb0DySDuGo9RvI6_mbuU.txt",
-      "category": "Domestic",
+      "id": 1789215869014,
+      "slug": "kashmir-tour-package",
+      "name": "Kashmir Tour Package – 6 Days / 5 Nights",
+      "location": "Kashmir",
+      "region": "Kashmir",
+      "image": "/uploads/1790074552269-f55651ea-kashmir-tour-package---6-days--5-nights.webp",
+      "gallery": [
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "tagline": "Heaven on the earth",
+      "description": "",
+      "overview": "Kashmir Tour Package – 6 Days / 5 Nights\n\nExplore Srinagar, Gulmarg, Pahalgam and Sonamarg in one beautiful Kashmir holiday.\nWake up beside Dal Lake. Ride a Shikara through calm water. See the snow-covered mountains of Gulmarg. Walk through the green valleys of Pahalgam. Spend time in the wide meadows of Sonamarg.\nThis Kashmir Tour Package is planned for travellers who want to see the main highlights of Kashmir without spending every day inside a car.\nThe plan can be changed according to your travel dates, hotel choice, budget and group size.\n\nKashmir Tour Package Highlights\nDuration: 6 Days / 5 Nights\nPlaces Covered: Srinagar, Gulmarg, Pahalgam & Sonamarg\nStart Point: Srinagar Airport\nEnd Point: Srinagar Airport\nStay: Hotels + optional houseboat\nTransport: Private AC vehicle\nMeals: Breakfast & Dinner\nShikara Ride: Included\nBest For: Families, couples, friends and small groups\nBest Season: April to June, September to October and December to February for snow\nTrip Type: Family Holiday + Nature + Sightseeing\nCustomization: Available\nImportant: Gulmarg, Sonamarg and Pahalgam have local transport rules. Your main vehicle may not be allowed to cover every internal sightseeing point. Local vehicles may need to be hired separately. These charges should be checked before booking.\n\nWhy Choose This Kashmir Tour?\nKashmir has many beautiful places, but the distances between them can make a trip tiring if the route is not planned well.\nThis itinerary gives you time for the four main areas instead of trying to cover too many places in too few days.\nYou get:\nSrinagar and Dal Lake\nMughal Gardens\nGulmarg\nPahalgam\nSonamarg\nShikara ride\nLocal food\nFree time\nPrivate travel\nOptional houseboat stay\nOptional Gondola ride\nOptional pony rides and adventure activities\nCurrent Kashmir packages in the market commonly cover Srinagar, Gulmarg and Pahalgam, while longer packages add Sonamarg and extra nights.\n",
+      "highlights": [
+        "Experienced mountain guide",
+        "All camp equipment & safety gear"
+      ],
+      "duration": "6 Days / 5 Nights",
+      "difficulty": "Moderate",
+      "altitude": "12,000 Ft",
+      "distance": "20 km",
+      "baseCamp": "Base Camp",
+      "rating": 4.9,
+      "reviewCount": 1,
+      "price": 19999,
+      "originalPrice": 18999,
+      "badge": "Featured",
       "categories": [
         "Domestic",
-        "Desert",
-        "Heritage"
+        "Holiday Package",
+        "Kashmir"
       ],
-      "location": "Jaisalmer Fort & Sam Dunes, Rajasthan",
-      "region": "Thar Desert",
-      "duration": "3 Days / 2 Nights",
-      "altitude": "Desert Terrain",
-      "difficulty": "Desert Safari & Culture",
-      "price": 8999,
-      "originalPrice": 11999,
-      "badge": "Desert Safari Special",
-      "rating": 4.9,
-      "reviewCount": 260,
-      "image": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=85",
-      "gallery": [
-        "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "Golden sandstone living fort, thrilling 4x4 desert dune bashing, camel safaris, and folk nights under the stars.",
-      "defaultHighlights": [
-        "Explore Jaisalmer Fort (Sonar Qila), the only living golden fort in India.",
-        "Thrilling camel safari and 4x4 Jeep dune bashing across the shifting Sam Sand Dunes.",
-        "Overnight luxury Swiss desert camp with Kalbeliya folk dance and Rajasthani feast.",
-        "Visit haunted mystery village of Kuldhara and the royal cenotaphs at Bada Bagh."
-      ],
-      "highlights": [
-        "Jaisalmer Fort",
-        "Patwon Ki Haveli",
-        "Nathmal Ki Haveli",
-        "Gadisar Lake",
-        "Sam Sand Dunes",
-        "Camel safari",
-        "Desert sunset",
-        "Rajasthani cultural evening",
-        "Jaisalmer Fort",
-        "Gadisar Lake",
-        "Patwon Ki Haveli",
-        "Local markets",
-        "Sam Sand Dunes",
-        "Camel safari",
-        "Cultural evening",
-        "Desert camp stay",
-        "Luxury or boutique hotel stay",
-        "Desert camp",
-        "Sunset camel ride",
-        "Private sightseeing",
-        "Rajasthani cultural evening",
-        "Desert dinner",
-        "Gadisar Lake",
-        "Fort and haveli exploration",
-        "Leisure time",
-        "Camel safari",
-        "Jeep safari",
-        "Dune bashing",
-        "Sunset at Sam Sand Dunes",
-        "Folk dance",
-        "Traditional music",
-        "Rajasthani dinner",
-        "Desert camp stay",
-        "Stargazing",
-        "Explore Jaisalmer Fort",
-        "Watch the sunset from Sam Sand Dunes",
-        "Take a camel safari",
-        "Try dune bashing",
-        "Stay in a desert camp",
-        "Watch Rajasthani folk performances",
-        "Enjoy traditional Rajasthani cuisine",
-        "Visit Gadisar Lake",
-        "Shop for handicrafts",
-        "Photograph the sandstone architecture",
-        "Explore local markets",
-        "Visit Bada Bagh",
-        "Explore Kuldhara",
-        "Visit Longewala and Tanot Mata on an extended itinerary",
-        "Jaisalmer Fort",
-        "Main havelis",
-        "Gadisar Lake",
-        "Sam Sand Dunes",
-        "Desert camp",
-        "Jaisalmer",
-        "Desert experience",
-        "Longewala",
-        "Tanot Mata",
-        "Additional sightseeing"
+      "status": "Published",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "Jun 14",
+          "endDate": "Jun 18, 2026",
+          "slotsLeft": 12,
+          "price": 8999
+        }
       ],
       "itinerary": [
         {
           "day": 1,
-          "title": "Arrival in Jaisalmer & Desert Experience",
-          "description": "Arrive in Jaisalmer by flight, train or road. After check-in and some rest, head towards the Sam Sand Dunes. Evening activities:\n• Camel safari\n• Sunset over the dunes\n• Desert camp check-in\n• Rajasthani folk music\n• Traditional dinner Overnight: Desert Camp",
-          "altitude": "Desert Terrain",
+          "title": "Arrive in Srinagar – Dal Lake & Shikara Ride",
+          "description": "Day 1: Arrive in Srinagar – Dal Lake & Shikara Ride\nMorning\nArrive at Srinagar Airport.\nMeet your driver and start your journey to the hotel.\nThe airport to Dal Lake area normally takes around 30–45 minutes, depending on traffic and hotel location.\nCheck in and relax.\nAfternoon\nAfter lunch, start your Srinagar sightseeing.\nVisit:\nNishat Bagh\nShalimar Bagh\nChashme Shahi\nPari Mahal\nThese gardens offer beautiful views of the mountains and Dal Lake.\nTake your time. There is no need to rush through every garden.\nEvening\nEnjoy a Shikara ride on Dal Lake.\nWatch the mountains change colour as the sun goes down.\nYou can also see floating shops and small boats selling local products.\nAfter the ride, return to your hotel.\nMeals\nBreakfast: Not included\nLunch: Not included\nDinner: Included\nAccommodation\n3-star / 4-star hotel in Srinagar\nOptional: Upgrade to a deluxe houseboat on Dal Lake.\nInsider Tip\nCarry a light jacket even during summer. Srinagar evenings can feel cool, especially near the lake.\n",
+          "altitude": "",
+          "distance": "",
+          "meal": "Dinner",
+          "stay": "3-star / 4-star hotel in Srinagar"
+        }
+      ],
+      "inclusions": [
+        ""
+      ],
+      "exclusions": [
+        "Personal expenses & tips",
+        "Travel insurance"
+      ],
+      "faqs": [],
+      "imageAlt": "kashmir tour package - krad Global",
+      "category": "Domestic"
+    },
+    {
+      "id": 3,
+      "slug": "kheerganga-trek",
+      "name": "Kheerganga Hot Spring Trek",
+      "file": "doc_3_1k1FMZd43IHiim0Sspx9j6NtiMND0eM_ST7FF1LxNxHQ.txt",
+      "category": "Weekend",
+      "categories": [
+        "Weekend",
+        "Trek",
+        "Hot Springs",
+        "Himachal"
+      ],
+      "location": "Parvati Valley, Kasol, Himachal Pradesh",
+      "region": "Parvati Valley",
+      "duration": "2 Days / 1 Night",
+      "altitude": "9,700 Ft",
+      "difficulty": "Easy to Moderate",
+      "price": 2499,
+      "originalPrice": 3499,
+      "badge": "Bestseller Weekend",
+      "rating": 4.8,
+      "reviewCount": 190,
+      "image": "https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1920&q=85",
+      "gallery": [
+        "https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "tagline": "Natural hot sulphur springs nestled high amidst pine-covered peaks of Parvati Valley.",
+      "defaultHighlights": [
+        "Natural thermal hot water spring bath overlooking snow-dusted Himalayan peaks.",
+        "Trek through ancient village of Nakthan and the roaring Rudranag waterfall.",
+        "Stargazing around campfire in the magical heights of Parvati Valley.",
+        "Perfect weekend rejuvenation getaway starting from Kasol / Barshaini."
+      ],
+      "highlights": [
+        "Scenic views of the Parvati Valley",
+        "Trek through pine, deodar and mixed Himalayan forests",
+        "Traditional mountain settlements such as Nakthan and Kalga",
+        "Beautiful Rudranag Waterfall",
+        "Himalayan streams and wooden bridges",
+        "Panoramic mountain views from the upper trail",
+        "Visit to Parvati Kund / Kheerganga hot water spring",
+        "A spiritual connection with the legends surrounding Lord Shiva",
+        "Opportunity to explore Kasol, Manikaran, Tosh and nearby Parvati Valley villages"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Reach Barshaini and Trek to Kheerganga",
+          "description": "Route: Barshaini → Nakthan → Rudranag → Kheerganga | Trek Time: Around 5–6 hours | Altitude: 9,700 Ft\n\nStart early from Barshaini, the scenic roadhead and standard base for the Kheerganga trek. The trail meanders through apple orchards and rustic wooden Himachali homes in Nakthan village, overlooking the roaring Parvati River.\n\nPause at the sacred Rudranag waterfall for refreshing mountain water and local tea. Continue climbing through towering deodar, oak, and pine forests until you emerge into the panoramic alpine meadow of Kheerganga, renowned for its natural geothermal hot water springs with 360-degree valley views.",
+          "altitude": "9,700 Ft",
           "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
+          "stay": "Hotel / Resort / Campsite",
+          "distance": "Approximately 12 km one way"
         },
         {
           "day": 2,
-          "title": "Jaisalmer Fort & Heritage Sightseeing",
-          "description": "After breakfast, return towards the city. Explore:\n• Jaisalmer Fort\n• Jain Temples\n• Patwon Ki Haveli\n• Nathmal Ki Haveli\n• Salim Singh Ki Haveli Later, spend some time exploring local markets. Overnight: Jaisalmer",
-          "altitude": "Desert Terrain",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        },
-        {
-          "day": 3,
-          "title": "Bada Bagh, Kuldhara & Gadisar Lake",
-          "description": "After breakfast, explore selected attractions outside the main city. Suggested stops:\n• Bada Bagh\n• Kuldhara\n• Jaisalmer War Museum, subject to route\n• Gadisar Lake Return to your hotel and enjoy a relaxed evening. Overnight: Jaisalmer",
-          "altitude": "Desert Terrain",
-          "meal": "Breakfast & Dinner",
-          "stay": "Hotel / Resort / Campsite"
-        },
-        {
-          "day": 4,
-          "title": "Departure",
-          "description": "Enjoy breakfast at the luxury desert camp or city heritage hotel and complete checkout formalities. Depending on your train or flight schedule, enjoy free time exploring the narrow alleys inside the living Golden Fort or shopping for camel leather goods, block prints, and desert handicrafts.\n\nTransfer to Jaisalmer Railway Station or Airport for your onward journey. Your desert adventure concludes with unforgettable memories of golden dunes, starlit skies, and royal Rajasthani hospitality.",
-          "altitude": "Desert Terrain",
+          "title": "Return to Barshaini and Departure",
+          "description": "Route: Kheerganga → Rudranag → Nakthan → Barshaini | Trek Time: Around 4–5 hours\n\nWake up to crisp Himalayan morning breezes and golden sunrise rays illuminating the snow-clad peaks. Enjoy a hearty breakfast at the campsite.\n\nBegin the descent retracing the forest trail carefully down towards Barshaini. Step mindfully over rocky roots and downhill stone sections. Arrive at Barshaini by afternoon, where local buses and shared taxis connect to Kasol, Manikaran, and Bhuntar for your onward journey.",
+          "altitude": "9,700 Ft",
           "meal": "Breakfast & Dinner",
           "stay": "Hotel / Resort / Campsite"
         }
       ],
       "inclusions": [
-        "Camel ride",
-        "Jeep safari",
-        "Dune bashing",
-        "Cultural programme",
-        "Dinner",
-        "Camp stay",
-        "Transfers"
+        "Comfortable stay as per selected itinerary (Hotels / Camps / Houseboat)",
+        "Meals as specified (Breakfast & Dinners)",
+        "Dedicated trip coordinator / mountain guide",
+        "Permits, entry passes and ground assistance",
+        "Private transfers as per package route"
       ],
       "exclusions": [
         "Personal expenses (laundry, beverages, tips)",
@@ -3119,95 +2895,466 @@
       ],
       "faqs": [
         {
-          "question": "How many days are enough for a Jaisalmer trip?",
-          "answer": "Three days and two nights is the minimum practical duration for Jaisalmer if you want to see the major attractions and experience the desert. For a more relaxed trip, 4 days / 3 nights is a better choice."
+          "question": "Is the Kheerganga trek suitable for complete beginners?",
+          "answer": "Yes. The Kheerganga Trek is an easy-to-moderate trail and is one of the most accessible Himalayan weekend treks for beginners. The distance is approximately 12 km one-way from Barshaini with gradual climbing. Basic physical fitness and comfortable trekking shoes are recommended."
         },
         {
-          "question": "What is the best time to visit Jaisalmer?",
-          "answer": "October to March is generally the most comfortable period for sightseeing and desert activities. Winter is especially popular, although desert nights can be cold."
+          "question": "What is the best time to visit Kheerganga?",
+          "answer": "April to June and September to November offer pleasant weather, clear skies, and spectacular valley vistas. The trek also operates during winter (December to February) for snow lovers, though temperatures drop below freezing at the summit."
         },
         {
-          "question": "How much does a Jaisalmer tour package cost?",
-          "answer": "The cost depends on the hotel, number of nights, vehicle, desert camp, activities, meals and travel season. Current marketplace packages show a wide range, so travellers should compare inclusions rather than just the advertised starting price."
+          "question": "Are the Parvati Kund hot springs open for bathing?",
+          "answer": "Yes, the natural sulphur hot springs at Parvati Kund are accessible year-round and are famous for their rejuvenating warmth and panoramic Himalayan snow-peak views."
         },
         {
-          "question": "Is a desert camp included in Jaisalmer tour packages?",
-          "answer": "Many Jaisalmer packages include a desert camp, particularly itineraries designed around Sam Sand Dunes. However, the camp category, meals, camel safari and cultural programme vary by package and should be confirmed before booking."
+          "question": "Is mobile network available during the trek?",
+          "answer": "Mobile connectivity (primarily BSNL, Jio, and Airtel) is generally available up to Barshaini and Nakthan village, but becomes intermittent or unavailable at the Kheerganga top camp."
         },
         {
-          "question": "Is Jaisalmer good for a family holiday?",
-          "answer": "Yes. Jaisalmer works well for families when the itinerary balances sightseeing with rest. A 3–4 night package can combine the fort, havelis, Gadisar Lake and a comfortable desert experience."
-        },
-        {
-          "question": "Can I combine Jaisalmer with Jodhpur?",
-          "answer": "Yes. Jodhpur + Jaisalmer is one of the most popular Rajasthan combinations. Allow at least 4–5 days for a comfortable version of the trip."
-        },
-        {
-          "question": "Can I customize my Jaisalmer tour package?",
-          "answer": "Yes. A customized package can be designed around your travel dates, hotel category, vehicle, sightseeing preferences, desert activities, number of nights and additional Rajasthan destinations."
+          "question": "What type of stay is provided at Kheerganga?",
+          "answer": "Comfortable alpine dome tents with warm fleece sleeping bags, insulated ground mats, and shared camp washroom facilities are provided at the meadow campsites."
         }
       ],
-      "overview": "Golden sandstone living fort, thrilling 4x4 desert dune bashing, camel safaris, and folk nights under the stars.",
+      "overview": "Kheerganga is more than just a walk to a hot spring. The trail gives you a compact introduction to the majestic alpine landscapes and vibrant culture of the Parvati Valley.\n\nNestled high amidst the pine and deodar covered slopes of Himachal Pradesh at 9,700 Ft, Kheerganga is renowned for its mystical hot water springs at Parvati Kund, sweeping views of snow-dusted Himalayan ridges, and serene mountain campsites.\n\nThe trail winds past the roaring suspension bridges of Barshaini, authentic wooden hamlets like Nakthan and Kalga, and the sacred waters of Rudranag. The combination of ancient deodar forests, alpine streams, warm mountain hospitality, and therapeutic hot springs makes Kheerganga an unmissable Himalayan adventure.",
       "batches": [
         {
-          "id": 131,
+          "id": 31,
           "startDate": "Upcoming Weekend",
           "endDate": "Confirming Batch",
           "slotsLeft": 6,
-          "price": 8999
+          "price": 2499
         },
         {
-          "id": 132,
+          "id": 32,
           "startDate": "Next Week",
           "endDate": "Open Batch",
           "slotsLeft": 10,
-          "price": 8999
+          "price": 2499
         },
         {
-          "id": 133,
+          "id": 33,
           "startDate": "Following Weekend",
           "endDate": "Filling Fast",
           "slotsLeft": 4,
-          "price": 8999
+          "price": 2499
         }
       ],
       "status": "Published",
       "travelTips": [
         {
-          "title": "Desert Sun Protection",
-          "desc": "The Thar Desert receives intense sunlight throughout the year. Always carry broad-spectrum sunscreen (SPF 50), polarized sunglasses, and a lightweight scarf."
+          "title": "Start Trail Early",
+          "desc": "Begin your hike from Barshaini by 8:00 AM to comfortably reach Kheerganga meadow well before sunset."
         },
         {
-          "title": "Warm Layers for Desert Nights",
-          "desc": "From October to March, while desert daytime temperatures are pleasant, temperatures plummet after sunset. Bring warm jackets, shawls, or thermals for the dunes."
+          "title": "Trekker Footwear with Traction",
+          "desc": "Wet boulders near waterfalls and forest mud paths can be slippery. Wear sturdy trekking shoes with reliable rubber lugs."
         },
         {
-          "title": "Hydration on the Dunes",
-          "desc": "Dry desert air leads to fast dehydration. Keep a reusable water bottle handy during camel treks and 4x4 dune bashing."
+          "title": "Sanctuary Etiquette at Hot Springs",
+          "desc": "The natural geothermal sulphur bath is revered as a sacred site. Maintain sanctity, follow separate bathing sections, and avoid soap or chemical detergents."
         },
         {
-          "title": "Authentic Golden Fort Shopping",
-          "desc": "Sonamukhi yellow sandstone carvings, mirror-work textiles, and camel leather items are best purchased from local artisan cooperatives with itemized bills."
+          "title": "Night Warmth & Lighting",
+          "desc": "Temperatures drop sharply after dark at 9,700 ft. Carry a reliable headlamp or torch and warm fleece/thermal wear."
         },
         {
-          "title": "Responsible Dune Tourism",
-          "desc": "Do not leave plastic bottles or wrappers on the sand dunes. Protect the fragile Thar Desert ecosystem and respect local desert folk artists."
+          "title": "Eco-Conscious Travel",
+          "desc": "Parvati Valley has strict anti-littering rules. Carry all plastic wrappers, bottles, and snack packs back down to Barshaini."
         }
       ],
       "bookingPolicy": [
-        "Camp bookings confirmed upon advance deposit clearance.",
-        "Camp inclusions include evening folk music, cultural dance, and Rajasthani buffet dinner.",
-        "Dune safari vehicle slots are pre-allocated according to sunset timings."
+        "Campsite tent allotment is subject to local village authority regulations.",
+        "Advance deposit confirms alpine tent accommodation, meals, and mountain guide.",
+        "Transfers between Bhuntar/Kasol and Barshaini available on private cab request."
       ],
       "costFactors": [
-        "Seasonal demand (Desert Festival / New Year vs regular winter dates)",
-        "Camp luxury level (Standard Swiss Tent vs Royal AC Jacuzzi Tent)",
-        "Adventure activities (Parasailing / Quad Biking / Jeep Dune Bashing)",
-        "Private vehicle type for Jodhpur-Jaisalmer highway transfers"
+        "Weekend vs weekday departures",
+        "Tent type (Alpine Dome Tent / Swiss Luxury Tent / Homestay)",
+        "Meals plan (Breakfast & Dinner vs All Meals)",
+        "Kasol to Barshaini pickup and drop options"
       ],
-      "imageAlt": "Domestic tour package in India by KRAD Global",
-      "createdAt": "2026-09-03T17:08:45.014Z",
-      "updatedAt": "2026-09-03T17:08:45.014Z"
+      "imageAlt": "Himalayan trekking package by KRAD Global",
+      "createdAt": "2026-09-23T17:08:45.014Z",
+      "updatedAt": "2026-09-23T17:08:45.014Z"
+    },
+    {
+      "id": 1,
+      "slug": "chopta-tungnath-chandrashila",
+      "name": "Chopta Tungnath Chandrashila Trek",
+      "file": "doc_1_1PEEEp0FsslyonEIreUtqTAgQvlC8rpsLsuF3hSshc3A.txt",
+      "category": "Himalayas",
+      "categories": [
+        "Himalayas",
+        "Trek",
+        "Weekend",
+        "Summit"
+      ],
+      "location": "Rudraprayag, Uttarakhand",
+      "region": "Garhwal Himalayas",
+      "duration": "3 Days / 2 Nights",
+      "altitude": "13,000 Ft",
+      "difficulty": "Easy to Moderate",
+      "price": 5499,
+      "originalPrice": 7499,
+      "badge": "Most Popular",
+      "rating": 4.9,
+      "reviewCount": 320,
+      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85",
+      "gallery": [
+        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "tagline": "Alpine meadows of Chopta, the highest Shiva temple at Tungnath, and panoramic 360° summit views.",
+      "defaultHighlights": [
+        "Trek to sacred Tungnath Temple, the highest Shiva shrine in the world.",
+        "Reach the Chandrashila Summit (13,000 ft) for 360° views of Nanda Devi, Trishul, and Chaukhamba.",
+        "Camp amidst the pristine rhododendron forests and alpine meadows of Chopta.",
+        "Beginner-friendly trail ideal for first-time Himalayan trekkers."
+      ],
+      "highlights": [
+        "Visit the beautiful meadows of Chopta.",
+        "Trek to the sacred Tungnath Temple.",
+        "Reach the Chandrashila Summit for breathtaking Himalayan views.",
+        "Experience scenic mountain roads and the beauty of Garhwal.",
+        "Enjoy sunrise and panoramic mountain landscapes, weather permitting.",
+        "Suitable for beginners with a reasonable level of fitness.",
+        "Explore the natural beauty, forests and Himalayan landscapes of Uttarakhand.",
+        "Opportunity to visit Deoria Tal, depending on the selected itinerary and package."
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrival at Chopta | Journey Through the Himalayas",
+          "description": "Your Himalayan adventure begins with your journey towards Chopta. As you travel through the beautiful landscapes of Uttarakhand, enjoy changing views of rivers, valleys, forests and mountain roads. On arrival in Chopta, check in to your campsite or accommodation and take some time to relax. The fresh mountain air and peaceful surroundings provide the perfect introduction to the Himalayas. In the evening, enjoy dinner, interact with fellow travelers and prepare for the next day's trek.",
+          "altitude": "13,000 Ft",
+          "meal": "Dinner",
+          "stay": "Campsite / Homestay / Hotel at Chopta"
+        },
+        {
+          "day": 2,
+          "title": "Chopta to Tungnath and Chandrashila Summit | Trek Day",
+          "description": "Wake up early and get ready for the most exciting day of the trip. After breakfast, begin your trek from Chopta towards Tungnath Temple. The trail gradually takes you through beautiful Himalayan landscapes and offers incredible views of the surrounding mountains. Reach Tungnath Temple and spend some time exploring this sacred Himalayan destination. After visiting Tungnath, continue towards the Chandrashila Summit. The final section of the trek can be steep, but reaching the summit is a rewarding experience. From Chandrashila, enjoy panoramic views of the Himalayan ranges, subject to weather and visibility. After spending time at the summit, begin your descent back towards Chopta. In the evening, relax at your accommodation and enjoy dinner.",
+          "altitude": "13,000 Ft",
+          "meal": "Breakfast & Dinner",
+          "stay": "Campsite / Homestay / Hotel at Chopta",
+          "distance": "Approx. 8–10 km round trip"
+        },
+        {
+          "day": 3,
+          "title": "Chopta to Departure Point | Memories for a Lifetime",
+          "description": "Wake up to another beautiful Himalayan morning. After breakfast, check out from your accommodation and begin your return journey with unforgettable memories of Chopta, Tungnath and Chandrashila. The trip concludes with memories of mountain views, peaceful landscapes, new friendships and an incredible trekking experience. Optional Add-On: Deoria Tal visit can be included based on your selected itinerary, route and available time.",
+          "altitude": "13,000 Ft",
+          "meal": "Breakfast",
+          "stay": "Hotel / Resort / Campsite"
+        }
+      ],
+      "inclusions": [
+        "Accommodation for the specified number of nights.",
+        "Meals as mentioned in the itinerary.",
+        "Transportation as per the selected package.",
+        "Experienced trek leader or trip coordinator.",
+        "Guided trek to Tungnath and Chandrashila, subject to weather and safety conditions.",
+        "Basic first-aid support.",
+        "Trekking permits and entry charges, where specifically included in the package.",
+        "All applicable assistance during the trek as mentioned in the itinerary."
+      ],
+      "exclusions": [
+        "Any transportation not specifically mentioned under inclusions.",
+        "Meals not mentioned in the itinerary.",
+        "Personal expenses such as shopping, snacks, beverages and tips.",
+        "Travel or medical insurance.",
+        "Personal trekking equipment and clothing.",
+        "Any expenses caused by roadblocks, landslides, bad weather, natural disasters or unforeseen circumstances.",
+        "Emergency evacuation or additional transportation expenses, if required.",
+        "Pony, palki or porter services unless specifically mentioned.",
+        "Any additional stay or meals caused by delays beyond the control of KradInd.",
+        "GST or other applicable taxes, if not mentioned in the package price.",
+        "Anything not specifically mentioned under Package Inclusions."
+      ],
+      "faqs": [
+        {
+          "question": "Is the Chopta Tungnath Chandrashila Trek suitable for beginners?",
+          "answer": "Yes. The trek is generally suitable for beginners with a reasonable level of fitness. However, the final climb towards Chandrashila can be challenging."
+        },
+        {
+          "question": "What is the best time for the trek?",
+          "answer": "March to June and September to November are generally popular periods for pleasant weather and mountain views. Winter departures offer a different experience, with snow possible depending on conditions."
+        },
+        {
+          "question": "Will we definitely reach Chandrashila Summit?",
+          "answer": "The summit attempt depends on weather, snow and trail conditions. The trek leader's decision regarding safety will be final."
+        },
+        {
+          "question": "What type of accommodation is provided?",
+          "answer": "Accommodation may be provided in camps, homestays or hotels, depending on the package selected and availability."
+        },
+        {
+          "question": "Is transportation included?",
+          "answer": "Transportation inclusion depends on the package selected. Please check the package details before booking."
+        },
+        {
+          "question": "Is mobile network available in Chopta?",
+          "answer": "Mobile connectivity can be limited or unavailable in some areas. Travelers should inform their family and friends accordingly."
+        },
+        {
+          "question": "What should I wear for the trek?",
+          "answer": "Carry comfortable trekking clothes, warm layers, a jacket, trekking shoes with good grip and rain protection."
+        },
+        {
+          "question": "Can children join the trek?",
+          "answer": "Children may join depending on their age, fitness level and the package requirements. Parents or guardians should consult KradInd before booking. Suggested website sections For the KradInd trek page, I recommend this order: 1. Hero Banner – “Chopta Tungnath Chandrashila Trek” 2. Price + Book Now button 3. Quick Information – Duration, Difficulty, Altitude, Location 4. Overview 5. Trek Highlights 6. Photo Gallery 7. Detailed Itinerary 8. Inclusions & Exclusions 9. Things to Carry 10. Fitness Requirement 11. Cancellation Policy"
+        }
+      ],
+      "overview": "Experience the beauty of the Garhwal Himalayas with the Chopta Tungnath Chandrashila Trek, one of Uttarakhand's most popular Himalayan adventures.\n\nFrom the beautiful alpine meadows of Chopta to the sacred Tungnath Temple and the breathtaking Chandrashila Summit, this journey offers a perfect combination of adventure, spirituality, nature and Himalayan views.\n\nThe trek takes you through scenic mountain roads, dense forests and high-altitude trails. Tungnath, one of the sacred Panch Kedar temples, is an important spiritual destination, while Chandrashila offers spectacular panoramic views of the surrounding Himalayan peaks.\n\nWhether you are a first-time trekker, a nature lover or an adventure enthusiast, the Chopta Tungnath Chandrashila Trek promises an unforgettable Himalayan experience.",
+      "batches": [
+        {
+          "id": 11,
+          "startDate": "Upcoming Weekend",
+          "endDate": "Confirming Batch",
+          "slotsLeft": 6,
+          "price": 5499
+        },
+        {
+          "id": 12,
+          "startDate": "Next Week",
+          "endDate": "Open Batch",
+          "slotsLeft": 10,
+          "price": 5499
+        },
+        {
+          "id": 13,
+          "startDate": "Following Weekend",
+          "endDate": "Filling Fast",
+          "slotsLeft": 4,
+          "price": 5499
+        }
+      ],
+      "status": "Published",
+      "travelTips": [
+        {
+          "title": "Dress in Multi-Weather Layers",
+          "desc": "Chopta meadows experience cool breezes while Chandrashila summit at 13,100 ft can be very windy and cold. Carry thermals, fleece, and a windbreaker."
+        },
+        {
+          "title": "Sturdy Trekking Shoes with Grip",
+          "desc": "The paved path from Chopta to Tungnath has steep inclines, while the trail from Tungnath to Chandrashila is rocky. Deep-tread shoes are mandatory."
+        },
+        {
+          "title": "Pace Your Summit Ascent",
+          "desc": "Start early by 5:00 AM from Chopta to catch the golden sunrise over Nanda Devi, Chaukhamba, and Trishul from the Chandrashila peak."
+        },
+        {
+          "title": "Carry Reusable Hydration Flask",
+          "desc": "Plastic bottles are discouraged in the Kedarnath Wildlife Sanctuary. Carry a reusable thermos for warm drinking water."
+        }
+      ],
+      "imageAlt": "Himalayan trekking package by KRAD Global",
+      "createdAt": "2026-09-27T17:08:45.013Z",
+      "updatedAt": "2026-09-27T17:08:45.013Z"
+    },
+    {
+      "id": 4,
+      "slug": "kerala-tour-package",
+      "name": "Kerala Tour Package – 5 Nights / 6 Days",
+      "file": "doc_4_1wb9w7USkShKXZOAv8Mv7SkIwn1hsytHaHXRBmwyR7aY.txt",
+      "category": "Domestic",
+      "categories": [
+        "Domestic",
+        "Holiday Package",
+        "South India",
+        "Honeymoon"
+      ],
+      "location": "Munnar, Thekkady, Alleppey & Kochi, Kerala",
+      "region": "God's Own Country",
+      "duration": "6 Days / 5 Nights",
+      "altitude": "Sea Level to 5,200 Ft",
+      "difficulty": "Leisure / Sightseeing",
+      "price": 30000,
+      "originalPrice": 38000,
+      "badge": "Couple & Honeymoon Choice",
+      "rating": 4.9,
+      "reviewCount": 310,
+      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=85",
+      "gallery": [
+        "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "tagline": "A well-planned Kerala holiday for couples covering hills, tea gardens, spices and backwaters with private car and 1 night houseboat.",
+      "defaultHighlights": [
+        "Private traditional houseboat cruise through the palm-fringed backwaters of Alleppey with all meals.",
+        "Endless green tea plantations and mist-covered viewpoints of Munnar.",
+        "Spice plantation walk and Periyar Tiger Reserve wildlife boat safari in Thekkady.",
+        "Historic Fort Kochi with Chinese fishing nets and Portuguese heritage."
+      ],
+      "highlights": [
+        "5 nights / 6 days Kerala holiday for 2 adults (₹60,000 total / ₹30,000 per person)",
+        "Private Swift Dzire reserved for the complete 6-day tour",
+        "2 nights in Munnar at verified 3-star hotel",
+        "1 night in Thekkady amidst spice plantations",
+        "1 night on a traditional Alleppey houseboat with full board",
+        "1 night in Kochi with heritage sightseeing",
+        "Daily breakfast and daily dinner at hotel stays",
+        "Houseboat lunch, evening tea/snacks, dinner and breakfast",
+        "Kochi Airport / Railway Station pickup & drop",
+        "Munnar tea gardens, Cheeyappara and Valara waterfalls",
+        "Mattupetty Dam, Echo Point and Kundala Lake",
+        "Thekkady spice plantations & optional Periyar lake activities",
+        "Alleppey backwater cruise & Fort Kochi heritage tour"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Kochi to Munnar – Waterfalls, Tea Hills & Scenic Drive",
+          "description": "Arrive at Kochi International Airport or Ernakulam Railway Station. Meet your driver and begin your scenic drive towards Munnar (~125-140 km, 4-5 hrs). En-route stops at Cheeyappara Waterfalls, Valara Waterfalls, spice plantations, and viewpoints. Reach Munnar and check in to your 3-star hotel. Spend the evening at a relaxed pace. Overnight: Munnar. Meal Plan: Dinner included.",
+          "altitude": "Sea Level to 5,200 Ft",
+          "meal": "Dinner",
+          "stay": "3-Star Hotel – Munnar"
+        },
+        {
+          "day": 2,
+          "title": "Munnar Full-Day Sightseeing",
+          "description": "Start your day with breakfast and head out for a full day around Munnar: Eravikulam National Park / Rajamalai (subject to Nilgiri tahr calving season closure), Tea Museum, Mattupetty Dam, Echo Point, Kundala Lake, and tea garden photo stops. Return to hotel in the evening. Overnight: Munnar. Meal Plan: Breakfast & Dinner included.",
+          "altitude": "Sea Level to 5,200 Ft",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Hotel – Munnar"
+        },
+        {
+          "day": 3,
+          "title": "Munnar to Thekkady – Hills, Spices & Wildlife",
+          "description": "After breakfast, check out and drive towards Thekkady (~110-125 km, ~4 hrs) through cardamom, pepper and spice plantations. Reach Thekkady, check in to your hotel. Afternoon and evening open for optional Periyar Lake boat ride, spice plantation tour, Kathakali show, or Ayurveda massage. Overnight: Thekkady. Meal Plan: Breakfast & Dinner included.",
+          "altitude": "Sea Level to 5,200 Ft",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Hotel – Thekkady"
+        },
+        {
+          "day": 4,
+          "title": "Thekkady to Alleppey – Overnight Houseboat",
+          "description": "Have breakfast and check out. Drive towards Alleppey (~140-160 km, 4.5-5 hrs). Board your traditional Kerala houseboat. Cruise through Vembanad Lake, canals, paddy fields and villages. Enjoy welcome drink, authentic Kerala lunch, evening tea/snacks, candlelight dinner and breakfast. Overnight: Alleppey Houseboat. Meal Plan: Full Houseboat Board.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast, Lunch, Snacks & Dinner",
+          "stay": "Traditional Kerala Houseboat – Alleppey"
+        },
+        {
+          "day": 5,
+          "title": "Alleppey to Kochi – Backwaters to Fort Kochi",
+          "description": "Morning cruise and breakfast on the houseboat. Check out and drive to Kochi (~55-65 km, 1.5-2 hrs). Check in to your 3-star hotel. Visit Fort Kochi, Chinese Fishing Nets, St. Francis Church, Santa Cruz Basilica, Mattancherry Palace, and Jew Town. Shop for spices and local handicrafts. Overnight: Kochi. Meal Plan: Breakfast & Dinner included.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Hotel – Kochi"
+        },
+        {
+          "day": 6,
+          "title": "Kochi Sightseeing & Departure",
+          "description": "Enjoy breakfast at the hotel. Check out according to your departure schedule. If time permits, visit Marine Drive or Lulu Mall. Driver transfers you to Cochin International Airport or Ernakulam Railway Station for your onward journey. Meal Plan: Breakfast included.",
+          "altitude": "Sea Level",
+          "meal": "Breakfast",
+          "stay": "Departure"
+        }
+      ],
+      "inclusions": [
+        "5 nights accommodation: 2N Munnar, 1N Thekkady, 1N Alleppey Houseboat, 1N Kochi (3-star category for 2 adults)",
+        "Private air-conditioned Swift Dzire available for the complete 6-day itinerary",
+        "Kochi Airport / Railway Station pickup and drop",
+        "Daily breakfast at hotels",
+        "Daily dinner at hotel stays",
+        "Houseboat lunch, evening tea/snacks, dinner and breakfast",
+        "Fuel charges, driver allowance, tolls, and standard parking",
+        "Intercity transfers and sightseeing as mentioned in the itinerary",
+        "Driver assistance throughout the trip"
+      ],
+      "exclusions": [
+        "Flight or train tickets to/from Kochi",
+        "Monument and attraction entry fees",
+        "Boating charges (Mattupetty Dam, Kundala Lake, Periyar Lake)",
+        "Periyar Tiger Reserve wildlife activities, jeep safari, elephant activities",
+        "Kathakali and Kalaripayattu cultural performance tickets",
+        "Ayurveda massage, spa, wellness treatments, and camera permits",
+        "Lunches outside the scheduled houseboat stay",
+        "Personal expenses, laundry, tips, and travel insurance"
+      ],
+      "faqs": [
+        {
+          "question": "What is the cost of this 5 nights 6 days Kerala tour package?",
+          "answer": "The package costs ₹60,000 for 2 adults, which works out to ₹30,000 per person. It includes 3-star accommodation, private Swift Dzire transportation, breakfast and dinner, plus one night in an Alleppey houseboat with full houseboat meals."
+        },
+        {
+          "question": "What places are covered in this Kerala tour package?",
+          "answer": "The route covers Kochi, Munnar, Thekkady and Alleppey. You get two nights in Munnar, one night in Thekkady, one night on an Alleppey houseboat and one night in Kochi."
+        },
+        {
+          "question": "Is the Kerala tour package private for couples?",
+          "answer": "Yes. This package is planned for 2 adults travelling in a private Swift Dzire. The vehicle is not shared with another tourist group."
+        },
+        {
+          "question": "Is Periyar boating included in the package?",
+          "answer": "No. Periyar Lake boating is an optional activity and is not included in the standard package. Tickets can be paid separately, subject to availability."
+        },
+        {
+          "question": "Is the Alleppey houseboat stay included?",
+          "answer": "Yes. The package includes one night on an Alleppey houseboat with lunch, evening tea/snacks, dinner and breakfast included."
+        },
+        {
+          "question": "What is the best time to visit Kerala?",
+          "answer": "October to February is generally a comfortable period for this route, with pleasant conditions in Munnar and Thekkady and suitable weather for backwater travel."
+        },
+        {
+          "question": "Are Eravikulam National Park and other entry tickets included?",
+          "answer": "No. Attraction entry fees are excluded. Eravikulam National Park is also subject to seasonal closure during calving season (Feb-March)."
+        },
+        {
+          "question": "Can I customize this Kerala tour package?",
+          "answer": "Yes. You can request changes to hotel category, destinations (Kumarakom, Kovalam, Varkala, Marari, Athirappilly), and number of nights."
+        }
+      ],
+      "overview": "Experience the diverse beauty of Kerala with a carefully planned 6 Days 5 Nights Kerala Tour Package covering the scenic hills of Munnar, the wildlife and spice plantations of Thekkady, the peaceful backwaters of Alleppey and the cultural charm of Kochi.\n\nThis Kerala holiday package brings together some of the state's most memorable experiences in one comfortable journey. Walk through lush tea plantations in Munnar, explore the natural surroundings of Thekkady, enjoy a relaxing backwater cruise in Alleppey and discover the heritage of Kochi.\n\nThe route is designed to give you a balance of sightseeing, leisure and scenic road journeys instead of packing too many attractions into a single day. Kerala's popular tour circuits commonly combine Munnar, Thekkady and Alleppey, with Kochi used as a convenient arrival and departure point.\n\nWhether you are planning a family vacation, a romantic Kerala honeymoon, or a refreshing getaway with friends, this itinerary can also be customised according to your travel dates, hotel category and preferred activities.",
+      "batches": [
+        {
+          "id": 41,
+          "startDate": "Upcoming Weekend",
+          "endDate": "Confirming Batch",
+          "slotsLeft": 6,
+          "price": 30000
+        },
+        {
+          "id": 42,
+          "startDate": "Next Week",
+          "endDate": "Open Batch",
+          "slotsLeft": 10,
+          "price": 30000
+        },
+        {
+          "id": 43,
+          "startDate": "Following Weekend",
+          "endDate": "Filling Fast",
+          "slotsLeft": 4,
+          "price": 30000
+        }
+      ],
+      "status": "Published",
+      "travelTips": [
+        {
+          "title": "Light Breathable Clothing",
+          "desc": "Kerala has a warm, tropical climate. Pack loose-fitting cotton clothing, sunglasses, and a lightweight umbrella for brief showers."
+        },
+        {
+          "title": "Warm Layer for Munnar Hills",
+          "desc": "Munnar's tea-clad hills sit at 5,200 ft where evening temperatures drop significantly. Bring a light pullover or jacket."
+        },
+        {
+          "title": "Houseboat Etiquette in Alleppey",
+          "desc": "Houseboats cruise during daylight hours and anchor by 5:30 PM per inland water authority safety regulations. Enjoy the sunset views over the paddy fields."
+        },
+        {
+          "title": "Temple & Cultural Dress Codes",
+          "desc": "Traditional attire is required at several ancient temples like Padmanabhaswamy. Check dress rules in advance."
+        }
+      ],
+      "imageAlt": "Customized holiday package by KRAD Global",
+      "createdAt": "2026-09-21T17:08:45.014Z",
+      "updatedAt": "2026-09-21T17:08:45.014Z"
     }
   ],
   "trailReports": [
@@ -3868,6 +4015,135 @@
     }
   ],
   "destinations": [
+    {
+      "id": "dest-1790597493304-f33683",
+      "name": "Valley of Flowers Trek Package",
+      "slug": "valley-of-flowers-trek-package-2-night-3days-copy-1378",
+      "category": "Domestic",
+      "tagline": "Explore handpicked tours, treks, and holidays in Valley of Flowers Trek Package.",
+      "image": "/uploads/1790597483443-13879494-valley-of-flowers.webp",
+      "badge": "Trending Circuit",
+      "highlights": [
+        "Main Highlights Valley of Flowers National Park Ghangaria Pulna Govindghat Joshimath Devprayag Rudraprayag Karnaprayag Nandprayag Himalayan road journey Seasonal alpine flowers Waterfalls and mountain streams 2 nights Ghangaria stay Important This is a short and demanding trekking itinerary. It is best suited to travellers who are comfortable with long road journeys and consecutive trekking days."
+      ],
+      "color": "from-emerald-900/80",
+      "icon": "🏔️",
+      "status": "Published",
+      "duration": "2 night 3 day's",
+      "price": 53999,
+      "originalPrice": 55000,
+      "bestSeason": "September to May",
+      "pickupDrop": "Dehradun Haridwar Rishikesh",
+      "suitableFor": "Families, Couples & Friends",
+      "overview": "What to Pack\nTrekking Essentials\nGood trekking shoes\nWaterproof rain jacket\nRain cover for backpack\nWarm jacket\nQuick-dry clothes\nWoollen socks\nComfortable trousers\nSmall backpack\nWalking stick/trekking pole\nSunglasses\nSunscreen\nPersonal medicines\nBasic first-aid items\nWater bottle\nPower bank\nHeadlamp/torch\nMonsoon Essentials\nBecause the main flower season overlaps with monsoon conditions, also carry:\nWaterproof phone pouch\nBackpack rain cover\nExtra socks\nQuick-dry clothing\nSmall plastic/dry bags for electronics\nTrekking operators note that wet and slippery trails, rain, fog and changing mountain weather can add difficulty to this route.\n\n",
+      "gallery": [],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Day 1 – Dehradun / Haridwar / Rishikesh → Govindghat → Pulna → Ghangaria",
+          "description": "Early Morning – Pickup\nPickup will be arranged from:\nDehradun / Haridwar / Rishikesh\nRecommended pickup time:\nAround 4:00–5:00 AM\nAn early start is important because the first day combines a long mountain road journey with the trek to Ghangaria.\nRoad Journey\nDrive towards Govindghat through:\nThe Dehradun–Govindghat road journey is roughly 300+ km and can take around 9–11 hours, depending on the starting point, traffic, weather and mountain-road conditions. Uttarakhand Tourism similarly describes the Dehradun–Govindghat drive as around 310 km and about 10–11 hours.\nAfternoon / Evening – Govindghat to Pulna\nAfter reaching the Govindghat area, continue towards Pulna, the roadhead used for the trek.\nThe road journey and local transfer timing can vary according to road and local transport conditions.\nTrek – Pulna to Ghangaria\nStart the uphill trek from Pulna towards Ghangaria.\nApproximate trek distance: 9–10 km as per the supplied itinerary.\nThe route involves continuous walking on mountain terrain with an uphill climb.\nGhangaria is the base for the Valley of Flowers trek. Official Uttarakhand Tourism places Ghangaria at around 3,050 metres and identifies it as the last human settlement on the route.\nEvening\nReach Ghangaria and check in to the hotel/guesthouse.\nRest after the long road and trekking day.\nDinner: Included\nOvernight: Ghangaria\nStay: Standard / Deluxe Room\nInsider Tip\nStart your day with a proper breakfast and carry a small trekking backpack. Keep your water, rain protection, medicines, phone, power bank and basic snacks easily accessible instead of putting them inside your main luggage.\n",
+          "distance": "40 km",
+          "duration": "1.5 hrs",
+          "altitude": "",
+          "meal": "Dinner included",
+          "stay": "Verified 3-Star Hotel",
+          "activities": "Rishikesh → Devprayag → Srinagar → Rudraprayag → Karnaprayag → Nandprayag → Joshimath → Govindghat"
+        },
+        {
+          "day": 2,
+          "title": "Day 2 – Ghangaria → Valley of Flowers → Ghangaria",
+          "description": "Early Morning\nWake up early and have breakfast.\nRecommended breakfast time:\nAround 6:00 AM\nStart the trek towards the Valley of Flowers National Park.\nGhangaria to Valley Entrance\nThe Valley entrance is approximately 4 km from Ghangaria according to Uttarakhand Tourism.\nThe trail includes:\nForest sections\nMountain paths\nStreams\nWaterfalls\nOpen meadows\nHimalayan views\nMorning to Afternoon – Valley Exploration\nSpend time inside the Valley of Flowers.\nEnjoy:\nSeasonal alpine flowers\nMountain scenery\nWater streams\nWaterfalls\nPhotography\nNature walks\nThe Valley of Flowers National Park is a UNESCO World Heritage Site and is known for its alpine flora and Himalayan landscape. Uttarakhand Tourism states that flower abundance is generally highest during July to September.\nCarry your packed lunch and water during the excursion.\nAfternoon – Return to Ghangaria\nBegin the return trek towards Ghangaria.\nThe schedule should allow sufficient time to return before the park's daily closing requirement. Official Uttarakhand Tourism states that overnight stays inside the Valley are not permitted and visitors need to return to Ghangaria by 5 PM.\nEvening\nReach Ghangaria.\nRest and freshen up at the hotel.\nDinner at the hotel.\nDinner: Included\nOvernight: Ghangaria\nStay: Standard / Deluxe Room\nInsider Tip\nDo not rush through the Valley just to cover more distance. Keep the day focused on the main trail, photography and returning to Ghangaria within the permitted timing.\n\n",
+          "distance": "65 km",
+          "duration": "Full Day",
+          "altitude": "",
+          "meal": "Breakfast & Dinner",
+          "stay": "Verified 3-Star Hotel",
+          "activities": "Ghangaria to Valley Entrance"
+        },
+        {
+          "day": 3,
+          "title": "Day 3 – Ghangaria → Pulna → Govindghat → Dehradun / Haridwar / Rishikesh",
+          "description": "Early Morning\nBreakfast at the hotel.\nCheck out.\nPrepare for the downhill trek from Ghangaria to Pulna.\nMorning – Trek Down\nStart the descent towards Pulna.\nApproximate trek distance: 9–10 km as per the supplied itinerary.\nThe downhill section can still be tiring because the trail is uneven and the legs are already carrying fatigue from the previous day.\nLate Morning\nReach Pulna.\nMeet the vehicle and continue towards Govindghat/Joshimath.\nAfternoon – Return Road Journey\nContinue through the Alaknanda Valley.\nLunch will be at your own expense en route.\nThe return journey follows the mountain road towards the selected drop location.\nEvening / Night – Drop\nDrop at your selected destination:\nDehradun / Haridwar / Rishikesh\nBreakfast: Included\nLunch: Not Included\nDinner: Not Included\nTour Ends\n",
+          "distance": "-",
+          "duration": "4 hrs",
+          "altitude": "",
+          "meal": "Breakfast & Dinner",
+          "stay": "Verified 3-Star Hotel / Resort",
+          "activities": "Morning – Trek Down"
+        }
+      ],
+      "inclusions": [
+        "2 nights accommodation in Ghangaria.",
+        "Standard/Deluxe room.",
+        "Twin/double/triple sharing as applicable.",
+        "Daily breakfast & dinner.",
+        "Tea/Coffee as specified.",
+        "Private vehicle for the road journey.",
+        "Dehradun / Haridwar / Rishikesh pickup. Transfer to Govindghat/Pulna",
+        "Return transfer from Pulna/Govindghat. Drop at Dehradun / Haridwar / Rishikesh.",
+        "Driver allowance. Fuel. Toll tax. Parking charges.",
+        "Assistance for Valley of Flowers entry and local arrangements.",
+        "Driver/vehicle assistance throughout the road journey.",
+        "Applicable hotel taxes sightseeing and transfers specifically mentioned in the itinerary."
+      ],
+      "exclusions": [
+        "Valley of Flowers National Park entry fee/permit, if applicable.",
+        "Forest/environmental fees.",
+        "Government charges not specifically included.",
+        "Trekking guide charges.",
+        "Porter charges. Horse/mule charges. Personal expenses. Laundry. Telephone/mobile charges. Tips. Room service. Lunches. Snacks.",
+        "Beverages other than those specifically included.",
+        "Travel insurance.",
+        "Medical insurance.",
+        "Trekking shoes. Trekking jacket. Raincoat. Walking stick. Backpack.",
+        "Personal trekking equipment.",
+        "Emergency evacuation/rescue charges.",
+        "Additional accommodation caused by weather or road disruption.",
+        "Additional transportation caused by landslides, roadblocks, weather or other unforeseen circumstances.",
+        "Any service not specifically mentioned under package inclusions."
+      ],
+      "travelTips": [
+        "Carry valid Government photo IDs (Aadhaar/Passport/Voter ID) for every guest for seamless hotel check-in and local checkpoint verifications.",
+        "Pack comfortable walking shoes, polarized sunglasses, sunscreen, and seasonal layered clothing.",
+        "Keep some cash handy as digital UPI payments can experience intermittent mobile network issues in hilly or remote stretches."
+      ],
+      "faqs": [
+        {
+          "question": "1. What is the price of the Valley of Flowers 2 Nights 3 Days package?",
+          "answer": "The package costs ₹54,000 total for 6 adults, which works out to ₹9,000 per person."
+        },
+        {
+          "question": "Can I start the Valley of Flowers trip from Dehradun?",
+          "answer": "Yes. Pickup is available from Dehradun, Haridwar or Rishikesh, according to the package itinerary."
+        },
+        {
+          "question": "3. How many nights do we stay in Ghangaria?",
+          "answer": "The package includes 2 nights in Ghangaria in a standard/deluxe room on twin, double or triple sharing."
+        },
+        {
+          "question": "4. Is the Valley of Flowers entry fee included?",
+          "answer": "No. The Valley of Flowers National Park entry fee/permit and applicable forest or government charges are excluded unless specifically added to your confirmed booking."
+        },
+        {
+          "question": "5. Is a trekking guide included?",
+          "answer": "No. A trekking guide is not included in the supplied package price. Guide services can be arranged separately if required and subject to availability."
+        },
+        {
+          "question": "6. Are horses, mules or porters included?",
+          "answer": "No. Horse/mule and porter services are excluded and can be arranged separately where available.\n"
+        },
+        {
+          "question": "7. Is Hemkund Sahib included in this package?",
+          "answer": "No. This package is specifically for the Valley of Flowers.\nThe route does not include Hemkund Sahib.\n"
+        },
+        {
+          "question": "8. Is the Valley of Flowers trek suitable for beginners?",
+          "answer": "The Valley of Flowers route can be completed by reasonably fit first-time trekkers, but this particular 2N/3D package is physically demanding because the first and third days combine long road journeys with trekking.\nTravellers should prepare for uphill/downhill walking, uneven terrain, changing weather and high-altitude conditions.\n"
+        }
+      ],
+      "createdAt": "2026-09-28T12:11:33.304Z",
+      "updatedAt": "2026-09-28T12:15:39.378Z"
+    },
     {
       "id": "dest-uttarakhand",
       "name": "Uttarakhand",

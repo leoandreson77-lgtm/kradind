@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { treks } from "@/lib/travel-data";
+import { getTreksAsync } from "@/lib/cms-store";
 
 export async function generateMetadata({
   params,
@@ -7,9 +8,17 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  let dynamicTreks: any[] = [];
+  try {
+    dynamicTreks = await getTreksAsync();
+  } catch {}
+
   const trek =
+    dynamicTreks.find((t) => t.slug === slug) ||
     treks.find((t) => t.slug === slug) ||
+    dynamicTreks.find((t) => t.slug.includes(slug)) ||
     treks.find((t) => t.slug.includes(slug)) ||
+    dynamicTreks[0] ||
     treks[0];
 
   const pageUrl = `https://kradind.com/treks/${slug}`;
@@ -55,9 +64,17 @@ export default async function TrekDetailLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  let dynamicTreks: any[] = [];
+  try {
+    dynamicTreks = await getTreksAsync();
+  } catch {}
+
   const trek =
+    dynamicTreks.find((t) => t.slug === slug) ||
     treks.find((t) => t.slug === slug) ||
+    dynamicTreks.find((t) => t.slug.includes(slug)) ||
     treks.find((t) => t.slug.includes(slug)) ||
+    dynamicTreks[0] ||
     treks[0];
 
   const trekSchema = {
@@ -87,10 +104,10 @@ export default async function TrekDetailLayout({
         itinerary: {
           "@type": "ItemList",
           numberOfItems: trek.itinerary?.length || 0,
-          itemListElement: trek.itinerary?.map((item, index) => ({
+          itemListElement: (trek.itinerary || []).map((item: any, index: number) => ({
             "@type": "ListItem",
             position: index + 1,
-            name: item.title || `Day ${item.day}`,
+            name: item.title || `Day ${item.day || index + 1}`,
             description: item.description,
           })),
         },

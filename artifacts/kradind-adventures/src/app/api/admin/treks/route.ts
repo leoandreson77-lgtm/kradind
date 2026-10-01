@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { readStore, writeStore, TrekData, getTreksAsync, syncTreksToMongo } from "@/lib/cms-store";
 import { getAdminSession } from "@/lib/admin-auth";
 
@@ -41,8 +42,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Trek name and slug are required" }, { status: 400 });
     }
 
+    const currentTreks = await getTreksAsync();
     const store = readStore();
-    if (!store.treks) store.treks = [];
+    store.treks = currentTreks;
 
     // Check slug uniqueness
     if (store.treks.some((t) => t.slug === body.slug)) {
@@ -98,6 +100,19 @@ export async function POST(request: NextRequest) {
     // Sync to MongoDB
     await syncTreksToMongo(store.treks);
 
+    // Instant Cache Invalidation across all front-facing pages
+    try {
+      revalidatePath("/");
+      revalidatePath("/treks");
+      revalidatePath("/domestic-trips");
+      revalidatePath("/international-trips");
+      revalidatePath("/destinations");
+      revalidatePath(`/treks/${newTrek.slug}`);
+      revalidatePath("/", "layout");
+    } catch (revErr) {
+      console.warn("revalidatePath warning:", revErr);
+    }
+
     return NextResponse.json(newTrek, { status: 201 });
   } catch (error: any) {
     console.error("Failed to create trek:", error);
@@ -113,8 +128,9 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body: TrekData = await request.json();
+    const currentTreks = await getTreksAsync();
     const store = readStore();
-    if (!store.treks) store.treks = [];
+    store.treks = currentTreks;
 
     const index = store.treks.findIndex((t) => String(t.id) === String(body.id));
 
@@ -131,6 +147,19 @@ export async function PUT(request: NextRequest) {
 
     // Sync to MongoDB
     await syncTreksToMongo(store.treks);
+
+    // Instant Cache Invalidation across all front-facing pages
+    try {
+      revalidatePath("/");
+      revalidatePath("/treks");
+      revalidatePath("/domestic-trips");
+      revalidatePath("/international-trips");
+      revalidatePath("/destinations");
+      revalidatePath(`/treks/${store.treks[index].slug}`);
+      revalidatePath("/", "layout");
+    } catch (revErr) {
+      console.warn("revalidatePath warning:", revErr);
+    }
 
     return NextResponse.json(store.treks[index]);
   } catch (error: any) {
@@ -153,8 +182,9 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Missing trek id" }, { status: 400 });
     }
 
+    const currentTreks = await getTreksAsync();
     const store = readStore();
-    if (!store.treks) store.treks = [];
+    store.treks = currentTreks;
 
     const initialLength = store.treks.length;
     store.treks = store.treks.filter((t) => String(t.id) !== String(id));
@@ -167,6 +197,18 @@ export async function DELETE(request: NextRequest) {
 
     // Sync to MongoDB
     await syncTreksToMongo(store.treks);
+
+    // Instant Cache Invalidation
+    try {
+      revalidatePath("/");
+      revalidatePath("/treks");
+      revalidatePath("/domestic-trips");
+      revalidatePath("/international-trips");
+      revalidatePath("/destinations");
+      revalidatePath("/", "layout");
+    } catch (revErr) {
+      console.warn("revalidatePath warning:", revErr);
+    }
 
     return NextResponse.json({ success: true, message: "Trek deleted successfully" });
   } catch (error: any) {

@@ -1,0 +1,71 @@
+# =============================================================================
+# KRADIND Adventures - Complete Self-Hosted Stack with Local MongoDB
+# Run with: docker compose -f docker-compose.mongo.yml up -d
+# =============================================================================
+
+services:
+  mongo:
+    image: mongo:7-jammy
+    container_name: kradind-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval 'db.adminCommand(\"ping\")' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kradind-adventures
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - MONGODB_URI=mongodb://mongo:27017/flight_search
+      - DATABASE_URL=mongodb://mongo:27017/flight_search
+      - ADMIN_SESSION_SECRET=${ADMIN_SESSION_SECRET:-kradind-secure-secret-key-himalayan-adventures-2026}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    volumes:
+      - kradind_cms_data:/app/artifacts/kradind-adventures/data
+      - kradind_uploads:/app/artifacts/kradind-adventures/public/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+volumes:
+  mongo_data:
+    name: kradind_mongo_data
+  kradind_cms_data:
+    name: kradind_cms_data
+  kradind_uploads:
+    name: kradind_uploads

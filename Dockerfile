@@ -9,13 +9,10 @@
 # -----------------------------------------------------------------------------
 FROM node:20-alpine AS base
 
-# Install libc6-compat for compatibility with native modules on Alpine Linux
-# Install wget for container healthcheck
 RUN apk add --no-cache libc6-compat wget
 
 WORKDIR /app
 
-# Enable Corepack and activate pnpm matching the repository lockfile
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
@@ -28,7 +25,7 @@ FROM base AS deps
 # Copy root workspace manifests
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
-# Copy all workspace package definitions for frozen lockfile resolution
+# Copy all workspace package definitions for lockfile resolution
 COPY artifacts/kradind-adventures/package.json ./artifacts/kradind-adventures/
 COPY lib/api-zod/package.json ./lib/api-zod/
 COPY lib/api-client-react/package.json ./lib/api-client-react/
@@ -36,8 +33,8 @@ COPY lib/api-spec/package.json ./lib/api-spec/
 COPY lib/db/package.json ./lib/db/
 COPY scripts/package.json ./scripts/
 
-# Install dependencies strictly following pnpm-lock.yaml
-RUN pnpm install --frozen-lockfile
+# Install dependencies matching workspace
+RUN pnpm install
 
 # -----------------------------------------------------------------------------
 # Stage 3: Builder Stage
@@ -56,15 +53,16 @@ COPY . .
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Compile Next.js 15 production build
-RUN pnpm --filter @workspace/kradind-adventures run build
+# Compile Next.js 15 production build and prune build cache to keep image slim
+RUN pnpm --filter @workspace/kradind-adventures run build && \
+    rm -rf artifacts/kradind-adventures/.next/cache
 
 # -----------------------------------------------------------------------------
 # Stage 4: Production Runner (Lean, Secure Non-Root Runtime)
 # -----------------------------------------------------------------------------
 FROM base AS runner
 
-WORKDIR /app
+WORKDIR /app/artifacts/kradind-adventures
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -75,26 +73,14 @@ ENV HOSTNAME="0.0.0.0"
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy root workspace metadata and dependencies
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/lib ./lib
+# Copy the built application workspace tree with proper ownership
+COPY --from=builder --chown=nextjs:nodejs /app /app
 
-# Copy compiled Next.js application, public assets, and store data
-COPY --from=builder /app/artifacts/kradind-adventures/package.json ./artifacts/kradind-adventures/package.json
-COPY --from=builder /app/artifacts/kradind-adventures/node_modules ./artifacts/kradind-adventures/node_modules
-COPY --from=builder /app/artifacts/kradind-adventures/.next ./artifacts/kradind-adventures/.next
-COPY --from=builder /app/artifacts/kradind-adventures/public ./artifacts/kradind-adventures/public
-COPY --from=builder /app/artifacts/kradind-adventures/data ./artifacts/kradind-adventures/data
-COPY --from=builder /app/artifacts/kradind-adventures/next.config.ts ./artifacts/kradind-adventures/next.config.ts
-
-# Prepare writable directories for runtime CMS data, uploads, and Next.js ISR cache
+# Prepare runtime writable directories for CMS data and uploads
 RUN mkdir -p /app/artifacts/kradind-adventures/public/uploads && \
     mkdir -p /app/artifacts/kradind-adventures/data && \
     chown -R nextjs:nodejs /app/artifacts/kradind-adventures/data && \
-    chown -R nextjs:nodejs /app/artifacts/kradind-adventures/public/uploads && \
-    chown -R nextjs:nodejs /app/artifacts/kradind-adventures/.next
+    chown -R nextjs:nodejs /app/artifacts/kradind-adventures/public/uploads
 
 # Switch to non-root user
 USER nextjs
@@ -106,5 +92,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/healthz || exit 1
 
-# Start production server
-CMD ["pnpm", "--filter", "@workspace/kradind-adventures", "run", "start"]
+# Start production server directly via Next.js binary
+CMD ["node", "./node_modules/.bin/next", "start", "-p", "3000", "-H", "0.0.0.0"]

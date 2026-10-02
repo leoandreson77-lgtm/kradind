@@ -66,6 +66,7 @@ export default function AdminCRMPage() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [tierFilter, setTierFilter] = useState("All");
+  const [density, setDensity] = useState<"comfortable" | "compact">("comfortable");
 
   // Customer 360 Slide-Over
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
@@ -852,72 +853,128 @@ export default function AdminCRMPage() {
       {/* TAB 1: CUSTOMER DIRECTORY */}
       {activeTab === "directory" && (
         <div className="space-y-4">
-          {/* Search & Filter Toolbar */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-center gap-3">
-            <div className="relative flex-1 w-full">
+          {/* Search, Filter Toolbar & Density Controls */}
+          <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
+            {/* Search Input */}
+            <div className="relative flex-1 min-w-[260px]">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search by customer name, phone, email, city, or tags..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                className="w-full bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 transition-all"
               />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
-            <div className="flex items-center gap-2 w-full md:w-auto flex-wrap">
-              <select
-                value={stageFilter}
-                onChange={(e) => setStageFilter(e.target.value)}
-                className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-600"
-              >
-                <option value="All">All Stages</option>
-                <option value="Lead">Lead</option>
-                <option value="Prospect">Prospect</option>
-                <option value="First-Time Explorer">First-Time Explorer</option>
-                <option value="Repeat Customer">Repeat Customer</option>
-                <option value="VIP Explorer">VIP Explorer</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+            {/* Filter Dropdowns and Layout Controls */}
+            <div className="flex items-center gap-2 flex-wrap justify-between xl:justify-end">
+              <div className="flex items-center gap-2 flex-wrap">
+                <select
+                  value={stageFilter}
+                  onChange={(e) => setStageFilter(e.target.value)}
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-600 focus:bg-white cursor-pointer"
+                >
+                  <option value="All">All Stages</option>
+                  <option value="Lead">Lead</option>
+                  <option value="Prospect">Prospect</option>
+                  <option value="First-Time Explorer">First-Time Explorer</option>
+                  <option value="Repeat Customer">Repeat Customer</option>
+                  <option value="VIP Explorer">VIP Explorer</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
 
-              <select
-                value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
-                className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-600"
-              >
-                <option value="All">All Priority</option>
-                <option value="Urgent / VIP">Urgent / VIP</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </select>
+                <select
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value)}
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-600 focus:bg-white cursor-pointer"
+                >
+                  <option value="All">All Priority</option>
+                  <option value="Urgent / VIP">Urgent / VIP</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
 
-              <select
-                value={tierFilter}
-                onChange={(e) => setTierFilter(e.target.value)}
-                className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-600"
-              >
-                <option value="All">All Loyalty Tiers</option>
-                <option value="Explorer (Bronze)">Explorer (Bronze)</option>
-                <option value="Summiteer (Silver)">Summiteer (Silver)</option>
-                <option value="Alpinist (Gold)">Alpinist (Gold)</option>
-                <option value="Legend (Platinum)">Legend (Platinum)</option>
-              </select>
+                <select
+                  value={tierFilter}
+                  onChange={(e) => setTierFilter(e.target.value)}
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-600 focus:bg-white cursor-pointer"
+                >
+                  <option value="All">All Loyalty Tiers</option>
+                  <option value="Explorer (Bronze)">Explorer (Bronze)</option>
+                  <option value="Summiteer (Silver)">Summiteer (Silver)</option>
+                  <option value="Alpinist (Gold)">Alpinist (Gold)</option>
+                  <option value="Legend (Platinum)">Legend (Platinum)</option>
+                </select>
+
+                {(search || stageFilter !== "All" || priorityFilter !== "All" || tierFilter !== "All") && (
+                  <button
+                    onClick={() => {
+                      setSearch("");
+                      setStageFilter("All");
+                      setPriorityFilter("All");
+                      setTierFilter("All");
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition flex items-center gap-1"
+                    title="Clear All Filters"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    <span>Reset</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Density Toggle (Spacious vs Compact) */}
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80 ml-auto xl:ml-0">
+                <button
+                  type="button"
+                  onClick={() => setDensity("comfortable")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    density === "comfortable"
+                      ? "bg-white text-emerald-800 shadow-2xs font-extrabold"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                  title="Comfortable Spacious Layout"
+                >
+                  Spacious
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDensity("compact")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    density === "compact"
+                      ? "bg-white text-emerald-800 shadow-2xs font-extrabold"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                  title="Compact Density"
+                >
+                  Compact
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Customer Table - Crystal Clear, High-Contrast Light Theme Card */}
+          {/* Customer Table - Spacious, Modern, Zero Awkward Text Wrapping */}
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-600 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+            <div className="overflow-x-auto scrollbar-thin">
+              <table className="w-full text-left text-xs min-w-[1020px]">
+                <thead className="bg-slate-50/90 text-slate-600 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200/90 select-none">
                   <tr>
-                    <th className="py-3.5 px-4">Customer Details</th>
-                    <th className="py-3.5 px-4">Lifecycle Stage</th>
-                    <th className="py-3.5 px-4">Loyalty & Priority</th>
-                    <th className="py-3.5 px-4">Spend & Trips</th>
-                    <th className="py-3.5 px-4">Assigned Agent</th>
-                    <th className="py-3.5 px-4 text-right">Quick Contact / Actions</th>
+                    <th className="py-3 px-4 w-[28%]">Customer Details</th>
+                    <th className="py-3 px-3.5 w-[16%]">Lifecycle Stage</th>
+                    <th className="py-3 px-3.5 w-[16%]">Loyalty & Priority</th>
+                    <th className="py-3 px-3.5 w-[14%]">Spend & Trips</th>
+                    <th className="py-3 px-3.5 w-[14%]">Assigned Agent</th>
+                    <th className="py-3 px-4 w-[12%] text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -939,46 +996,43 @@ export default function AdminCRMPage() {
                     filteredCustomers.map((cust) => (
                       <tr
                         key={cust.id}
-                        className="hover:bg-slate-50/80 transition-colors group cursor-pointer"
+                        className="hover:bg-emerald-50/30 transition-colors group cursor-pointer"
                         onClick={() => setSelectedCustomerId(cust.id)}
                       >
                         {/* Customer Details */}
-                        <td className="py-3.5 px-4">
+                        <td className={`${density === "compact" ? "py-2 px-4" : "py-3.5 px-4"}`}>
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex items-center justify-center font-bold text-sm shadow-xs flex-shrink-0">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0 select-none">
                               {cust.name.charAt(0).toUpperCase()}
                             </div>
                             <div className="min-w-0">
-                              <div className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors flex items-center gap-1.5">
-                                <span>{cust.name}</span>
+                              <div className="font-bold text-slate-900 text-xs sm:text-[13px] group-hover:text-emerald-700 transition-colors flex items-center gap-1.5 truncate">
+                                <span className="truncate">{cust.name}</span>
                                 {cust.idProofVerified && (
-                                  <span title="ID Verified" className="text-emerald-600 font-bold text-xs">
+                                  <span title="ID Verified" className="text-emerald-600 font-bold text-xs shrink-0">
                                     ✓
                                   </span>
                                 )}
                               </div>
-                              <div className="text-xs text-slate-500 font-medium truncate flex items-center gap-1.5 mt-0.5">
-                                <span>{cust.phone}</span>
+                              <div className="text-[11px] text-slate-500 font-medium truncate flex items-center gap-1.5 mt-0.5">
+                                <span className="font-semibold text-slate-600">{cust.phone}</span>
                                 <span className="text-slate-300">•</span>
-                                <span>{cust.city}</span>
+                                <span className="truncate">{cust.city}</span>
                               </div>
                             </div>
                           </div>
                         </td>
 
                         {/* Lifecycle Stage */}
-                        <td className="py-3.5 px-4">
-                          <div className="space-y-1">
+                        <td className={`${density === "compact" ? "py-2 px-3.5" : "py-3.5 px-3.5"} whitespace-nowrap`}>
+                          <div className="flex flex-col gap-1 items-start">
                             <span
-                              className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${getStageBadgeClasses(
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border whitespace-nowrap shadow-2xs ${getStageBadgeClasses(
                                 cust.lifecycleStage
                               )}`}
                             >
-                              {cust.lifecycleStage}
-                            </span>
-                            <div className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
                               <span
-                                className={`w-1.5 h-1.5 rounded-full ${
+                                className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                                   cust.status === "Active"
                                     ? "bg-emerald-500"
                                     : cust.status === "Follow-Up Needed"
@@ -986,20 +1040,23 @@ export default function AdminCRMPage() {
                                     : "bg-slate-400"
                                 }`}
                               />
-                              <span>{cust.status}</span>
-                            </div>
+                              <span>{cust.lifecycleStage}</span>
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-medium pl-1">
+                              Status: {cust.status}
+                            </span>
                           </div>
                         </td>
 
                         {/* Loyalty & Priority */}
-                        <td className="py-3.5 px-4">
-                          <div className="space-y-1">
-                            <div className="text-xs font-bold text-slate-800 flex items-center gap-1">
+                        <td className={`${density === "compact" ? "py-2 px-3.5" : "py-3.5 px-3.5"} whitespace-nowrap`}>
+                          <div className="flex flex-col gap-1 items-start">
+                            <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                               <span>{getTierIcon(cust.loyaltyTier)}</span>
                               <span>{cust.loyaltyTier.split(" ")[0]}</span>
                             </div>
                             <span
-                              className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border ${getPriorityBadgeClasses(
+                              className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border whitespace-nowrap ${getPriorityBadgeClasses(
                                 cust.priority
                               )}`}
                             >
@@ -1009,21 +1066,30 @@ export default function AdminCRMPage() {
                         </td>
 
                         {/* Spend & Trips */}
-                        <td className="py-3.5 px-4">
-                          <div className="font-extrabold text-slate-900 text-sm">{formatCurrency(cust.totalSpent)}</div>
-                          <div className="text-xs text-slate-500 font-medium">
-                            {cust.totalTrips} expedition{cust.totalTrips !== 1 ? "s" : ""}
+                        <td className={`${density === "compact" ? "py-2 px-3.5" : "py-3.5 px-3.5"} whitespace-nowrap`}>
+                          <div className="font-extrabold text-slate-900 text-xs sm:text-[13px]">
+                            {formatCurrency(cust.totalSpent)}
+                          </div>
+                          <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                            {cust.totalTrips} {cust.totalTrips === 1 ? "trip" : "trips"}
                           </div>
                         </td>
 
                         {/* Assigned Agent */}
-                        <td className="py-3.5 px-4">
-                          <div className="text-xs text-slate-800 font-bold">{cust.assignedTo || "Unassigned"}</div>
-                          <div className="text-[11px] text-slate-400 truncate">Src: {cust.source}</div>
+                        <td className={`${density === "compact" ? "py-2 px-3.5" : "py-3.5 px-3.5"} whitespace-nowrap`}>
+                          <div className="text-xs text-slate-800 font-bold flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold shrink-0">
+                              {(cust.assignedTo || "U").charAt(0).toUpperCase()}
+                            </span>
+                            <span className="truncate max-w-[110px]">{cust.assignedTo || "Unassigned"}</span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 pl-6.5 mt-0.5">
+                            via {cust.source}
+                          </div>
                         </td>
 
                         {/* Quick Actions */}
-                        <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <td className={`${density === "compact" ? "py-2 px-4" : "py-3.5 px-4"} text-right whitespace-nowrap`} onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-1.5">
                             <a
                               href={`https://wa.me/${cleanPhoneForWhatsApp(cust.phone)}?text=Hi%20${encodeURIComponent(
@@ -1032,29 +1098,29 @@ export default function AdminCRMPage() {
                               target="_blank"
                               rel="noreferrer"
                               title="Chat on WhatsApp"
-                              className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 transition-colors shadow-xs"
+                              className="w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/90 flex items-center justify-center transition-colors shadow-2xs"
                             >
                               <MessageSquare className="w-3.5 h-3.5" />
                             </a>
                             <a
                               href={`tel:${cust.phone}`}
                               title="Direct Phone Call"
-                              className="p-2 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 transition-colors shadow-xs"
+                              className="w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200/90 flex items-center justify-center transition-colors shadow-2xs"
                             >
                               <Phone className="w-3.5 h-3.5" />
                             </a>
                             <button
                               onClick={() => setSelectedCustomerId(cust.id)}
-                              title="Open Customer 360"
-                              className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-700 text-slate-700 hover:text-white border border-slate-200 text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                              title="Open Customer 360 Profile"
+                              className="h-8 px-2.5 rounded-lg bg-slate-900 hover:bg-[#0F3A2E] text-white text-[11px] font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
                             >
-                              <Eye className="w-3.5 h-3.5" />
+                              <Eye className="w-3.5 h-3.5 text-emerald-400" />
                               <span>View 360</span>
                             </button>
                             <button
                               onClick={() => handleDeleteCustomer(cust.id, cust.name)}
                               title="Delete Record"
-                              className="p-2 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 transition-colors"
+                              className="w-8 h-8 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>

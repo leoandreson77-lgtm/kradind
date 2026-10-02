@@ -23,6 +23,8 @@ import {
   Users,
   UserCheck,
   MessageSquare,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -38,6 +40,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     permissions?: string[];
   } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("kradind_admin_sidebar_collapsed");
+      if (saved === "true") setSidebarCollapsed(true);
+    }
+  }, []);
+
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      if (typeof window !== "undefined") {
+        localStorage.setItem("kradind_admin_sidebar_collapsed", String(next));
+      }
+      return next;
+    });
+  };
 
   // If on login page, render children directly without admin shell
   const isLoginPage = pathname === "/admin/login";
@@ -171,29 +191,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         />
       )}
 
-      {/* Admin Sidebar - Permanently FIXED on Desktop, Smooth Slide Drawer on Mobile */}
+      {/* Admin Sidebar - Permanently FIXED on Desktop with Collapsible Width, Smooth Slide Drawer on Mobile */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col justify-between overflow-y-auto transition-transform duration-300 ease-in-out print:hidden ${
-          sidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+        className={`fixed inset-y-0 left-0 z-40 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col justify-between overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out print:hidden ${
+          sidebarOpen
+            ? "translate-x-0 shadow-2xl w-64"
+            : `-translate-x-full md:translate-x-0 ${sidebarCollapsed ? "md:w-20" : "md:w-64"}`
         }`}
       >
         <div>
           {/* Logo & Brand */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/80">
-            <div className="flex items-center gap-3">
+          <div
+            className={`flex items-center ${
+              sidebarCollapsed ? "justify-center px-3" : "justify-between px-5"
+            } py-4 border-b border-slate-800/80 transition-all`}
+          >
+            <div className="flex items-center gap-3 min-w-0">
               <Image
                 src="/logo-emblem.webp"
                 alt="KRAD Global tour and travel company logo"
-                width={40}
-                height={40}
-                className="w-10 h-10 object-contain drop-shadow-sm"
+                width={36}
+                height={36}
+                className="w-9 h-9 object-contain drop-shadow-sm shrink-0"
               />
-              <div>
-                <div className="font-bold text-white text-sm tracking-wide">KRADIND</div>
-                <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-400" /> Admin CMS
+              {!sidebarCollapsed && (
+                <div className="min-w-0">
+                  <div className="font-bold text-white text-sm tracking-wide truncate">KRADIND</div>
+                  <div className="text-[10px] text-slate-400 flex items-center gap-1 truncate">
+                    <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" /> Admin CMS
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Mobile close button inside drawer */}
@@ -203,10 +231,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <X className="w-5 h-5" />
             </button>
+
+            {/* Desktop collapse toggle */}
+            {!sidebarCollapsed && (
+              <button
+                onClick={toggleSidebarCollapse}
+                className="hidden md:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                title="Collapse sidebar for wider workspace"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
+          {/* Desktop Expand Icon Button when collapsed */}
+          {sidebarCollapsed && (
+            <div className="hidden md:flex justify-center py-2 border-b border-slate-800/50">
+              <button
+                onClick={toggleSidebarCollapse}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                title="Expand sidebar"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
           {/* Navigation Links */}
-          <nav className="p-4 space-y-1.5">
+          <nav className="p-3 space-y-1">
             {navItems.map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;
@@ -215,18 +267,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.href}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
+                  title={sidebarCollapsed ? item.label : undefined}
+                  className={`flex items-center ${
+                    sidebarCollapsed ? "justify-center px-2 py-2.5" : "justify-between px-3.5 py-2.5"
+                  } rounded-xl text-xs font-semibold transition ${
                     active
                       ? "bg-[#0F3A2E] text-emerald-300 shadow-sm"
                       : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${active ? "text-emerald-400" : "text-slate-400"}`} />
-                    <span>{item.label}</span>
+                  <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "gap-3"}`}>
+                    <Icon className={`w-4 h-4 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`} />
+                    {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                   </div>
-                  {item.badge && (
-                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  {!sidebarCollapsed && item.badge && (
+                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
                       {item.badge}
                     </span>
                   )}
@@ -237,44 +292,70 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* User Info & Footer Actions */}
-        <div className="p-4 border-t border-slate-800/80 space-y-3 shrink-0 bg-slate-900">
-          <div className="px-2 space-y-1">
-            <div className="flex items-center justify-between gap-1.5">
-              <div className="text-xs font-bold text-white truncate">
-                {adminUser?.name || "Head of Expeditions"}
+        <div className={`p-3 border-t border-slate-800/80 space-y-2 shrink-0 bg-slate-900`}>
+          {!sidebarCollapsed ? (
+            <>
+              <div className="px-2 space-y-1">
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className="text-xs font-bold text-white truncate">
+                    {adminUser?.name || "Head of Expeditions"}
+                  </div>
+                  <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                    {adminUser?.role || "Super Admin"}
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-400 truncate">
+                  {adminUser?.email || "admin@kradind.com"}
+                </div>
               </div>
-              <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
-                {adminUser?.role || "Super Admin"}
-              </span>
-            </div>
-            <div className="text-[11px] text-slate-400 truncate">
-              {adminUser?.email || "admin@kradind.com"}
-            </div>
-          </div>
 
-          <div className="pt-2 border-t border-slate-800 space-y-1">
-            <Link
-              href="/"
-              target="_blank"
-              className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>View Public Site</span>
-            </Link>
+              <div className="pt-2 border-t border-slate-800 space-y-1">
+                <Link
+                  href="/"
+                  target="_blank"
+                  className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  <span>View Public Site</span>
+                </Link>
 
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-rose-400 hover:text-rose-300 rounded-lg hover:bg-rose-950/40 transition"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Log Out</span>
-            </button>
-          </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-rose-400 hover:text-rose-300 rounded-lg hover:bg-rose-950/40 transition cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5 shrink-0" />
+                  <span>Log Out</span>
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <Link
+                href="/"
+                target="_blank"
+                title="View Public Site"
+                className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </Link>
+              <button
+                onClick={handleLogout}
+                title="Log Out"
+                className="p-2 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 transition cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
-      {/* Main Content Area - with offset to respect fixed sidebar */}
-      <main className="flex-1 min-w-0 md:ml-64 p-4 sm:p-6 lg:p-8 print:m-0 print:p-0 print:ml-0 print:w-full">
+      {/* Main Content Area - with responsive offset respecting collapsible sidebar */}
+      <main
+        className={`flex-1 min-w-0 transition-all duration-300 ${
+          sidebarCollapsed ? "md:ml-20" : "md:ml-64"
+        } p-3 sm:p-5 lg:p-6 print:m-0 print:p-0 print:ml-0 print:w-full`}
+      >
         {children}
       </main>
 

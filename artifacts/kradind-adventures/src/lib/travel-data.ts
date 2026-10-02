@@ -16,6 +16,12 @@ export interface TrekBatch {
   endDate: string;
   slotsLeft: number;
   price: number;
+  status?: "AVBL" | "WL" | "FULL" | "LAST" | string;
+  waitlistCount?: number;
+  experienceTag?: string;
+  monthGroup?: string;
+  seasonTheme?: string;
+  note?: string;
 }
 
 export interface TrekFAQ {

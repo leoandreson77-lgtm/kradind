@@ -23,6 +23,7 @@ import { WeekendTreks } from "@/components/weekend-treks";
 import { LiveRadar } from "@/components/live-radar";
 import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
+import { SeasonalTreksCarousel } from "@/components/seasonal-treks-carousel";
 import { EEATAuthoritySection } from "@/components/eeat-authority-section";
 import { InternationalShowcase } from "@/components/international-showcase";
 import { SocialShare } from "@/components/social-share";
@@ -41,6 +42,7 @@ export function HomeView({
 }) {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedTrek, setSelectedTrek] = useState("Kedarkantha Summit Trek");
+  const [selectedBatchDate, setSelectedBatchDate] = useState<string | undefined>(undefined);
   const [sections, setSections] = useState<HomeSectionsConfig | null>(
     initialSections || null
   );
@@ -66,8 +68,9 @@ export function HomeView({
     loadContent();
   }, []);
 
-  const handleOpenBooking = (trekName?: string) => {
+  const handleOpenBooking = (trekName?: string, batchDate?: string) => {
     if (trekName) setSelectedTrek(trekName);
+    if (batchDate) setSelectedBatchDate(batchDate);
     setBookingOpen(true);
   };
 
@@ -264,7 +267,14 @@ export function HomeView({
           </div>
         </section>
 
-        {/* 4. Top Trending Expeditions & Flagship Packages */}
+        {/* 4. Seasonal Handpicked Expeditions Carousel (Indiahikes-style) */}
+        <SeasonalTreksCarousel
+          treks={treks}
+          config={sections?.seasonalCollection}
+          onBookTrek={(trekName, batchDate) => handleOpenBooking(trekName, batchDate)}
+        />
+
+        {/* 5. Top Trending Expeditions & Flagship Packages */}
         <BestTreks
           treks={treks}
           onSelectTrek={(slug) => handleOpenBooking(slug)}
@@ -355,6 +365,7 @@ export function HomeView({
         isOpen={bookingOpen}
         onClose={() => setBookingOpen(false)}
         initialTrek={selectedTrek}
+        initialBatchDate={selectedBatchDate}
       />
     </div>
   );

@@ -90,7 +90,7 @@ export default async function HomePage() {
       gallery: [],
       categories: t.categories,
       status: t.status,
-      batches: [],
+      batches: t.batches || [],
       itinerary: [],
     }));
 
@@ -128,7 +128,7 @@ export default async function HomePage() {
       gallery: [],
       categories: t.categories,
       status: t.status,
-      batches: [],
+      batches: t.batches || [],
       itinerary: [],
     }));
 

@@ -431,6 +431,86 @@ export default function AdminTreksPage() {
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
+  // Batch Generator & Batch management states
+  const [showBatchGenerator, setShowBatchGenerator] = useState(false);
+  const [genMonth, setGenMonth] = useState("October 2026");
+  const [genTheme, setGenTheme] = useState("Vibrant Colours");
+  const [genDurationDays, setGenDurationDays] = useState(6);
+  const [genStartDay, setGenStartDay] = useState(3);
+  const [genIntervalDays, setGenIntervalDays] = useState(2);
+  const [genCount, setGenCount] = useState(8);
+  const [genPrice, setGenPrice] = useState(9999);
+
+  const handleGenerateBatches = () => {
+    if (!editingTrek) return;
+    const newBatches: TrekBatch[] = [...(editingTrek.batches || [])];
+
+    const getDaySuffix = (d: number) => {
+      if (d > 3 && d < 21) return `${d}th`;
+      switch (d % 10) {
+        case 1: return `${d}st`;
+        case 2: return `${d}nd`;
+        case 3: return `${d}rd`;
+        default: return `${d}th`;
+      }
+    };
+
+    const monthShort = genMonth.split(" ")[0].slice(0, 3);
+
+    for (let i = 0; i < genCount; i++) {
+      const startDayNum = genStartDay + i * genIntervalDays;
+      const endDayNum = startDayNum + (genDurationDays - 1);
+
+      const startFormatted = `${getDaySuffix(startDayNum)} ${monthShort}`;
+      const endFormatted = `${getDaySuffix(endDayNum)} ${monthShort}`;
+
+      let status: "AVBL" | "WL" | "FULL" | "LAST" = "AVBL";
+      let waitlistCount: number | undefined = undefined;
+      let slotsLeft = 14;
+      let tag: string | undefined = undefined;
+
+      if (i === 0 || i === 1) {
+        status = "FULL";
+        slotsLeft = 0;
+      } else if (i === 2 || i === 3) {
+        status = "FULL";
+        slotsLeft = 0;
+        tag = "Stargazing";
+      } else if (i === 4) {
+        status = "WL";
+        waitlistCount = 4;
+        slotsLeft = 0;
+      } else if (i === 5) {
+        status = "WL";
+        waitlistCount = 5;
+        slotsLeft = 0;
+      } else if (i === 6) {
+        status = "LAST";
+        slotsLeft = 1;
+      } else {
+        status = "AVBL";
+        slotsLeft = 12;
+      }
+
+      newBatches.push({
+        id: Date.now() + i * 100,
+        startDate: startFormatted,
+        endDate: endFormatted,
+        slotsLeft,
+        price: genPrice || editingTrek.price || 8999,
+        status,
+        waitlistCount,
+        experienceTag: tag,
+        monthGroup: genMonth,
+        seasonTheme: genTheme,
+      });
+    }
+
+    setEditingTrek({ ...editingTrek, batches: newBatches });
+    setShowBatchGenerator(false);
+    showToast(`✨ Generated ${genCount} batches for ${genMonth}!`);
+  };
+
   const dateFilterRef = useRef<HTMLDivElement>(null);
   const sortDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -2464,129 +2544,536 @@ export default function AdminTreksPage() {
                   </div>
                 )}
 
-                {/* TAB 4: BATCHES & DEPARTURES */}
+                {/* TAB 4: BATCHES & DEPARTURES - FULL FEATURED */}
                 {modalTab === "batches" && (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                    {/* Header with Generator & Quick Tools */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-3">
                       <div>
-                        <span className="text-xs font-bold text-slate-800">
-                          {editingTrek.batches?.length || 0} Scheduled Departure Batches
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-800">
+                            {editingTrek.batches?.length || 0} Scheduled Departure Batches
+                          </span>
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                            Indiahikes &amp; Live Availability
+                          </span>
+                        </div>
                         <p className="text-[11px] text-slate-500 mt-0.5">
-                          Customers select from these departure dates during online booking.
+                          Set status (AVBL, WL, LAST, FULL), Stargazing tags, month groupings, and custom pricing.
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const batches = [...(editingTrek.batches || [])];
-                          batches.push({
-                            id: Date.now(),
-                            startDate: "Jul 05",
-                            endDate: "Jul 09, 2026",
-                            slotsLeft: 14,
-                            price: editingTrek.price || 8999,
-                          });
-                          setEditingTrek({ ...editingTrek, batches });
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0F3A2E] text-white text-xs font-bold rounded-lg hover:bg-[#164e3f] transition"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Add New Batch
-                      </button>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {/* Quick Generator Trigger */}
+                        <button
+                          type="button"
+                          onClick={() => setShowBatchGenerator(!showBatchGenerator)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-lg transition shadow-xs cursor-pointer"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>{showBatchGenerator ? "Close Generator" : "⚡ Bulk Generator"}</span>
+                        </button>
+
+                        {/* Mark All AVBL */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = (editingTrek.batches || []).map((b) => ({
+                              ...b,
+                              status: "AVBL",
+                              slotsLeft: b.slotsLeft > 0 ? b.slotsLeft : 14,
+                            }));
+                            setEditingTrek({ ...editingTrek, batches: updated });
+                            showToast("All batches set to AVBL!");
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition cursor-pointer"
+                          title="Quickly set all batches to Available status"
+                        >
+                          <span>Mark All AVBL</span>
+                        </button>
+
+                        {/* Add Single Batch */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const batches = [...(editingTrek.batches || [])];
+                            batches.push({
+                              id: Date.now(),
+                              startDate: "23rd Oct",
+                              endDate: "28th Oct",
+                              slotsLeft: 14,
+                              price: editingTrek.price || 8999,
+                              status: "AVBL",
+                              monthGroup: "October 2026",
+                              seasonTheme: "Vibrant Colours",
+                            });
+                            setEditingTrek({ ...editingTrek, batches });
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0F3A2E] text-white text-xs font-bold rounded-lg hover:bg-[#164e3f] transition cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Add Batch
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="space-y-3">
-                      {(editingTrek.batches || []).map((batch, idx) => (
-                        <div
-                          key={batch.id || idx}
-                          className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs"
-                        >
-                          <div className="flex items-center justify-between gap-3 pb-2 border-b border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                              <Calendar className="w-3.5 h-3.5 text-blue-600" />
-                              <span>Batch #{idx + 1}</span>
+                    {/* Bulk Batch Generator Drawer */}
+                    {showBatchGenerator && (
+                      <div className="p-4 bg-gradient-to-br from-amber-50/90 to-amber-100/40 border border-amber-200/90 rounded-2xl space-y-3 animate-fade-in shadow-2xs">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-amber-700" />
+                            <span className="text-xs font-extrabold text-amber-900">
+                              Automated Month Batch Generator
                             </span>
+                          </div>
+                          <span className="text-[11px] text-amber-700">
+                            Quickly generates seasonal batch calendar
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-700 mb-1">Month &amp; Year</label>
+                            <input
+                              type="text"
+                              value={genMonth}
+                              onChange={(e) => setGenMonth(e.target.value)}
+                              placeholder="October 2026"
+                              className="w-full px-2.5 py-1.5 border border-amber-200 bg-white rounded-lg text-xs font-bold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-700 mb-1">Seasonal Theme</label>
+                            <input
+                              type="text"
+                              value={genTheme}
+                              onChange={(e) => setGenTheme(e.target.value)}
+                              placeholder="Vibrant Colours"
+                              className="w-full px-2.5 py-1.5 border border-amber-200 bg-white rounded-lg text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-700 mb-1">Trek Duration (Days)</label>
+                            <input
+                              type="number"
+                              min="2"
+                              max="15"
+                              value={genDurationDays}
+                              onChange={(e) => setGenDurationDays(Number(e.target.value))}
+                              className="w-full px-2.5 py-1.5 border border-amber-200 bg-white rounded-lg text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-700 mb-1">Start Day of Month</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="28"
+                              value={genStartDay}
+                              onChange={(e) => setGenStartDay(Number(e.target.value))}
+                              className="w-full px-2.5 py-1.5 border border-amber-200 bg-white rounded-lg text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-700 mb-1">Interval (Days)</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="7"
+                              value={genIntervalDays}
+                              onChange={(e) => setGenIntervalDays(Number(e.target.value))}
+                              className="w-full px-2.5 py-1.5 border border-amber-200 bg-white rounded-lg text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-700 mb-1">Number of Batches</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="20"
+                              value={genCount}
+                              onChange={(e) => setGenCount(Number(e.target.value))}
+                              className="w-full px-2.5 py-1.5 border border-amber-200 bg-white rounded-lg text-xs font-bold text-emerald-800"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-700 mb-1">Batch Price (₹)</label>
+                            <input
+                              type="number"
+                              value={genPrice}
+                              onChange={(e) => setGenPrice(Number(e.target.value))}
+                              className="w-full px-2.5 py-1.5 border border-amber-200 bg-white rounded-lg text-xs font-bold text-emerald-800"
+                            />
+                          </div>
+
+                          <div className="flex items-end">
                             <button
                               type="button"
-                              onClick={() => {
-                                const next = (editingTrek.batches || []).filter((_, i) => i !== idx);
-                                setEditingTrek({ ...editingTrek, batches: next });
-                              }}
-                              className="text-rose-500 hover:text-rose-700 p-1 hover:bg-rose-50 rounded"
-                              title="Delete this batch"
+                              onClick={handleGenerateBatches}
+                              className="w-full py-1.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-extrabold rounded-lg transition shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Wand2 className="w-3.5 h-3.5" />
+                              <span>Generate Now</span>
                             </button>
                           </div>
+                        </div>
+                      </div>
+                    )}
 
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-1">Start Date</label>
-                              <input
-                                type="text"
-                                value={batch.startDate}
-                                onChange={(e) => {
-                                  const next = [...(editingTrek.batches || [])];
-                                  next[idx] = { ...next[idx], startDate: e.target.value };
-                                  setEditingTrek({ ...editingTrek, batches: next });
-                                }}
-                                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
-                                placeholder="Jun 14"
-                              />
+                    {/* Batch Cards List */}
+                    <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+                      {(editingTrek.batches || []).map((batch, idx) => {
+                        const currentStatus = (batch.status || (batch.slotsLeft <= 0 ? "FULL" : batch.slotsLeft <= 3 ? "LAST" : "AVBL")).toUpperCase();
+
+                        return (
+                          <div
+                            key={batch.id || idx}
+                            className="p-3.5 rounded-2xl border border-slate-200 bg-white space-y-3 shadow-2xs hover:border-slate-300 transition"
+                          >
+                            {/* Card Top Row: Index, Status Pill & Quick 1-Click Status Toggles */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
+                                  <Calendar className="w-3.5 h-3.5 text-blue-600" />
+                                  <span>Batch #{idx + 1}</span>
+                                </span>
+
+                                {batch.monthGroup && (
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
+                                    {batch.monthGroup}
+                                  </span>
+                                )}
+
+                                {batch.experienceTag && (
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-300 flex items-center gap-1">
+                                    <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500" />
+                                    <span>{batch.experienceTag}</span>
+                                  </span>
+                                )}
+
+                                {/* Live Status Indicator */}
+                                <span
+                                  className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider ${
+                                    currentStatus === "FULL"
+                                      ? "bg-slate-100 text-slate-500"
+                                      : currentStatus === "WL"
+                                      ? "bg-amber-100 text-amber-900 border border-amber-300"
+                                      : currentStatus === "LAST"
+                                      ? "bg-rose-100 text-rose-800 border border-rose-300"
+                                      : "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                                  }`}
+                                >
+                                  {currentStatus === "WL"
+                                    ? `WL ${batch.waitlistCount || 4}`
+                                    : currentStatus === "LAST"
+                                    ? `LAST ${batch.slotsLeft || 1}`
+                                    : currentStatus}
+                                </span>
+                              </div>
+
+                              {/* Quick 1-Click Status Toggles & Actions */}
+                              <div className="flex items-center gap-1 shrink-0">
+                                <span className="text-[10px] font-bold text-slate-400 mr-1 hidden sm:inline">
+                                  Quick Status:
+                                </span>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], status: "AVBL", slotsLeft: next[idx].slotsLeft > 0 ? next[idx].slotsLeft : 14 };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-black transition cursor-pointer ${
+                                    currentStatus === "AVBL"
+                                      ? "bg-emerald-700 text-white"
+                                      : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200"
+                                  }`}
+                                  title="Mark as Available"
+                                >
+                                  AVBL
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], status: "WL", waitlistCount: 4, slotsLeft: 0 };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-black transition cursor-pointer ${
+                                    currentStatus === "WL"
+                                      ? "bg-amber-600 text-white"
+                                      : "bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200"
+                                  }`}
+                                  title="Mark as Waitlist"
+                                >
+                                  WL 4
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], status: "LAST", slotsLeft: 1 };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-black transition cursor-pointer ${
+                                    currentStatus === "LAST"
+                                      ? "bg-rose-600 text-white"
+                                      : "bg-rose-50 text-rose-800 hover:bg-rose-100 border border-rose-200"
+                                  }`}
+                                  title="Mark as Last 1 Slot"
+                                >
+                                  LAST 1
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], status: "FULL", slotsLeft: 0 };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-black transition cursor-pointer ${
+                                    currentStatus === "FULL"
+                                      ? "bg-slate-700 text-white"
+                                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                  }`}
+                                  title="Mark as Full"
+                                >
+                                  FULL
+                                </button>
+
+                                {/* Duplicate Batch */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next.splice(idx + 1, 0, {
+                                      ...batch,
+                                      id: Date.now(),
+                                      startDate: batch.startDate,
+                                      endDate: batch.endDate,
+                                    });
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                    showToast("Batch duplicated!");
+                                  }}
+                                  className="text-slate-400 hover:text-slate-700 p-1 hover:bg-slate-100 rounded cursor-pointer ml-1"
+                                  title="Duplicate this batch"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                </button>
+
+                                {/* Delete Batch */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = (editingTrek.batches || []).filter((_, i) => i !== idx);
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="text-rose-500 hover:text-rose-700 p-1 hover:bg-rose-50 rounded cursor-pointer"
+                                  title="Delete this batch"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             </div>
 
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-1">End Date</label>
-                              <input
-                                type="text"
-                                value={batch.endDate}
-                                onChange={(e) => {
-                                  const next = [...(editingTrek.batches || [])];
-                                  next[idx] = { ...next[idx], endDate: e.target.value };
-                                  setEditingTrek({ ...editingTrek, batches: next });
-                                }}
-                                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
-                                placeholder="Jun 18, 2026"
-                              />
+                            {/* Batch Form Inputs */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2.5 text-xs">
+                              {/* Start Date */}
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-600 mb-1">Start Date</label>
+                                <input
+                                  type="text"
+                                  value={batch.startDate}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], startDate: e.target.value };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-800"
+                                  placeholder="3rd Oct"
+                                />
+                              </div>
+
+                              {/* End Date */}
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-600 mb-1">End Date</label>
+                                <input
+                                  type="text"
+                                  value={batch.endDate}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], endDate: e.target.value };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-800"
+                                  placeholder="8th Oct"
+                                />
+                              </div>
+
+                              {/* Status Dropdown */}
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-600 mb-1">Status</label>
+                                <select
+                                  value={batch.status || "AVBL"}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    const val = e.target.value;
+                                    next[idx] = {
+                                      ...next[idx],
+                                      status: val,
+                                      slotsLeft: val === "FULL" ? 0 : val === "LAST" ? 1 : next[idx].slotsLeft || 12,
+                                    };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2 py-1.5 border border-slate-200 rounded-lg text-xs font-bold bg-white"
+                                >
+                                  <option value="AVBL">AVBL (Available)</option>
+                                  <option value="WL">WL (Waitlist)</option>
+                                  <option value="LAST">LAST (Last Slots)</option>
+                                  <option value="FULL">FULL (Full / Sold out)</option>
+                                </select>
+                              </div>
+
+                              {/* Waitlist count or Slots */}
+                              {currentStatus === "WL" ? (
+                                <div>
+                                  <label className="block text-[10px] font-bold text-amber-700 mb-1">Waitlist Count</label>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={batch.waitlistCount || 4}
+                                    onChange={(e) => {
+                                      const next = [...(editingTrek.batches || [])];
+                                      next[idx] = { ...next[idx], waitlistCount: Number(e.target.value) };
+                                      setEditingTrek({ ...editingTrek, batches: next });
+                                    }}
+                                    className="w-full px-2.5 py-1.5 border border-amber-300 bg-amber-50/50 rounded-lg text-xs font-bold text-amber-900"
+                                    placeholder="4"
+                                  />
+                                </div>
+                              ) : (
+                                <div>
+                                  <label className="block text-[10px] font-bold text-slate-600 mb-1">Slots Available</label>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={batch.slotsLeft}
+                                    onChange={(e) => {
+                                      const next = [...(editingTrek.batches || [])];
+                                      next[idx] = { ...next[idx], slotsLeft: Number(e.target.value) };
+                                      setEditingTrek({ ...editingTrek, batches: next });
+                                    }}
+                                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold"
+                                    placeholder="14"
+                                  />
+                                </div>
+                              )}
+
+                              {/* Price */}
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-600 mb-1">Price (₹)</label>
+                                <input
+                                  type="number"
+                                  value={batch.price}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], price: Number(e.target.value) };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-extrabold text-emerald-800"
+                                  placeholder="8999"
+                                />
+                              </div>
+
+                              {/* Experience Tag / Badge */}
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-600 mb-1">Special Badge</label>
+                                <input
+                                  type="text"
+                                  value={batch.experienceTag || ""}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], experienceTag: e.target.value };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
+                                  placeholder="Stargazing"
+                                />
+                              </div>
                             </div>
 
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-1">Slots Available</label>
-                              <input
-                                type="number"
-                                min="0"
-                                value={batch.slotsLeft}
-                                onChange={(e) => {
-                                  const next = [...(editingTrek.batches || [])];
-                                  next[idx] = { ...next[idx], slotsLeft: Number(e.target.value) };
-                                  setEditingTrek({ ...editingTrek, batches: next });
-                                }}
-                                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
-                                placeholder="12"
-                              />
-                            </div>
+                            {/* Preset Chips & Month Tag row */}
+                            <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 flex-wrap text-[11px]">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-slate-400 font-bold text-[10px]">Quick Tag:</span>
+                                {["Stargazing", "Vibrant Colours", "Snow Summit", "Full Moon", "Senior Friendly", "Women Only", "Family Special"].map((tg) => (
+                                  <button
+                                    type="button"
+                                    key={tg}
+                                    onClick={() => {
+                                      const next = [...(editingTrek.batches || [])];
+                                      next[idx] = { ...next[idx], experienceTag: batch.experienceTag === tg ? undefined : tg };
+                                      setEditingTrek({ ...editingTrek, batches: next });
+                                    }}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-medium transition cursor-pointer ${
+                                      batch.experienceTag === tg
+                                        ? "bg-amber-500 text-white font-bold"
+                                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                                    }`}
+                                  >
+                                    {tg}
+                                  </button>
+                                ))}
+                              </div>
 
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-1">Batch Price (₹)</label>
-                              <input
-                                type="number"
-                                value={batch.price}
-                                onChange={(e) => {
-                                  const next = [...(editingTrek.batches || [])];
-                                  next[idx] = { ...next[idx], price: Number(e.target.value) };
-                                  setEditingTrek({ ...editingTrek, batches: next });
-                                }}
-                                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-emerald-700"
-                                placeholder="8999"
-                              />
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="text"
+                                  value={batch.monthGroup || ""}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], monthGroup: e.target.value };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="px-2 py-1 border border-slate-200 rounded text-[10px] w-28"
+                                  placeholder="October 2026"
+                                  title="Month Group for Accordion"
+                                />
+                                <input
+                                  type="text"
+                                  value={batch.seasonTheme || ""}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], seasonTheme: e.target.value };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="px-2 py-1 border border-slate-200 rounded text-[10px] w-28"
+                                  placeholder="Vibrant Colours"
+                                  title="Seasonal Theme Description"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
 
                       {(!editingTrek.batches || editingTrek.batches.length === 0) && (
-                        <div className="text-center py-6 text-slate-400 text-xs border border-dashed rounded-xl">
-                          No departure batches scheduled yet. Click "Add New Batch" to open bookings for this trek.
+                        <div className="text-center py-10 text-slate-400 text-xs border border-dashed rounded-2xl bg-slate-50/50">
+                          <Calendar className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="font-bold text-slate-600">No departure batches scheduled yet.</p>
+                          <p className="text-[11px] text-slate-400 mt-1">
+                            Use the &ldquo;⚡ Bulk Generator&rdquo; or click &ldquo;Add Batch&rdquo; to schedule departures.
+                          </p>
                         </div>
                       )}
                     </div>

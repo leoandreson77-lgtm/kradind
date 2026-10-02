@@ -92,6 +92,20 @@ export async function PUT(request: NextRequest) {
           "jaipur-tour-package",
         ],
       },
+      seasonalCollection: {
+        enabled: body.seasonalCollection?.enabled ?? currentSections?.seasonalCollection?.enabled ?? true,
+        badge: body.seasonalCollection?.badge ?? currentSections?.seasonalCollection?.badge ?? "High Altitude Autumn Window",
+        title: body.seasonalCollection?.title ?? currentSections?.seasonalCollection?.title ?? "Top 5 Treks for October-November",
+        subtitle: body.seasonalCollection?.subtitle ?? currentSections?.seasonalCollection?.subtitle ?? "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
+        seasonTag: body.seasonalCollection?.seasonTag ?? currentSections?.seasonalCollection?.seasonTag ?? "October - November",
+        featuredSlugs: body.seasonalCollection?.featuredSlugs ?? currentSections?.seasonalCollection?.featuredSlugs ?? [
+          "kuari-pass-trek",
+          "dayara-bugyal-trek",
+          "chopta-tungnath-chandrashila",
+          "pench-tiger-trail",
+          "hampta-pass",
+        ],
+      },
       eeat: {
         badge: body.eeat?.badge ?? currentSections?.eeat?.badge ?? "Expedition Authority & Curation",
         title: body.eeat?.title ?? currentSections?.eeat?.title ?? "Curated by KRADIND Expedition Team",

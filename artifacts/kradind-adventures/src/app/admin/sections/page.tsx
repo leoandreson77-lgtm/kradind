@@ -29,12 +29,15 @@ import {
   MapPin,
   CheckCircle2,
   Plane,
+  Calendar,
+  CalendarCheck,
+  Eye,
 } from "lucide-react";
 import { HomeSectionsConfig, SectionFaqItem, TrustSignalItem, TrekData, DestinationData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
-type SectionTab = "topBar" | "hero" | "monsoon" | "treks" | "international" | "eeat" | "footer";
+type SectionTab = "hero" | "seasonal" | "topBar" | "monsoon" | "treks" | "international" | "eeat" | "footer";
 
 export default function AdminSectionsPage() {
   const [sections, setSections] = useState<HomeSectionsConfig | null>(null);
@@ -200,6 +203,7 @@ export default function AdminSectionsPage() {
 
   const tabs = [
     { id: "hero" as SectionTab, label: "Hero & Banner", icon: Sparkles, desc: "Tagline, title & background" },
+    { id: "seasonal" as SectionTab, label: "Seasonal Carousel", icon: CalendarCheck, desc: "Top 5 Indiahikes-style carousel" },
     { id: "topBar" as SectionTab, label: "Top Bar & Helpline", icon: PhoneCall, desc: "Helpline & badges" },
     { id: "monsoon" as SectionTab, label: "Monsoon & Offers", icon: CloudRain, desc: "Promo coupons & discounts" },
     { id: "treks" as SectionTab, label: "Featured & Weekend", icon: Mountain, desc: "Homepage showcase curations" },
@@ -255,7 +259,7 @@ export default function AdminSectionsPage() {
       </div>
 
       {/* Tab Navigation Pill Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 bg-slate-200/70 p-1.5 rounded-2xl">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 bg-slate-200/70 p-1.5 rounded-2xl">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -399,6 +403,314 @@ export default function AdminSectionsPage() {
                 description="Full-bleed backdrop photo. We recommend 1920x1080px or higher for crisp display."
                 aspect="banner"
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: SEASONAL FEATURED TREKS (Indiahikes-Style Carousel) */}
+      {activeTab === "seasonal" && (
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-800 flex items-center justify-center font-bold">
+                <CalendarCheck className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-slate-900">
+                    Seasonal Featured Carousel (Indiahikes-Style)
+                  </h2>
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                    Homepage Highlight
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Feature handpicked high-altitude treks with date badges (e.g. &ldquo;Top 5 Treks for October-November&rdquo;)
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={sections.seasonalCollection?.enabled ?? true}
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      seasonalCollection: {
+                        enabled: e.target.checked,
+                        badge: sections.seasonalCollection?.badge || "High Altitude Autumn Window",
+                        title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                        subtitle:
+                          sections.seasonalCollection?.subtitle ||
+                          "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
+                        seasonTag: sections.seasonalCollection?.seasonTag || "October - November",
+                        featuredSlugs: sections.seasonalCollection?.featuredSlugs || [
+                          "kuari-pass-trek",
+                          "dayara-bugyal-trek",
+                          "chopta-tungnath-chandrashila",
+                          "pench-tiger-trail",
+                          "hampta-pass",
+                        ],
+                      },
+                    })
+                  }
+                  className="w-4 h-4 rounded text-[#0F3A2E] focus:ring-emerald-500"
+                />
+                <span>Active on Homepage</span>
+              </label>
+
+              <button
+                onClick={() => handleSave("seasonalCollection")}
+                disabled={savingSection === "seasonalCollection"}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-xs disabled:opacity-60 cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{savingSection === "seasonalCollection" ? "Saving..." : "Save Carousel"}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1.5">Section Pill Tag / Badge</label>
+              <input
+                type="text"
+                value={sections.seasonalCollection?.badge || ""}
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    seasonalCollection: {
+                      enabled: sections.seasonalCollection?.enabled ?? true,
+                      badge: e.target.value,
+                      title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                      subtitle: sections.seasonalCollection?.subtitle || "",
+                      seasonTag: sections.seasonalCollection?.seasonTag || "October - November",
+                      featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                    },
+                  })
+                }
+                placeholder="High Altitude Autumn Window"
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1.5">Season / Window Label</label>
+              <input
+                type="text"
+                value={sections.seasonalCollection?.seasonTag || ""}
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    seasonalCollection: {
+                      enabled: sections.seasonalCollection?.enabled ?? true,
+                      badge: sections.seasonalCollection?.badge || "",
+                      title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                      subtitle: sections.seasonalCollection?.subtitle || "",
+                      seasonTag: e.target.value,
+                      featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                    },
+                  })
+                }
+                placeholder="October - November"
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block font-bold text-slate-700 mb-1.5">Main Section Heading (Displayed prominently)</label>
+              <input
+                type="text"
+                value={sections.seasonalCollection?.title || ""}
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    seasonalCollection: {
+                      enabled: sections.seasonalCollection?.enabled ?? true,
+                      badge: sections.seasonalCollection?.badge || "",
+                      title: e.target.value,
+                      subtitle: sections.seasonalCollection?.subtitle || "",
+                      seasonTag: sections.seasonalCollection?.seasonTag || "",
+                      featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                    },
+                  })
+                }
+                placeholder="Top 5 Treks for October-November"
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block font-bold text-slate-700 mb-1.5">Subtitle / Description</label>
+              <textarea
+                rows={2}
+                value={sections.seasonalCollection?.subtitle || ""}
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    seasonalCollection: {
+                      enabled: sections.seasonalCollection?.enabled ?? true,
+                      badge: sections.seasonalCollection?.badge || "",
+                      title: sections.seasonalCollection?.title || "",
+                      subtitle: e.target.value,
+                      seasonTag: sections.seasonalCollection?.seasonTag || "",
+                      featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                    },
+                  })
+                }
+                placeholder="Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5."
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
+              />
+            </div>
+
+            {/* Selected Treks in Order */}
+            <div className="sm:col-span-2 space-y-3 pt-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-slate-800 text-xs block">
+                    Featured Treks Sequence ({(sections.seasonalCollection?.featuredSlugs || []).length} Selected)
+                  </span>
+                  <span className="text-[11px] text-slate-500">
+                    Use Up/Down arrows to change display order on the carousel.
+                  </span>
+                </div>
+              </div>
+
+              {/* Selected List with Ordering */}
+              <div className="space-y-2">
+                {(sections.seasonalCollection?.featuredSlugs || []).map((slug, idx) => {
+                  const trekItem = treks.find((t) => t.slug === slug);
+                  const title = trekItem?.name || slug;
+                  return (
+                    <div
+                      key={slug}
+                      className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-[#0F3A2E] text-white flex items-center justify-center font-bold text-[10px]">
+                          {idx + 1}
+                        </span>
+                        <div>
+                          <span className="font-bold text-slate-900 block">{title}</span>
+                          <span className="text-[10px] text-slate-400">
+                            {trekItem?.duration} • {trekItem?.altitude || "Alpine Summit"} • {trekItem?.batches?.length || 0} departures
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={() => {
+                            const cur = [...(sections.seasonalCollection?.featuredSlugs || [])];
+                            const temp = cur[idx];
+                            cur[idx] = cur[idx - 1];
+                            cur[idx - 1] = temp;
+                            setSections({
+                              ...sections,
+                              seasonalCollection: {
+                                ...sections.seasonalCollection!,
+                                featuredSlugs: cur,
+                              },
+                            });
+                          }}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 text-slate-600 cursor-pointer"
+                          title="Move earlier in carousel"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={idx === (sections.seasonalCollection?.featuredSlugs || []).length - 1}
+                          onClick={() => {
+                            const cur = [...(sections.seasonalCollection?.featuredSlugs || [])];
+                            const temp = cur[idx];
+                            cur[idx] = cur[idx + 1];
+                            cur[idx + 1] = temp;
+                            setSections({
+                              ...sections,
+                              seasonalCollection: {
+                                ...sections.seasonalCollection!,
+                                featuredSlugs: cur,
+                              },
+                            });
+                          }}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 text-slate-600 cursor-pointer"
+                          title="Move later in carousel"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const cur = (sections.seasonalCollection?.featuredSlugs || []).filter((s) => s !== slug);
+                            setSections({
+                              ...sections,
+                              seasonalCollection: {
+                                ...sections.seasonalCollection!,
+                                featuredSlugs: cur,
+                              },
+                            });
+                          }}
+                          className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 cursor-pointer"
+                          title="Remove from carousel"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Add More Treks to Carousel */}
+              <div className="pt-2">
+                <span className="block text-[11px] font-bold text-slate-600 mb-1.5">
+                  Click to add/remove more treks:
+                </span>
+                <div className="flex flex-wrap gap-2 p-3 bg-slate-100/60 border border-slate-200/80 rounded-2xl max-h-48 overflow-y-auto">
+                  {treks.map((t) => {
+                    const isSelected = (sections.seasonalCollection?.featuredSlugs || []).includes(t.slug);
+                    return (
+                      <button
+                        type="button"
+                        key={t.slug}
+                        onClick={() => {
+                          const current = sections.seasonalCollection?.featuredSlugs || [];
+                          const updated = isSelected
+                            ? current.filter((s) => s !== t.slug)
+                            : [...current, t.slug];
+                          setSections({
+                            ...sections,
+                            seasonalCollection: {
+                              enabled: sections.seasonalCollection?.enabled ?? true,
+                              badge: sections.seasonalCollection?.badge || "High Altitude Autumn Window",
+                              title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                              subtitle: sections.seasonalCollection?.subtitle || "",
+                              seasonTag: sections.seasonalCollection?.seasonTag || "",
+                              featuredSlugs: updated,
+                            },
+                          });
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer ${
+                          isSelected
+                            ? "bg-[#0F3A2E] text-white shadow-xs"
+                            : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                        <span>{t.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>

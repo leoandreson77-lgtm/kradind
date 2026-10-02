@@ -7,13 +7,15 @@ export function BookingModal({
   isOpen,
   onClose,
   initialTrek,
+  initialBatchDate,
 }: {
   isOpen: boolean;
   onClose: () => void;
   initialTrek?: string;
+  initialBatchDate?: string;
 }) {
   const [trekName, setTrekName] = useState(initialTrek || "Kedarkantha Summit Trek");
-  const [batchDate, setBatchDate] = useState("Jun 14 - Jun 18, 2026");
+  const [batchDate, setBatchDate] = useState(initialBatchDate || "Jun 14 - Jun 18, 2026");
   const [trekkersCount, setTrekkersCount] = useState(1);
   const [promoCode, setPromoCode] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
@@ -24,6 +26,14 @@ export function BookingModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmationMsg, setConfirmationMsg] = useState("");
   const [bookingRefId, setBookingRefId] = useState("");
+
+  React.useEffect(() => {
+    if (initialTrek) setTrekName(initialTrek);
+  }, [initialTrek]);
+
+  React.useEffect(() => {
+    if (initialBatchDate) setBatchDate(initialBatchDate);
+  }, [initialBatchDate]);
 
   if (!isOpen) return null;
 

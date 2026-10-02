@@ -10,6 +10,12 @@ export interface TrekBatch {
   endDate: string;
   slotsLeft: number;
   price: number;
+  status?: "AVBL" | "WL" | "FULL" | "LAST" | string;
+  waitlistCount?: number;
+  experienceTag?: string;
+  monthGroup?: string;
+  seasonTheme?: string;
+  note?: string;
 }
 
 export interface TrekItineraryDay {
@@ -130,6 +136,14 @@ export interface HomeSectionsConfig {
     title: string;
     subtitle: string;
     featuredSlugs?: string[];
+  };
+  seasonalCollection?: {
+    enabled: boolean;
+    badge?: string;
+    title: string;
+    subtitle: string;
+    seasonTag?: string;
+    featuredSlugs: string[];
   };
   eeat: {
     badge: string;
@@ -2639,6 +2653,20 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       subtitle: "Explore handpicked global destinations with complete visa assistance, verified stays, and private transfers.",
       featuredSlugs: ["nepal", "bali", "thailand", "dubai", "vietnam", "singapore", "maldives"],
     },
+    seasonalCollection: {
+      enabled: true,
+      badge: "High Altitude Autumn Window",
+      title: "Top 5 Treks for October-November",
+      subtitle: "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
+      seasonTag: "October - November",
+      featuredSlugs: [
+        "kuari-pass-trek",
+        "dayara-bugyal-trek",
+        "chopta-tungnath-chandrashila",
+        "pench-tiger-trail",
+        "hampta-pass",
+      ],
+    },
     eeat: {
       badge: "Expedition Authority & Curation",
       title: "Curated by KRADIND Expedition Team",
@@ -3236,6 +3264,23 @@ export function readStore(): CMSStoreData {
           rawHome?.international?.featuredSlugs && rawHome.international.featuredSlugs.length > 0
             ? rawHome.international.featuredSlugs
             : defaultSections.international?.featuredSlugs || ["nepal", "bali", "thailand", "dubai", "vietnam", "singapore", "maldives"],
+      },
+      seasonalCollection: {
+        enabled: rawHome?.seasonalCollection?.enabled ?? defaultSections.seasonalCollection?.enabled ?? true,
+        badge: rawHome?.seasonalCollection?.badge || defaultSections.seasonalCollection?.badge || "High Altitude Autumn Window",
+        title: rawHome?.seasonalCollection?.title || defaultSections.seasonalCollection?.title || "Top 5 Treks for October-November",
+        subtitle: rawHome?.seasonalCollection?.subtitle || defaultSections.seasonalCollection?.subtitle || "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
+        seasonTag: rawHome?.seasonalCollection?.seasonTag || defaultSections.seasonalCollection?.seasonTag || "October - November",
+        featuredSlugs:
+          rawHome?.seasonalCollection?.featuredSlugs && rawHome.seasonalCollection.featuredSlugs.length > 0
+            ? rawHome.seasonalCollection.featuredSlugs
+            : defaultSections.seasonalCollection?.featuredSlugs || [
+                "kuari-pass-trek",
+                "dayara-bugyal-trek",
+                "chopta-tungnath-chandrashila",
+                "pench-tiger-trail",
+                "hampta-pass",
+              ],
       },
       eeat: {
         badge: rawHome?.eeat?.badge || defaultSections.eeat.badge,

@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { X, Calendar, Sparkles, Star, ChevronDown, ChevronUp, MessageCircle, Phone, AlertCircle, CheckCircle2 } from "lucide-react";
 import { TrekBatch, TrekData } from "@/lib/cms-store";
 
@@ -177,11 +179,27 @@ export function TrekDatesModal({
               </span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight brand-font">
-              {trek.name}
+              <Link
+                href={`/treks/${trek.slug}`}
+                onClick={onClose}
+                className="hover:text-emerald-800 transition underline-offset-4 hover:underline"
+                title="View full trek itinerary page"
+              >
+                {trek.name}
+              </Link>
             </h3>
-            <p className="text-xs text-slate-600 mt-0.5 line-clamp-1">
-              {trek.tagline || "Authentic Himalayan trail with experienced guides"}
-            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-xs text-slate-600 line-clamp-1">
+                {trek.tagline || "Authentic Himalayan trail with experienced guides"}
+              </p>
+              <Link
+                href={`/treks/${trek.slug}`}
+                onClick={onClose}
+                className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 shrink-0 inline-flex items-center gap-0.5 underline"
+              >
+                <span>View Route &amp; Plan →</span>
+              </Link>
+            </div>
           </div>
 
           <button

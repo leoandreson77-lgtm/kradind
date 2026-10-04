@@ -27,7 +27,7 @@ interface FormattedTextProps {
  *    `### Heading 3`
  */
 export function FormattedText({ text, className = "" }: FormattedTextProps) {
-  if (!text) return null;
+  if (!text || typeof text !== "string") return null;
 
   // Split into paragraphs by double newlines
   const paragraphs = text.split(/\n{2,}/);
@@ -96,7 +96,7 @@ export function FormattedText({ text, className = "" }: FormattedTextProps) {
  * **bold**, *italic*, <u>underline</u>, <s>strikethrough</s>, [badge]badge[/badge], [size=...], [color=...], [highlight], <b>, <i>
  */
 export function parseInlineFormatting(str: string): React.ReactNode[] {
-  if (!str) return [];
+  if (!str || typeof str !== "string") return [];
 
   // Tokenize regex matching:
   // 1. [size=...]...[/size]

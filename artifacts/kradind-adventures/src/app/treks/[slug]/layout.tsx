@@ -16,8 +16,8 @@ export async function generateMetadata({
   const trek =
     dynamicTreks.find((t) => t.slug === slug) ||
     treks.find((t) => t.slug === slug) ||
-    dynamicTreks.find((t) => t.slug.includes(slug)) ||
-    treks.find((t) => t.slug.includes(slug)) ||
+    dynamicTreks.find((t) => t.slug?.includes(slug)) ||
+    treks.find((t) => t.slug?.includes(slug)) ||
     dynamicTreks[0] ||
     treks[0];
 
@@ -72,8 +72,8 @@ export default async function TrekDetailLayout({
   const trek =
     dynamicTreks.find((t) => t.slug === slug) ||
     treks.find((t) => t.slug === slug) ||
-    dynamicTreks.find((t) => t.slug.includes(slug)) ||
-    treks.find((t) => t.slug.includes(slug)) ||
+    dynamicTreks.find((t) => t.slug?.includes(slug)) ||
+    treks.find((t) => t.slug?.includes(slug)) ||
     dynamicTreks[0] ||
     treks[0];
 

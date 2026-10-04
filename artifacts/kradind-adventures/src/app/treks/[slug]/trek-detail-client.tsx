@@ -52,6 +52,7 @@ interface ParsedItineraryDay {
 }
 
 function parseItineraryDay(dayItem: any): ParsedItineraryDay {
+  if (!dayItem || typeof dayItem !== "object") dayItem = {};
   const title = (dayItem.title || "").trim();
   let duration = (dayItem.duration || "").trim();
   let distance = (dayItem.distance || "").trim();
@@ -316,7 +317,7 @@ function ItineraryDayCard({ dayItem }: { dayItem: any }) {
 }
 
 function FormattedTextBlock({ text }: { text: string }) {
-  if (!text) return null;
+  if (!text || typeof text !== "string") return null;
 
   // Normalise any inline raw asterisks to newlines with clean bullets
   const normalised = text
@@ -432,8 +433,8 @@ export function TrekDetailClient({
         {/* Background Image Container */}
         <div className="absolute inset-0 z-0">
           <img
-            src={trek.image}
-            alt={trek.imageAlt || getImageAlt(trek)}
+            src={trek.image || "/ocean-sunrise.webp"}
+            alt={trek.imageAlt || (trek ? getImageAlt(trek) : "KRADIND Tour")}
             className="w-full h-full object-cover object-center scale-[1.01] transform transition-transform duration-1000"
           />
           {/* Directional gradient: ensures high contrast for text on the left, while fading out smoothly on the center-right */}
@@ -733,7 +734,7 @@ export function TrekDetailClient({
                   What Is Included
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                  {trek.inclusions?.map((inc: string, i: number) => (
+                  {trek.inclusions?.filter((inc) => typeof inc === "string" && inc.trim().length > 0).map((inc: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-emerald-600 font-bold">✓</span>
                       <span>{inc}</span>
@@ -749,7 +750,7 @@ export function TrekDetailClient({
                   What Is Not Included
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                  {trek.exclusions?.map((exc: string, i: number) => (
+                  {trek.exclusions?.filter((exc) => typeof exc === "string" && exc.trim().length > 0).map((exc: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-rose-500 font-bold">✗</span>
                       <span>{exc}</span>

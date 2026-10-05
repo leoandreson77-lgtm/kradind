@@ -146,6 +146,8 @@ export function TrekDatesModal({
     };
   };
 
+  const router = useRouter();
+
   const handleRowClick = (batch: TrekBatch) => {
     const status = getBatchStatusDetails(batch);
     if (!status.bookable && status.code === "FULL") {
@@ -154,8 +156,9 @@ export function TrekDatesModal({
     }
     if (onBookBatch) {
       onBookBatch(trek, batch);
-      onClose();
     }
+    onClose();
+    router.push(`/booking?trek=${trek.slug}&date=${encodeURIComponent(`${batch.startDate} – ${batch.endDate}`)}`);
   };
 
   return (
@@ -366,6 +369,13 @@ export function TrekDatesModal({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href={`/booking?trek=${trek.slug}`}
+              onClick={onClose}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs"
+            >
+              <span>Booking Form →</span>
+            </Link>
             <a
               href="https://wa.me/917500222141?text=Hi%20KRADIND%2C%20I%20am%20looking%20for%20trek%20dates%20and%20batches"
               target="_blank"

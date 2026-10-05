@@ -388,8 +388,8 @@ export function VoiceAssistant() {
     else if (clean.includes("book") || clean.includes("plan")) {
       match = {
         intent: "Plan Your Custom Trip",
-        destinationUrl: "/plan-your-trip",
-        responseSpeech: "Opening trip planner to customize your holiday!",
+        destinationUrl: "/booking",
+        responseSpeech: "Opening booking portal to reserve your expedition!",
         icon: "📝",
       };
     }

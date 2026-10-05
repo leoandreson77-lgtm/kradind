@@ -938,13 +938,13 @@ export function TrekDetailClient({
 
             {/* Action Buttons */}
             <div className="space-y-2.5 pt-2">
-              <button
-                onClick={() => setBookingOpen(true)}
-                className="w-full bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2"
+              <Link
+                href={`/booking?trek=${trek.slug}`}
+                className="w-full bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2 text-center"
               >
                 <Calendar className="w-4 h-4" />
                 <span>Book This Adventure Now</span>
-              </button>
+              </Link>
 
               <a
                 href={`https://wa.me/917500222141?text=${whatsappMessage}`}
@@ -1060,12 +1060,12 @@ export function TrekDetailClient({
             <MessageCircle className="w-4 h-4 text-emerald-600" />
           </a>
 
-          <button
-            onClick={() => setBookingOpen(true)}
-            className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap cursor-pointer"
+          <Link
+            href={`/booking?trek=${trek.slug}`}
+            className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap cursor-pointer inline-flex items-center"
           >
             Check Dates & Book
-          </button>
+          </Link>
         </div>
       </div>
 

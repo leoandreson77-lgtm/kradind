@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { X, CheckCircle2, Calendar, Users, ShieldCheck, Mountain } from "lucide-react";
 
 export function BookingModal({
@@ -287,10 +288,20 @@ export function BookingModal({
               </div>
               <button
                 type="submit"
-                className="bg-[#FF6B35] hover:bg-[#e8590c] text-white font-bold px-6 py-3 rounded-full text-xs transition shadow-lg flex items-center gap-1"
+                className="bg-[#FF6B35] hover:bg-[#e8590c] text-white font-bold px-6 py-3 rounded-full text-xs transition shadow-lg flex items-center gap-1 cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" /> Confirm Reservation
               </button>
+            </div>
+
+            <div className="pt-2 text-center border-t border-slate-100">
+              <Link
+                href={`/booking?trek=${encodeURIComponent(trekName)}&date=${encodeURIComponent(batchDate)}`}
+                onClick={onClose}
+                className="text-[11px] font-bold text-emerald-800 hover:text-emerald-950 underline inline-flex items-center gap-1"
+              >
+                <span>Or open full booking page (/booking) →</span>
+              </Link>
             </div>
 
           </form>

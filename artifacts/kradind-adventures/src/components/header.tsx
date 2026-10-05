@@ -807,8 +807,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
           {/* Glowing Vibrant Plan Your Trip CTA - Full Visibility & Zero Clipping */}
           <Link
-            href="/plan-your-trip"
-            onClick={onBookClick}
+            href="/booking"
             className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FF6B35] to-[#f0551d] hover:from-[#e05a26] hover:to-[#df4913] text-white text-xs sm:text-[13px] xl:text-sm font-extrabold px-3.5 sm:px-4 xl:px-5 py-2 sm:py-2.5 rounded-full shadow-md hover:shadow-xl transition-all duration-200 shrink-0 whitespace-nowrap transform hover:-translate-y-0.5 active:translate-y-0"
           >
             <span>Plan Your Trip</span>
@@ -851,14 +850,13 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
               <span>Call Us</span>
             </a>
             <Link
-              href="/plan-your-trip"
+              href="/booking"
               onClick={() => {
                 setMobileMenuOpen(false);
-                if (onBookClick) onBookClick();
               }}
               className="flex items-center justify-center gap-1 bg-[#FF6B35] text-white font-extrabold text-xs py-2.5 rounded-xl shadow-xs"
             >
-              <span>Plan Trip →</span>
+              <span>Book / Plan →</span>
             </Link>
           </div>
 

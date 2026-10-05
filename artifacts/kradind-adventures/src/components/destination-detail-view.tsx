@@ -232,16 +232,13 @@ export function DestinationDetailView({
 
           {/* Action CTAs */}
           <div className="flex flex-wrap items-center gap-3 pt-3">
-            <button
-              onClick={() => {
-                setSelectedPackageName(`${destination.name} Tour Circuit (${destination.duration || "Complete"})`);
-                setIsBookingOpen(true);
-              }}
+            <Link
+              href={`/booking?destination=${encodeURIComponent(destination.name)}&mode=custom`}
               className="px-6 py-3.5 bg-[#FF6B35] hover:bg-[#e85c27] text-white text-xs sm:text-sm font-black rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2"
             >
               <span>Book / Customize Circuit</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Link>
 
             <a
               href={`https://wa.me/917500222141?text=${whatsappMessage}`}
@@ -679,15 +676,12 @@ export function DestinationDetailView({
                         >
                           Details
                         </Link>
-                        <button
-                          onClick={() => {
-                            setSelectedPackageName(trek.name);
-                            setIsBookingOpen(true);
-                          }}
+                        <Link
+                          href={`/booking?package=${encodeURIComponent(trek.name)}&trek=${trek.slug}`}
                           className="px-3.5 py-1.5 bg-[#0F3A2E] hover:bg-[#154d3d] text-white text-xs font-black rounded-xl transition shadow-2xs"
                         >
                           Book
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>

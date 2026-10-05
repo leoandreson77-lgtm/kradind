@@ -861,21 +861,21 @@ export default function AdminDestinationsPage() {
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-black tracking-widest text-[#FF6B35] uppercase mb-1">
             <Compass className="w-4 h-4" />
-            <span>Destinations & Tour Circuits</span>
+            <span>Regional Destinations & Guides</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 brand-font">
-            Destinations & Itinerary CMS
+            Destinations &amp; Itinerary CMS
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-            Configure travel destinations with complete day-by-day itineraries, inclusions, exclusions, travel guidelines, and pricing.
+            Configure travel destinations with day-by-day itineraries, inclusions, exclusions, travel guidelines, and regional information.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={() => window.print()}
-            className="px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-2 cursor-pointer"
+            className="px-3.5 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-2 cursor-pointer"
             title="Export clean, lightweight PDF catalog of destinations"
           >
             <FileDown className="w-4 h-4 text-emerald-700" />
@@ -883,19 +883,54 @@ export default function AdminDestinationsPage() {
           </button>
 
           <Link
-            href="/admin/treks"
-            className="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold rounded-2xl transition flex items-center gap-2"
+            href="/admin/treks?type=domestic"
+            className="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200/70 text-xs font-bold rounded-2xl transition flex items-center gap-2"
           >
-            <span>Switch to Treks CMS</span>
+            <Car className="w-4 h-4 text-blue-600" />
+            <span>Destination Packages</span>
+          </Link>
+
+          <Link
+            href="/admin/treks?type=treks"
+            className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition flex items-center gap-2"
+          >
+            <Mountain className="w-4 h-4 text-emerald-700" />
+            <span>Trek Packages</span>
           </Link>
 
           <button
             onClick={handleOpenAdd}
-            className="px-5 py-3 bg-[#0F3A2E] hover:bg-[#154d3d] text-white text-xs font-extrabold rounded-2xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2"
+            className="px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#154d3d] text-white text-xs font-extrabold rounded-2xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             <span>Add Destination Circuit</span>
           </button>
+        </div>
+      </div>
+
+      {/* Quick Separation Notice & Context Helper */}
+      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-emerald-50/60 border border-blue-200/80 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs print:hidden shadow-xs">
+        <div className="flex items-start gap-2.5">
+          <div className="p-2 bg-blue-100 text-blue-700 rounded-xl mt-0.5 shrink-0">
+            <Info className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="font-extrabold text-slate-900 block text-xs">
+              Package Pricing &amp; Batch Bookings vs Regional Guides
+            </span>
+            <p className="text-slate-600 mt-0.5 leading-relaxed">
+              Looking to edit <strong>tour packages with batch departure dates, pricing tiers &amp; live booking checkout</strong> (e.g. Kashmir, Kerala, Rajasthan, Goa)? Manage them under <strong className="text-blue-700">Destination Packages</strong> in the Packages CMS. This page is dedicated to regional guide portals, sightseeing details, and itinerary printables.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+          <Link
+            href="/admin/treks?type=domestic"
+            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 whitespace-nowrap"
+          >
+            <Car className="w-3.5 h-3.5" />
+            <span>Open Destination Packages</span>
+          </Link>
         </div>
       </div>
 

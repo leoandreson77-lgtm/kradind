@@ -548,7 +548,40 @@ export default function AdminTreksPage() {
 
   useEffect(() => {
     fetchTreks();
+    const updateFromUrl = () => {
+      if (typeof window === "undefined") return;
+      const params = new URLSearchParams(window.location.search);
+      const typeParam = params.get("type");
+      if (typeParam === "trek" || typeParam === "treks") {
+        setClassificationFilter("Treks");
+      } else if (
+        typeParam === "domestic" ||
+        typeParam === "tour" ||
+        typeParam === "destination" ||
+        typeParam === "destinations"
+      ) {
+        setClassificationFilter("Domestic");
+      } else {
+        setClassificationFilter("All");
+      }
+    };
+    updateFromUrl();
+    window.addEventListener("popstate", updateFromUrl);
+    return () => {
+      window.removeEventListener("popstate", updateFromUrl);
+    };
   }, []);
+
+  const handleSwitchClassification = (filter: "All" | "Treks" | "Domestic") => {
+    setClassificationFilter(filter);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (filter === "Treks") url.searchParams.set("type", "treks");
+      else if (filter === "Domestic") url.searchParams.set("type", "domestic");
+      else url.searchParams.delete("type");
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
 
   // Quick 1-Click Move Handler
   const handleQuickMoveTrek = async (trek: TrekData, targetType?: "Domestic" | "Trek") => {
@@ -732,47 +765,62 @@ export default function AdminTreksPage() {
     }
   };
 
-  const handleOpenAdd = () => {
+  const handleOpenAdd = (preferredType?: "Trek" | "Domestic") => {
     setModalTab("basic");
+    const isDomestic = preferredType ? preferredType === "Domestic" : classificationFilter === "Domestic";
+
     setEditingTrek({
       id: "",
       slug: "",
       name: "",
-      category: "Himalayas",
-      location: "Uttarakhand",
-      region: "Garhwal",
-      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
-      imageAlt: "Himalayan trekking package by KRAD Global",
+      category: isDomestic ? "Domestic" : "Himalayas",
+      location: isDomestic ? "Kashmir" : "Uttarakhand",
+      region: isDomestic ? "Srinagar & Gulmarg" : "Garhwal",
+      image: isDomestic
+        ? "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80"
+        : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+      imageAlt: isDomestic ? "Domestic holiday tour package by KRAD Global" : "Himalayan trekking package by KRAD Global",
       gallery: [
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+        isDomestic
+          ? "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80"
+          : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
       ],
-      tagline: "",
+      tagline: isDomestic ? "Scenic leisure holidays, sightseeing & private travel" : "Leading Himalayan High-Altitude Expedition",
       overview: "",
-      highlights: ["Experienced mountain guide", "All camp equipment & safety gear", "Nutritious mountain meals"],
-      duration: "5 Days / 4 Nights",
-      difficulty: "Moderate",
-      altitude: "12,000 Ft",
-      distance: "20 km",
-      baseCamp: "Base Camp",
+      highlights: isDomestic
+        ? ["Private sanitized AC vehicle for all transfers", "Handpicked 3-star / 4-star boutique stays", "Daily breakfast & hot dinner included", "Complimentary boat ride / local sightseeing"]
+        : ["Experienced mountain guide", "All camp equipment & safety gear", "Nutritious mountain meals"],
+      duration: isDomestic ? "6 Days / 5 Nights" : "5 Days / 4 Nights",
+      difficulty: isDomestic ? "Leisure / Scenic" : "Moderate",
+      altitude: isDomestic ? "Sightseeing" : "12,000 Ft",
+      distance: isDomestic ? "350 km Sightseeing" : "20 km",
+      baseCamp: isDomestic ? "Airport / Railway Station" : "Base Camp",
       rating: 4.9,
       reviewCount: 1,
-      price: 8999,
-      originalPrice: 10999,
-      badge: "Featured",
-      categories: ["Himalayas", "Trek"],
+      price: isDomestic ? 18999 : 8999,
+      originalPrice: isDomestic ? 22999 : 10999,
+      badge: isDomestic ? "Domestic Holiday" : "Featured",
+      categories: isDomestic ? ["Domestic", "Holiday Package"] : ["Himalayas", "Trek"],
       status: "Published",
       batches: [
-        { id: 1, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 12, price: 8999 },
-        { id: 2, startDate: "Jun 21", endDate: "Jun 25, 2026", slotsLeft: 14, price: 8999 },
-        { id: 3, startDate: "Jul 05", endDate: "Jul 09, 2026", slotsLeft: 10, price: 8999 },
+        { id: 1, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 12, price: isDomestic ? 18999 : 8999 },
+        { id: 2, startDate: "Jun 21", endDate: "Jun 25, 2026", slotsLeft: 14, price: isDomestic ? 18999 : 8999 },
+        { id: 3, startDate: "Jul 05", endDate: "Jul 09, 2026", slotsLeft: 10, price: isDomestic ? 18999 : 8999 },
       ],
-      itinerary: getDefaultItinerary(5),
-      inclusions: ["All meals during the trek", "Certified mountain guides", "Tents, sleeping bags, and mattress"],
-      exclusions: ["Personal expenses & tips", "Travel insurance", "Transportation to base camp unless booked"],
+      itinerary: getDefaultItinerary(isDomestic ? 6 : 5),
+      inclusions: isDomestic
+        ? ["Hotel accommodation on twin sharing", "Daily breakfast and dinner", "Private AC transport for transfers and sightseeing", "All toll tax, parking, and driver allowance"]
+        : ["All meals during the trek", "Certified mountain guides", "Tents, sleeping bags, and mattress"],
+      exclusions: ["Personal expenses & tips", "Travel insurance", "Entry fees or monument passes"],
       faqs: [
-        { question: "What is the fitness level required?", answer: "Moderate fitness. 3-4 km jogging daily for 2 weeks prior is recommended." }
+        {
+          question: isDomestic ? "Can this tour package be customized?" : "What is the fitness level required?",
+          answer: isDomestic
+            ? "Yes! All domestic tour packages can be customized based on your preferred travel dates, hotel choices, and group size."
+            : "Moderate fitness. 3-4 km jogging daily for 2 weeks prior is recommended."
+        }
       ],
     });
     setIsModalOpen(true);
@@ -1057,6 +1105,10 @@ export default function AdminTreksPage() {
       });
   }, [treks, classificationFilter, search, selectedCategory, dateFilter, customStartDate, customEndDate, sortBy]);
 
+  const totalBatchesCount = useMemo(() => {
+    return filtered.reduce((acc, t) => acc + (t.batches?.length || 0), 0);
+  }, [filtered]);
+
   const allFilteredIds = filtered.map((t) => t.id);
   const isAllSelected = allFilteredIds.length > 0 && allFilteredIds.every((id) => selectedTrekIds.includes(id));
 
@@ -1094,7 +1146,11 @@ export default function AdminTreksPage() {
           />
           <div>
             <h1 className="text-base font-extrabold text-[#0F3A2E]">
-              Treks &amp; Domestic Tour Packages Catalog
+              {classificationFilter === "Treks"
+                ? "Himalayan Treks & Expeditions Catalog"
+                : classificationFilter === "Domestic"
+                ? "Domestic Destination Tour Packages Catalog"
+                : "Treks & Domestic Tour Packages Catalog"}
             </h1>
             <p className="text-[10px] text-slate-500">
               Official KRAD Global Travels &amp; KRADIND Adventures Portfolio
@@ -1114,88 +1170,258 @@ export default function AdminTreksPage() {
         </div>
       </div>
 
-      {/* Header & Actions */}
+      {/* Dynamic Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
+          <div className="flex items-center gap-2 mb-1.5">
+            {classificationFilter === "Treks" ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                <Mountain className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Himalayan & Weekend Treks Management</span>
+              </span>
+            ) : classificationFilter === "Domestic" ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                <Car className="w-3.5 h-3.5 text-amber-600" />
+                <span>Destination & Holiday Packages Management</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-slate-200 text-slate-700 border border-slate-300">
+                <Globe className="w-3.5 h-3.5 text-slate-600" />
+                <span>Combined Catalog Portfolio</span>
+              </span>
+            )}
+          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Treks & Domestic Packages CMS
+            {classificationFilter === "Treks"
+              ? "🏔️ Trek Packages CMS"
+              : classificationFilter === "Domestic"
+              ? "🏖️ Destination Tour Packages CMS"
+              : "All Adventures & Holiday Packages CMS"}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Manage Himalayan expeditions, domestic tour packages, multi-day itineraries, departure batches, and pricing.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+            {classificationFilter === "Treks"
+              ? "Manage high-altitude mountain expeditions, summit passes, departure batches, and trekking itineraries."
+              : classificationFilter === "Domestic"
+              ? "Manage domestic holiday tours, sightseeing itineraries, state vacation circuits, and hotel/vehicle inclusions."
+              : "Unified management for Himalayan expeditions, holiday destination packages, departure dates, and pricing."}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => window.print()}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
-            title="Export clean, lightweight PDF catalog of treks and tour packages"
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
+            title="Export clean, lightweight PDF catalog"
           >
             <FileDown className="w-4 h-4 text-emerald-700" />
-            <span>Export Clean PDF</span>
+            <span>Export Catalog PDF</span>
           </button>
 
-          <button
-            onClick={handleOpenAdd}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
-          >
-            <Plus className="w-4 h-4 text-emerald-400" />
-            <span>Add New Package / Trek</span>
-          </button>
+          {classificationFilter === "Domestic" ? (
+            <button
+              onClick={() => handleOpenAdd("Domestic")}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-amber-200" />
+              <span>+ Add Destination Tour Package</span>
+            </button>
+          ) : classificationFilter === "Treks" ? (
+            <button
+              onClick={() => handleOpenAdd("Trek")}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-emerald-400" />
+              <span>+ Add New Trek Expedition</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleOpenAdd("Trek")}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5 text-emerald-400" />
+                <span>+ Trek</span>
+              </button>
+              <button
+                onClick={() => handleOpenAdd("Domestic")}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5 text-amber-200" />
+                <span>+ Tour Package</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Primary Classification Filter Bar (Treks vs Domestic Packages) */}
-      <div className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none w-full sm:w-auto">
-          <button
-            onClick={() => setClassificationFilter("All")}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
-              classificationFilter === "All"
-                ? "bg-slate-900 text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+      {/* Quick KPI Overview & 1-Click Type Switcher Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 print:hidden">
+        {/* Card 1: Trek Packages */}
+        <button
+          type="button"
+          onClick={() => handleSwitchClassification("Treks")}
+          className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between group ${
+            classificationFilter === "Treks"
+              ? "bg-gradient-to-br from-emerald-50 via-white to-emerald-50/50 border-emerald-500 shadow-md ring-2 ring-emerald-500/20"
+              : "bg-white hover:bg-slate-50 border-slate-200 shadow-xs"
+          }`}
+        >
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800">
+              <Mountain className="w-4 h-4 text-emerald-600" />
+              <span>Trek Packages</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-1">
+              {trekCount} <span className="text-xs font-medium text-slate-400">active</span>
+            </div>
+            <span className="text-[10px] text-emerald-700 font-semibold block mt-0.5">
+              Himalayas & Weekend Treks
+            </span>
+          </div>
+          <span
+            className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
+              classificationFilter === "Treks" ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600"
             }`}
           >
-            <span>All Packages</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${classificationFilter === "All" ? "bg-slate-800 text-slate-300" : "bg-slate-200 text-slate-700"}`}>
-              {treks.length}
-            </span>
-          </button>
+            {classificationFilter === "Treks" ? "Viewing" : "View"}
+          </span>
+        </button>
 
+        {/* Card 2: Destination Tour Packages */}
+        <button
+          type="button"
+          onClick={() => handleSwitchClassification("Domestic")}
+          className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between group ${
+            classificationFilter === "Domestic"
+              ? "bg-gradient-to-br from-amber-50 via-white to-amber-50/50 border-amber-500 shadow-md ring-2 ring-amber-500/20"
+              : "bg-white hover:bg-slate-50 border-slate-200 shadow-xs"
+          }`}
+        >
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800">
+              <Car className="w-4 h-4 text-amber-600" />
+              <span>Destination Packages</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-1">
+              {domesticCount} <span className="text-xs font-medium text-slate-400">active</span>
+            </div>
+            <span className="text-[10px] text-amber-700 font-semibold block mt-0.5">
+              Kashmir, Kerala, Rajasthan, etc.
+            </span>
+          </div>
+          <span
+            className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
+              classificationFilter === "Domestic" ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-600"
+            }`}
+          >
+            {classificationFilter === "Domestic" ? "Viewing" : "View"}
+          </span>
+        </button>
+
+        {/* Card 3: Departure Batches */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
+              <Calendar className="w-4 h-4 text-sky-600" />
+              <span>Departure Batches</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-1">
+              {totalBatchesCount} <span className="text-xs font-medium text-slate-400">batches</span>
+            </div>
+            <span className="text-[10px] text-slate-500 font-medium block mt-0.5">
+              Across current {filtered.length} packages
+            </span>
+          </div>
+        </div>
+
+        {/* Card 4: Quick Add Shortcuts */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-center gap-2">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            Quick Add New
+          </span>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => handleOpenAdd("Trek")}
+              className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <Mountain className="w-3.5 h-3.5 text-emerald-600" />
+              <span>+ Trek</span>
+            </button>
+            <button
+              onClick={() => handleOpenAdd("Domestic")}
+              className="px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <Car className="w-3.5 h-3.5 text-amber-600" />
+              <span>+ Tour</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Primary Classification Filter Bar (Treks vs Domestic Packages Tabs) */}
+      <div className="bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none w-full sm:w-auto">
           <button
-            onClick={() => setClassificationFilter("Treks")}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+            onClick={() => handleSwitchClassification("Treks")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               classificationFilter === "Treks"
                 ? "bg-[#0F3A2E] text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
             }`}
           >
             <Mountain className="w-3.5 h-3.5 text-emerald-400" />
-            <span>🏔️ Himalayan Treks</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${classificationFilter === "Treks" ? "bg-emerald-950 text-emerald-300" : "bg-emerald-100 text-emerald-800"}`}>
+            <span>🏔️ Trek Packages</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ${
+                classificationFilter === "Treks" ? "bg-emerald-950 text-emerald-300" : "bg-emerald-100 text-emerald-800"
+              }`}
+            >
               {trekCount}
             </span>
           </button>
 
           <button
-            onClick={() => setClassificationFilter("Domestic")}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+            onClick={() => handleSwitchClassification("Domestic")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               classificationFilter === "Domestic"
                 ? "bg-amber-600 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
             }`}
           >
             <Car className="w-3.5 h-3.5 text-amber-200" />
-            <span>🚗 Domestic Packages</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${classificationFilter === "Domestic" ? "bg-amber-800 text-amber-200" : "bg-amber-100 text-amber-800"}`}>
+            <span>🏖️ Destination Packages</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ${
+                classificationFilter === "Domestic" ? "bg-amber-800 text-amber-200" : "bg-amber-100 text-amber-800"
+              }`}
+            >
               {domesticCount}
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleSwitchClassification("All")}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+              classificationFilter === "All"
+                ? "bg-slate-900 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            }`}
+          >
+            <span>All Combined</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ${
+                classificationFilter === "All" ? "bg-slate-800 text-slate-300" : "bg-slate-200 text-slate-700"
+              }`}
+            >
+              {treks.length}
             </span>
           </button>
         </div>
 
-        <div className="text-[11px] font-medium text-slate-400 hidden sm:block">
-          Use the <span className="font-semibold text-slate-600">⇄ Move</span> buttons to switch any package between Trek and Domestic format.
+        <div className="text-[11px] font-medium text-slate-400 hidden sm:flex items-center gap-2">
+          <span>Tip:</span>
+          <span>Click <span className="font-semibold text-slate-700">⇄ To Tour</span> or <span className="font-semibold text-slate-700">⇄ To Trek</span> on any row to instantly move between sections.</span>
         </div>
       </div>
 
@@ -1776,19 +2002,21 @@ export default function AdminTreksPage() {
                         <button
                           onClick={() => handleQuickMoveTrek(t, "Trek")}
                           disabled={actionLoading}
-                          className="p-1.5 text-emerald-700 hover:text-emerald-900 hover:bg-emerald-100 rounded-lg transition"
-                          title="Quick Move: Convert to Himalayan Trek"
+                          className="inline-flex items-center gap-1 px-2 py-1 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/90 rounded-lg text-[10px] font-bold transition shadow-2xs cursor-pointer disabled:opacity-50"
+                          title="Quick Move: Convert this package to Himalayan Trek"
                         >
-                          <Mountain className="w-4 h-4" />
+                          <Mountain className="w-3 h-3 text-emerald-600" />
+                          <span>To Trek</span>
                         </button>
                       ) : (
                         <button
                           onClick={() => handleQuickMoveTrek(t, "Domestic")}
                           disabled={actionLoading}
-                          className="p-1.5 text-amber-700 hover:text-amber-900 hover:bg-amber-100 rounded-lg transition"
-                          title="Quick Move: Convert to Domestic Tour Package"
+                          className="inline-flex items-center gap-1 px-2 py-1 text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/90 rounded-lg text-[10px] font-bold transition shadow-2xs cursor-pointer disabled:opacity-50"
+                          title="Quick Move: Convert this package to Destination Tour Package"
                         >
-                          <Car className="w-4 h-4" />
+                          <Car className="w-3 h-3 text-amber-600" />
+                          <span>To Tour</span>
                         </button>
                       )}
 

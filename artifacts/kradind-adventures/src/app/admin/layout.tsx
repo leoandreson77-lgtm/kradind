@@ -144,21 +144,62 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   };
 
-  const navItems = [
-    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { label: "CRM & Customers", href: "/admin/crm", icon: Users, badge: "New" },
-    { label: "Customer Leads", href: "/admin/leads", icon: Inbox },
-    { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
-    { label: "Treks CMS", href: "/admin/treks", icon: Mountain },
-    { label: "Destinations CMS", href: "/admin/destinations", icon: MapPin },
-    { label: "International CMS", href: "/admin/international", icon: Globe },
-    { label: "Landing Pages", href: "/admin/landing-pages", icon: Sparkles },
-    { label: "Live Trail Radar", href: "/admin/radar", icon: Radio },
-    { label: "Home Sections", href: "/admin/sections", icon: Sliders },
-    { label: "Team & RBAC", href: "/admin/users", icon: UserCheck },
-    { label: "Team Internal Chat", href: "/admin/chat", icon: MessageSquare, badge: "Live" },
-    { label: "Settings", href: "/admin/settings", icon: Settings },
+  const [currentQuery, setCurrentQuery] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentQuery(window.location.search || "");
+    }
+  }, [pathname]);
+
+  const navGroups = [
+    {
+      group: "OPERATIONS & CRM",
+      items: [
+        { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+        { label: "CRM & Customers", href: "/admin/crm", icon: Users, badge: "New" },
+        { label: "Customer Leads", href: "/admin/leads", icon: Inbox },
+        { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
+      ],
+    },
+    {
+      group: "PACKAGES MANAGEMENT",
+      items: [
+        { label: "🏔️ Trek Packages", href: "/admin/treks?type=treks", icon: Mountain, badge: "Treks" },
+        { label: "🏖️ Destination Packages", href: "/admin/treks?type=domestic", icon: MapPin, badge: "Tours" },
+        { label: "📍 Destinations Explorer", href: "/admin/destinations", icon: Sparkles },
+        { label: "🌐 International CMS", href: "/admin/international", icon: Globe },
+      ],
+    },
+    {
+      group: "CONTENT & MARKETING",
+      items: [
+        { label: "Landing Pages", href: "/admin/landing-pages", icon: Sparkles },
+        { label: "Live Trail Radar", href: "/admin/radar", icon: Radio },
+        { label: "Home Sections", href: "/admin/sections", icon: Sliders },
+      ],
+    },
+    {
+      group: "TEAM & SYSTEM",
+      items: [
+        { label: "Team Internal Chat", href: "/admin/chat", icon: MessageSquare, badge: "Live" },
+        { label: "Team & RBAC", href: "/admin/users", icon: UserCheck },
+        { label: "Settings", href: "/admin/settings", icon: Settings },
+      ],
+    },
   ];
+
+  const isItemActive = (href: string) => {
+    const [targetPath, targetQuery] = href.split("?");
+    if (pathname !== targetPath) return false;
+    if (!targetQuery) {
+      if (pathname === "/admin/treks") {
+        return !currentQuery || currentQuery.includes("type=treks");
+      }
+      return true;
+    }
+    return currentQuery.includes(targetQuery);
+  };
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row text-slate-800 font-sans">
@@ -218,7 +259,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className="min-w-0">
                   <div className="font-bold text-white text-sm tracking-wide truncate">KRADIND</div>
                   <div className="text-[10px] text-slate-400 flex items-center gap-1 truncate">
-                    <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" /> Admin CMS
+                    <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" /> Admin Portal
                   </div>
                 </div>
               )}
@@ -257,37 +298,58 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           )}
 
-          {/* Navigation Links */}
-          <nav className="p-3 space-y-1">
-            {navItems.map((item) => {
-              const active = pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  title={sidebarCollapsed ? item.label : undefined}
-                  className={`flex items-center ${
-                    sidebarCollapsed ? "justify-center px-2 py-2.5" : "justify-between px-3.5 py-2.5"
-                  } rounded-xl text-xs font-semibold transition ${
-                    active
-                      ? "bg-[#0F3A2E] text-emerald-300 shadow-sm"
-                      : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-                  }`}
-                >
-                  <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "gap-3"}`}>
-                    <Icon className={`w-4 h-4 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`} />
-                    {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+          {/* Navigation Groups */}
+          <nav className="p-3 space-y-4">
+            {navGroups.map((group, gIdx) => (
+              <div key={gIdx} className="space-y-1">
+                {!sidebarCollapsed && (
+                  <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-300">
+                    {group.group}
                   </div>
-                  {!sidebarCollapsed && item.badge && (
-                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
+                )}
+                {group.items.map((item) => {
+                  const active = isItemActive(item.href);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        const [, q] = item.href.split("?");
+                        setCurrentQuery(q ? `?${q}` : "");
+                      }}
+                      title={sidebarCollapsed ? item.label : undefined}
+                      className={`flex items-center ${
+                        sidebarCollapsed ? "justify-center px-2 py-2" : "justify-between px-3 py-2"
+                      } rounded-xl text-xs font-semibold transition ${
+                        active
+                          ? "bg-[#0F3A2E] text-emerald-300 shadow-sm border border-emerald-500/30"
+                          : "text-slate-400 hover:bg-slate-800/80 hover:text-slate-200"
+                      }`}
+                    >
+                      <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "gap-2.5"}`}>
+                        <Icon className={`w-4 h-4 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+                      </div>
+                      {!sidebarCollapsed && item.badge && (
+                        <span
+                          className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 ${
+                            item.badge === "Treks"
+                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                              : item.badge === "Tours"
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                              : "bg-slate-700/60 text-slate-300"
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
         </div>
 

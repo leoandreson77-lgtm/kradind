@@ -18,6 +18,8 @@ import {
   MessageSquare,
   Sparkles,
   ShieldCheck,
+  Car,
+  Compass,
 } from "lucide-react";
 import { TrekData, TrailRadarReport, BookingRecord, LeadRecord } from "@/lib/cms-store";
 
@@ -56,14 +58,18 @@ export default function AdminDashboardPage() {
     0,
   );
 
-  const activeTreksCount = treks.filter((t) => t.status === "Published").length;
+  const trekExpeditions = treks.filter((t) => (t.category || "Himalayas") !== "Domestic");
+  const destinationPackages = treks.filter((t) => (t.category || "") === "Domestic");
+
+  const activeTreksCount = trekExpeditions.filter((t) => t.status === "Published").length;
+  const activeDestCount = destinationPackages.filter((t) => t.status === "Published").length;
 
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-8 bg-slate-200 rounded-lg w-48" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((n) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {[1, 2, 3, 4, 5, 6].map((n) => (
             <div key={n} className="h-28 bg-white rounded-2xl border border-slate-200 p-5" />
           ))}
         </div>
@@ -80,57 +86,94 @@ export default function AdminDashboardPage() {
             Expedition Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Real-time overview of live trails, bookings, and public site contents.
+            Real-time management for trek packages, holiday destinations, bookings, and customer inquiries.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           <Link
-            href="/admin/treks"
-            className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-semibold rounded-xl transition shadow-sm"
+            href="/admin/treks?type=treks"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-semibold rounded-xl transition shadow-xs"
           >
-            <PlusCircle className="w-4 h-4 text-emerald-400" />
-            <span>Manage Treks</span>
+            <Mountain className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Trek Packages ({trekExpeditions.length})</span>
+          </Link>
+          <Link
+            href="/admin/treks?type=domestic"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition shadow-xs"
+          >
+            <Car className="w-3.5 h-3.5 text-blue-200" />
+            <span>Destination Packages ({destinationPackages.length})</span>
+          </Link>
+          <Link
+            href="/admin/destinations"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl transition shadow-xs"
+          >
+            <Compass className="w-3.5 h-3.5 text-amber-400" />
+            <span>Destinations Explorer</span>
           </Link>
           <Link
             href="/admin/sections"
-            className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#FF6B35] hover:bg-[#e8590c] text-white text-xs font-semibold rounded-xl transition shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#FF6B35] hover:bg-[#e8590c] text-white text-xs font-semibold rounded-xl transition shadow-xs"
           >
-            <TrendingUp className="w-4 h-4" />
-            <span>Edit Home Hero</span>
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Home Hero</span>
           </Link>
         </div>
       </div>
 
       {/* KPI Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {/* Card 1: Active Treks */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Published Treks
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              Trek Expeditions
             </span>
             <div className="text-2xl font-extrabold text-slate-900 mt-1">
               {activeTreksCount}{" "}
-              <span className="text-xs font-normal text-slate-400">/ {treks.length} total</span>
+              <span className="text-xs font-normal text-slate-400">/ {trekExpeditions.length} total</span>
             </div>
             <Link
-              href="/admin/treks"
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0F3A2E] hover:underline mt-2"
+              href="/admin/treks?type=treks"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 hover:underline mt-2"
             >
-              <span>View catalog</span>
+              <span>Manage Treks</span>
               <ArrowUpRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-[#0F3A2E] flex items-center justify-center">
-            <Mountain className="w-6 h-6" />
+          <div className="w-11 h-11 rounded-xl bg-emerald-50 text-[#0F3A2E] flex items-center justify-center">
+            <Mountain className="w-5 h-5" />
           </div>
         </div>
 
-        {/* Card 2: Bookings */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center justify-between">
+        {/* Card 2: Destination Packages */}
+        <div className="bg-white rounded-2xl border border-blue-200/60 p-5 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider block">
+              Dest Packages
+            </span>
+            <div className="text-2xl font-extrabold text-slate-900 mt-1">
+              {activeDestCount}{" "}
+              <span className="text-xs font-normal text-slate-400">/ {destinationPackages.length} total</span>
+            </div>
+            <Link
+              href="/admin/treks?type=domestic"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline mt-2"
+            >
+              <span>Manage Tours</span>
+              <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <Car className="w-5 h-5" />
+          </div>
+        </div>
+
+        {/* Card 3: Bookings */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
               Total Bookings
             </span>
             <div className="text-2xl font-extrabold text-slate-900 mt-1">{bookings.length}</div>
@@ -138,57 +181,37 @@ export default function AdminDashboardPage() {
               href="/admin/bookings"
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0F3A2E] hover:underline mt-2"
             >
-              <span>View departures</span>
+              <span>Departures</span>
               <ArrowUpRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
-            <Users className="w-6 h-6" />
-          </div>
-        </div>
-
-        {/* Card 3: Live Radar Reports */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Trail Radar Feeds
-            </span>
-            <div className="text-2xl font-extrabold text-slate-900 mt-1">{radar.length}</div>
-            <Link
-              href="/admin/radar"
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0F3A2E] hover:underline mt-2"
-            >
-              <span>Update conditions</span>
-              <ArrowUpRight className="w-3 h-3" />
-            </Link>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
-            <Radio className="w-6 h-6" />
+          <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+            <Users className="w-5 h-5" />
           </div>
         </div>
 
         {/* Card 4: Confirmed Revenue */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Confirmed Revenue
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              Confirmed Rev
             </span>
-            <div className="text-2xl font-extrabold text-slate-900 mt-1">
+            <div className="text-xl font-extrabold text-slate-900 mt-1">
               ₹{totalRevenue.toLocaleString("en-IN")}
             </div>
-            <span className="text-[11px] text-emerald-600 font-semibold mt-2 block">
+            <span className="text-[10px] text-emerald-600 font-semibold mt-2 block">
               + Verified deposits
             </span>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-orange-50 text-[#FF6B35] flex items-center justify-center">
-            <IndianRupee className="w-6 h-6" />
+          <div className="w-11 h-11 rounded-xl bg-orange-50 text-[#FF6B35] flex items-center justify-center">
+            <IndianRupee className="w-5 h-5" />
           </div>
         </div>
 
         {/* Card 5: Inquiries / Leads */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
               Customer Leads
             </span>
             <div className="text-2xl font-extrabold text-slate-900 mt-1">
@@ -203,12 +226,32 @@ export default function AdminDashboardPage() {
               href="/admin/leads"
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0F3A2E] hover:underline mt-2"
             >
-              <span>View inquiries</span>
+              <span>Inquiries</span>
               <ArrowUpRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <Inbox className="w-6 h-6" />
+          <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <Inbox className="w-5 h-5" />
+          </div>
+        </div>
+
+        {/* Card 6: Live Radar Reports */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              Trail Radar
+            </span>
+            <div className="text-2xl font-extrabold text-slate-900 mt-1">{radar.length}</div>
+            <Link
+              href="/admin/radar"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0F3A2E] hover:underline mt-2"
+            >
+              <span>Conditions</span>
+              <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+            <Radio className="w-5 h-5" />
           </div>
         </div>
       </div>
@@ -235,6 +278,45 @@ export default function AdminDashboardPage() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
           <Link
+            href="/admin/treks?type=treks"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <Mountain className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Trek Packages</span>
+              <span className="text-[10px] text-slate-400">High-altitude & passes</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/treks?type=domestic"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <Car className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Tour Packages</span>
+              <span className="text-[10px] text-slate-400">Domestic & state tours</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/destinations"
+            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
+          >
+            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+              <Compass className="w-4 h-4 text-purple-400" />
+            </div>
+            <div>
+              <span className="font-bold text-xs block text-white">Destinations Guides</span>
+              <span className="text-[10px] text-slate-400">Sightseeing & circuits</span>
+            </div>
+          </Link>
+
+          <Link
             href="/admin/sections"
             className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
           >
@@ -244,32 +326,6 @@ export default function AdminDashboardPage() {
             <div>
               <span className="font-bold text-xs block text-white">Hero &amp; Title</span>
               <span className="text-[10px] text-slate-400">Heading &amp; backdrop</span>
-            </div>
-          </Link>
-
-          <Link
-            href="/admin/treks"
-            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
-          >
-            <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-              <Mountain className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="font-bold text-xs block text-white">Treks CMS</span>
-              <span className="text-[10px] text-slate-400">1-click clone &amp; days</span>
-            </div>
-          </Link>
-
-          <Link
-            href="/admin/destinations"
-            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
-          >
-            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-              <TrendingUp className="w-4 h-4 text-purple-400" />
-            </div>
-            <div>
-              <span className="font-bold text-xs block text-white">Destinations</span>
-              <span className="text-[10px] text-slate-400">Domestic &amp; yatras</span>
             </div>
           </Link>
 
@@ -296,19 +352,6 @@ export default function AdminDashboardPage() {
             <div>
               <span className="font-bold text-xs block text-white">Authority &amp; FAQs</span>
               <span className="text-[10px] text-slate-400">Trust cards &amp; Q&amp;A</span>
-            </div>
-          </Link>
-
-          <Link
-            href="/admin/sections"
-            className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition group flex flex-col justify-between"
-          >
-            <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-              <MessageSquare className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="font-bold text-xs block text-white">Footer &amp; Social</span>
-              <span className="text-[10px] text-slate-400">Phones &amp; channels</span>
             </div>
           </Link>
         </div>

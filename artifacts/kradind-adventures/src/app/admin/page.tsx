@@ -33,17 +33,36 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     async function fetchDashboardData() {
       try {
+        const savedToken = typeof window !== "undefined" ? localStorage.getItem("kradind_admin_token") : null;
+        const headers: Record<string, string> = {};
+        if (savedToken) {
+          headers["x-admin-token"] = savedToken;
+          headers["Authorization"] = `Bearer ${savedToken}`;
+        }
+
         const [treksRes, radarRes, bookingsRes, leadsRes] = await Promise.all([
-          fetch("/api/admin/treks"),
-          fetch("/api/admin/radar"),
-          fetch("/api/admin/bookings"),
-          fetch("/api/admin/leads"),
+          fetch("/api/admin/treks", { headers, credentials: "include" }),
+          fetch("/api/admin/radar", { headers, credentials: "include" }),
+          fetch("/api/admin/bookings", { headers, credentials: "include" }),
+          fetch("/api/admin/leads", { headers, credentials: "include" }),
         ]);
 
-        if (treksRes.ok) setTreks(await treksRes.json());
-        if (radarRes.ok) setRadar(await radarRes.json());
-        if (bookingsRes.ok) setBookings(await bookingsRes.json());
-        if (leadsRes.ok) setLeads(await leadsRes.json());
+        if (treksRes.ok) {
+          const data = await treksRes.json();
+          if (Array.isArray(data)) setTreks(data);
+        }
+        if (radarRes.ok) {
+          const data = await radarRes.json();
+          if (Array.isArray(data)) setRadar(data);
+        }
+        if (bookingsRes.ok) {
+          const data = await bookingsRes.json();
+          if (Array.isArray(data)) setBookings(data);
+        }
+        if (leadsRes.ok) {
+          const data = await leadsRes.json();
+          if (Array.isArray(data)) setLeads(data);
+        }
       } catch (err) {
         console.error("Failed to load dashboard data", err);
       } finally {
@@ -53,16 +72,21 @@ export default function AdminDashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const totalRevenue = bookings.reduce(
-    (acc, b) => (b.status === "Confirmed" || b.status === "Completed" ? acc + b.totalAmount : acc),
+  const safeBookings = Array.isArray(bookings) ? bookings : [];
+  const safeTreks = Array.isArray(treks) ? treks : [];
+  const safeLeads = Array.isArray(leads) ? leads : [];
+  const safeRadar = Array.isArray(radar) ? radar : [];
+
+  const totalRevenue = safeBookings.reduce(
+    (acc, b) => (b && (b.status === "Confirmed" || b.status === "Completed") ? acc + (Number(b.totalAmount) || 0) : acc),
     0,
   );
 
-  const trekExpeditions = treks.filter((t) => (t.category || "Himalayas") !== "Domestic");
-  const destinationPackages = treks.filter((t) => (t.category || "") === "Domestic");
+  const trekExpeditions = safeTreks.filter((t) => t && (t.category || "Himalayas") !== "Domestic");
+  const destinationPackages = safeTreks.filter((t) => t && (t.category || "") === "Domestic");
 
-  const activeTreksCount = trekExpeditions.filter((t) => t.status === "Published").length;
-  const activeDestCount = destinationPackages.filter((t) => t.status === "Published").length;
+  const activeTreksCount = trekExpeditions.filter((t) => t && t.status === "Published").length;
+  const activeDestCount = destinationPackages.filter((t) => t && t.status === "Published").length;
 
   if (loading) {
     return (
@@ -387,7 +411,7 @@ export default function AdminDashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {bookings.slice(0, 5).map((b) => (
+              {safeBookings.slice(0, 5).map((b) => (
                 <tr key={b.id} className="hover:bg-slate-50/60 transition">
                   <td className="px-5 py-3 font-mono font-bold text-slate-800">{b.id}</td>
                   <td className="px-5 py-3">
@@ -397,7 +421,7 @@ export default function AdminDashboardPage() {
                   <td className="px-5 py-3 font-medium text-slate-700">{b.trekName}</td>
                   <td className="px-5 py-3 text-slate-600">{b.travelers} Trekkers</td>
                   <td className="px-5 py-3 font-bold text-slate-900">
-                    ₹{b.totalAmount.toLocaleString("en-IN")}
+                    ₹{(Number(b.totalAmount) || 0).toLocaleString("en-IN")}
                   </td>
                   <td className="px-5 py-3">
                     <span
@@ -419,7 +443,7 @@ export default function AdminDashboardPage() {
                   </td>
                 </tr>
               ))}
-              {bookings.length === 0 && (
+              {safeBookings.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-5 py-8 text-center text-slate-400 text-xs">
                     No bookings recorded yet.
@@ -444,7 +468,7 @@ export default function AdminDashboardPage() {
             href="/admin/leads"
             className="text-xs font-bold text-[#0F3A2E] hover:underline"
           >
-            All Inquiries ({leads.length}) →
+            All Inquiries ({safeLeads.length}) →
           </Link>
         </div>
 
@@ -461,7 +485,7 @@ export default function AdminDashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {leads.slice(0, 5).map((l) => (
+              {safeLeads.slice(0, 5).map((l) => (
                 <tr key={l.id} className="hover:bg-slate-50/60 transition">
                   <td className="px-5 py-3 font-mono font-bold text-slate-800">{l.id}</td>
                   <td className="px-5 py-3">

@@ -1975,10 +1975,10 @@ export default function AdminTreksPage() {
                     <td className="px-5 py-3.5 text-slate-700 font-medium">{t.location}</td>
                     <td className="px-5 py-3.5 text-slate-600">{t.altitude}</td>
                     <td className="px-5 py-3.5">
-                      <div className="font-bold text-slate-900">₹{t.price.toLocaleString("en-IN")}</div>
-                      {t.originalPrice > t.price && (
+                      <div className="font-bold text-slate-900">₹{(Number(t.price) || 0).toLocaleString("en-IN")}</div>
+                      {Boolean(t.originalPrice && Number(t.originalPrice) > Number(t.price)) && (
                         <div className="text-[10px] text-slate-400 line-through">
-                          ₹{t.originalPrice.toLocaleString("en-IN")}
+                          ₹{(Number(t.originalPrice) || 0).toLocaleString("en-IN")}
                         </div>
                       )}
                     </td>

@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { BookingModal } from "@/components/booking-modal";
 import { Phone, Mail, MapPin, Send, CheckCircle2, ArrowRight } from "lucide-react";
 import { ProtectedContactCardEmail } from "@/components/protected-email";
+import { GoogleMapLocator } from "@/components/google-map-locator";
 
 export default function ContactPage() {
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -117,7 +118,7 @@ export default function ContactPage() {
                 </p>
                 <div className="mt-2.5">
                   <a
-                    href="https://www.google.com/search?sca_esv=080dae4805299e94&sxsrf=APpeQntb4GvbjjeiOalE3kSH4CzAWMmSiQ:1790599408087&q=krad+global+dehradun+address&ludocid=2851661435002339716&sa=X&sqi=2&ved=2ahUKEwigpZ3NppGXAxWs1jgGHefSJU4Q6BN6BAgmEAI"
+                    href="https://www.google.com/maps/search/?api=1&query=KRAD+GLOBAL&query_place_id=ChIJ9VntEfArCTkRhMH-ZPcikyc"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline"
@@ -209,6 +210,11 @@ export default function ContactPage() {
             )}
           </div>
 
+        </div>
+
+        {/* Interactive Google Map Section */}
+        <div className="max-w-5xl mx-auto pt-4">
+          <GoogleMapLocator showTitle={true} />
         </div>
 
       </main>

@@ -42,7 +42,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
     config?.address ||
     "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand – 248001, India";
   const addressGoogleLink =
-    "https://www.google.com/search?sca_esv=080dae4805299e94&sxsrf=APpeQntb4GvbjjeiOalE3kSH4CzAWMmSiQ:1790599408087&q=krad+global+dehradun+address&ludocid=2851661435002339716&sa=X&sqi=2&ved=2ahUKEwigpZ3NppGXAxWs1jgGHefSJU4Q6BN6BAgmEAI";
+    "https://www.google.com/maps/search/?api=1&query=KRAD+GLOBAL&query_place_id=ChIJ9VntEfArCTkRhMH-ZPcikyc";
 
   let whatsappUrl =
     config?.whatsappLink ||

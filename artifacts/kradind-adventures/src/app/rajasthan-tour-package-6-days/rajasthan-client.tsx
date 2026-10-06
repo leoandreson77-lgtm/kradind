@@ -197,7 +197,7 @@ export function RajasthanTourClient() {
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <a
-                  href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+                  href={`https://wa.me/919797941414?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-extrabold text-xs sm:text-sm px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5"
@@ -304,7 +304,7 @@ export function RajasthanTourClient() {
 
                 {/* Direct CTA */}
                 <a
-                  href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+                  href={`https://wa.me/919797941414?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-extrabold text-sm py-3.5 rounded-2xl shadow-md transition"
@@ -1055,13 +1055,13 @@ export function RajasthanTourClient() {
 
               <div className="pt-2">
                 <a
-                  href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+                  href={`https://wa.me/919797941414?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-extrabold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-md transition"
                 >
                   <FaWhatsapp className="w-4 h-4" />
-                  <span>WhatsApp Us: +91 7500222141</span>
+                  <span>WhatsApp Us: +91 9797941414</span>
                 </a>
               </div>
             </div>
@@ -1180,7 +1180,7 @@ export function RajasthanTourClient() {
 
         <div className="flex items-center gap-2">
           <a
-            href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+            href={`https://wa.me/919797941414?text=${whatsappMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2.5 rounded-xl bg-[#25D366] text-white"

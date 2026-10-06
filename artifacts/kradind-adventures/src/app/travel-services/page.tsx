@@ -57,7 +57,7 @@ export default function TravelServicesPage() {
         setErrorMsg(data.error || "Failed to submit request. Please call us directly.");
       }
     } catch {
-      setErrorMsg("Network error. Please try again or call +91 7500222141.");
+      setErrorMsg("Network error. Please try again or call +91 9797941414.");
     } finally {
       setIsSubmitting(false);
     }
@@ -159,11 +159,11 @@ export default function TravelServicesPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <a
-              href="tel:+917500222141"
+              href="tel:+919797941414"
               className="inline-flex items-center gap-2 bg-[#0F3A2E] hover:bg-emerald-950 text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition shadow-sm"
             >
               <PhoneCall className="w-4 h-4 text-emerald-400 animate-phone-vibrate" />
-              <span>Call Ground Desk: +91 7500222141</span>
+              <span>Call Ground Desk: +91 9797941414</span>
             </a>
             <button
               onClick={() => setBookingOpen(true)}
@@ -225,11 +225,11 @@ export default function TravelServicesPage() {
 
                     <div className="space-y-2">
                       <a
-                        href="tel:+917500222141"
+                        href="tel:+919797941414"
                         className="w-full flex items-center justify-center gap-2 bg-[#0F3A2E] hover:bg-emerald-900 text-white font-bold text-xs py-2.5 rounded-lg transition"
                       >
                         <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Direct Call: 7500222141</span>
+                        <span>Direct Call: 9797941414</span>
                       </a>
                       <button
                         onClick={() => {

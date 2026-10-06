@@ -262,7 +262,7 @@ export default async function LandingPagesDirectoryPage() {
                       </Link>
 
                       <a
-                        href={`https://wa.me/917500222141?text=${encodeURIComponent(
+                        href={`https://wa.me/919797941414?text=${encodeURIComponent(
                           `Hi KRADIND! I'm interested in the ${camp.title} signature expedition. Please share available dates and dossier.`
                         )}`}
                         target="_blank"
@@ -372,7 +372,7 @@ export default async function LandingPagesDirectoryPage() {
                 Can I request custom dates for our group or corporate team?
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Yes! We organize private signature batches for corporate leadership programs, college groups, and families. Contact our expedition desk at +91 7500222141 to customize dates and transit.
+                Yes! We organize private signature batches for corporate leadership programs, college groups, and families. Contact our expedition desk at +91 9797941414 to customize dates and transit.
               </p>
             </div>
           </div>

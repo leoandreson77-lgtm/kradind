@@ -271,8 +271,8 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <a href="tel:+917500222141" className="hover:text-white">
-                    +91 75002 22141
+                  <a href="tel:+919797941414" className="hover:text-white">
+                    +91 9797941414
                   </a>
                 </div>
               </div>
@@ -446,7 +446,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   </p>
                   <ul className="text-xs space-y-1.5 list-disc pl-5">
                     <li><strong>Direct Digital Submissions:</strong> Booking inquiry forms, itinerary customizer, and contact modals on www.kradind.com.</li>
-                    <li><strong>Direct Communication:</strong> Verbal and text discussions via our verified WhatsApp (+91 75002 22141) and official email (@kradind.com).</li>
+                    <li><strong>Direct Communication:</strong> Verbal and text discussions via our verified WhatsApp (+91 9797941414) and official email (@kradind.com).</li>
                     <li><strong>Offline Base Camp Check-In:</strong> Physical sign-in registers, photo ID verification, and medical fitness forms at assembly points in Rishikesh, Dehradun, Sankri, Joshimath, Manali, Leh, or Srinagar.</li>
                     <li><strong>Automated Telemetry:</strong> Cookies, server error logs, and web analytics tracking as you browse our digital interfaces.</li>
                     <li><strong>Authorised Third Parties:</strong> Corporate HR coordinators or group organizers providing participant rosters with your prior authorization.</li>
@@ -664,7 +664,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   </p>
                   <ul className="text-xs space-y-1 list-disc pl-5">
                     <li>Inform the trek leader during the base camp briefing before trail departure.</li>
-                    <li>Or submit an opt-out email with your batch details to <a href="mailto:support@kradind.com" className="text-emerald-700 underline">support@kradind.com</a>.</li>
+                    <li>Or submit an opt-out email with your batch details to <a href="mailto:info@kradind.com" className="text-emerald-700 underline">info@kradind.com</a>.</li>
                     <li>Upon receiving a takedown request, we will blur or remove the participant&apos;s likeness from digital media within <strong>48 hours</strong>.</li>
                   </ul>
                 </section>
@@ -713,8 +713,8 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                       </p>
                       <p className="m-0">
                         <strong>Operational Support Email:</strong>{" "}
-                        <a href="mailto:support@kradind.com" className="text-emerald-400 underline">
-                          support@kradind.com
+                        <a href="mailto:info@kradind.com" className="text-emerald-400 underline">
+                          info@kradind.com
                         </a>{" "}
                         /{" "}
                         <a href="mailto:kradglobalind@gmail.com" className="text-emerald-400 underline">
@@ -723,8 +723,8 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                       </p>
                       <p className="m-0">
                         <strong>Emergency Helpline:</strong>{" "}
-                        <a href="tel:+917500222141" className="text-emerald-400 font-bold">
-                          +91 75002 22141
+                        <a href="tel:+919797941414" className="text-emerald-400 font-bold">
+                          +91 9797941414
                         </a>
                       </p>
                       <p className="m-0 text-[11px] text-slate-400">
@@ -892,7 +892,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <p className="m-0"><strong>KRAD Global</strong></p>
                     <p className="m-0">Website: www.kradind.com</p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
-                    <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
+                    <p className="m-0">Mobile / WhatsApp: +91 9797941414</p>
                     <p className="m-0">Address: Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                   </div>
                 </section>
@@ -1009,7 +1009,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <div className="pt-2 text-slate-800 space-y-1 font-medium">
                     <p className="m-0"><strong>KRAD Global</strong></p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
-                    <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
+                    <p className="m-0">Mobile / WhatsApp: +91 9797941414</p>
                     <p className="m-0">Website: www.kradind.com</p>
                   </div>
                 </section>
@@ -1095,7 +1095,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <div className="pt-2 text-slate-800 space-y-1 font-medium">
                     <p className="m-0"><strong>KRAD Global</strong></p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
-                    <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
+                    <p className="m-0">Mobile / WhatsApp: +91 9797941414</p>
                     <p className="m-0">Address: Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                   </div>
                 </section>
@@ -1170,7 +1170,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <div className="pt-2 text-slate-800 space-y-1 font-medium">
                     <p className="m-0"><strong>KRAD Global</strong></p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
-                    <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
+                    <p className="m-0">Mobile / WhatsApp: +91 9797941414</p>
                   </div>
                 </section>
               </div>
@@ -1241,7 +1241,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <div className="pt-2 text-slate-800 space-y-1 font-medium">
                     <p className="m-0"><strong>KRAD Global</strong></p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
-                    <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
+                    <p className="m-0">Mobile / WhatsApp: +91 9797941414</p>
                     <p className="m-0">Website: www.kradind.com</p>
                   </div>
                 </section>
@@ -1317,7 +1317,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <p className="m-0"><strong>KRAD Global</strong></p>
                     <p className="m-0">Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                     <p className="m-0">Email: kradglobalind@gmail.com</p>
-                    <p className="m-0">Mobile / WhatsApp: +91 75002 22141</p>
+                    <p className="m-0">Mobile / WhatsApp: +91 9797941414</p>
                     <p className="m-0">Website: www.kradind.com</p>
                   </div>
                 </section>
@@ -1374,7 +1374,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                 <section className="space-y-3">
                   <h3 className="text-lg font-bold text-slate-900 m-0">5. Corrections &amp; Feedback Policy</h3>
                   <p className="text-xs leading-relaxed">
-                    We welcome feedback from the mountaineering community. If you spot an inaccuracy regarding trail distances, elevations, or regional regulations, please email our editorial desk at <strong>support@kradind.com</strong>. We verify and correct confirmed errors within 48 hours.
+                    We welcome feedback from the mountaineering community. If you spot an inaccuracy regarding trail distances, elevations, or regional regulations, please email our editorial desk at <strong>info@kradind.com</strong>. We verify and correct confirmed errors within 48 hours.
                   </p>
                 </section>
 
@@ -1384,7 +1384,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <p className="m-0"><strong>Chief Expedition Directorate:</strong> KRADIND Expedition Team</p>
                     <p className="m-0"><strong>Organization:</strong> KRADIND Adventures Private Limited</p>
                     <p className="m-0"><strong>Address:</strong> Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
-                    <p className="m-0"><strong>Email:</strong> support@kradind.com / kradglobalind@gmail.com</p>
+                    <p className="m-0"><strong>Email:</strong> info@kradind.com / kradglobalind@gmail.com</p>
                     <p className="m-0"><strong>Last Reviewed:</strong> 14 September 2026</p>
                   </div>
                 </section>

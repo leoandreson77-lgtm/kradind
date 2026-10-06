@@ -274,7 +274,7 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
                 </Link>
 
                 <a
-                  href={`https://wa.me/917500222141?text=${encodeURIComponent(
+                  href={`https://wa.me/919797941414?text=${encodeURIComponent(
                     `Hi KRADIND! I am checking the live trail ground radar update for ${selectedReport.trail}. Can you share available batch dates and difficulty preparation?`
                   )}`}
                   target="_blank"

@@ -275,7 +275,7 @@ function parseDoc(filename, meta) {
     faqs: faqs.length > 0 ? faqs : meta.defaultFaqs || [
       {
         question: "How can I book this trip with KRADIND?",
-        answer: "You can book directly using the Book Now button, reach out via WhatsApp at +91 7500222141, or submit an inquiry on the Contact page."
+        answer: "You can book directly using the Book Now button, reach out via WhatsApp at +91 9797941414, or submit an inquiry on the Contact page."
       },
       {
         question: "Is this package suitable for families and beginners?",

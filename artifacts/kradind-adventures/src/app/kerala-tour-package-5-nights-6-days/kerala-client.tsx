@@ -189,7 +189,7 @@ export function KeralaTourClient() {
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <a
-                  href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+                  href={`https://wa.me/919797941414?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-extrabold text-xs sm:text-sm px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5"
@@ -266,7 +266,7 @@ export function KeralaTourClient() {
 
                 {/* Direct CTA */}
                 <a
-                  href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+                  href={`https://wa.me/919797941414?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-extrabold text-sm py-3.5 rounded-2xl shadow-md transition"
@@ -1268,7 +1268,7 @@ export function KeralaTourClient() {
                 </p>
                 <div className="pt-2">
                   <a
-                    href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+                    href={`https://wa.me/919797941414?text=${whatsappMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-[#25D366] text-white font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow"
@@ -1369,7 +1369,7 @@ export function KeralaTourClient() {
                   <span className="text-xs text-slate-500">
                     Prefer direct chat?{" "}
                     <a
-                      href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+                      href={`https://wa.me/919797941414?text=${whatsappMessage}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-emerald-700 font-bold hover:underline"
@@ -1392,7 +1392,7 @@ export function KeralaTourClient() {
         </div>
 
         <a
-          href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+          href={`https://wa.me/919797941414?text=${whatsappMessage}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1.5 bg-[#25D366] text-white px-3.5 py-2.5 rounded-xl text-xs font-bold shadow shrink-0"

@@ -49,13 +49,13 @@ export default function Contact() {
             <p className="mb-4 text-xs font-bold uppercase tracking-[.18em] text-[#bd6b27]">Let’s make a plan</p>
             <h2 className="text-4xl font-extrabold leading-[1.02] text-primary sm:text-5xl">What are you dreaming about?</h2>
             <div className="mt-8 grid gap-4">
-              <a href="tel:+919999999999" className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-accent" data-testid="link-contact-call">
+              <a href="tel:+919797941414" className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-accent" data-testid="link-contact-call">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-secondary text-primary"><Phone className="size-4" /></span>
-                <span><span className="block text-sm font-bold text-primary">Call the trip desk</span><span className="mt-1 block text-xs text-muted-foreground">+91 99999 99999 · 10am–7pm IST</span></span>
+                <span><span className="block text-sm font-bold text-primary">Call the trip desk</span><span className="mt-1 block text-xs text-muted-foreground">+91 9797941414 · 10am–7pm IST</span></span>
               </a>
-              <a href="mailto:hello@kradind.com" className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-accent" data-testid="link-contact-email">
+              <a href="mailto:info@kradind.com" className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-accent" data-testid="link-contact-email">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-secondary text-primary"><Mail className="size-4" /></span>
-                <span><span className="block text-sm font-bold text-primary">Write us a note</span><span className="mt-1 block text-xs text-muted-foreground">hello@kradind.com · We reply within a day</span></span>
+                <span><span className="block text-sm font-bold text-primary">Write us a note</span><span className="mt-1 block text-xs text-muted-foreground">info@kradind.com · We reply within a day</span></span>
               </a>
               <div className="flex items-start gap-4 rounded-2xl bg-[#d5e5df] p-5">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-accent"><Clock3 className="size-4" /></span>

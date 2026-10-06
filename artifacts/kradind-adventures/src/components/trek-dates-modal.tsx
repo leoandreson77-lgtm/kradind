@@ -377,7 +377,7 @@ export function TrekDatesModal({
               <span>Booking Form →</span>
             </Link>
             <a
-              href="https://wa.me/917500222141?text=Hi%20KRADIND%2C%20I%20am%20looking%20for%20trek%20dates%20and%20batches"
+              href="https://wa.me/919797941414?text=Hi%20KRADIND%2C%20I%20am%20looking%20for%20trek%20dates%20and%20batches"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs"
@@ -386,7 +386,7 @@ export function TrekDatesModal({
               <span>WhatsApp</span>
             </a>
             <a
-              href="tel:+917500222141"
+              href="tel:+919797941414"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition shadow-xs"
             >
               <Phone className="w-3.5 h-3.5 text-slate-500" />

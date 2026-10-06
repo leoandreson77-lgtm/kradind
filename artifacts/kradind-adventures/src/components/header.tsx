@@ -273,8 +273,8 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                   <span className="flex items-center gap-1.5 font-medium text-emerald-800">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> NIM Certified Guides • Medical Kit & Oxygen
                   </span>
-                  <a href="tel:+917500222141" className="font-bold text-[#FF6B35] hover:underline">
-                    Call: +91 7500222141
+                  <a href="tel:+919797941414" className="font-bold text-[#FF6B35] hover:underline">
+                    Call: +91 9797941414
                   </a>
                 </div>
               </div>
@@ -843,7 +843,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
               <span>Voice</span>
             </button>
             <a
-              href="tel:+917500222141"
+              href="tel:+919797941414"
               className="flex items-center justify-center gap-1 bg-slate-50 text-[#0F3A2E] border border-slate-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"
             >
               <PhoneCall className="w-3.5 h-3.5 text-emerald-600 animate-phone-vibrate shrink-0" />

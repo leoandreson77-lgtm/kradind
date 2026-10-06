@@ -84,10 +84,10 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-sm text-slate-900">Emergency Ground Desk</h3>
                 <a
-                  href="tel:+917500222141"
+                  href="tel:+919797941414"
                   className="text-xs text-slate-600 hover:text-emerald-700 font-medium mt-1 block"
                 >
-                  +91 75002 22141 (24/7 Helpline & WhatsApp)
+                  +91 9797941414 (24/7 Helpline & WhatsApp)
                 </a>
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-bold text-sm text-slate-900">Email Expeditions Team</h3>
-                <ProtectedContactCardEmail email="support@kradind.com" />
+                <ProtectedContactCardEmail email="info@kradind.com" />
               </div>
             </div>
 
@@ -172,7 +172,7 @@ export default function ContactPage() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 75002 22141"
+                    placeholder="+91 9797941414"
                     className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-[#0F3A2E]"
                   />
                 </div>

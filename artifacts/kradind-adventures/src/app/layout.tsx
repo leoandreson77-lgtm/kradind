@@ -121,7 +121,7 @@ const globalStructuredData = {
         "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+917500222141",
+        telephone: "+919797941414",
         contactType: "customer service",
         url: "https://kradind.com/contact",
       },
@@ -141,7 +141,7 @@ const globalStructuredData = {
         addressCountry: "IN",
       },
       sameAs: [
-        "https://wa.link/n3u8c0",
+        "https://wa.me/919797941414",
         "https://www.instagram.com/kradglobal/",
         "https://www.facebook.com/share/189E2RUcH4/",
         "https://www.youtube.com/@kradglobaltravels",
@@ -160,7 +160,7 @@ const globalStructuredData = {
       logo: "https://kradind.com/logo-emblem.webp",
       description:
         "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
-      telephone: "+91 75002 22141",
+      telephone: "+91 9797941414",
       priceRange: "₹₹",
       currenciesAccepted: "INR, USD",
       paymentAccepted: "Credit Card, UPI, Net Banking",
@@ -171,7 +171,7 @@ const globalStructuredData = {
       },
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+917500222141",
+        telephone: "+919797941414",
         contactType: "customer service",
         url: "https://kradind.com/contact",
       },
@@ -241,7 +241,7 @@ const globalStructuredData = {
         "India's premier certified high-altitude expedition operator. Specializing in small-batch eco-treks, Himalayan alpine circuits, and tailored experiential travel with certified wilderness leaders.",
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+91 75002 22141",
+        telephone: "+91 9797941414",
         contactType: "customer service",
         url: "https://kradind.com/contact",
       },
@@ -279,7 +279,7 @@ const globalStructuredData = {
         },
       ],
       sameAs: [
-        "https://wa.link/n3u8c0",
+        "https://wa.me/919797941414",
         "https://www.instagram.com/kradglobal/",
         "https://www.facebook.com/share/189E2RUcH4/",
         "https://www.youtube.com/@kradglobaltravels",

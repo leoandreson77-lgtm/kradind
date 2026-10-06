@@ -68,7 +68,7 @@ const DEFAULT_NEW_PAGE: LandingPageData = {
     subtitle: "Limited to 15 trekkers per batch. Leave your phone number to receive instant WhatsApp itinerary & discounted price breakdown.",
     ctaText: "Get Instant Quote & PDF",
   },
-  whatsappNumber: "917500222141",
+  whatsappNumber: "919797941414",
   whatsappMessage: "Hi KRADIND Adventures! I'm interested in booking the exclusive expedition. Please share available dates and slots.",
   faqs: [
     { question: "Is this expedition beginner-friendly?", answer: "Yes! Our itineraries are designed with gradual acclimatization days and certified support staff, making it accessible to first-time fit trekkers." },
@@ -1079,7 +1079,7 @@ export default function AdminLandingPagesPage() {
                         type="text"
                         value={editingPage.whatsappNumber || ""}
                         onChange={(e) => setEditingPage({ ...editingPage, whatsappNumber: e.target.value })}
-                        placeholder="e.g. 917500222141"
+                        placeholder="e.g. 919797941414"
                         className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none font-mono"
                       />
                     </div>

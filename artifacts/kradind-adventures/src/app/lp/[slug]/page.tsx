@@ -201,11 +201,11 @@ export default function LandingPageRoute({
   };
 
   const whatsappHref =
-    page.whatsappNumber && page.whatsappNumber !== "917500222141"
+    page.whatsappNumber && page.whatsappNumber !== "919797941414"
       ? `https://wa.me/${page.whatsappNumber}?text=${encodeURIComponent(
           page.whatsappMessage || `Hi KRADIND! I'm interested in the ${page.title} expedition.`
         )}`
-      : "https://wa.link/n3u8c0";
+      : "https://wa.me/919797941414";
 
   const getHighlightIcon = (iconName?: string) => {
     switch (iconName) {
@@ -305,11 +305,11 @@ export default function LandingPageRoute({
                   </a>
 
                   <a
-                    href="tel:+917500222141"
+                    href="tel:+919797941414"
                     className="px-5 py-3.5 bg-white/10 hover:bg-white/15 text-white border border-white/20 font-bold text-xs sm:text-sm rounded-2xl backdrop-blur-md transition flex items-center gap-2"
                   >
                     <PhoneCall className="w-4 h-4 text-emerald-400" />
-                    <span>24/7 Helpline: +91 7500222141</span>
+                    <span>24/7 Helpline: +91 9797941414</span>
                   </a>
                 </div>
               </div>

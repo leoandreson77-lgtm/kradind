@@ -207,7 +207,7 @@ function BookingContent() {
         setErrorMessage(data.error || "Failed to confirm booking. Please contact our Dehradun desk directly.");
       }
     } catch {
-      setErrorMessage("Network error. Please try again or reach out at +91 75002 22141.");
+      setErrorMessage("Network error. Please try again or reach out at +91 9797941414.");
     } finally {
       setIsSubmitting(false);
     }
@@ -255,7 +255,7 @@ function BookingContent() {
         setErrorMessage(data.error || "Failed to submit plan. Please contact our Dehradun desk directly.");
       }
     } catch {
-      setErrorMessage("Network error. Please try again or reach out at +91 75002 22141.");
+      setErrorMessage("Network error. Please try again or reach out at +91 9797941414.");
     } finally {
       setIsSubmitting(false);
     }
@@ -370,7 +370,7 @@ function BookingContent() {
             {/* Quick Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <a
-                href={`https://wa.me/917500222141?text=${encodeURIComponent(
+                href={`https://wa.me/919797941414?text=${encodeURIComponent(
                   `Hi KRADIND, I just booked #${submittedBooking.bookingId} for ${submittedBooking.trekName} (${submittedBooking.travelers} travelers). Please send my itinerary and preparation checklist.`
                 )}`}
                 target="_blank"
@@ -382,11 +382,11 @@ function BookingContent() {
               </a>
 
               <a
-                href="tel:+917500222141"
+                href="tel:+919797941414"
                 className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition"
               >
                 <PhoneCall className="w-4 h-4 text-emerald-400" />
-                <span>Call Ground Desk (+91 7500222141)</span>
+                <span>Call Ground Desk (+91 9797941414)</span>
               </a>
             </div>
 
@@ -901,7 +901,7 @@ function BookingContent() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Direct Basecamp Support: +91 75002 22141</span>
+                    <span>Direct Basecamp Support: +91 9797941414</span>
                   </div>
                 </div>
 
@@ -913,7 +913,7 @@ function BookingContent() {
                   </p>
                   <div className="flex items-center justify-center gap-2 pt-1">
                     <a
-                      href="https://wa.me/917500222141?text=Hi%20KRADIND%2C%20I%20have%20questions%20regarding%20booking"
+                      href="https://wa.me/919797941414?text=Hi%20KRADIND%2C%20I%20have%20questions%20regarding%20booking"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 transition"
@@ -922,7 +922,7 @@ function BookingContent() {
                       <span>WhatsApp</span>
                     </a>
                     <a
-                      href="tel:+917500222141"
+                      href="tel:+919797941414"
                       className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-[11px] font-bold flex items-center gap-1 transition"
                     >
                       <PhoneCall className="w-3.5 h-3.5 text-slate-500" />

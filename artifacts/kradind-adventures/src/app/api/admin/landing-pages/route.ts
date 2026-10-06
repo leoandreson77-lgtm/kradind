@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         subtitle: "Leave your contact details to receive full expedition dossier.",
         ctaText: "Enquire Now",
       },
-      whatsappNumber: body.whatsappNumber || "917500222141",
+      whatsappNumber: body.whatsappNumber || "919797941414",
       whatsappMessage: body.whatsappMessage || `Hi KRADIND! I'm interested in the ${body.title} expedition.`,
       faqs: body.faqs || [],
       testimonials: body.testimonials || [],

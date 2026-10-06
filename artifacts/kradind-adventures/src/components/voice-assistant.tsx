@@ -370,7 +370,7 @@ export function VoiceAssistant() {
     ) {
       match = {
         intent: "Direct Call Desk",
-        destinationUrl: "tel:+917500222141",
+        destinationUrl: "tel:+919797941414",
         responseSpeech: "Connecting you with KRADIND customer support desk!",
         icon: "📞",
       };
@@ -379,7 +379,7 @@ export function VoiceAssistant() {
     else if (clean.includes("whatsapp") || clean.includes("chat")) {
       match = {
         intent: "WhatsApp Instant Chat",
-        destinationUrl: "https://wa.me/917500222141?text=Hello%20KRADIND!%20I%20would%20like%20to%20inquire%20about%20tours.",
+        destinationUrl: "https://wa.me/919797941414?text=Hello%20KRADIND!%20I%20would%20like%20to%20inquire%20about%20tours.",
         responseSpeech: "Opening KRADIND WhatsApp support!",
         icon: "💬",
       };

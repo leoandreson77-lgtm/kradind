@@ -752,7 +752,7 @@ export default function AdminSectionsPage() {
                   })
                 }
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900"
-                placeholder="+91 75002 22141"
+                placeholder="+91 9797941414"
               />
             </div>
 
@@ -760,7 +760,7 @@ export default function AdminSectionsPage() {
               <label className="block font-bold text-slate-700 mb-1.5">Official WhatsApp Number</label>
               <input
                 type="text"
-                value={sections.topBar.whatsappNumber || "+91 75002 22141"}
+                value={sections.topBar.whatsappNumber || "+91 9797941414"}
                 onChange={(e) =>
                   setSections({
                     ...sections,
@@ -768,7 +768,7 @@ export default function AdminSectionsPage() {
                   })
                 }
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-emerald-700"
-                placeholder="+91 75002 22141"
+                placeholder="+91 9797941414"
               />
             </div>
 
@@ -1665,7 +1665,7 @@ export default function AdminSectionsPage() {
               <label className="block font-bold text-slate-700 mb-1.5">Official Support Email</label>
               <input
                 type="email"
-                value={sections.contactAndFooter?.supportEmail || "support@kradind.com"}
+                value={sections.contactAndFooter?.supportEmail || "info@kradind.com"}
                 onChange={(e) =>
                   setSections({
                     ...sections,
@@ -1683,7 +1683,7 @@ export default function AdminSectionsPage() {
               <label className="block font-bold text-slate-700 mb-1.5">Official Support Phone</label>
               <input
                 type="text"
-                value={sections.contactAndFooter?.supportPhone || "+91 75002 22141"}
+                value={sections.contactAndFooter?.supportPhone || "+91 9797941414"}
                 onChange={(e) =>
                   setSections({
                     ...sections,
@@ -1701,7 +1701,7 @@ export default function AdminSectionsPage() {
               <label className="block font-bold text-slate-700 mb-1.5">Official WhatsApp Direct Chat Link</label>
               <input
                 type="text"
-                value={sections.contactAndFooter?.whatsappLink || "https://wa.link/n3u8c0"}
+                value={sections.contactAndFooter?.whatsappLink || "https://wa.me/919797941414"}
                 onChange={(e) =>
                   setSections({
                     ...sections,

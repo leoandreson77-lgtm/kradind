@@ -1965,7 +1965,7 @@ export function getDefaultLandingPages(): LandingPageData[] {
         subtitle: "Leave your contact details to instantly receive detailed PDF itinerary, batch dates & gear checklist.",
         ctaText: "Reserve Early-Bird Slot",
       },
-      whatsappNumber: "917500222141",
+      whatsappNumber: "919797941414",
       whatsappMessage: "Hi KRADIND! I want to book my slot for the Kedarkantha Winter Summit 2026 expedition.",
       faqs: [
         {
@@ -2065,7 +2065,7 @@ export function getDefaultLandingPages(): LandingPageData[] {
         subtitle: "Summer batches open between July and September only. Early reservations strongly recommended.",
         ctaText: "Check Batch Availability",
       },
-      whatsappNumber: "917500222141",
+      whatsappNumber: "919797941414",
       whatsappMessage: "Hi KRADIND! I want to check batch availability for Kashmir Great Lakes 2026.",
       faqs: [
         {
@@ -2158,7 +2158,7 @@ export function getDefaultLandingPages(): LandingPageData[] {
           "Leave your WhatsApp number to receive complete day-by-day travel plan, hotel options, and group discounts.",
         ctaText: "Get Free Kedarnath Itinerary",
       },
-      whatsappNumber: "917500222141",
+      whatsappNumber: "919797941414",
       whatsappMessage:
         "Hi KRADIND! I want to plan the 6 Days / 5 Nights Kedarnath Tour Package from Delhi.",
       faqs: [
@@ -2266,7 +2266,7 @@ export function getDefaultLandingPages(): LandingPageData[] {
           "Leave your details to get complete day-by-day itinerary, vehicle options (Innova / Tempo Traveller), and hotel tiers.",
         ctaText: "Get Free Char Dham Plan",
       },
-      whatsappNumber: "917500222141",
+      whatsappNumber: "919797941414",
       whatsappMessage:
         "Hi KRADIND! I want to enquire about the 12 Days / 11 Nights Char Dham Yatra Package.",
       faqs: [
@@ -2373,7 +2373,7 @@ export function getDefaultLandingPages(): LandingPageData[] {
           "Tell us your preferred dates and group size. We'll send an instant WhatsApp quotation and itinerary.",
         ctaText: "Get Free Do Dham Quotation",
       },
-      whatsappNumber: "917500222141",
+      whatsappNumber: "919797941414",
       whatsappMessage:
         "Hi KRADIND! I'm interested in the 6 Days / 5 Nights Do Dham Yatra (Kedarnath & Badrinath).",
       faqs: [
@@ -2480,7 +2480,7 @@ export function getDefaultLandingPages(): LandingPageData[] {
           "Leave your WhatsApp number to receive complete day-by-day travel plan, hotel options, and booking voucher.",
         ctaText: "Get Rajasthan Quotation",
       },
-      whatsappNumber: "917500222141",
+      whatsappNumber: "919797941414",
       whatsappMessage:
         "Hi KRADIND! I want to book the Rajasthan Tour Package (6 Days / 5 Nights: Jaipur, Jodhpur, Udaipur).",
       faqs: [
@@ -2566,7 +2566,7 @@ export function getDefaultLandingPages(): LandingPageData[] {
           "Leave your WhatsApp number to receive complete day-by-day travel plan, hotel vouchers, and instant confirmation.",
         ctaText: "Get Kerala Quotation",
       },
-      whatsappNumber: "917500222141",
+      whatsappNumber: "919797941414",
       whatsappMessage:
         "Hi KRADIND! I want to book the Kerala Tour Package (5 Nights / 6 Days: Kochi, Munnar, Thekkady, Alleppey Houseboat).",
       faqs: [
@@ -2618,9 +2618,9 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       badge: "Limited Season Offer",
     },
     topBar: {
-      supportPhone: "+91 75002 22141",
+      supportPhone: "+91 9797941414",
       leaveNoTrace: "🌱 Leave No Trace Certified Operator",
-      whatsappNumber: "+91 75002 22141",
+      whatsappNumber: "+91 9797941414",
       announcementText: "🔥 2026 Himalayan Batches Now Live with Early-Bird Discounts",
       announcementLink: "/treks",
     },
@@ -2726,9 +2726,9 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       ],
     },
     contactAndFooter: {
-      supportEmail: "support@kradind.com",
-      supportPhone: "+91 75002 22141",
-      whatsappLink: "https://wa.link/n3u8c0",
+      supportEmail: "info@kradind.com",
+      supportPhone: "+91 9797941414",
+      whatsappLink: "https://wa.me/919797941414",
       address: "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
       officeHours: "Open 24/7 for Expedition & Ground Support",
       instagramUrl: "https://www.instagram.com/kradglobal/",
@@ -3037,7 +3037,7 @@ function getInitialStore(): CMSStoreData {
         department: "Executive & Strategy",
         status: "Active",
         permissions: ["all"],
-        phone: "+91 75002 22141",
+        phone: "+91 9797941414",
         lastLogin: new Date().toISOString(),
         passwordHash: defaultAdmin.hash,
         salt: defaultAdmin.salt,

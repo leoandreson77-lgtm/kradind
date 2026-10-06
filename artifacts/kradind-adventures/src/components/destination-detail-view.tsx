@@ -241,7 +241,7 @@ export function DestinationDetailView({
             </Link>
 
             <a
-              href={`https://wa.me/917500222141?text=${whatsappMessage}`}
+              href={`https://wa.me/919797941414?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-3.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-black rounded-2xl shadow-md transition flex items-center gap-2"

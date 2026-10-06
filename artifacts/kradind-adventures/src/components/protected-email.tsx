@@ -16,7 +16,7 @@ interface ProtectedEmailProps {
  * In client browser, immediately renders full clickable mailto link for real human users.
  */
 export function ProtectedEmailLink({
-  email = "support@kradind.com",
+  email = "info@kradind.com",
   className = "flex items-center gap-2.5 hover:text-emerald-400 transition group",
   showIcon = true,
 }: ProtectedEmailProps) {
@@ -63,7 +63,7 @@ export function ProtectedEmailLink({
 }
 
 export function ProtectedContactCardEmail({
-  email = "support@kradind.com",
+  email = "info@kradind.com",
 }: {
   email?: string;
 }) {

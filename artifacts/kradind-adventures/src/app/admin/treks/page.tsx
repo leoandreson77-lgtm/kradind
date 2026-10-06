@@ -1165,7 +1165,7 @@ export default function AdminTreksPage() {
             Generated on {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
           </span>
           <span className="text-[10px] text-emerald-700 font-semibold block">
-            www.kradind.com • +91 7500222141
+            www.kradind.com • +91 9797941414
           </span>
         </div>
       </div>

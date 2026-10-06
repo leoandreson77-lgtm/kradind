@@ -219,7 +219,7 @@ export function ItineraryPdfModal({
     const text = encodeURIComponent(
       `Hello KRADIND Adventures! I just submitted an inquiry for "${tour.name}" (${tour.duration}). Please share the official itinerary PDF and best group price on WhatsApp.`
     );
-    window.open(`https://wa.me/917500222141?text=${text}`, "_blank");
+    window.open(`https://wa.me/919797941414?text=${text}`, "_blank");
   };
 
   return (
@@ -408,7 +408,7 @@ export function ItineraryPdfModal({
                 </div>
                 <div className="flex flex-wrap sm:justify-end gap-x-3 gap-y-0.5 text-[11px] pt-1 text-slate-700">
                   <span className="flex items-center gap-1 font-semibold">
-                    <Phone className="w-3 h-3 text-emerald-700" /> +91 7500222141
+                    <Phone className="w-3 h-3 text-emerald-700" /> +91 9797941414
                   </span>
                   <span className="flex items-center gap-1">
                     <Mail className="w-3 h-3 text-emerald-700" /> {['contact', 'kradind.com'].join('@')}
@@ -718,9 +718,9 @@ export function ItineraryPdfModal({
                   slot reservations, or group queries, contact your dedicated trip coordinator.
                 </p>
                 <div className="flex items-center gap-3 text-[11px] font-semibold text-emerald-800 pt-0.5">
-                  <span>Helpline: +91 75002 22141</span>
+                  <span>Helpline: +91 9797941414</span>
                   <span>•</span>
-                  <span>WhatsApp: +91 75002 22141</span>
+                  <span>WhatsApp: +91 9797941414</span>
                 </div>
               </div>
 

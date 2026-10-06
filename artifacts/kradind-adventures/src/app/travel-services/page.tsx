@@ -229,7 +229,7 @@ export default function TravelServicesPage() {
                         className="w-full flex items-center justify-center gap-2 bg-[#0F3A2E] hover:bg-emerald-900 text-white font-bold text-xs py-2.5 rounded-lg transition"
                       >
                         <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Direct Call: 9797941414</span>
+                        <span>Direct Call: +91 9797941414</span>
                       </a>
                       <button
                         onClick={() => {
@@ -297,7 +297,7 @@ export default function TravelServicesPage() {
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 9876543210"
+                      placeholder="+91 9797941414"
                       className="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                     />
                   </div>

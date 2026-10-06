@@ -3125,7 +3125,7 @@ function getInitialStore(): CMSStoreData {
         id: "BK-8841",
         customerName: "Aarav Sharma",
         email: "aarav.sharma@gmail.com",
-        phone: "+91 98765 43210",
+        phone: "+91 9797941414",
         trekSlug: "kedarkantha-summit-trek",
         trekName: "Kedarkantha Summit Trek",
         batchDate: "2026-10-15",

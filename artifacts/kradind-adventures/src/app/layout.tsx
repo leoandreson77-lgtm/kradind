@@ -121,7 +121,7 @@ const globalStructuredData = {
         "KRAD Global is a premier tour and travel company in Dehradun offering domestic and international tour packages, customized holidays, and Himalayan treks.",
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+919797941414",
+        telephone: "+91 9797941414",
         contactType: "customer service",
         url: "https://kradind.com/contact",
       },
@@ -171,7 +171,7 @@ const globalStructuredData = {
       },
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+919797941414",
+        telephone: "+91 9797941414",
         contactType: "customer service",
         url: "https://kradind.com/contact",
       },

@@ -818,7 +818,7 @@ export default function Home() {
 
               <div className="mt-6 flex items-center gap-4 text-xs font-semibold text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5"><Mail className="size-4 text-accent" /> info@kradind.com</span>
-                <span className="inline-flex items-center gap-1.5"><PhoneCall className="size-4 text-accent" /> +91 98765 43210</span>
+                <span className="inline-flex items-center gap-1.5"><PhoneCall className="size-4 text-accent" /> +91 9797941414</span>
               </div>
             </div>
 

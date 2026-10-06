@@ -102,7 +102,7 @@ export default function RajasthanTourPackagePage() {
       "@type": "TravelAgency",
       name: "KRADIND Adventures",
       url: "https://kradind.com",
-      telephone: "+91-9797941414",
+      telephone: "+91 9797941414",
     },
     offers: [
       {

@@ -656,7 +656,7 @@ export default function AdminUsersPage() {
                 <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Phone Number</label>
                 <input
                   type="tel"
-                  placeholder="+91 98765 00000"
+                  placeholder="+91 9797941414"
                   value={newUser.phone}
                   onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"

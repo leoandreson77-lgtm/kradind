@@ -302,7 +302,7 @@ export default function PackagesPage() {
                         <label className="block text-white/80 font-bold mb-1">Phone Number</label>
                         <input
                           required
-                          placeholder="+91 99999 99999"
+                          placeholder="+91 9797941414"
                           className="h-11 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-white outline-none focus:border-accent"
                         />
                       </div>

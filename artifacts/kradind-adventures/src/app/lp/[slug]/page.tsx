@@ -376,7 +376,7 @@ export default function LandingPageRoute({
                             required
                             value={leadPhone}
                             onChange={(e) => setLeadPhone(e.target.value)}
-                            placeholder="e.g. 9876543210"
+                            placeholder="+91 9797941414"
                             className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                           />
                         </div>

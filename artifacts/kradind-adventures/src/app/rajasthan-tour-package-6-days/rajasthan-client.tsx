@@ -1107,7 +1107,7 @@ export function RajasthanTourClient() {
                       <input
                         type="tel"
                         required
-                        placeholder="+91 98765 43210"
+                        placeholder="+91 9797941414"
                         value={leadPhone}
                         onChange={(e) => setLeadPhone(e.target.value)}
                         className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:border-[#FF6B35]"

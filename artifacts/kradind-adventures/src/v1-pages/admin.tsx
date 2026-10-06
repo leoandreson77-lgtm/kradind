@@ -48,7 +48,7 @@ const mockBookings: Booking[] = [
     id: 'KRD-8849',
     customerName: 'Aarav Sharma',
     email: 'aarav@gmail.com',
-    phone: '+91 98765 43210',
+    phone: '+91 9797941414',
     trekName: 'Kedarkantha Winter Peak',
     batchDate: '15 Dec 2026',
     travelers: 2,

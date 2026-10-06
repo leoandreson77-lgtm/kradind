@@ -757,10 +757,10 @@ export default function AdminSectionsPage() {
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Official WhatsApp Number</label>
+              <label className="block font-bold text-slate-700 mb-1.5">Official WhatsApp Number (Floating Icon & TopBar)</label>
               <input
                 type="text"
-                value={sections.topBar.whatsappNumber || "+91 9797941414"}
+                value={sections.topBar.whatsappNumber ?? ""}
                 onChange={(e) =>
                   setSections({
                     ...sections,
@@ -770,6 +770,7 @@ export default function AdminSectionsPage() {
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-emerald-700"
                 placeholder="+91 9797941414"
               />
+              <p className="text-[11px] text-slate-400 mt-1">Applies to top bar and floating WhatsApp chat button.</p>
             </div>
 
             <div className="sm:col-span-2">
@@ -1698,10 +1699,11 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Official WhatsApp Direct Chat Link</label>
+              <label className="block font-bold text-slate-700 mb-1.5">Official WhatsApp Direct Chat Link (Footer & CTA)</label>
               <input
                 type="text"
-                value={sections.contactAndFooter?.whatsappLink || "https://wa.me/919797941414"}
+                value={sections.contactAndFooter?.whatsappLink ?? ""}
+                placeholder="https://wa.me/919797941414"
                 onChange={(e) =>
                   setSections({
                     ...sections,
@@ -1713,6 +1715,7 @@ export default function AdminSectionsPage() {
                 }
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono"
               />
+              <p className="text-[11px] text-slate-400 mt-1">Enter full URL (e.g. https://wa.me/919797941414) or mobile number.</p>
             </div>
 
             <div className="sm:col-span-2">

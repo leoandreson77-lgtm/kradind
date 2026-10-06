@@ -41,6 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [currentQuery, setCurrentQuery] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -48,6 +49,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       if (saved === "true") setSidebarCollapsed(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentQuery(window.location.search || "");
+    }
+  }, [pathname]);
 
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed((prev) => {
@@ -158,13 +165,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   };
 
-  const [currentQuery, setCurrentQuery] = useState("");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setCurrentQuery(window.location.search || "");
-    }
-  }, [pathname]);
 
   const navGroups = [
     {

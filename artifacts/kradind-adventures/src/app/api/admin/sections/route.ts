@@ -134,8 +134,17 @@ export async function PUT(request: NextRequest) {
           return p.includes("7500222141") ? "+91 9797941414" : p;
         })(),
         whatsappLink: (() => {
-          const l = body.contactAndFooter?.whatsappLink ?? currentSections?.contactAndFooter?.whatsappLink ?? "https://wa.me/919797941414";
-          return (l.includes("7500222141") || l.includes("wa.link")) ? "https://wa.me/919797941414" : l;
+          let l = (body.contactAndFooter?.whatsappLink ?? currentSections?.contactAndFooter?.whatsappLink ?? "https://wa.me/919797941414").trim();
+          if (l.includes("7500222141") || l.includes("wa.link")) {
+            return "https://wa.me/919797941414";
+          }
+          if (l && !l.startsWith("http://") && !l.startsWith("https://")) {
+            const digits = l.replace(/\D/g, "");
+            if (digits) {
+              return `https://wa.me/${digits.length === 10 ? "91" + digits : digits}`;
+            }
+          }
+          return l || "https://wa.me/919797941414";
         })(),
         address: body.contactAndFooter?.address ?? currentSections?.contactAndFooter?.address ?? "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
         officeHours: body.contactAndFooter?.officeHours ?? currentSections?.contactAndFooter?.officeHours ?? "Open 24/7 for Expedition & Ground Support",

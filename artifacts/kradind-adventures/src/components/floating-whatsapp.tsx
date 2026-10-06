@@ -6,7 +6,7 @@ import { FaWhatsapp } from "react-icons/fa";
 
 export function FloatingWhatsApp() {
   const pathname = usePathname();
-  const whatsappUrl = "https://wa.link/n3u8c0";
+  const whatsappUrl = "https://wa.me/919797941414?text=Hello%20KRADIND%20Adventures!";
 
   // Hide WhatsApp floating button on Admin CMS pages
   if (pathname?.startsWith("/admin")) {

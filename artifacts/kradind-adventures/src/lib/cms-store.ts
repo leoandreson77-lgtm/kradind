@@ -3233,7 +3233,7 @@ export function readStore(): CMSStoreData {
     const defaultSections = getDefaultHomeSections();
     const rawHome = parsed.homeSections as Partial<HomeSectionsConfig> | undefined;
 
-    parsed.homeSections = {
+    const assembledSections: HomeSectionsConfig = {
       hero: { ...defaultSections.hero, ...(rawHome?.hero || {}) },
       monsoon: { ...defaultSections.monsoon, ...(rawHome?.monsoon || {}) },
       topBar: { ...defaultSections.topBar, ...(rawHome?.topBar || {}) },
@@ -3322,6 +3322,12 @@ export function readStore(): CMSStoreData {
         copyrightText: rawHome?.contactAndFooter?.copyrightText || defaultSections.contactAndFooter.copyrightText,
       },
     };
+
+    const { sanitized: cleanHome, hasChanges: homeChanged } = sanitizeSectionsConfig(assembledSections);
+    parsed.homeSections = cleanHome;
+    if (homeChanged) {
+      updated = true;
+    }
 
 
     // 1. Upgrade existing admins with RBAC roles & permissions
@@ -3571,6 +3577,43 @@ export function getPublishedTreks(): TrekData[] {
 // Asynchronous MongoDB-Backed CMS Persistence Functions
 // ---------------------------------------------------------------------------
 
+function sanitizeSectionsConfig(sections: HomeSectionsConfig): { sanitized: HomeSectionsConfig; hasChanges: boolean } {
+  let hasChanges = false;
+  if (sections.topBar) {
+    if (!sections.topBar.supportPhone || sections.topBar.supportPhone.includes("7500222141")) {
+      sections.topBar.supportPhone = "+91 9797941414";
+      hasChanges = true;
+    }
+    if (!sections.topBar.whatsappNumber || sections.topBar.whatsappNumber.includes("7500222141")) {
+      sections.topBar.whatsappNumber = "+91 9797941414";
+      hasChanges = true;
+    }
+  }
+  if (sections.contactAndFooter) {
+    if (!sections.contactAndFooter.supportPhone || sections.contactAndFooter.supportPhone.includes("7500222141")) {
+      sections.contactAndFooter.supportPhone = "+91 9797941414";
+      hasChanges = true;
+    }
+    if (
+      !sections.contactAndFooter.whatsappLink ||
+      sections.contactAndFooter.whatsappLink.includes("7500222141") ||
+      sections.contactAndFooter.whatsappLink.includes("wa.link")
+    ) {
+      sections.contactAndFooter.whatsappLink = "https://wa.me/919797941414";
+      hasChanges = true;
+    }
+    if (
+      sections.contactAndFooter.supportEmail &&
+      (sections.contactAndFooter.supportEmail.includes("support@") ||
+        sections.contactAndFooter.supportEmail.includes("hello@"))
+    ) {
+      sections.contactAndFooter.supportEmail = "info@kradind.com";
+      hasChanges = true;
+    }
+  }
+  return { sanitized: sections, hasChanges };
+}
+
 export async function getHomeSectionsAsync(): Promise<HomeSectionsConfig> {
   try {
     const db = await getDb();
@@ -3578,15 +3621,22 @@ export async function getHomeSectionsAsync(): Promise<HomeSectionsConfig> {
     if (doc) {
       const { _id, configKey, ...sections } = doc as any;
       if (sections.hero && sections.monsoon && sections.topBar) {
+        const { sanitized, hasChanges } = sanitizeSectionsConfig(sections as HomeSectionsConfig);
+        if (hasChanges) {
+          syncHomeSectionsToMongo(sanitized).catch(() => {});
+        }
         const store = readStore();
-        store.homeSections = sections as HomeSectionsConfig;
-        return sections as HomeSectionsConfig;
+        store.homeSections = sanitized;
+        return sanitized;
       }
     }
   } catch (err) {
     console.warn("MongoDB getHomeSections error, fallback to local store:", err);
   }
-  return readStore().homeSections;
+  const store = readStore();
+  const { sanitized } = sanitizeSectionsConfig(store.homeSections);
+  store.homeSections = sanitized;
+  return sanitized;
 }
 
 export async function syncHomeSectionsToMongo(sections: HomeSectionsConfig): Promise<void> {

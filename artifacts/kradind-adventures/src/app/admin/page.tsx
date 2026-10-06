@@ -200,7 +200,7 @@ export default function AdminDashboardPage() {
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
               Total Bookings
             </span>
-            <div className="text-2xl font-extrabold text-slate-900 mt-1">{bookings.length}</div>
+            <div className="text-2xl font-extrabold text-slate-900 mt-1">{safeBookings.length}</div>
             <Link
               href="/admin/bookings"
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0F3A2E] hover:underline mt-2"
@@ -239,10 +239,10 @@ export default function AdminDashboardPage() {
               Customer Leads
             </span>
             <div className="text-2xl font-extrabold text-slate-900 mt-1">
-              {leads.length}{" "}
-              {leads.filter((l) => l.status === "New").length > 0 && (
+              {safeLeads.length}{" "}
+              {safeLeads.filter((l) => l.status === "New").length > 0 && (
                 <span className="text-xs font-bold text-blue-600">
-                  ({leads.filter((l) => l.status === "New").length} new)
+                  ({safeLeads.filter((l) => l.status === "New").length} new)
                 </span>
               )}
             </div>
@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
               Trail Radar
             </span>
-            <div className="text-2xl font-extrabold text-slate-900 mt-1">{radar.length}</div>
+            <div className="text-2xl font-extrabold text-slate-900 mt-1">{safeRadar.length}</div>
             <Link
               href="/admin/radar"
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0F3A2E] hover:underline mt-2"
@@ -411,34 +411,34 @@ export default function AdminDashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {safeBookings.slice(0, 5).map((b) => (
-                <tr key={b.id} className="hover:bg-slate-50/60 transition">
-                  <td className="px-5 py-3 font-mono font-bold text-slate-800">{b.id}</td>
+              {safeBookings.slice(0, 5).map((b, idx) => (
+                <tr key={b?.id || `booking-${idx}`} className="hover:bg-slate-50/60 transition">
+                  <td className="px-5 py-3 font-mono font-bold text-slate-800">{b?.id || "N/A"}</td>
                   <td className="px-5 py-3">
-                    <div className="font-semibold text-slate-900">{b.customerName}</div>
-                    <div className="text-[11px] text-slate-500">{b.email}</div>
+                    <div className="font-semibold text-slate-900">{b?.customerName || "Customer"}</div>
+                    <div className="text-[11px] text-slate-500">{b?.email || "—"}</div>
                   </td>
-                  <td className="px-5 py-3 font-medium text-slate-700">{b.trekName}</td>
-                  <td className="px-5 py-3 text-slate-600">{b.travelers} Trekkers</td>
+                  <td className="px-5 py-3 font-medium text-slate-700">{b?.trekName || "Custom Tour"}</td>
+                  <td className="px-5 py-3 text-slate-600">{b?.travelers || 1} Trekkers</td>
                   <td className="px-5 py-3 font-bold text-slate-900">
-                    ₹{(Number(b.totalAmount) || 0).toLocaleString("en-IN")}
+                    ₹{(Number(b?.totalAmount) || 0).toLocaleString("en-IN")}
                   </td>
                   <td className="px-5 py-3">
                     <span
                       className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                        b.status === "Confirmed"
+                        b?.status === "Confirmed"
                           ? "bg-emerald-100 text-emerald-800"
-                          : b.status === "Pending"
+                          : b?.status === "Pending"
                           ? "bg-amber-100 text-amber-800"
                           : "bg-slate-100 text-slate-700"
                       }`}
                     >
-                      {b.status === "Confirmed" ? (
+                      {b?.status === "Confirmed" ? (
                         <CheckCircle2 className="w-3 h-3" />
                       ) : (
                         <Clock className="w-3 h-3" />
                       )}
-                      <span>{b.status}</span>
+                      <span>{b?.status || "Pending"}</span>
                     </span>
                   </td>
                 </tr>
@@ -485,30 +485,30 @@ export default function AdminDashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {safeLeads.slice(0, 5).map((l) => (
-                <tr key={l.id} className="hover:bg-slate-50/60 transition">
-                  <td className="px-5 py-3 font-mono font-bold text-slate-800">{l.id}</td>
+              {safeLeads.slice(0, 5).map((l, idx) => (
+                <tr key={l?.id || `lead-${idx}`} className="hover:bg-slate-50/60 transition">
+                  <td className="px-5 py-3 font-mono font-bold text-slate-800">{l?.id || "N/A"}</td>
                   <td className="px-5 py-3">
-                    <div className="font-semibold text-slate-900">{l.name}</div>
-                    <div className="text-[11px] text-slate-500">{l.email}</div>
+                    <div className="font-semibold text-slate-900">{l?.name || "Visitor"}</div>
+                    <div className="text-[11px] text-slate-500">{l?.email || "—"}</div>
                   </td>
                   <td className="px-5 py-3 max-w-xs truncate text-slate-600">
-                    "{l.message}"
+                    "{l?.message || ""}"
                   </td>
-                  <td className="px-5 py-3 text-slate-500 font-medium">{l.source}</td>
+                  <td className="px-5 py-3 text-slate-500 font-medium">{l?.source || "Website"}</td>
                   <td className="px-5 py-3">
                     <span
                       className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                        l.status === "New"
+                        l?.status === "New"
                           ? "bg-blue-100 text-blue-800"
-                          : l.status === "Contacted"
+                          : l?.status === "Contacted"
                           ? "bg-amber-100 text-amber-800"
-                          : l.status === "Qualified"
+                          : l?.status === "Qualified"
                           ? "bg-emerald-100 text-emerald-800"
                           : "bg-slate-100 text-slate-600"
                       }`}
                     >
-                      {l.status}
+                      {l?.status || "New"}
                     </span>
                   </td>
                   <td className="px-5 py-3 text-right">
@@ -521,7 +521,7 @@ export default function AdminDashboardPage() {
                   </td>
                 </tr>
               ))}
-              {leads.length === 0 && (
+              {safeLeads.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-5 py-8 text-center text-slate-400 text-xs">
                     No customer leads yet.

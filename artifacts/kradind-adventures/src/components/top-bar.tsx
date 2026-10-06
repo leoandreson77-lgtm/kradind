@@ -21,7 +21,10 @@ export function TopBar({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const supportPhone = config?.supportPhone || "+91 9797941414";
+  let supportPhone = config?.supportPhone || "+91 9797941414";
+  if (!supportPhone || supportPhone.includes("7500222141")) {
+    supportPhone = "+91 9797941414";
+  }
   const lntText = config?.leaveNoTrace || "🌱 Leave No Trace Certified Operator";
 
   return (

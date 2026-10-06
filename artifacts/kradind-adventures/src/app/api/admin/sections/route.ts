@@ -64,9 +64,15 @@ export async function PUT(request: NextRequest) {
         badge: body.monsoon?.badge ?? currentSections?.monsoon?.badge ?? "Limited Season Offer",
       },
       topBar: {
-        supportPhone: body.topBar?.supportPhone ?? currentSections?.topBar?.supportPhone ?? "+91 9797941414",
+        supportPhone: (() => {
+          const p = body.topBar?.supportPhone ?? currentSections?.topBar?.supportPhone ?? "+91 9797941414";
+          return p.includes("7500222141") ? "+91 9797941414" : p;
+        })(),
         leaveNoTrace: body.topBar?.leaveNoTrace ?? currentSections?.topBar?.leaveNoTrace ?? "🌱 Leave No Trace Certified Operator",
-        whatsappNumber: body.topBar?.whatsappNumber ?? currentSections?.topBar?.whatsappNumber ?? "+91 9797941414",
+        whatsappNumber: (() => {
+          const w = body.topBar?.whatsappNumber ?? currentSections?.topBar?.whatsappNumber ?? "+91 9797941414";
+          return w.includes("7500222141") ? "+91 9797941414" : w;
+        })(),
         announcementText: body.topBar?.announcementText ?? currentSections?.topBar?.announcementText ?? "",
         announcementLink: body.topBar?.announcementLink ?? currentSections?.topBar?.announcementLink ?? "/treks",
       },
@@ -119,9 +125,18 @@ export async function PUT(request: NextRequest) {
         faqs: body.eeat?.faqs ?? currentSections?.eeat?.faqs ?? [],
       },
       contactAndFooter: {
-        supportEmail: body.contactAndFooter?.supportEmail ?? currentSections?.contactAndFooter?.supportEmail ?? "info@kradind.com",
-        supportPhone: body.contactAndFooter?.supportPhone ?? currentSections?.contactAndFooter?.supportPhone ?? "+91 9797941414",
-        whatsappLink: body.contactAndFooter?.whatsappLink ?? currentSections?.contactAndFooter?.whatsappLink ?? "https://wa.me/919797941414",
+        supportEmail: (() => {
+          const e = body.contactAndFooter?.supportEmail ?? currentSections?.contactAndFooter?.supportEmail ?? "info@kradind.com";
+          return (e.includes("support@") || e.includes("hello@")) ? "info@kradind.com" : e;
+        })(),
+        supportPhone: (() => {
+          const p = body.contactAndFooter?.supportPhone ?? currentSections?.contactAndFooter?.supportPhone ?? "+91 9797941414";
+          return p.includes("7500222141") ? "+91 9797941414" : p;
+        })(),
+        whatsappLink: (() => {
+          const l = body.contactAndFooter?.whatsappLink ?? currentSections?.contactAndFooter?.whatsappLink ?? "https://wa.me/919797941414";
+          return (l.includes("7500222141") || l.includes("wa.link")) ? "https://wa.me/919797941414" : l;
+        })(),
         address: body.contactAndFooter?.address ?? currentSections?.contactAndFooter?.address ?? "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
         officeHours: body.contactAndFooter?.officeHours ?? currentSections?.contactAndFooter?.officeHours ?? "Open 24/7 for Expedition & Ground Support",
         instagramUrl: body.contactAndFooter?.instagramUrl ?? currentSections?.contactAndFooter?.instagramUrl ?? "https://www.instagram.com/kradglobal/",

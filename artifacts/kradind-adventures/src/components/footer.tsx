@@ -27,19 +27,33 @@ import { ProtectedEmailLink } from "./protected-email";
 import { HomeSectionsConfig } from "@/lib/cms-store";
 
 export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFooter"] }) {
-  const supportPhone = config?.supportPhone || "+91 9797941414";
+  let supportPhone = config?.supportPhone || "+91 9797941414";
+  if (!supportPhone || supportPhone.includes("7500222141")) {
+    supportPhone = "+91 9797941414";
+  }
   const cleanPhone = supportPhone.replace(/\s+/g, "");
-  const supportEmail = config?.supportEmail || "info@kradind.com";
+
+  let supportEmail = config?.supportEmail || "info@kradind.com";
+  if (supportEmail.includes("support@") || supportEmail.includes("hello@")) {
+    supportEmail = "info@kradind.com";
+  }
+
   const address =
     config?.address ||
     "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand – 248001, India";
   const addressGoogleLink =
     "https://www.google.com/search?sca_esv=080dae4805299e94&sxsrf=APpeQntb4GvbjjeiOalE3kSH4CzAWMmSiQ:1790599408087&q=krad+global+dehradun+address&ludocid=2851661435002339716&sa=X&sqi=2&ved=2ahUKEwigpZ3NppGXAxWs1jgGHefSJU4Q6BN6BAgmEAI";
-  const whatsappUrl =
+
+  let whatsappUrl =
     config?.whatsappLink ||
     `https://wa.me/919797941414?text=${encodeURIComponent(
       "Hello KRADIND Adventures! I would like to inquire about upcoming treks and customized travel packages."
     )}`;
+  if (whatsappUrl.includes("7500222141") || whatsappUrl.includes("wa.link")) {
+    whatsappUrl = `https://wa.me/919797941414?text=${encodeURIComponent(
+      "Hello KRADIND Adventures! I would like to inquire about upcoming treks and customized travel packages."
+    )}`;
+  }
 
   const socialLinks = [
     {

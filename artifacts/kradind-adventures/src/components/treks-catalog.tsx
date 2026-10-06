@@ -86,51 +86,80 @@ export function TreksContent({
   }, [initialCategory, paramCategory, paramSearch, paramDestination]);
 
   const CATEGORIES = [
-    { label: "All Trips", value: "All" },
+    { label: "🌟 All Trips", value: "All" },
     { label: "🚗 Domestic Tours", value: "Domestic" },
+    { label: "⛺ Weekend Escapes", value: "Weekend" },
+    { label: "📅 Fixed Departures", value: "Fixed Departure" },
     { label: "🏔️ Himalayan Treks", value: "Himalayas" },
-    { label: "🌲 Uttarakhand", value: "Uttarakhand" },
-    { label: "🌲 Himachal", value: "Himachal" },
-    { label: "❄️ Kashmir", value: "Kashmir" },
-    { label: "🏔️ Ladakh", value: "Ladakh" },
-    { label: "🏰 Rajasthan", value: "Rajasthan" },
-    { label: "🌴 Kerala", value: "Kerala" },
-    { label: "🌿 Northeast", value: "Northeast" },
-    { label: "🌊 Goa & Coast", value: "Goa" },
-    { label: "⛺ Weekend Treks", value: "Weekend" },
+    { label: "✈️ International Tours", value: "International" },
   ];
 
   const filteredTreks = useMemo(() => {
     return allTreks.filter((trek) => {
-      const catLower = selectedCategory.toLowerCase();
+      const catLower = selectedCategory.toLowerCase().trim();
+
       const isDomesticCat =
         catLower === "domestic" ||
         catLower.includes("road trip") ||
-        catLower === "domestic trips";
+        catLower === "domestic trips" ||
+        catLower === "domestic tours";
 
       const isDomesticTrek =
         (trek.category || "").toLowerCase() === "domestic" ||
         (trek.categories || []).some((c) => c.toLowerCase() === "domestic");
 
-      const isKashmirOrLadakhCat =
-        catLower === "ladakh" ||
-        catLower === "kashmir" ||
-        catLower.includes("ladakh") ||
-        catLower.includes("kashmir");
+      const isWeekendCat =
+        catLower === "weekend" ||
+        catLower.includes("weekend");
 
-      const isKashmirOrLadakhTrek =
-        (trek.location || "").toLowerCase().includes("kashmir") ||
-        (trek.location || "").toLowerCase().includes("ladakh") ||
-        (trek.region || "").toLowerCase().includes("kashmir") ||
-        (trek.region || "").toLowerCase().includes("ladakh") ||
-        (trek.categories || []).some(
-          (c) => c.toLowerCase().includes("kashmir") || c.toLowerCase().includes("ladakh")
+      const isWeekendTrek =
+        (trek.category || "").toLowerCase() === "weekend" ||
+        (trek.categories || []).some((c) => c.toLowerCase() === "weekend") ||
+        (trek.duration || "").toLowerCase().includes("2 days") ||
+        (trek.duration || "").toLowerCase().includes("3 days") ||
+        (trek.duration || "").toLowerCase().includes("4 days");
+
+      const isFixedDepartureCat =
+        catLower === "fixed departure" ||
+        catLower === "fixed" ||
+        catLower.includes("departure");
+
+      const isFixedDepartureTrek =
+        (trek.category || "").toLowerCase() === "fixed departure" ||
+        (trek.categories || []).some((c) => c.toLowerCase() === "fixed departure") ||
+        (Array.isArray(trek.batches) && trek.batches.length > 0);
+
+      const isHimalayasCat =
+        catLower === "himalayas" ||
+        catLower === "trek" ||
+        catLower === "treks" ||
+        catLower.includes("himalayan");
+
+      const isHimalayasTrek =
+        ["himalayas", "trek"].includes((trek.category || "").toLowerCase()) ||
+        (trek.categories || []).some((c) => ["himalayas", "trek", "summit"].includes(c.toLowerCase()));
+
+      const isInternationalCat =
+        catLower === "international" ||
+        catLower.includes("international") ||
+        catLower === "global";
+
+      const isInternationalTrek =
+        (trek.category || "").toLowerCase() === "international" ||
+        (trek.categories || []).some((c) => c.toLowerCase() === "international") ||
+        ["bali", "dubai", "thailand", "vietnam", "singapore", "maldives", "nepal"].some((country) =>
+          (trek.location || "").toLowerCase().includes(country) ||
+          (trek.region || "").toLowerCase().includes(country) ||
+          (trek.name || "").toLowerCase().includes(country)
         );
 
       const matchesCategory =
         selectedCategory === "All" ||
         (isDomesticCat && isDomesticTrek) ||
-        (isKashmirOrLadakhCat && isKashmirOrLadakhTrek) ||
+        (isWeekendCat && isWeekendTrek) ||
+        (isFixedDepartureCat && isFixedDepartureTrek) ||
+        (isHimalayasCat && isHimalayasTrek) ||
+        (isInternationalCat && isInternationalTrek) ||
         (trek.category || "").toLowerCase().includes(catLower) ||
         (trek.categories || []).some((c) => c.toLowerCase().includes(catLower)) ||
         (trek.location || "").toLowerCase().includes(catLower) ||
@@ -276,6 +305,20 @@ export function TreksContent({
                 ? "/rajasthan-tour-package-6-days"
                 : trek.slug === "kerala-tour-package-5-nights-6-days"
                 ? "/kerala-tour-package-5-nights-6-days"
+                : trek.slug.includes("bali")
+                ? "/international-trips/bali"
+                : trek.slug.includes("thailand")
+                ? "/international-trips/thailand"
+                : trek.slug.includes("dubai")
+                ? "/international-trips/dubai"
+                : trek.slug.includes("vietnam")
+                ? "/international-trips/vietnam"
+                : trek.slug.includes("singapore")
+                ? "/international-trips/singapore"
+                : trek.slug.includes("maldives")
+                ? "/international-trips/maldives"
+                : trek.slug.includes("nepal")
+                ? "/international-trips/nepal"
                 : `/treks/${trek.slug}`;
 
             return (

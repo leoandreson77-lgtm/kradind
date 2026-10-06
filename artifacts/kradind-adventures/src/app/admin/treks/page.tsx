@@ -231,10 +231,38 @@ function cleanWords(s: string): string[] {
 function matchesCategoryOrTag(t: TrekData, tagOrCat: string): boolean {
   if (!tagOrCat || tagOrCat === "All") return true;
   const target = tagOrCat.toLowerCase().trim();
-  const isDom = isDomesticPackage(t);
 
-  if (target === "domestic" || target === "domestic tours" || target === "domestic packages") return isDom;
-  if (target === "himalayan treks" || target === "treks") return !isDom;
+  if (target === "domestic" || target === "domestic tours" || target === "domestic packages") {
+    return (
+      (t.category || "").toLowerCase() === "domestic" ||
+      (t.categories || []).some((c) => c.toLowerCase() === "domestic")
+    );
+  }
+  if (target === "weekend" || target === "weekend treks" || target === "weekend trips") {
+    return (
+      (t.category || "").toLowerCase() === "weekend" ||
+      (t.categories || []).some((c) => c.toLowerCase() === "weekend")
+    );
+  }
+  if (target === "fixed departure" || target === "fixed departures") {
+    return (
+      (t.category || "").toLowerCase() === "fixed departure" ||
+      (t.categories || []).some((c) => c.toLowerCase() === "fixed departure") ||
+      (Array.isArray(t.batches) && t.batches.length > 0)
+    );
+  }
+  if (target === "international" || target === "international trips" || target === "international tours") {
+    return (
+      (t.category || "").toLowerCase() === "international" ||
+      (t.categories || []).some((c) => c.toLowerCase() === "international")
+    );
+  }
+  if (target === "himalayan treks" || target === "treks" || target === "himalayas" || target === "trek") {
+    return (
+      ["himalayas", "trek"].includes((t.category || "").toLowerCase()) ||
+      (t.categories || []).some((c) => ["himalayas", "trek"].includes(c.toLowerCase()))
+    );
+  }
 
   const allTokens = [
     t.category || "",
@@ -271,50 +299,23 @@ const DOMESTIC_REGIONS = [
   "Meghalaya",
   "Assam",
   "Maharashtra",
-  "Western Ghats",
-  "South India",
 ];
 
 const TREK_COLLECTIONS = [
   "Himalayas",
   "Weekend Treks",
-  "Monsoon Specials",
+  "Fixed Departure",
   "High Altitude Passes",
-  "Kashmir Treks",
-  "Uttarakhand",
-  "Himachal Pradesh",
   "Family Friendly",
   "Winter Snow",
-  "Summer Escapes",
-  "Expeditions",
 ];
 
 const POPULAR_CATEGORIES = [
   "Domestic",
-  "Himalayas",
-  "Weekend Treks",
-  "Monsoon Specials",
-  "High Altitude Passes",
-  "Kashmir Treks",
-  "Uttarakhand",
-  "Himachal Pradesh",
-  "Rajasthan",
-  "Kerala",
-  "Goa",
-  "Family Friendly",
-  "Winter Snow",
-  "Summer Escapes",
-  "Expeditions",
   "Weekend",
-  "Summit",
-  "Heritage",
-  "Northeast",
-  "Road Trip",
-  "Adventure",
-  "Wildlife",
-  "Desert",
-  "Beach",
-  "Honeymoon",
+  "Fixed Departure",
+  "Himalayas",
+  "International",
 ];
 
 function getDefaultItinerary(daysCount: number = 5): TrekItineraryDay[] {
@@ -1032,13 +1033,16 @@ export default function AdminTreksPage() {
     POPULAR_CATEGORIES.forEach((c) => tagSet.add(c));
 
     const list = Array.from(tagSet);
-    // Sort by matching package count (highest first), then alphabetical
-    return list.sort((a, b) => {
-      const countA = treks.filter((t) => matchesCategoryOrTag(t, a)).length;
-      const countB = treks.filter((t) => matchesCategoryOrTag(t, b)).length;
-      if (countB !== countA) return countB - countA;
-      return a.localeCompare(b);
-    });
+    const popularList = POPULAR_CATEGORIES.filter((c) => tagSet.has(c));
+    const otherList = list
+      .filter((c) => !POPULAR_CATEGORIES.includes(c))
+      .sort((a, b) => {
+        const countA = treks.filter((t) => matchesCategoryOrTag(t, a)).length;
+        const countB = treks.filter((t) => matchesCategoryOrTag(t, b)).length;
+        if (countB !== countA) return countB - countA;
+        return a.localeCompare(b);
+      });
+    return [...popularList, ...otherList];
   }, [treks]);
 
   // Recently added count (within 7 days)

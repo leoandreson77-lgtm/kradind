@@ -89,725 +89,16 @@
     },
     "topBar": {
       "supportPhone": "+91 9797941414",
-      "leaveNoTrace": "🌱 Leave No Trace Certified Operator"
+      "leaveNoTrace": "🌱 Leave No Trace Certified Operator",
+      "whatsappNumber": "+91 9797941414"
     },
-    "seasonalCollection": {
-      "enabled": true,
-      "badge": "High Altitude Autumn Window",
-      "title": "Top 5 Treks for October-November",
-      "subtitle": "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
-      "seasonTag": "October - November",
-      "featuredSlugs": [
-        "kuari-pass-trek",
-        "dayara-bugyal-trek",
-        "deoriatal-chandrashila",
-        "pench-tiger-trail",
-        "chopta-tungnath-chandrashila"
-      ]
+    "contactAndFooter": {
+      "supportEmail": "info@kradind.com",
+      "supportPhone": "+91 9797941414",
+      "whatsappLink": "https://wa.me/919797941414"
     }
   },
   "treks": [
-    {
-      "id": 9004,
-      "slug": "pench-tiger-trail",
-      "name": "Pench Tiger Trail",
-      "category": "Domestic",
-      "categories": [
-        "Domestic",
-        "Wildlife",
-        "Trail",
-        "Autumn Special"
-      ],
-      "location": "Pench National Park, MP",
-      "region": "Madhya Pradesh",
-      "duration": "4 Days",
-      "altitude": "2,004 ft",
-      "difficulty": "Easy",
-      "price": 6999,
-      "originalPrice": 8999,
-      "badge": "Jungle Expedition",
-      "rating": 4.8,
-      "reviewCount": 180,
-      "image": "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=1200&q=80",
-      "gallery": [
-        "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "Trek through the Jungles of Pench Tiger Reserve",
-      "description": "The inspiration for Rudyard Kipling's The Jungle Book. Explore buffer zone jungle trails, teak forests, and open safari tracks under expert naturalists.",
-      "highlights": [
-        "Guided buffer-zone nature walks",
-        "Open Jeep Tiger Safari",
-        "Birdwatching over 250 species"
-      ],
-      "status": "Published",
-      "batches": [
-        {
-          "id": 401,
-          "startDate": "5th Oct",
-          "endDate": "8th Oct",
-          "slotsLeft": 0,
-          "price": 6999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Wildlife Safari"
-        },
-        {
-          "id": 402,
-          "startDate": "12th Oct",
-          "endDate": "15th Oct",
-          "slotsLeft": 0,
-          "price": 6999,
-          "status": "WL",
-          "waitlistCount": 2,
-          "monthGroup": "October 2026",
-          "seasonTheme": "Wildlife Safari"
-        },
-        {
-          "id": 403,
-          "startDate": "19th Oct",
-          "endDate": "22nd Oct",
-          "slotsLeft": 10,
-          "price": 6999,
-          "status": "AVBL",
-          "experienceTag": "Photowalk",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Wildlife Safari"
-        },
-        {
-          "id": 404,
-          "startDate": "26th Oct",
-          "endDate": "29th Oct",
-          "slotsLeft": 1,
-          "price": 6999,
-          "status": "LAST",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Wildlife Safari"
-        }
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Arrival at Pench, briefing & evening nature walk",
-          "description": "Assembly at eco-lodge.",
-          "altitude": "1,800 ft"
-        },
-        {
-          "day": 2,
-          "title": "Morning Tiger Safari & afternoon forest walk",
-          "description": "Jeep safari in core park.",
-          "altitude": "2,004 ft"
-        },
-        {
-          "day": 3,
-          "title": "Totladoh reservoir trail & birdwatching",
-          "description": "Walk along reservoir banks.",
-          "altitude": "1,900 ft"
-        },
-        {
-          "day": 4,
-          "title": "Departure",
-          "description": "Transfer to Nagpur airport/railway.",
-          "altitude": "1,000 ft"
-        }
-      ],
-      "inclusions": [
-        "All meals",
-        "Eco-resort stay",
-        "Jeep safari permits",
-        "Naturalist guide"
-      ],
-      "exclusions": [
-        "Airfare",
-        "Personal expenses"
-      ],
-      "createdAt": "2026-10-02T21:03:49.516Z",
-      "updatedAt": "2026-10-02T21:03:49.516Z"
-    },
-    {
-      "id": 9003,
-      "slug": "deoriatal-chandrashila",
-      "name": "Deoriatal Chandrashila",
-      "category": "Himalayas",
-      "categories": [
-        "Himalayas",
-        "Trek",
-        "Summit",
-        "Autumn Special"
-      ],
-      "location": "Sari / Chopta, Uttarakhand",
-      "region": "Rudraprayag, Uttarakhand",
-      "duration": "6 Days",
-      "altitude": "12,083 ft",
-      "difficulty": "Moderate",
-      "price": 7999,
-      "originalPrice": 9999,
-      "badge": "360 Panoramic Summit",
-      "rating": 4.9,
-      "reviewCount": 450,
-      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-      "gallery": [
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "A summit climb to one of India's best panoramas",
-      "description": "From emerald Deoriatal lake reflecting the Chaukhamba massif to the 12,083 ft Chandrashila summit overlooking the Garhwal range, this is a timeless classic.",
-      "highlights": [
-        "Reflection of Chaukhamba in Deoriatal Lake",
-        "Highest Shiva temple in the world at Tungnath",
-        "Summit sunrise panorama"
-      ],
-      "status": "Published",
-      "batches": [
-        {
-          "id": 301,
-          "startDate": "4th Oct",
-          "endDate": "9th Oct",
-          "slotsLeft": 0,
-          "price": 7999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Sunrise 360"
-        },
-        {
-          "id": 302,
-          "startDate": "11th Oct",
-          "endDate": "16th Oct",
-          "slotsLeft": 0,
-          "price": 7999,
-          "status": "WL",
-          "waitlistCount": 6,
-          "monthGroup": "October 2026",
-          "seasonTheme": "Sunrise 360"
-        },
-        {
-          "id": 303,
-          "startDate": "18th Oct",
-          "endDate": "23rd Oct",
-          "slotsLeft": 11,
-          "price": 7999,
-          "status": "AVBL",
-          "experienceTag": "Full Moon",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Sunrise 360"
-        },
-        {
-          "id": 304,
-          "startDate": "25th Oct",
-          "endDate": "30th Oct",
-          "slotsLeft": 3,
-          "price": 7999,
-          "status": "LAST",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Sunrise 360"
-        }
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Haridwar to Sari village",
-          "description": "Drive along the Alaknanda and Mandakini.",
-          "altitude": "6,600 ft"
-        },
-        {
-          "day": 2,
-          "title": "Sari to Deoriatal camp",
-          "description": "Short uphill walk to the alpine lake.",
-          "altitude": "7,840 ft"
-        },
-        {
-          "day": 3,
-          "title": "Deoriatal to Chopta through Rohini Bugyal",
-          "description": "Forest ridge trail through rhododendrons.",
-          "altitude": "8,800 ft"
-        },
-        {
-          "day": 4,
-          "title": "Chopta to Tungnath & Chandrashila Summit",
-          "description": "Climb to Tungnath temple and Chandrashila top.",
-          "altitude": "12,083 ft"
-        },
-        {
-          "day": 5,
-          "title": "Chopta to Sari descent",
-          "description": "Scenic trail return.",
-          "altitude": "6,600 ft"
-        },
-        {
-          "day": 6,
-          "title": "Return drive to Haridwar",
-          "description": "Safe return to railway station.",
-          "altitude": "1,000 ft"
-        }
-      ],
-      "inclusions": [
-        "All meals",
-        "Camps and homestays",
-        "Permits",
-        "Leader"
-      ],
-      "exclusions": [
-        "Train travel",
-        "Personal gear"
-      ],
-      "createdAt": "2026-10-02T21:03:49.516Z",
-      "updatedAt": "2026-10-02T21:03:49.516Z"
-    },
-    {
-      "id": 9002,
-      "slug": "dayara-bugyal-trek",
-      "name": "Dayara Bugyal Trek",
-      "category": "Himalayas",
-      "categories": [
-        "Himalayas",
-        "Trek",
-        "Meadows",
-        "Autumn Special"
-      ],
-      "location": "Raithal, Uttarakhand",
-      "region": "Uttarkashi, Uttarakhand",
-      "duration": "6 Days",
-      "altitude": "11,830 ft",
-      "difficulty": "Easy-Moderate",
-      "price": 8499,
-      "originalPrice": 10999,
-      "badge": "Family Friendly",
-      "rating": 4.9,
-      "reviewCount": 310,
-      "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-      "gallery": [
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "An ideal Himalayan trek for beginners and families",
-      "description": "Spread over 28 square kilometers of velvet alpine meadows, Dayara Bugyal is among India's most expansive and scenic high-altitude tablelands.",
-      "highlights": [
-        "28 sq km rolling meadow walk",
-        "Bandarpunch and Kala Nag views",
-        "Ancient walnut and maple forests"
-      ],
-      "status": "Published",
-      "batches": [
-        {
-          "id": 201,
-          "startDate": "2nd Oct",
-          "endDate": "7th Oct",
-          "slotsLeft": 0,
-          "price": 8499,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Golden Meadows"
-        },
-        {
-          "id": 202,
-          "startDate": "8th Oct",
-          "endDate": "13th Oct",
-          "slotsLeft": 0,
-          "price": 8499,
-          "status": "FULL",
-          "experienceTag": "Family Friendly",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Golden Meadows"
-        },
-        {
-          "id": 203,
-          "startDate": "15th Oct",
-          "endDate": "20th Oct",
-          "slotsLeft": 0,
-          "price": 8499,
-          "status": "WL",
-          "waitlistCount": 3,
-          "monthGroup": "October 2026",
-          "seasonTheme": "Golden Meadows"
-        },
-        {
-          "id": 204,
-          "startDate": "22nd Oct",
-          "endDate": "27th Oct",
-          "slotsLeft": 14,
-          "price": 8499,
-          "status": "AVBL",
-          "experienceTag": "Stargazing",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Golden Meadows"
-        },
-        {
-          "id": 205,
-          "startDate": "28th Oct",
-          "endDate": "2nd Nov",
-          "slotsLeft": 2,
-          "price": 8499,
-          "status": "LAST",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Golden Meadows"
-        },
-        {
-          "id": 206,
-          "startDate": "5th Nov",
-          "endDate": "10th Nov",
-          "slotsLeft": 12,
-          "price": 8499,
-          "status": "AVBL",
-          "monthGroup": "November 2026",
-          "seasonTheme": "Crisp Autumn"
-        }
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Dehradun to Raithal drive",
-          "description": "Scenic drive beside Bhagirathi river.",
-          "altitude": "7,400 ft"
-        },
-        {
-          "day": 2,
-          "title": "Raithal to Gui camp",
-          "description": "Gentle forest hike through oak trees.",
-          "altitude": "9,500 ft"
-        },
-        {
-          "day": 3,
-          "title": "Gui to Chilapada",
-          "description": "Trek to high camp at meadow edge.",
-          "altitude": "10,500 ft"
-        },
-        {
-          "day": 4,
-          "title": "Chilapada to Dayara Top and return",
-          "description": "Summit walk across vast grassy knolls.",
-          "altitude": "11,830 ft"
-        },
-        {
-          "day": 5,
-          "title": "Descent to Raithal",
-          "description": "Downhill stroll back to the village homestays.",
-          "altitude": "7,400 ft"
-        },
-        {
-          "day": 6,
-          "title": "Drive back to Dehradun",
-          "description": "Return journey.",
-          "altitude": "1,450 ft"
-        }
-      ],
-      "inclusions": [
-        "All meals",
-        "Quality alpine tents",
-        "Certified leader",
-        "Permits and first aid"
-      ],
-      "exclusions": [
-        "Personal gear",
-        "Dehradun travel"
-      ],
-      "createdAt": "2026-10-02T21:03:49.516Z",
-      "updatedAt": "2026-10-02T21:03:49.516Z"
-    },
-    {
-      "id": 9001,
-      "slug": "kuari-pass-trek",
-      "name": "Kuari Pass Trek",
-      "category": "Himalayas",
-      "categories": [
-        "Himalayas",
-        "Trek",
-        "Summit",
-        "Autumn Special"
-      ],
-      "location": "Joshimath, Uttarakhand",
-      "region": "Garhwal Himalayas",
-      "duration": "6 Days",
-      "altitude": "12,516 ft",
-      "difficulty": "Moderate",
-      "price": 9999,
-      "originalPrice": 12999,
-      "badge": "Top Autumn Pick",
-      "rating": 4.9,
-      "reviewCount": 420,
-      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
-      "gallery": [
-        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80"
-      ],
-      "tagline": "The trek with the grandest mountain views of Uttarakhand",
-      "description": "Kuari Pass is known as the Curzon Trail, offering unmatched panoramic views of Mt Nanda Devi (India's second highest peak), Kamet, Dronagiri, and Chaukhamba. Oct-Nov brings crystal clear azure skies and vibrant alpine meadows.",
-      "overview": "Walk along ridge walks with 360 degree Himalayan mountain vistas. Camp under rhododendron glades and spot Nanda Devi sanctuary.",
-      "highlights": [
-        "Unrivaled close-up vistas of India's highest peaks: Nanda Devi, Kamet, Trishul",
-        "Spectacular ridge walk from Tali top to Khullara camp",
-        "Pristine oak and rhododendron forest walking trails",
-        "High altitude stargazing with zero light pollution"
-      ],
-      "status": "Published",
-      "batches": [
-        {
-          "id": 101,
-          "startDate": "3rd Oct",
-          "endDate": "8th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 102,
-          "startDate": "4th Oct",
-          "endDate": "9th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 103,
-          "startDate": "5th Oct",
-          "endDate": "10th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "experienceTag": "Stargazing",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 104,
-          "startDate": "6th Oct",
-          "endDate": "11th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "experienceTag": "Stargazing",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 105,
-          "startDate": "9th Oct",
-          "endDate": "14th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 106,
-          "startDate": "10th Oct",
-          "endDate": "15th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 107,
-          "startDate": "11th Oct",
-          "endDate": "16th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 108,
-          "startDate": "12th Oct",
-          "endDate": "17th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "experienceTag": "Stargazing",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 109,
-          "startDate": "13th Oct",
-          "endDate": "18th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "experienceTag": "Stargazing",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 110,
-          "startDate": "16th Oct",
-          "endDate": "21st Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "WL",
-          "waitlistCount": 4,
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 111,
-          "startDate": "17th Oct",
-          "endDate": "22nd Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "WL",
-          "waitlistCount": 5,
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 112,
-          "startDate": "18th Oct",
-          "endDate": "23rd Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 113,
-          "startDate": "19th Oct",
-          "endDate": "24th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "FULL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 114,
-          "startDate": "20th Oct",
-          "endDate": "25th Oct",
-          "slotsLeft": 0,
-          "price": 9999,
-          "status": "WL",
-          "waitlistCount": 5,
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 115,
-          "startDate": "23rd Oct",
-          "endDate": "28th Oct",
-          "slotsLeft": 12,
-          "price": 9999,
-          "status": "AVBL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 116,
-          "startDate": "24th Oct",
-          "endDate": "29th Oct",
-          "slotsLeft": 10,
-          "price": 9999,
-          "status": "AVBL",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 117,
-          "startDate": "25th Oct",
-          "endDate": "30th Oct",
-          "slotsLeft": 1,
-          "price": 9999,
-          "status": "LAST",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 118,
-          "startDate": "26th Oct",
-          "endDate": "31st Oct",
-          "slotsLeft": 5,
-          "price": 9999,
-          "status": "LAST",
-          "monthGroup": "October 2026",
-          "seasonTheme": "Vibrant Colours"
-        },
-        {
-          "id": 119,
-          "startDate": "2nd Nov",
-          "endDate": "7th Nov",
-          "slotsLeft": 14,
-          "price": 9999,
-          "status": "AVBL",
-          "monthGroup": "November 2026",
-          "seasonTheme": "Clear Skies & First Snow"
-        },
-        {
-          "id": 120,
-          "startDate": "7th Nov",
-          "endDate": "12th Nov",
-          "slotsLeft": 8,
-          "price": 9999,
-          "status": "AVBL",
-          "experienceTag": "Stargazing",
-          "monthGroup": "November 2026",
-          "seasonTheme": "Clear Skies & First Snow"
-        },
-        {
-          "id": 121,
-          "startDate": "14th Nov",
-          "endDate": "19th Nov",
-          "slotsLeft": 2,
-          "price": 9999,
-          "status": "LAST",
-          "monthGroup": "November 2026",
-          "seasonTheme": "Clear Skies & First Snow"
-        }
-      ],
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Rishikesh to Joshimath drive (255 km)",
-          "description": "Drive along the holy confluence rivers Alaknanda and Mandakini.",
-          "altitude": "6,150 ft"
-        },
-        {
-          "day": 2,
-          "title": "Joshimath to Dhak drive, trek to Gulling camp",
-          "description": "Gradual climb through terraced villages into alpine forests.",
-          "altitude": "9,600 ft"
-        },
-        {
-          "day": 3,
-          "title": "Gulling to Tali Top campsite",
-          "description": "Climb through dense forests into open alpine meadows.",
-          "altitude": "11,000 ft"
-        },
-        {
-          "day": 4,
-          "title": "Tali to Kuari Pass summit (12,516 ft) and back to Khullara",
-          "description": "The grand summit day with 360 panorama of Garhwal giants.",
-          "altitude": "12,516 ft"
-        },
-        {
-          "day": 5,
-          "title": "Khullara to Dhak trek, drive to Joshimath",
-          "description": "Descent through scenic oak trails.",
-          "altitude": "6,150 ft"
-        },
-        {
-          "day": 6,
-          "title": "Joshimath to Rishikesh departure",
-          "description": "Early morning drive back to Rishikesh.",
-          "altitude": "1,120 ft"
-        }
-      ],
-      "inclusions": [
-        "All meals on trek",
-        "Tents and sleeping bags",
-        "NIM-certified trek leader",
-        "Forest permits and medical oxygen kit"
-      ],
-      "exclusions": [
-        "Transit to/from Rishikesh",
-        "Personal trekking gear",
-        "Offloading backpacks"
-      ],
-      "createdAt": "2026-10-02T21:03:49.515Z",
-      "updatedAt": "2026-10-02T21:03:49.516Z"
-    },
     {
       "id": 5,
       "slug": "maharashtra-tour-package",
@@ -817,6 +108,7 @@
       "categories": [
         "Domestic",
         "Weekend",
+        "Fixed Departure",
         "Western Ghats"
       ],
       "location": "Mumbai, Lonavala, Mahabaleshwar, Panchgani",
@@ -1081,8 +373,9 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
-        "Heritage",
-        "Weekend"
+        "Weekend",
+        "Fixed Departure",
+        "Heritage"
       ],
       "location": "Jaipur, Rajasthan",
       "region": "Royal Rajasthan",
@@ -1295,6 +588,7 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
+        "Fixed Departure",
         "Desert",
         "Heritage"
       ],
@@ -1308,7 +602,7 @@
       "badge": "Desert Safari Special",
       "rating": 4.9,
       "reviewCount": 260,
-      "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1920&q=85",
+      "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80",
       "gallery": [
         "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80"
@@ -1529,6 +823,7 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
+        "Fixed Departure",
         "Beach",
         "Holiday Package"
       ],
@@ -1743,6 +1038,7 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
+        "Fixed Departure",
         "Northeast",
         "Nature"
       ],
@@ -1984,12 +1280,12 @@
       "slug": "leh-ladakh-tour-package",
       "name": "Leh Ladakh High Passes Expedition",
       "file": "doc_9_1v7caUYi87dHaTibZRwl1SVzKqaairXdpOu8xB0Nf_yk.txt",
-      "category": "Himalayas",
+      "category": "Domestic",
       "categories": [
-        "Himalayas",
         "Domestic",
-        "Adventure",
-        "High Passes"
+        "Fixed Departure",
+        "Himalayas",
+        "Adventure"
       ],
       "location": "Leh, Nubra Valley, Pangong Tso, Ladakh",
       "region": "Trans-Himalayas",
@@ -2282,6 +1578,7 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
+        "Fixed Departure",
         "Himalayas",
         "Northeast"
       ],
@@ -2548,7 +1845,7 @@
       "updatedAt": "2026-09-09T17:08:45.014Z"
     },
     {
-      "id": 12,
+      "id": 1201,
       "slug": "nainital-tour-package-3-nights-4-days",
       "name": "Nainital Lake District Tour",
       "file": "doc_12_1sa5ndInl08UDRCUExAgy8kPffNmKAdef4ydmEiKBD6E.txt",
@@ -2556,6 +1853,7 @@
       "categories": [
         "Weekend",
         "Domestic",
+        "Fixed Departure",
         "Hill Station"
       ],
       "location": "Nainital, Bhimtal, Pangot, Uttarakhand",
@@ -2762,6 +2060,7 @@
       "categories": [
         "Himalayas",
         "Trek",
+        "Fixed Departure",
         "High Pass"
       ],
       "location": "Manali to Lahaul, Himachal Pradesh",
@@ -3052,6 +2351,7 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
+        "Fixed Departure",
         "Wildlife",
         "Northeast"
       ],
@@ -3266,6 +2566,7 @@
       "categories": [
         "Weekend",
         "Domestic",
+        "Fixed Departure",
         "Hill Station"
       ],
       "location": "Nainital, Bhimtal, Pangot, Uttarakhand",
@@ -3495,6 +2796,7 @@
       "badge": "Featured",
       "categories": [
         "Domestic",
+        "Fixed Departure",
         "Holiday Package",
         "Kashmir"
       ],
@@ -3539,8 +2841,8 @@
       "categories": [
         "Weekend",
         "Trek",
-        "Hot Springs",
-        "Himachal"
+        "Fixed Departure",
+        "Hot Springs"
       ],
       "location": "Parvati Valley, Kasol, Himachal Pradesh",
       "region": "Parvati Valley",
@@ -3702,6 +3004,7 @@
         "Himalayas",
         "Trek",
         "Weekend",
+        "Fixed Departure",
         "Summit"
       ],
       "location": "Rudraprayag, Uttarakhand",
@@ -3877,9 +3180,9 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
+        "Fixed Departure",
         "Holiday Package",
-        "South India",
-        "Honeymoon"
+        "South India"
       ],
       "location": "Munnar, Thekkady, Alleppey & Kochi, Kerala",
       "region": "God's Own Country",
@@ -4072,36 +3375,1086 @@
       "updatedAt": "2026-09-21T17:08:45.014Z"
     },
     {
-      "id": 99201,
       "slug": "rajasthan-tour-package-6-days",
-      "name": "Rajasthan Tour Package – 6 Days / 5 Nights",
-      "category": "Rajasthan",
-      "categories": [
-        "Rajasthan",
-        "Domestic",
-        "Road Trip",
-        "Heritage",
-        "Cultural"
-      ],
-      "location": "Jaipur, Jodhpur & Udaipur, Rajasthan",
-      "region": "Rajasthan",
-      "duration": "6 Days / 5 Nights",
       "altitude": "Ground Elevation",
+      "badge": "Royal Circuit",
+      "categories": [
+        "Domestic",
+        "Fixed Departure",
+        "Heritage",
+        "Road Trip"
+      ],
+      "category": "Domestic",
+      "createdAt": "2026-10-06T13:30:35.672Z",
+      "defaultHighlights": [
+        "Private Swift Dzire reserved exclusively for 2 adults for all 6 days.",
+        "Explore Amber Fort, Jaigarh, Nahargarh, City Palace, Mehrangarh, and Lake Pichola.",
+        "Includes 5 nights in verified 3-star hotels with breakfast and optional dinner.",
+        "Scenic highway road trip with stop at the 15th-century Ranakpur Jain Temple."
+      ],
       "difficulty": "Easy",
-      "price": 42999,
-      "originalPrice": 49999,
-      "badge": "Couple Special",
-      "rating": 4.9,
-      "reviewCount": 184,
-      "image": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1920&q=85",
+      "duration": "6 Days / 5 Nights",
+      "exclusions": [
+        "Airfare or train tickets",
+        "Monument, fort, museum entry tickets",
+        "Lake Pichola boat ride",
+        "Lunches and personal shopping"
+      ],
       "gallery": [
         "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=1200&q=80"
       ],
+      "highlights": [
+        "Amber Fort & Nahargarh sunset views in Jaipur",
+        "Mehrangarh Fort & blue-painted old city lanes in Jodhpur",
+        "Ranakpur marble temple with 1,444 uniquely carved pillars",
+        "Lake Pichola lakeside ghats & Udaipur City Palace"
+      ],
+      "id": 99201,
+      "image": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1920&q=85",
+      "inclusions": [
+        "5 nights accommodation in selected 3-star hotels for 2 adults",
+        "Private AC Swift Dzire for the full route with Jaipur pickup and Udaipur drop",
+        "Daily breakfast (plus dinner if selecting the ₹49,999 plan)",
+        "Driver allowance, fuel, road taxes, tolls, and standard parking"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Jaipur Arrival & Pink City Sightseeing",
+          "description": "Meet driver at Jaipur Airport/Railway Station, check-in, visit City Palace, Jantar Mantar, Hawa Mahal and Old City Bazaars.",
+          "stay": "Jaipur 3-Star Hotel",
+          "meal": "Breakfast / +Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Jaipur Forts & City Sightseeing",
+          "description": "Explore Amber Fort, Jaigarh Fort, Jal Mahal photo stop, Nahargarh Fort sunset, and Birla Mandir.",
+          "stay": "Jaipur 3-Star Hotel",
+          "meal": "Breakfast / +Dinner"
+        },
+        {
+          "day": 3,
+          "title": "Jaipur to Jodhpur (via Ajmer/Pushkar optional)",
+          "description": "Scenic 6-hour highway drive to the Blue City Jodhpur. Check-in and evening walk at Clock Tower & Sardar Market.",
+          "stay": "Jodhpur 3-Star Hotel",
+          "meal": "Breakfast / +Dinner"
+        },
+        {
+          "day": 4,
+          "title": "Jodhpur Sightseeing & Mehrangarh",
+          "description": "Visit majestic Mehrangarh Fort, Jaswant Thada royal marble cenotaph, and Umaid Bhawan Palace museum.",
+          "stay": "Jodhpur 3-Star Hotel",
+          "meal": "Breakfast / +Dinner"
+        },
+        {
+          "day": 5,
+          "title": "Jodhpur to Udaipur via Ranakpur",
+          "description": "Drive to Udaipur stopping at Ranakpur Jain Temple, evening stroll at Lake Pichola and Gangaur Ghat.",
+          "stay": "Udaipur 3-Star Hotel",
+          "meal": "Breakfast / +Dinner"
+        },
+        {
+          "day": 6,
+          "title": "Udaipur Sightseeing & Departure Drop",
+          "description": "Visit Udaipur City Palace, Jagdish Temple, Saheliyon Ki Bari, and transfer to Udaipur Airport/Railway Station.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ],
+      "location": "Jaipur, Jodhpur & Udaipur, Rajasthan",
+      "name": "Rajasthan Tour Package – 6 Days / 5 Nights",
+      "originalPrice": 49999,
+      "price": 42999,
+      "rating": 4.9,
+      "region": "Rajasthan",
+      "reviewCount": 184,
+      "status": "Published",
       "tagline": "Private 6-day royal journey through Jaipur, Jodhpur, and Udaipur in a dedicated Swift Dzire with verified 3-star stays.",
-      "status": "Published"
+      "updatedAt": "2026-10-06T13:30:35.672Z"
+    },
+    {
+      "slug": "bali-tour-package",
+      "altitude": "Sea Level",
+      "badge": "Visa On Arrival",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "15 Oct 2026",
+          "endDate": "21 Oct 2026",
+          "slotsLeft": 6,
+          "price": 42999,
+          "status": "AVBL"
+        },
+        {
+          "id": 2,
+          "startDate": "05 Nov 2026",
+          "endDate": "11 Nov 2026",
+          "slotsLeft": 8,
+          "price": 42999,
+          "status": "AVBL"
+        },
+        {
+          "id": 3,
+          "startDate": "20 Dec 2026",
+          "endDate": "26 Dec 2026",
+          "slotsLeft": 4,
+          "price": 47999,
+          "status": "LAST"
+        }
+      ],
+      "categories": [
+        "International",
+        "Fixed Departure",
+        "Beach",
+        "Holiday Package"
+      ],
+      "category": "International",
+      "defaultHighlights": [
+        "Speedboat day trip to Nusa Penida Island",
+        "Uluwatu cliff sunset with Kecak dance",
+        "Ubud artisan villages & swing experience"
+      ],
+      "difficulty": "Easy",
+      "duration": "7 Days / 6 Nights",
+      "exclusions": [
+        "International flights to/from Denpasar",
+        "Personal expenses & tipping",
+        "Visa on Arrival fee (if applicable)"
+      ],
+      "gallery": [
+        "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "highlights": [
+        "Ubud Monkey Forest & UNESCO Tegalalang Rice Terraces",
+        "Speedboat to Nusa Penida Kelingking T-Rex Beach & Angel's Billabong",
+        "Uluwatu Sunset Temple & Kecak Fire Dance",
+        "Seminyak beachfront resort stay with daily breakfast"
+      ],
+      "id": 5001,
+      "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
+      "imageAlt": "Bali Island Tour Package - Ubud Terraces and Nusa Penida",
+      "inclusions": [
+        "6 nights stay in verified 4-star boutique resorts",
+        "Daily breakfast and select dinners",
+        "Private AC transport with English-speaking driver",
+        "Speedboat return tickets to Nusa Penida",
+        "All entrance tickets & permits"
+      ],
+      "location": "Ubud, Seminyak, Nusa Penida, Bali",
+      "name": "Bali Island Tour Package – 7 Days / 6 Nights",
+      "originalPrice": 49999,
+      "price": 42999,
+      "rating": 4.9,
+      "region": "Indonesia",
+      "reviewCount": 310,
+      "status": "Published",
+      "tagline": "Tropical paradise: Ubud rice terraces, Uluwatu sunsets, Nusa Penida cliffs & beach clubs.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrival in Bali & Ubud Transfer",
+          "description": "Arrive at Ngurah Rai International Airport. Transfer to Ubud boutique resort. Evening leisure at Ubud traditional art market.",
+          "stay": "Ubud 4-Star Resort",
+          "meal": "Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Tegalalang Rice Terraces & Bali Swing",
+          "description": "Visit Sacred Monkey Forest and walk along UNESCO Tegalalang rice terraces. Enjoy iconic jungle swing and coffee plantation.",
+          "stay": "Ubud 4-Star Resort",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 3,
+          "title": "Kintamani Volcano & Tirta Empul Holy Springs",
+          "description": "Scenic drive to Mount Batur volcano viewpoint. Visit Tirta Empul holy spring temple and Tegenungan waterfall.",
+          "stay": "Ubud 4-Star Resort",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 4,
+          "title": "Nusa Penida Island Speedboat Day Tour",
+          "description": "Speedboat to Nusa Penida. Visit Kelingking T-Rex Beach cliff, Angel's Billabong, and Broken Beach.",
+          "stay": "Seminyak Beach Resort",
+          "meal": "Breakfast & Lunch"
+        },
+        {
+          "day": 5,
+          "title": "Tanjung Benoa Watersports & Uluwatu Sunset",
+          "description": "Banana boat and watersports at Tanjung Benoa. Sunset visit to 70m cliffside Uluwatu temple with Kecak fire dance.",
+          "stay": "Seminyak Beach Resort",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 6,
+          "title": "Tanah Lot Temple & Seminyak Leisure",
+          "description": "Visit iconic offshore rock temple Tanah Lot. Afternoon shopping in Seminyak boutiques and sunset beach club.",
+          "stay": "Seminyak Beach Resort",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 7,
+          "title": "Souvenir Shopping & Airport Departure",
+          "description": "Breakfast at resort, last-minute shopping at Krisna Oleh-Oleh, and transfer to Denpasar Airport.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ]
+    },
+    {
+      "slug": "thailand-tour-package",
+      "altitude": "Sea Level",
+      "badge": "Visa Free / Easy VOA",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "18 Oct 2026",
+          "endDate": "23 Oct 2026",
+          "slotsLeft": 8,
+          "price": 34999,
+          "status": "AVBL"
+        },
+        {
+          "id": 2,
+          "startDate": "10 Nov 2026",
+          "endDate": "15 Nov 2026",
+          "slotsLeft": 10,
+          "price": 34999,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "International",
+        "Fixed Departure",
+        "Beach",
+        "Holiday Package"
+      ],
+      "category": "International",
+      "defaultHighlights": [
+        "Phi Phi Island speedboat tour",
+        "Bangkok temple city tour",
+        "Chao Phraya sunset dinner cruise"
+      ],
+      "difficulty": "Easy",
+      "duration": "6 Days / 5 Nights",
+      "exclusions": [
+        "International airfare",
+        "National park entry fees (approx 400 THB)",
+        "Personal shopping & insurance"
+      ],
+      "gallery": [
+        "https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "highlights": [
+        "Phi Phi Island speedboat day cruise with Maya Bay snorkeling",
+        "Bangkok Grand Palace & Wat Arun Temple of Dawn",
+        "Chao Phraya luxury dinner river cruise",
+        "Phuket Patong Beach resort stay"
+      ],
+      "id": 5002,
+      "image": "https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?auto=format&fit=crop&w=1200&q=80",
+      "imageAlt": "Thailand Tour Package - Phuket beaches and Bangkok temples",
+      "inclusions": [
+        "5 nights 4-star accommodation in Phuket & Bangkok",
+        "Daily breakfast & island tour buffet lunch",
+        "Phi Phi Island speedboat tour with snorkeling gear",
+        "All airport and intercity transfers"
+      ],
+      "location": "Bangkok & Phuket, Thailand",
+      "name": "Thailand Holiday Tour Package – 6 Days / 5 Nights",
+      "originalPrice": 41999,
+      "price": 34999,
+      "rating": 4.8,
+      "region": "Southeast Asia",
+      "reviewCount": 245,
+      "status": "Published",
+      "tagline": "Vibrant Bangkok street life, ornate temples, and crystal-clear waters of Phuket & Phi Phi Islands.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Bangkok Arrival & Chao Phraya Dinner Cruise",
+          "description": "Arrival at Suvarnabhumi Airport Bangkok. Hotel transfer and check-in. Evening luxury dinner cruise along Chao Phraya river.",
+          "stay": "Bangkok 4-Star Hotel",
+          "meal": "Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Bangkok City & Temple Tour",
+          "description": "Visit the Grand Palace, Wat Phra Kaew (Emerald Buddha), and Wat Arun. Evening explore vibrant street food at Chinatown.",
+          "stay": "Bangkok 4-Star Hotel",
+          "meal": "Breakfast & Lunch"
+        },
+        {
+          "day": 3,
+          "title": "Bangkok to Phuket Flight & Patong Beach",
+          "description": "Short domestic flight to Phuket. Check in to beachfront resort in Patong. Evening sunset walk at Kata or Karon beach.",
+          "stay": "Phuket Beach Resort",
+          "meal": "Breakfast"
+        },
+        {
+          "day": 4,
+          "title": "Phi Phi Island Speedboat Day Cruise",
+          "description": "Full-day speedboat excursion to Phi Phi Don and Phi Phi Leh. Snorkeling at Maya Bay, Pileh Lagoon, and Viking Cave.",
+          "stay": "Phuket Beach Resort",
+          "meal": "Breakfast & Buffet Lunch"
+        },
+        {
+          "day": 5,
+          "title": "Phuket Big Buddha & Promthep Cape Sunset",
+          "description": "Visit the revered 45-meter Big Buddha and Wat Chalong. Watch golden sunset from Promthep Cape viewpoint.",
+          "stay": "Phuket Beach Resort",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 6,
+          "title": "Phuket Departure",
+          "description": "Breakfast at resort and transfer to Phuket International Airport for flight back home.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ]
+    },
+    {
+      "slug": "dubai-tour-package",
+      "altitude": "Sea Level",
+      "badge": "Bestseller",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "22 Oct 2026",
+          "endDate": "26 Oct 2026",
+          "slotsLeft": 5,
+          "price": 38999,
+          "status": "AVBL"
+        },
+        {
+          "id": 2,
+          "startDate": "14 Nov 2026",
+          "endDate": "18 Nov 2026",
+          "slotsLeft": 8,
+          "price": 38999,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "International",
+        "Fixed Departure",
+        "Luxury",
+        "Holiday Package"
+      ],
+      "category": "International",
+      "defaultHighlights": [
+        "Burj Khalifa top observatory entry",
+        "Desert 4x4 safari with BBQ dinner",
+        "Dubai Marina Dhow Cruise"
+      ],
+      "difficulty": "Easy",
+      "duration": "5 Days / 4 Nights",
+      "exclusions": [
+        "UAE Tourist Visa fee (assistance provided)",
+        "Tourism Dirham hotel tax",
+        "Personal expenses & flights"
+      ],
+      "gallery": [
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "highlights": [
+        "Burj Khalifa 124th & 125th Floor Observatory tickets",
+        "Thrilling 4x4 Desert Safari with dune bashing, BBQ & Tanoura dance",
+        "Dubai Marina luxury Dhow Cruise with international buffet",
+        "Dubai city tour: Palm Jumeirah, Burj Al Arab photo stop & Dubai Mall"
+      ],
+      "id": 5003,
+      "image": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80",
+      "imageAlt": "Dubai Tour Package - Burj Khalifa and Desert Safari",
+      "inclusions": [
+        "4 nights stay in verified 4-star Dubai hotel",
+        "Daily breakfast and 2 lavish dinner experiences",
+        "Private airport transfers and group tour transfers",
+        "All activity tickets as mentioned"
+      ],
+      "location": "Dubai City & Desert, UAE",
+      "name": "Dubai Tour Package & Desert Safari – 5 Days / 4 Nights",
+      "originalPrice": 45999,
+      "price": 38999,
+      "rating": 4.9,
+      "region": "Middle East",
+      "reviewCount": 380,
+      "status": "Published",
+      "tagline": "Futuristic skyscrapers, Arabian desert dune bashing, luxury marina cruise & Burj Khalifa top views.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Dubai Arrival & Marina Dhow Dinner Cruise",
+          "description": "Arrive at Dubai International Airport. Transfer to luxury 4-star hotel. Evening romantic Dhow cruise with international buffet at Dubai Marina.",
+          "stay": "Dubai 4-Star Hotel",
+          "meal": "Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Dubai City Tour & Burj Khalifa Top Observatory",
+          "description": "Half-day city tour covering Dubai Frame, Palm Jumeirah photo stop, and Dubai Mall. Ascend to 124th/125th floor of Burj Khalifa for panoramic vistas.",
+          "stay": "Dubai 4-Star Hotel",
+          "meal": "Breakfast"
+        },
+        {
+          "day": 3,
+          "title": "Afternoon 4x4 Desert Safari & BBQ Dinner",
+          "description": "Thrilling dune bashing in Arabian desert, camel rides, sandboarding, and traditional BBQ dinner with Tanoura & fire dance.",
+          "stay": "Dubai 4-Star Hotel",
+          "meal": "Breakfast & BBQ Dinner"
+        },
+        {
+          "day": 4,
+          "title": "Miracle Garden & Global Village Excursion",
+          "description": "Visit Dubai Miracle Garden featuring 150 million blooming flowers, followed by multicultural pavilions and shopping at Global Village.",
+          "stay": "Dubai 4-Star Hotel",
+          "meal": "Breakfast"
+        },
+        {
+          "day": 5,
+          "title": "Gold Souk Shopping & Airport Departure",
+          "description": "Explore the bustling Gold & Spice Souks in Deira. Transfer to Dubai International Airport for your return flight.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ]
+    },
+    {
+      "slug": "vietnam-tour-package",
+      "altitude": "Sea Level",
+      "badge": "Trending",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "25 Oct 2026",
+          "endDate": "30 Oct 2026",
+          "slotsLeft": 6,
+          "price": 36999,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "International",
+        "Fixed Departure",
+        "Cultural",
+        "Holiday Package"
+      ],
+      "category": "International",
+      "defaultHighlights": [
+        "Overnight Ha Long Bay cruise",
+        "Hanoi Old Quarter historic tour",
+        "Kayaking in limestone karst bays"
+      ],
+      "difficulty": "Easy",
+      "duration": "6 Days / 5 Nights",
+      "exclusions": [
+        "Vietnam eVisa fee",
+        "International airfare",
+        "Personal expenses and drinks"
+      ],
+      "gallery": [
+        "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "highlights": [
+        "Overnight luxury cruise in UNESCO World Heritage Ha Long Bay",
+        "Hanoi Old Quarter walking & street food tour",
+        "Kayaking through hidden limestone lagoons in Sung Sot Cave",
+        "Ho Chi Minh Mausoleum and One Pillar Pagoda"
+      ],
+      "id": 5004,
+      "image": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80",
+      "imageAlt": "Vietnam Tour Package - Ha Long Bay limestone karsts",
+      "inclusions": [
+        "4 nights hotel in Hanoi + 1 night luxury cruise in Ha Long Bay",
+        "All meals onboard cruise and daily breakfast at hotel",
+        "English-speaking licensed Vietnamese tour guide",
+        "All domestic ground transfers"
+      ],
+      "location": "Hanoi & Ha Long Bay, Vietnam",
+      "name": "Vietnam Holiday Tour Package – 6 Days / 5 Nights",
+      "originalPrice": 43999,
+      "price": 36999,
+      "rating": 4.8,
+      "region": "Southeast Asia",
+      "reviewCount": 195,
+      "status": "Published",
+      "tagline": "Mystical Ha Long Bay limestone karsts, lantern-lit alleys, French architecture & authentic street food.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Hanoi Arrival & Old Quarter Street Food",
+          "description": "Arrive at Noi Bai Airport in Hanoi. Transfer to boutique hotel. Evening street food and cyclo tour in Hanoi 36 Old Streets.",
+          "stay": "Hanoi Boutique Hotel",
+          "meal": "Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Hanoi Historic Highlights Tour",
+          "description": "Visit Ho Chi Minh Mausoleum, One Pillar Pagoda, Temple of Literature, and tranquil Hoan Kiem Lake.",
+          "stay": "Hanoi Boutique Hotel",
+          "meal": "Breakfast & Lunch"
+        },
+        {
+          "day": 3,
+          "title": "Hanoi to Ha Long Bay Overnight Cruise",
+          "description": "Drive to Tuan Chau Harbour and board luxury cruise. Sail through emerald waters and thousands of towering limestone karsts.",
+          "stay": "Ha Long Bay Cruise",
+          "meal": "Breakfast, Lunch & Dinner"
+        },
+        {
+          "day": 4,
+          "title": "Ha Long Bay Kayaking & Cruise to Hanoi",
+          "description": "Morning Tai Chi on sundeck and kayak through Sung Sot (Surprise) Cave. Disembark and drive back to Hanoi.",
+          "stay": "Hanoi Boutique Hotel",
+          "meal": "Brunch & Dinner"
+        },
+        {
+          "day": 5,
+          "title": "Ninh Binh Day Excursion (Trang An & Tam Coc)",
+          "description": "Day trip to Trang An UNESCO landscape complex. Bamboo boat ride through river caves and hike to Hang Mua viewpoint.",
+          "stay": "Hanoi Boutique Hotel",
+          "meal": "Breakfast & Lunch"
+        },
+        {
+          "day": 6,
+          "title": "Hanoi Departure Drop",
+          "description": "Breakfast at hotel and transfer to Noi Bai Airport for departure.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ]
+    },
+    {
+      "slug": "singapore-tour-package",
+      "altitude": "Sea Level",
+      "badge": "Family Special",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "02 Nov 2026",
+          "endDate": "06 Nov 2026",
+          "slotsLeft": 6,
+          "price": 49999,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "International",
+        "Fixed Departure",
+        "City Tour",
+        "Holiday Package"
+      ],
+      "category": "International",
+      "defaultHighlights": [
+        "Universal Studios Singapore pass",
+        "Gardens by the Bay Cloud Forest",
+        "Sentosa Island cable car"
+      ],
+      "difficulty": "Easy",
+      "duration": "5 Days / 4 Nights",
+      "exclusions": [
+        "Singapore eVisa",
+        "International flights",
+        "Lunches and dinners not specified"
+      ],
+      "gallery": [
+        "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "highlights": [
+        "Full day Universal Studios Singapore theme park pass",
+        "Gardens by the Bay: Flower Dome & Cloud Forest tickets",
+        "Sentosa Island cable car ride & Wings of Time night show",
+        "Singapore River cruise and Marina Bay Merlion park tour"
+      ],
+      "id": 5005,
+      "image": "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1200&q=80",
+      "imageAlt": "Singapore Tour Package - Marina Bay Sands and Gardens by the Bay",
+      "inclusions": [
+        "4 nights stay in central 4-star Singapore hotel",
+        "Daily international breakfast buffet",
+        "Universal Studios entry tickets",
+        "Gardens by the Bay two-dome admission"
+      ],
+      "location": "Marina Bay & Sentosa, Singapore",
+      "name": "Singapore Tour Package & City Breaks – 5 Days / 4 Nights",
+      "originalPrice": 58999,
+      "price": 49999,
+      "rating": 4.9,
+      "region": "Southeast Asia",
+      "reviewCount": 290,
+      "status": "Published",
+      "tagline": "Futuristic garden city: Gardens by the Bay Supertrees, Universal Studios & Sentosa cable car.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Singapore Arrival & Night Safari",
+          "description": "Arrive at Changi Airport. Transfer to city hotel. Evening tram ride and trail walk at the world-famous Singapore Night Safari.",
+          "stay": "Singapore 4-Star Hotel",
+          "meal": "Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Gardens by the Bay & Marina Bay Sands",
+          "description": "Visit Gardens by the Bay: Flower Dome and Cloud Forest. Evening Spectra light and water fountain show at Marina Bay Sands.",
+          "stay": "Singapore 4-Star Hotel",
+          "meal": "Breakfast"
+        },
+        {
+          "day": 3,
+          "title": "Sentosa Island & Universal Studios Singapore",
+          "description": "Full day adrenaline and movie magic at Universal Studios Singapore. Sunset cable car ride and Wings of Time night show.",
+          "stay": "Singapore 4-Star Hotel",
+          "meal": "Breakfast"
+        },
+        {
+          "day": 4,
+          "title": "Singapore City Tour & Orchard Road Shopping",
+          "description": "Explore Merlion Park, Chinatown, Little India, and luxury shopping along Orchard Road.",
+          "stay": "Singapore 4-Star Hotel",
+          "meal": "Breakfast"
+        },
+        {
+          "day": 5,
+          "title": "Jewel Changi Rain Vortex & Departure",
+          "description": "Check out and visit the world's tallest indoor waterfall Rain Vortex at Jewel Changi before your departure flight.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ]
+    },
+    {
+      "slug": "maldives-tour-package",
+      "altitude": "Sea Level",
+      "badge": "Honeymoon Special",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "12 Nov 2026",
+          "endDate": "15 Nov 2026",
+          "slotsLeft": 4,
+          "price": 64999,
+          "status": "LAST"
+        }
+      ],
+      "categories": [
+        "International",
+        "Fixed Departure",
+        "Luxury",
+        "Honeymoon"
+      ],
+      "category": "International",
+      "defaultHighlights": [
+        "Luxury overwater villa accommodation",
+        "Speedboat transfer included",
+        "All-inclusive dining"
+      ],
+      "difficulty": "Easy",
+      "duration": "4 Days / 3 Nights",
+      "exclusions": [
+        "International flights to Male (MLE)",
+        "Motorized water sports (jet ski, parasailing)",
+        "Spa treatments and diving excursions"
+      ],
+      "gallery": [
+        "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "highlights": [
+        "Private overwater villa with direct crystal lagoon access",
+        "Speedboat return transfers from Velana Airport (Male)",
+        "All-inclusive meal plan: Unlimited meals & beverages",
+        "Complimentary snorkeling gear & non-motorized water sports"
+      ],
+      "id": 5006,
+      "image": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1200&q=80",
+      "imageAlt": "Maldives Overwater Villa Holiday - Private lagoon villas",
+      "inclusions": [
+        "3 nights in an Overwater Lagoon Villa",
+        "All-inclusive breakfast, lunch, dinner & drinks",
+        "Speedboat airport transfers",
+        "Green tax and all resort service charges"
+      ],
+      "location": "Male Atolls, Maldives",
+      "name": "Maldives Overwater Villa Holiday – 4 Days / 3 Nights",
+      "originalPrice": 79999,
+      "price": 64999,
+      "rating": 5,
+      "region": "Indian Ocean",
+      "reviewCount": 160,
+      "status": "Published",
+      "tagline": "Unrivaled luxury: Turquoise lagoons, overwater villas, private reefs and all-inclusive island pampering.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Male Arrival & Speedboat Transfer to Overwater Villa",
+          "description": "Arrive at Velana International Airport. Speedboat transfer to private luxury island resort. Settle into your Overwater Lagoon Villa.",
+          "stay": "Overwater Lagoon Villa",
+          "meal": "Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Private Lagoon Snorkeling & Coral Reef Exploration",
+          "description": "Step down directly into turquoise waters from your private villa deck. Complimentary snorkeling gear to explore colorful marine life.",
+          "stay": "Overwater Lagoon Villa",
+          "meal": "Breakfast, Lunch & Dinner"
+        },
+        {
+          "day": 3,
+          "title": "Sunset Dolphin Cruise & Island Spa Leisure",
+          "description": "Indulge in resort wellness and non-motorized watersports (kayak, paddleboard). Evening sunset cruise watching wild spinner dolphins.",
+          "stay": "Overwater Lagoon Villa",
+          "meal": "Breakfast, Lunch & Dinner"
+        },
+        {
+          "day": 4,
+          "title": "Floating Breakfast & Speedboat Departure",
+          "description": "Enjoy a memorable floating breakfast in your private pool/lagoon. Speedboat transfer back to Male Airport for return flight.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ]
+    },
+    {
+      "slug": "nepal-tour-package",
+      "altitude": "8,000 Ft",
+      "badge": "Visa Free for Indians",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "20 Oct 2026",
+          "endDate": "25 Oct 2026",
+          "slotsLeft": 8,
+          "price": 26999,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "International",
+        "Fixed Departure",
+        "Trek",
+        "Himalayas"
+      ],
+      "category": "International",
+      "defaultHighlights": [
+        "Annapurna panorama from Sarangkot",
+        "Pashupatinath & Boudhanath darshan",
+        "Pokhara lake cruise"
+      ],
+      "difficulty": "Easy to Moderate",
+      "duration": "6 Days / 5 Nights",
+      "exclusions": [
+        "Flights to Kathmandu (KTM)",
+        "Personal travel insurance",
+        "Lunches and extra beverages"
+      ],
+      "gallery": [
+        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "highlights": [
+        "Kathmandu UNESCO Durbar Square, Pashupatinath & Boudhanath Stupa",
+        "Pokhara Phewa Lake boating & Davis Falls",
+        "Sarangkot sunrise view of Annapurna & Machapuchare (Fishtail)",
+        "Scenic highway drive across Himalayan river valleys"
+      ],
+      "id": 5007,
+      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+      "imageAlt": "Nepal Himalayan Tour - Annapurna and Pokhara",
+      "inclusions": [
+        "5 nights 3/4-star hotel stay in Kathmandu & Pokhara",
+        "Daily breakfast and traditional Nepalese farewell dinner",
+        "Private AC transport with experienced hill driver",
+        "All monument sightseeing permits"
+      ],
+      "location": "Kathmandu & Pokhara, Nepal",
+      "name": "Nepal Himalayan Tour – 6 Days / 5 Nights",
+      "originalPrice": 32999,
+      "price": 26999,
+      "rating": 4.8,
+      "region": "Himalayas",
+      "reviewCount": 220,
+      "status": "Published",
+      "tagline": "Sacred Pashupatinath temple, serene Phewa Lake boat ride, and Annapurna sunrise viewpoints in Sarangkot.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Kathmandu Arrival & Pashupatinath Temple Darshan",
+          "description": "Arrive at Tribhuvan International Airport in Kathmandu. Check in to hotel. Evening darshan and aarti at sacred Pashupatinath temple.",
+          "stay": "Kathmandu 3/4-Star Hotel",
+          "meal": "Dinner"
+        },
+        {
+          "day": 2,
+          "title": "Boudhanath Stupa & Kathmandu Durbar Square",
+          "description": "Visit the colossal Boudhanath Stupa, Swayambhunath (Monkey Temple), and ancient historic royal palaces in Kathmandu Durbar Square.",
+          "stay": "Kathmandu 3/4-Star Hotel",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 3,
+          "title": "Scenic Highway Drive to Pokhara Lake City",
+          "description": "Drive along the Trishuli River to the picturesque valley of Pokhara (6-7 hrs). Evening leisurely boat ride on Phewa Lake.",
+          "stay": "Pokhara Lakeside Hotel",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 4,
+          "title": "Sarangkot Sunrise & Pokhara Valley Sightseeing",
+          "description": "Early morning drive to Sarangkot for stunning sunrise over the Annapurna and Machapuchare range. Visit Davis Falls and Gupteshwor Cave.",
+          "stay": "Pokhara Lakeside Hotel",
+          "meal": "Breakfast & Dinner"
+        },
+        {
+          "day": 5,
+          "title": "Pokhara to Kathmandu Return Drive",
+          "description": "Scenic return drive to Kathmandu with stop at Manakamana cable car point. Evening souvenir shopping in Thamel market.",
+          "stay": "Kathmandu 3/4-Star Hotel",
+          "meal": "Breakfast & Traditional Nepali Dinner"
+        },
+        {
+          "day": 6,
+          "title": "Kathmandu Airport Departure",
+          "description": "Breakfast at hotel and transfer to Tribhuvan International Airport for your flight back home.",
+          "stay": "Departure",
+          "meal": "Breakfast"
+        }
+      ]
+    },
+    {
+      "slug": "kuari-pass-trek",
+      "altitude": "12,516 Ft",
+      "badge": "Lord Curzon Trail",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "10 Oct 2026",
+          "endDate": "15 Oct 2026",
+          "slotsLeft": 8,
+          "price": 9499,
+          "status": "AVBL"
+        },
+        {
+          "id": 2,
+          "startDate": "24 Oct 2026",
+          "endDate": "29 Oct 2026",
+          "slotsLeft": 6,
+          "price": 9499,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "Himalayas",
+        "Trek",
+        "Fixed Departure",
+        "Summit"
+      ],
+      "category": "Himalayas",
+      "defaultHighlights": [
+        "Mt Nanda Devi views",
+        "Gorson Bugyal ridge walk",
+        "Joshimath basecamp"
+      ],
+      "difficulty": "Moderate",
+      "duration": "6 Days / 5 Nights",
+      "exclusions": [
+        "Transport to basecamp",
+        "Backpack offloading",
+        "Personal gear"
+      ],
+      "highlights": [
+        "Unobstructed views of Mt. Nanda Devi",
+        "Gorson Bugyal high meadows",
+        "Ancient oak and rhododendron forest walk"
+      ],
+      "id": 9001,
+      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+      "inclusions": [
+        "All meals during trek",
+        "Tented accommodation",
+        "Certified trek leader",
+        "Forest permits"
+      ],
+      "location": "Joshimath, Uttarakhand",
+      "name": "Kuari Pass Trek",
+      "originalPrice": 12999,
+      "price": 9499,
+      "rating": 4.9,
+      "region": "Garhwal Himalayas",
+      "reviewCount": 180,
+      "status": "Published",
+      "tagline": "Spectacular close-up views of Mt. Nanda Devi, Dronagiri, and Kamet across alpine oak forests."
+    },
+    {
+      "slug": "dayara-bugyal-trek",
+      "altitude": "11,830 Ft",
+      "badge": "High Alpine Meadows",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "12 Oct 2026",
+          "endDate": "16 Oct 2026",
+          "slotsLeft": 10,
+          "price": 8499,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "Himalayas",
+        "Trek",
+        "Fixed Departure",
+        "Meadows"
+      ],
+      "category": "Himalayas",
+      "defaultHighlights": [
+        "Vast meadows",
+        "Mt Bandarpoonch view",
+        "Homestay at Raithal village"
+      ],
+      "difficulty": "Easy to Moderate",
+      "duration": "5 Days / 4 Nights",
+      "exclusions": [
+        "Transport to Raithal",
+        "Personal expenses"
+      ],
+      "highlights": [
+        "Endless rolling green bugyals",
+        "Panoramic Gangotri I, II, III views",
+        "Barnala lake campsite"
+      ],
+      "id": 9002,
+      "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+      "inclusions": [
+        "All meals",
+        "Tents & sleeping bags",
+        "Trek leader",
+        "Permits"
+      ],
+      "location": "Raithal, Uttarakhand",
+      "name": "Dayara Bugyal Trek",
+      "originalPrice": 10999,
+      "price": 8499,
+      "rating": 4.8,
+      "region": "Garhwal Himalayas",
+      "reviewCount": 210,
+      "status": "Published",
+      "tagline": "India's most pristine rolling velvet alpine meadow with panoramic views of the Gangotri massif."
+    },
+    {
+      "slug": "deoriatal-chandrashila",
+      "altitude": "13,123 Ft",
+      "badge": "Lake & Summit",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "15 Oct 2026",
+          "endDate": "18 Oct 2026",
+          "slotsLeft": 12,
+          "price": 6999,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "Himalayas",
+        "Trek",
+        "Weekend",
+        "Fixed Departure",
+        "Summit"
+      ],
+      "category": "Himalayas",
+      "defaultHighlights": [
+        "Deoria Tal lake camp",
+        "Tungnath temple",
+        "Chandrashila summit"
+      ],
+      "difficulty": "Easy to Moderate",
+      "duration": "4 Days / 3 Nights",
+      "exclusions": [
+        "Transport to Sari",
+        "Personal gear"
+      ],
+      "highlights": [
+        "Reflection of Chaukhamba in Deoria Tal",
+        "Highest Shiva temple Tungnath",
+        "Chandrashila 360° summit view"
+      ],
+      "id": 9003,
+      "image": "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=80",
+      "inclusions": [
+        "All meals during trek",
+        "Alpine camping",
+        "Trek guide",
+        "Permits"
+      ],
+      "location": "Sari / Chopta, Uttarakhand",
+      "name": "Deoriatal Chandrashila Trek",
+      "originalPrice": 8999,
+      "price": 6999,
+      "rating": 4.9,
+      "region": "Garhwal Himalayas",
+      "reviewCount": 340,
+      "status": "Published",
+      "tagline": "Sacred emerald lake reflecting Chaukhamba peaks, ancient Tungnath temple, and Chandrashila 360° summit."
+    },
+    {
+      "slug": "pench-tiger-trail",
+      "altitude": "1,100 Ft",
+      "badge": "Tiger Safari Special",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "20 Oct 2026",
+          "endDate": "22 Oct 2026",
+          "slotsLeft": 4,
+          "price": 13999,
+          "status": "AVBL"
+        }
+      ],
+      "categories": [
+        "Domestic",
+        "Weekend",
+        "Fixed Departure",
+        "Wildlife"
+      ],
+      "category": "Domestic",
+      "defaultHighlights": [
+        "Open 4x4 jeep safaris",
+        "Naturalist guided tours",
+        "Resort stay & meals"
+      ],
+      "difficulty": "Easy",
+      "duration": "3 Days / 2 Nights",
+      "exclusions": [
+        "Camera fees",
+        "Personal expenses"
+      ],
+      "highlights": [
+        "2 exclusive open-jeep tiger safaris",
+        "Verified wildlife jungle resort stay",
+        "Expert naturalist guides"
+      ],
+      "id": 9004,
+      "image": "https://images.unsplash.com/photo-1549366021-9f761d450615?auto=format&fit=crop&w=1200&q=80",
+      "inclusions": [
+        "2 jungle safaris with gypsy & permits",
+        "Resort stay with all meals",
+        "Nagpur transfers"
+      ],
+      "location": "Pench National Park, MP",
+      "name": "Pench Tiger Trail",
+      "originalPrice": 16999,
+      "price": 13999,
+      "rating": 4.9,
+      "region": "Central India",
+      "reviewCount": 95,
+      "status": "Published",
+      "tagline": "The original Jungle Book forest: thrilling open-top 4x4 safaris seeking Bengal tigers, leopards & wild dogs."
     }
   ],
   "trailReports": [
@@ -4762,6 +5115,136 @@
     }
   ],
   "destinations": [
+    {
+      "id": "dest-1791292102310-14004d",
+      "name": "Rajasthan",
+      "slug": "rajasthan-tour",
+      "category": "Domestic",
+      "tagline": "**Rajasthan Tour Package – 5 Nights / 6 Days**\n**Duration: **6 Days / 5 Nights\n**Route:** Jaipur → Jodhpur → Udaipur\n**Hotel Category: **3-Star\n**Vehicle:** Private Swift Dzire\n**Occupancy:** 2 Adults / 1 Couple\n**Meal Options:** Breakfast or Breakfast + Dinner\n**Starting Point: **Jaipur Airport / Railway Station\n**End Point:** Udaipur Airport / Railway Station",
+      "image": "/uploads/1791291102567-8f57e423-whatsapp-image-2026-10-06-at-6-21-09-pm.webp",
+      "badge": "desert",
+      "highlights": [],
+      "color": "from-emerald-900/80",
+      "icon": "🌴",
+      "status": "Published",
+      "duration": "6 days/5 nights",
+      "price": 49999,
+      "originalPrice": 79999,
+      "bestSeason": "September to May",
+      "pickupDrop": "Nearest Airport / Railway Station",
+      "suitableFor": "Families, Couples & Friends",
+      "overview": "",
+      "gallery": [],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Day 1: Jaipur Arrival & Pink City Sightseeing",
+          "description": "**Route:** Jaipur Airport / Railway Station → Hotel → Jaipur Sightseeing\n**Overnight:** Jaipur\n**Meals:** As per selected meal plan\nYour Rajasthan holiday starts in Jaipur.\nMeet the driver at **Jaipur Airport or Railway Station** and transfer to your hotel. After check-in and some time to freshen up, begin your first look at the Pink City.\nVisit** City Palace,** where courtyards, royal halls and museum displays offer a glimpse into Jaipur's former royal life.\nContinue to** Jantar Mantar**, the historic astronomical site known for its large stone instruments.\nLater, stop at **Hawa Mahal** for photographs before heading towards the old market area.\nSpend some time around **Johari Bazaar or Bapu Bazaar.** This is a good place to browse jewellery, textiles, handicrafts, footwear and local products.\nReturn to the hotel and relax.\n**Overnight stay:** Jaipur\n**Insider Tip:** Keep your first evening flexible. Jaipur's markets are more enjoyable when you are not rushing between sightseeing points.\n",
+          "distance": "35 km",
+          "duration": "Full Day Sightseeing",
+          "altitude": "",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Deluxe Hotel / Resort",
+          "activities": "Arrival, Hotel check-in"
+        },
+        {
+          "day": 2,
+          "title": "Day 2: Local Sightseeing & Circuit Exploration",
+          "description": "Visit renowned scenic viewpoints, historic monuments, local bazaars, and experience local cuisine.",
+          "distance": "50 km",
+          "duration": "Full Day Sightseeing",
+          "altitude": "",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Deluxe Hotel / Resort",
+          "activities": "Sightseeing, Photography"
+        },
+        {
+          "day": 3,
+          "title": "Day 3: Local Sightseeing & Circuit Exploration",
+          "description": "Visit renowned scenic viewpoints, historic monuments, local bazaars, and experience local cuisine.",
+          "distance": "50 km",
+          "duration": "Full Day Sightseeing",
+          "altitude": "",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Deluxe Hotel / Resort",
+          "activities": "Sightseeing, Photography"
+        },
+        {
+          "day": 4,
+          "title": "Day 4: Local Sightseeing & Circuit Exploration",
+          "description": "Visit renowned scenic viewpoints, historic monuments, local bazaars, and experience local cuisine.",
+          "distance": "50 km",
+          "duration": "Full Day Sightseeing",
+          "altitude": "",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Deluxe Hotel / Resort",
+          "activities": "Sightseeing, Photography"
+        },
+        {
+          "day": 5,
+          "title": "Day 5: Local Sightseeing & Circuit Exploration",
+          "description": "Visit renowned scenic viewpoints, historic monuments, local bazaars, and experience local cuisine.",
+          "distance": "50 km",
+          "duration": "Full Day Sightseeing",
+          "altitude": "",
+          "meal": "Breakfast & Dinner",
+          "stay": "3-Star Deluxe Hotel / Resort",
+          "activities": "Sightseeing, Photography"
+        },
+        {
+          "day": 6,
+          "title": "Day 6: Sightseeing & Final Departure",
+          "description": "Enjoy a hearty breakfast, pack bags, and transfer to airport/station for your return journey with fond memories.",
+          "distance": "35 km",
+          "duration": "2 hrs drive",
+          "altitude": "",
+          "meal": "Breakfast only",
+          "stay": "Departure (No stay)",
+          "activities": "Breakfast, Airport transfer"
+        }
+      ],
+      "inclusions": [
+        "Accommodation in verified 3-Star/4-Star hotels or boutique stays on twin/triple sharing",
+        "Daily nutritious Breakfast and Dinner at the hotel restaurant",
+        "Private dedicated AC vehicle (Sedan/SUV) for all airport transfers, intercity travel & sightseeing",
+        "Experienced commercial driver, fuel, state road permits, toll taxes, and all parking fees",
+        "Pick-up and drop-off from designated Airport or Railway Station",
+        "Driver allowance, night halts, and 24/7 on-tour KRADIND Tour Coordinator assistance"
+      ],
+      "exclusions": [
+        "Airfare or Train tickets to and from the starting destination",
+        "Daily Lunches, personal refreshments, and room service/laundry expenses",
+        "Entry tickets for monuments, museums, palaces, and wildlife national parks",
+        "Optional adventure sports (river rafting, paragliding, ropeways, boat rides, camel safaris)",
+        "Unforeseen costs due to roadblocks, weather disruptions, natural hazards or flight rescheduling",
+        "Applicable Government GST (5%)"
+      ],
+      "travelTips": [
+        "Carry valid Government photo IDs (Aadhaar/Passport/Voter ID) for every guest for seamless hotel check-in and local checkpoint verifications.",
+        "Pack comfortable walking shoes, polarized sunglasses, sunscreen, and seasonal layered clothing.",
+        "Keep some cash handy as digital UPI payments can experience intermittent mobile network issues in hilly or remote stretches."
+      ],
+      "faqs": [
+        {
+          "question": "What is the best time to visit this destination?",
+          "answer": "The ideal visiting period is generally between September and May when pleasant temperatures make sightseeing, outdoor activities, and nature excursions delightful."
+        },
+        {
+          "question": "Can this itinerary and hotel category be customized?",
+          "answer": "Absolutely! All KRADIND tour circuits can be fully personalized. You can extend days, swap attractions, or upgrade to 4-Star/5-Star luxury heritage resorts."
+        },
+        {
+          "question": "What type of vehicles are provided for our group?",
+          "answer": "We provide private AC vehicles based on your group size: Swift Dzire / Etios for 2-3 guests, Toyota Innova / Ertiga for 4-6 guests, and Tempo Travellers for larger families."
+        },
+        {
+          "question": "How do I confirm my tour booking?",
+          "answer": "You can book with a nominal 25% advance token payment. The remaining balance can be completed prior to trip commencement or at the time of arrival."
+        }
+      ],
+      "createdAt": "2026-10-06T13:08:22.311Z",
+      "updatedAt": "2026-10-06T13:08:22.311Z"
+    },
     {
       "id": "dest-1790597493304-f33683",
       "name": "Valley of Flowers Trek Package",

@@ -3123,6 +3123,757 @@ export const treks: TrekData[] = [
       "Lunches and personal shopping"
     ],
     "status": "Published"
-  }
+  },
+{
+  "slug": "bali-tour-package",
+  "altitude": "Sea Level",
+  "badge": "Visa On Arrival",
+  "batches": [
+    {
+      "id": 1,
+      "startDate": "15 Oct 2026",
+      "endDate": "21 Oct 2026",
+      "slotsLeft": 6,
+      "price": 42999,
+      "status": "AVBL"
+    },
+    {
+      "id": 2,
+      "startDate": "05 Nov 2026",
+      "endDate": "11 Nov 2026",
+      "slotsLeft": 8,
+      "price": 42999,
+      "status": "AVBL"
+    },
+    {
+      "id": 3,
+      "startDate": "20 Dec 2026",
+      "endDate": "26 Dec 2026",
+      "slotsLeft": 4,
+      "price": 47999,
+      "status": "LAST"
+    }
+  ],
+  "categories": [
+    "International",
+    "Fixed Departure",
+    "Beach",
+    "Holiday Package"
+  ],
+  "category": "International",
+  "defaultHighlights": [
+    "Speedboat day trip to Nusa Penida Island",
+    "Uluwatu cliff sunset with Kecak dance",
+    "Ubud artisan villages & swing experience"
+  ],
+  "difficulty": "Easy",
+  "duration": "7 Days / 6 Nights",
+  "exclusions": [
+    "International flights to/from Denpasar",
+    "Personal expenses & tipping",
+    "Visa on Arrival fee (if applicable)"
+  ],
+  "gallery": [
+    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1200&q=80"
+  ],
+  "highlights": [
+    "Ubud Monkey Forest & UNESCO Tegalalang Rice Terraces",
+    "Speedboat to Nusa Penida Kelingking T-Rex Beach & Angel's Billabong",
+    "Uluwatu Sunset Temple & Kecak Fire Dance",
+    "Seminyak beachfront resort stay with daily breakfast"
+  ],
+  "id": 5001,
+  "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
+  "imageAlt": "Bali Island Tour Package - Ubud Terraces and Nusa Penida",
+  "inclusions": [
+    "6 nights stay in verified 4-star boutique resorts",
+    "Daily breakfast and select dinners",
+    "Private AC transport with English-speaking driver",
+    "Speedboat return tickets to Nusa Penida",
+    "All entrance tickets & permits"
+  ],
+  "location": "Ubud, Seminyak, Nusa Penida, Bali",
+  "name": "Bali Island Tour Package – 7 Days / 6 Nights",
+  "originalPrice": 49999,
+  "price": 42999,
+  "rating": 4.9,
+  "region": "Indonesia",
+  "reviewCount": 310,
+  "status": "Published",
+  "tagline": "Tropical paradise: Ubud rice terraces, Uluwatu sunsets, Nusa Penida cliffs & beach clubs.",
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival in Bali & Ubud Transfer",
+      "description": "Arrive at Ngurah Rai International Airport. Transfer to Ubud boutique resort. Evening leisure at Ubud traditional art market.",
+      "stay": "Ubud 4-Star Resort",
+      "meal": "Dinner"
+    },
+    {
+      "day": 2,
+      "title": "Tegalalang Rice Terraces & Bali Swing",
+      "description": "Visit Sacred Monkey Forest and walk along UNESCO Tegalalang rice terraces. Enjoy iconic jungle swing and coffee plantation.",
+      "stay": "Ubud 4-Star Resort",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 3,
+      "title": "Kintamani Volcano & Tirta Empul Holy Springs",
+      "description": "Scenic drive to Mount Batur volcano viewpoint. Visit Tirta Empul holy spring temple and Tegenungan waterfall.",
+      "stay": "Ubud 4-Star Resort",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 4,
+      "title": "Nusa Penida Island Speedboat Day Tour",
+      "description": "Speedboat to Nusa Penida. Visit Kelingking T-Rex Beach cliff, Angel's Billabong, and Broken Beach.",
+      "stay": "Seminyak Beach Resort",
+      "meal": "Breakfast & Lunch"
+    },
+    {
+      "day": 5,
+      "title": "Tanjung Benoa Watersports & Uluwatu Sunset",
+      "description": "Banana boat and watersports at Tanjung Benoa. Sunset visit to 70m cliffside Uluwatu temple with Kecak fire dance.",
+      "stay": "Seminyak Beach Resort",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 6,
+      "title": "Tanah Lot Temple & Seminyak Leisure",
+      "description": "Visit iconic offshore rock temple Tanah Lot. Afternoon shopping in Seminyak boutiques and sunset beach club.",
+      "stay": "Seminyak Beach Resort",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 7,
+      "title": "Souvenir Shopping & Airport Departure",
+      "description": "Breakfast at resort, last-minute shopping at Krisna Oleh-Oleh, and transfer to Denpasar Airport.",
+      "stay": "Departure",
+      "meal": "Breakfast"
+    }
+  ]
+},
+{
+  "slug": "thailand-tour-package",
+  "altitude": "Sea Level",
+  "badge": "Visa Free / Easy VOA",
+  "batches": [
+    {
+      "id": 1,
+      "startDate": "18 Oct 2026",
+      "endDate": "23 Oct 2026",
+      "slotsLeft": 8,
+      "price": 34999,
+      "status": "AVBL"
+    },
+    {
+      "id": 2,
+      "startDate": "10 Nov 2026",
+      "endDate": "15 Nov 2026",
+      "slotsLeft": 10,
+      "price": 34999,
+      "status": "AVBL"
+    }
+  ],
+  "categories": [
+    "International",
+    "Fixed Departure",
+    "Beach",
+    "Holiday Package"
+  ],
+  "category": "International",
+  "defaultHighlights": [
+    "Phi Phi Island speedboat tour",
+    "Bangkok temple city tour",
+    "Chao Phraya sunset dinner cruise"
+  ],
+  "difficulty": "Easy",
+  "duration": "6 Days / 5 Nights",
+  "exclusions": [
+    "International airfare",
+    "National park entry fees (approx 400 THB)",
+    "Personal shopping & insurance"
+  ],
+  "gallery": [
+    "https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1200&q=80"
+  ],
+  "highlights": [
+    "Phi Phi Island speedboat day cruise with Maya Bay snorkeling",
+    "Bangkok Grand Palace & Wat Arun Temple of Dawn",
+    "Chao Phraya luxury dinner river cruise",
+    "Phuket Patong Beach resort stay"
+  ],
+  "id": 5002,
+  "image": "https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?auto=format&fit=crop&w=1200&q=80",
+  "imageAlt": "Thailand Tour Package - Phuket beaches and Bangkok temples",
+  "inclusions": [
+    "5 nights 4-star accommodation in Phuket & Bangkok",
+    "Daily breakfast & island tour buffet lunch",
+    "Phi Phi Island speedboat tour with snorkeling gear",
+    "All airport and intercity transfers"
+  ],
+  "location": "Bangkok & Phuket, Thailand",
+  "name": "Thailand Holiday Tour Package – 6 Days / 5 Nights",
+  "originalPrice": 41999,
+  "price": 34999,
+  "rating": 4.8,
+  "region": "Southeast Asia",
+  "reviewCount": 245,
+  "status": "Published",
+  "tagline": "Vibrant Bangkok street life, ornate temples, and crystal-clear waters of Phuket & Phi Phi Islands.",
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Bangkok Arrival & Chao Phraya Dinner Cruise",
+      "description": "Arrival at Suvarnabhumi Airport Bangkok. Hotel transfer and check-in. Evening luxury dinner cruise along Chao Phraya river.",
+      "stay": "Bangkok 4-Star Hotel",
+      "meal": "Dinner"
+    },
+    {
+      "day": 2,
+      "title": "Bangkok City & Temple Tour",
+      "description": "Visit the Grand Palace, Wat Phra Kaew (Emerald Buddha), and Wat Arun. Evening explore vibrant street food at Chinatown.",
+      "stay": "Bangkok 4-Star Hotel",
+      "meal": "Breakfast & Lunch"
+    },
+    {
+      "day": 3,
+      "title": "Bangkok to Phuket Flight & Patong Beach",
+      "description": "Short domestic flight to Phuket. Check in to beachfront resort in Patong. Evening sunset walk at Kata or Karon beach.",
+      "stay": "Phuket Beach Resort",
+      "meal": "Breakfast"
+    },
+    {
+      "day": 4,
+      "title": "Phi Phi Island Speedboat Day Cruise",
+      "description": "Full-day speedboat excursion to Phi Phi Don and Phi Phi Leh. Snorkeling at Maya Bay, Pileh Lagoon, and Viking Cave.",
+      "stay": "Phuket Beach Resort",
+      "meal": "Breakfast & Buffet Lunch"
+    },
+    {
+      "day": 5,
+      "title": "Phuket Big Buddha & Promthep Cape Sunset",
+      "description": "Visit the revered 45-meter Big Buddha and Wat Chalong. Watch golden sunset from Promthep Cape viewpoint.",
+      "stay": "Phuket Beach Resort",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 6,
+      "title": "Phuket Departure",
+      "description": "Breakfast at resort and transfer to Phuket International Airport for flight back home.",
+      "stay": "Departure",
+      "meal": "Breakfast"
+    }
+  ]
+},
+{
+  "slug": "dubai-tour-package",
+  "altitude": "Sea Level",
+  "badge": "Bestseller",
+  "batches": [
+    {
+      "id": 1,
+      "startDate": "22 Oct 2026",
+      "endDate": "26 Oct 2026",
+      "slotsLeft": 5,
+      "price": 38999,
+      "status": "AVBL"
+    },
+    {
+      "id": 2,
+      "startDate": "14 Nov 2026",
+      "endDate": "18 Nov 2026",
+      "slotsLeft": 8,
+      "price": 38999,
+      "status": "AVBL"
+    }
+  ],
+  "categories": [
+    "International",
+    "Fixed Departure",
+    "Luxury",
+    "Holiday Package"
+  ],
+  "category": "International",
+  "defaultHighlights": [
+    "Burj Khalifa top observatory entry",
+    "Desert 4x4 safari with BBQ dinner",
+    "Dubai Marina Dhow Cruise"
+  ],
+  "difficulty": "Easy",
+  "duration": "5 Days / 4 Nights",
+  "exclusions": [
+    "UAE Tourist Visa fee (assistance provided)",
+    "Tourism Dirham hotel tax",
+    "Personal expenses & flights"
+  ],
+  "gallery": [
+    "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
+  ],
+  "highlights": [
+    "Burj Khalifa 124th & 125th Floor Observatory tickets",
+    "Thrilling 4x4 Desert Safari with dune bashing, BBQ & Tanoura dance",
+    "Dubai Marina luxury Dhow Cruise with international buffet",
+    "Dubai city tour: Palm Jumeirah, Burj Al Arab photo stop & Dubai Mall"
+  ],
+  "id": 5003,
+  "image": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80",
+  "imageAlt": "Dubai Tour Package - Burj Khalifa and Desert Safari",
+  "inclusions": [
+    "4 nights stay in verified 4-star Dubai hotel",
+    "Daily breakfast and 2 lavish dinner experiences",
+    "Private airport transfers and group tour transfers",
+    "All activity tickets as mentioned"
+  ],
+  "location": "Dubai City & Desert, UAE",
+  "name": "Dubai Tour Package & Desert Safari – 5 Days / 4 Nights",
+  "originalPrice": 45999,
+  "price": 38999,
+  "rating": 4.9,
+  "region": "Middle East",
+  "reviewCount": 380,
+  "status": "Published",
+  "tagline": "Futuristic skyscrapers, Arabian desert dune bashing, luxury marina cruise & Burj Khalifa top views.",
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Dubai Arrival & Marina Dhow Dinner Cruise",
+      "description": "Arrive at Dubai International Airport. Transfer to luxury 4-star hotel. Evening romantic Dhow cruise with international buffet at Dubai Marina.",
+      "stay": "Dubai 4-Star Hotel",
+      "meal": "Dinner"
+    },
+    {
+      "day": 2,
+      "title": "Dubai City Tour & Burj Khalifa Top Observatory",
+      "description": "Half-day city tour covering Dubai Frame, Palm Jumeirah photo stop, and Dubai Mall. Ascend to 124th/125th floor of Burj Khalifa for panoramic vistas.",
+      "stay": "Dubai 4-Star Hotel",
+      "meal": "Breakfast"
+    },
+    {
+      "day": 3,
+      "title": "Afternoon 4x4 Desert Safari & BBQ Dinner",
+      "description": "Thrilling dune bashing in Arabian desert, camel rides, sandboarding, and traditional BBQ dinner with Tanoura & fire dance.",
+      "stay": "Dubai 4-Star Hotel",
+      "meal": "Breakfast & BBQ Dinner"
+    },
+    {
+      "day": 4,
+      "title": "Miracle Garden & Global Village Excursion",
+      "description": "Visit Dubai Miracle Garden featuring 150 million blooming flowers, followed by multicultural pavilions and shopping at Global Village.",
+      "stay": "Dubai 4-Star Hotel",
+      "meal": "Breakfast"
+    },
+    {
+      "day": 5,
+      "title": "Gold Souk Shopping & Airport Departure",
+      "description": "Explore the bustling Gold & Spice Souks in Deira. Transfer to Dubai International Airport for your return flight.",
+      "stay": "Departure",
+      "meal": "Breakfast"
+    }
+  ]
+},
+{
+  "slug": "vietnam-tour-package",
+  "altitude": "Sea Level",
+  "badge": "Trending",
+  "batches": [
+    {
+      "id": 1,
+      "startDate": "25 Oct 2026",
+      "endDate": "30 Oct 2026",
+      "slotsLeft": 6,
+      "price": 36999,
+      "status": "AVBL"
+    }
+  ],
+  "categories": [
+    "International",
+    "Fixed Departure",
+    "Cultural",
+    "Holiday Package"
+  ],
+  "category": "International",
+  "defaultHighlights": [
+    "Overnight Ha Long Bay cruise",
+    "Hanoi Old Quarter historic tour",
+    "Kayaking in limestone karst bays"
+  ],
+  "difficulty": "Easy",
+  "duration": "6 Days / 5 Nights",
+  "exclusions": [
+    "Vietnam eVisa fee",
+    "International airfare",
+    "Personal expenses and drinks"
+  ],
+  "gallery": [
+    "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80"
+  ],
+  "highlights": [
+    "Overnight luxury cruise in UNESCO World Heritage Ha Long Bay",
+    "Hanoi Old Quarter walking & street food tour",
+    "Kayaking through hidden limestone lagoons in Sung Sot Cave",
+    "Ho Chi Minh Mausoleum and One Pillar Pagoda"
+  ],
+  "id": 5004,
+  "image": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80",
+  "imageAlt": "Vietnam Tour Package - Ha Long Bay limestone karsts",
+  "inclusions": [
+    "4 nights hotel in Hanoi + 1 night luxury cruise in Ha Long Bay",
+    "All meals onboard cruise and daily breakfast at hotel",
+    "English-speaking licensed Vietnamese tour guide",
+    "All domestic ground transfers"
+  ],
+  "location": "Hanoi & Ha Long Bay, Vietnam",
+  "name": "Vietnam Holiday Tour Package – 6 Days / 5 Nights",
+  "originalPrice": 43999,
+  "price": 36999,
+  "rating": 4.8,
+  "region": "Southeast Asia",
+  "reviewCount": 195,
+  "status": "Published",
+  "tagline": "Mystical Ha Long Bay limestone karsts, lantern-lit alleys, French architecture & authentic street food.",
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Hanoi Arrival & Old Quarter Street Food",
+      "description": "Arrive at Noi Bai Airport in Hanoi. Transfer to boutique hotel. Evening street food and cyclo tour in Hanoi 36 Old Streets.",
+      "stay": "Hanoi Boutique Hotel",
+      "meal": "Dinner"
+    },
+    {
+      "day": 2,
+      "title": "Hanoi Historic Highlights Tour",
+      "description": "Visit Ho Chi Minh Mausoleum, One Pillar Pagoda, Temple of Literature, and tranquil Hoan Kiem Lake.",
+      "stay": "Hanoi Boutique Hotel",
+      "meal": "Breakfast & Lunch"
+    },
+    {
+      "day": 3,
+      "title": "Hanoi to Ha Long Bay Overnight Cruise",
+      "description": "Drive to Tuan Chau Harbour and board luxury cruise. Sail through emerald waters and thousands of towering limestone karsts.",
+      "stay": "Ha Long Bay Cruise",
+      "meal": "Breakfast, Lunch & Dinner"
+    },
+    {
+      "day": 4,
+      "title": "Ha Long Bay Kayaking & Cruise to Hanoi",
+      "description": "Morning Tai Chi on sundeck and kayak through Sung Sot (Surprise) Cave. Disembark and drive back to Hanoi.",
+      "stay": "Hanoi Boutique Hotel",
+      "meal": "Brunch & Dinner"
+    },
+    {
+      "day": 5,
+      "title": "Ninh Binh Day Excursion (Trang An & Tam Coc)",
+      "description": "Day trip to Trang An UNESCO landscape complex. Bamboo boat ride through river caves and hike to Hang Mua viewpoint.",
+      "stay": "Hanoi Boutique Hotel",
+      "meal": "Breakfast & Lunch"
+    },
+    {
+      "day": 6,
+      "title": "Hanoi Departure Drop",
+      "description": "Breakfast at hotel and transfer to Noi Bai Airport for departure.",
+      "stay": "Departure",
+      "meal": "Breakfast"
+    }
+  ]
+},
+{
+  "slug": "singapore-tour-package",
+  "altitude": "Sea Level",
+  "badge": "Family Special",
+  "batches": [
+    {
+      "id": 1,
+      "startDate": "02 Nov 2026",
+      "endDate": "06 Nov 2026",
+      "slotsLeft": 6,
+      "price": 49999,
+      "status": "AVBL"
+    }
+  ],
+  "categories": [
+    "International",
+    "Fixed Departure",
+    "City Tour",
+    "Holiday Package"
+  ],
+  "category": "International",
+  "defaultHighlights": [
+    "Universal Studios Singapore pass",
+    "Gardens by the Bay Cloud Forest",
+    "Sentosa Island cable car"
+  ],
+  "difficulty": "Easy",
+  "duration": "5 Days / 4 Nights",
+  "exclusions": [
+    "Singapore eVisa",
+    "International flights",
+    "Lunches and dinners not specified"
+  ],
+  "gallery": [
+    "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1200&q=80"
+  ],
+  "highlights": [
+    "Full day Universal Studios Singapore theme park pass",
+    "Gardens by the Bay: Flower Dome & Cloud Forest tickets",
+    "Sentosa Island cable car ride & Wings of Time night show",
+    "Singapore River cruise and Marina Bay Merlion park tour"
+  ],
+  "id": 5005,
+  "image": "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1200&q=80",
+  "imageAlt": "Singapore Tour Package - Marina Bay Sands and Gardens by the Bay",
+  "inclusions": [
+    "4 nights stay in central 4-star Singapore hotel",
+    "Daily international breakfast buffet",
+    "Universal Studios entry tickets",
+    "Gardens by the Bay two-dome admission"
+  ],
+  "location": "Marina Bay & Sentosa, Singapore",
+  "name": "Singapore Tour Package & City Breaks – 5 Days / 4 Nights",
+  "originalPrice": 58999,
+  "price": 49999,
+  "rating": 4.9,
+  "region": "Southeast Asia",
+  "reviewCount": 290,
+  "status": "Published",
+  "tagline": "Futuristic garden city: Gardens by the Bay Supertrees, Universal Studios & Sentosa cable car.",
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Singapore Arrival & Night Safari",
+      "description": "Arrive at Changi Airport. Transfer to city hotel. Evening tram ride and trail walk at the world-famous Singapore Night Safari.",
+      "stay": "Singapore 4-Star Hotel",
+      "meal": "Dinner"
+    },
+    {
+      "day": 2,
+      "title": "Gardens by the Bay & Marina Bay Sands",
+      "description": "Visit Gardens by the Bay: Flower Dome and Cloud Forest. Evening Spectra light and water fountain show at Marina Bay Sands.",
+      "stay": "Singapore 4-Star Hotel",
+      "meal": "Breakfast"
+    },
+    {
+      "day": 3,
+      "title": "Sentosa Island & Universal Studios Singapore",
+      "description": "Full day adrenaline and movie magic at Universal Studios Singapore. Sunset cable car ride and Wings of Time night show.",
+      "stay": "Singapore 4-Star Hotel",
+      "meal": "Breakfast"
+    },
+    {
+      "day": 4,
+      "title": "Singapore City Tour & Orchard Road Shopping",
+      "description": "Explore Merlion Park, Chinatown, Little India, and luxury shopping along Orchard Road.",
+      "stay": "Singapore 4-Star Hotel",
+      "meal": "Breakfast"
+    },
+    {
+      "day": 5,
+      "title": "Jewel Changi Rain Vortex & Departure",
+      "description": "Check out and visit the world's tallest indoor waterfall Rain Vortex at Jewel Changi before your departure flight.",
+      "stay": "Departure",
+      "meal": "Breakfast"
+    }
+  ]
+},
+{
+  "slug": "maldives-tour-package",
+  "altitude": "Sea Level",
+  "badge": "Honeymoon Special",
+  "batches": [
+    {
+      "id": 1,
+      "startDate": "12 Nov 2026",
+      "endDate": "15 Nov 2026",
+      "slotsLeft": 4,
+      "price": 64999,
+      "status": "LAST"
+    }
+  ],
+  "categories": [
+    "International",
+    "Fixed Departure",
+    "Luxury",
+    "Honeymoon"
+  ],
+  "category": "International",
+  "defaultHighlights": [
+    "Luxury overwater villa accommodation",
+    "Speedboat transfer included",
+    "All-inclusive dining"
+  ],
+  "difficulty": "Easy",
+  "duration": "4 Days / 3 Nights",
+  "exclusions": [
+    "International flights to Male (MLE)",
+    "Motorized water sports (jet ski, parasailing)",
+    "Spa treatments and diving excursions"
+  ],
+  "gallery": [
+    "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1200&q=80"
+  ],
+  "highlights": [
+    "Private overwater villa with direct crystal lagoon access",
+    "Speedboat return transfers from Velana Airport (Male)",
+    "All-inclusive meal plan: Unlimited meals & beverages",
+    "Complimentary snorkeling gear & non-motorized water sports"
+  ],
+  "id": 5006,
+  "image": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1200&q=80",
+  "imageAlt": "Maldives Overwater Villa Holiday - Private lagoon villas",
+  "inclusions": [
+    "3 nights in an Overwater Lagoon Villa",
+    "All-inclusive breakfast, lunch, dinner & drinks",
+    "Speedboat airport transfers",
+    "Green tax and all resort service charges"
+  ],
+  "location": "Male Atolls, Maldives",
+  "name": "Maldives Overwater Villa Holiday – 4 Days / 3 Nights",
+  "originalPrice": 79999,
+  "price": 64999,
+  "rating": 5,
+  "region": "Indian Ocean",
+  "reviewCount": 160,
+  "status": "Published",
+  "tagline": "Unrivaled luxury: Turquoise lagoons, overwater villas, private reefs and all-inclusive island pampering.",
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Male Arrival & Speedboat Transfer to Overwater Villa",
+      "description": "Arrive at Velana International Airport. Speedboat transfer to private luxury island resort. Settle into your Overwater Lagoon Villa.",
+      "stay": "Overwater Lagoon Villa",
+      "meal": "Dinner"
+    },
+    {
+      "day": 2,
+      "title": "Private Lagoon Snorkeling & Coral Reef Exploration",
+      "description": "Step down directly into turquoise waters from your private villa deck. Complimentary snorkeling gear to explore colorful marine life.",
+      "stay": "Overwater Lagoon Villa",
+      "meal": "Breakfast, Lunch & Dinner"
+    },
+    {
+      "day": 3,
+      "title": "Sunset Dolphin Cruise & Island Spa Leisure",
+      "description": "Indulge in resort wellness and non-motorized watersports (kayak, paddleboard). Evening sunset cruise watching wild spinner dolphins.",
+      "stay": "Overwater Lagoon Villa",
+      "meal": "Breakfast, Lunch & Dinner"
+    },
+    {
+      "day": 4,
+      "title": "Floating Breakfast & Speedboat Departure",
+      "description": "Enjoy a memorable floating breakfast in your private pool/lagoon. Speedboat transfer back to Male Airport for return flight.",
+      "stay": "Departure",
+      "meal": "Breakfast"
+    }
+  ]
+},
+{
+  "slug": "nepal-tour-package",
+  "altitude": "8,000 Ft",
+  "badge": "Visa Free for Indians",
+  "batches": [
+    {
+      "id": 1,
+      "startDate": "20 Oct 2026",
+      "endDate": "25 Oct 2026",
+      "slotsLeft": 8,
+      "price": 26999,
+      "status": "AVBL"
+    }
+  ],
+  "categories": [
+    "International",
+    "Fixed Departure",
+    "Trek",
+    "Himalayas"
+  ],
+  "category": "International",
+  "defaultHighlights": [
+    "Annapurna panorama from Sarangkot",
+    "Pashupatinath & Boudhanath darshan",
+    "Pokhara lake cruise"
+  ],
+  "difficulty": "Easy to Moderate",
+  "duration": "6 Days / 5 Nights",
+  "exclusions": [
+    "Flights to Kathmandu (KTM)",
+    "Personal travel insurance",
+    "Lunches and extra beverages"
+  ],
+  "gallery": [
+    "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80"
+  ],
+  "highlights": [
+    "Kathmandu UNESCO Durbar Square, Pashupatinath & Boudhanath Stupa",
+    "Pokhara Phewa Lake boating & Davis Falls",
+    "Sarangkot sunrise view of Annapurna & Machapuchare (Fishtail)",
+    "Scenic highway drive across Himalayan river valleys"
+  ],
+  "id": 5007,
+  "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+  "imageAlt": "Nepal Himalayan Tour - Annapurna and Pokhara",
+  "inclusions": [
+    "5 nights 3/4-star hotel stay in Kathmandu & Pokhara",
+    "Daily breakfast and traditional Nepalese farewell dinner",
+    "Private AC transport with experienced hill driver",
+    "All monument sightseeing permits"
+  ],
+  "location": "Kathmandu & Pokhara, Nepal",
+  "name": "Nepal Himalayan Tour – 6 Days / 5 Nights",
+  "originalPrice": 32999,
+  "price": 26999,
+  "rating": 4.8,
+  "region": "Himalayas",
+  "reviewCount": 220,
+  "status": "Published",
+  "tagline": "Sacred Pashupatinath temple, serene Phewa Lake boat ride, and Annapurna sunrise viewpoints in Sarangkot.",
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Kathmandu Arrival & Pashupatinath Temple Darshan",
+      "description": "Arrive at Tribhuvan International Airport in Kathmandu. Check in to hotel. Evening darshan and aarti at sacred Pashupatinath temple.",
+      "stay": "Kathmandu 3/4-Star Hotel",
+      "meal": "Dinner"
+    },
+    {
+      "day": 2,
+      "title": "Boudhanath Stupa & Kathmandu Durbar Square",
+      "description": "Visit the colossal Boudhanath Stupa, Swayambhunath (Monkey Temple), and ancient historic royal palaces in Kathmandu Durbar Square.",
+      "stay": "Kathmandu 3/4-Star Hotel",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 3,
+      "title": "Scenic Highway Drive to Pokhara Lake City",
+      "description": "Drive along the Trishuli River to the picturesque valley of Pokhara (6-7 hrs). Evening leisurely boat ride on Phewa Lake.",
+      "stay": "Pokhara Lakeside Hotel",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 4,
+      "title": "Sarangkot Sunrise & Pokhara Valley Sightseeing",
+      "description": "Early morning drive to Sarangkot for stunning sunrise over the Annapurna and Machapuchare range. Visit Davis Falls and Gupteshwor Cave.",
+      "stay": "Pokhara Lakeside Hotel",
+      "meal": "Breakfast & Dinner"
+    },
+    {
+      "day": 5,
+      "title": "Pokhara to Kathmandu Return Drive",
+      "description": "Scenic return drive to Kathmandu with stop at Manakamana cable car point. Evening souvenir shopping in Thamel market.",
+      "stay": "Kathmandu 3/4-Star Hotel",
+      "meal": "Breakfast & Traditional Nepali Dinner"
+    },
+    {
+      "day": 6,
+      "title": "Kathmandu Airport Departure",
+      "description": "Breakfast at hotel and transfer to Tribhuvan International Airport for your flight back home.",
+      "stay": "Departure",
+      "meal": "Breakfast"
+    }
+  ]
+}
 ];
-

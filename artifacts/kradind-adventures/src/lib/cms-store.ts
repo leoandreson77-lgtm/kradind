@@ -3670,6 +3670,21 @@ export async function getTreksAsync(): Promise<TrekData[]> {
           }
         }
       }
+
+      for (const staticTrek of defaultTreks) {
+        if (!slugMap.has(staticTrek.slug)) {
+          slugMap.set(staticTrek.slug, {
+            ...(staticTrek as unknown as TrekData),
+            status: (staticTrek as any).status || "Published",
+          });
+        }
+      }
+
+      const jaisalmer = slugMap.get("jaisalmer-tour-package");
+      if (jaisalmer && (!jaisalmer.image || jaisalmer.image.includes("509316975850"))) {
+        jaisalmer.image = "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1920&q=85";
+      }
+
       const cleanTreks = Array.from(slugMap.values());
       const store = readStore();
       store.treks = cleanTreks;

@@ -2814,10 +2814,10 @@ export const treks: TrekData[] = [
     "badge": "Desert Safari Special",
     "rating": 4.9,
     "reviewCount": 260,
-    "image": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=85",
+    "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1920&q=85",
     "gallery": [
-      "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80"
+      "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80"
     ],
     "tagline": "Golden sandstone living fort, thrilling 4x4 desert dune bashing, camel safaris, and folk nights under the stars.",
     "defaultHighlights": [

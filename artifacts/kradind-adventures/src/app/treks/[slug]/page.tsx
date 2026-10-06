@@ -48,6 +48,16 @@ const REGIONAL_TREK_CATEGORIES: Record<string, { name: string; title: string; su
     title: "Weekend & Short Treks in India",
     subtitle: "Quick 2-to-3-day escapes with stunning panoramic views, camping, and easy-to-moderate trails.",
   },
+  rajasthan: {
+    name: "Rajasthan",
+    title: "Rajasthan Heritage Treks & Tour Packages",
+    subtitle: "Timeless Rajput forts, opulent lake palaces, camel safaris, and golden sand dunes in Jaipur, Udaipur & Jaisalmer.",
+  },
+  kerala: {
+    name: "Kerala",
+    title: "Kerala Backwaters & Hill Tour Packages",
+    subtitle: "Emerald tea plantations of Munnar, serene Alleppey backwater houseboats, and tranquil Arabian coastline.",
+  },
 };
 
 export default async function TrekDetailPage({
@@ -58,6 +68,16 @@ export default async function TrekDetailPage({
   const { slug } = await params;
   const rawSlug = slug || "chopta-tungnath-chandrashila";
   const normalizedSlug = rawSlug.toLowerCase();
+
+  if (normalizedSlug === "rajasthan-tour-package-6-days" || normalizedSlug === "rajasthan-tour-package-5-nights-6-days") {
+    const { redirect } = await import("next/navigation");
+    redirect("/rajasthan-tour-package-6-days");
+  }
+
+  if (normalizedSlug === "kerala-tour-package-5-nights-6-days") {
+    const { redirect } = await import("next/navigation");
+    redirect("/kerala-tour-package-5-nights-6-days");
+  }
 
   const regionalConfig = REGIONAL_TREK_CATEGORIES[normalizedSlug];
   if (regionalConfig) {

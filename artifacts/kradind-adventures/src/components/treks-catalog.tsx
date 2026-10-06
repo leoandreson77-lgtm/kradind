@@ -270,26 +270,34 @@ export function TreksContent({
 
         {/* Results Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 min-h-[45vh]">
-          {filteredTreks.map((trek) => (
-            <div
-              key={trek.id}
-              role="link"
-              tabIndex={0}
-              onClick={(e) => {
-                const target = e.target as HTMLElement;
-                if (target.closest("button[data-action='quick-book']")) {
-                  return;
-                }
-                router.push(`/treks/${trek.slug}`);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  router.push(`/treks/${trek.slug}`);
-                }
-              }}
-              className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 cursor-pointer"
-            >
+          {filteredTreks.map((trek) => {
+            const targetHref =
+              trek.slug === "rajasthan-tour-package-6-days" || trek.slug === "rajasthan-tour-package-5-nights-6-days"
+                ? "/rajasthan-tour-package-6-days"
+                : trek.slug === "kerala-tour-package-5-nights-6-days"
+                ? "/kerala-tour-package-5-nights-6-days"
+                : `/treks/${trek.slug}`;
+
+            return (
+              <div
+                key={trek.slug || `${trek.id}-${trek.name}`}
+                role="link"
+                tabIndex={0}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.closest("button[data-action='quick-book']")) {
+                    return;
+                  }
+                  router.push(targetHref);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    router.push(targetHref);
+                  }
+                }}
+                className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 cursor-pointer"
+              >
               <div>
                 {/* Image & Badges */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
@@ -378,7 +386,7 @@ export function TreksContent({
                   </button>
 
                   <Link
-                    href={`/treks/${trek.slug}`}
+                    href={targetHref}
                     onClick={(e) => e.stopPropagation()}
                     className="bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-xs px-3 sm:px-3.5 py-2 rounded-xl transition flex items-center justify-center gap-1 group/btn shadow-xs relative z-10 whitespace-nowrap min-h-[36px]"
                   >
@@ -388,7 +396,8 @@ export function TreksContent({
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {filteredTreks.length === 0 && (

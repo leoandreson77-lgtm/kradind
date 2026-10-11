@@ -171,10 +171,12 @@ export default function ContactPage() {
                   <label className="block text-[11px] font-bold text-slate-500 uppercase">Phone Number (WhatsApp updates)</label>
                   <input
                     type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 9797941414"
-                    className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-[#0F3A2E]"
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    placeholder="9797941414"
+                    className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-[#0F3A2E] font-mono"
                   />
                 </div>
                 <div>

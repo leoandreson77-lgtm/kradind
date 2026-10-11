@@ -29,7 +29,7 @@ export function TopBar({
 
   return (
     <div
-      className={`transition-all duration-300 ease-in-out overflow-hidden ${
+      className={`no-print print:hidden transition-all duration-300 ease-in-out overflow-hidden ${
         isScrolled
           ? "max-h-0 opacity-0 pointer-events-none -translate-y-full py-0 border-b-0"
           : "max-h-12 opacity-100 translate-y-0 py-2 border-b border-white/10"

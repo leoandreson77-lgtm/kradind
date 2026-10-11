@@ -267,12 +267,14 @@ export function BookingModal({
                     id="booking-phone"
                     name="phone"
                     type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
                     aria-label="Phone or WhatsApp Number"
-                    placeholder="Phone / WhatsApp"
+                    placeholder="10-digit Mobile / WhatsApp"
                     required
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-3 outline-none focus:border-[#0F3A2E]"
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-3 outline-none focus:border-[#0F3A2E] font-mono"
                   />
                 </div>
               </div>

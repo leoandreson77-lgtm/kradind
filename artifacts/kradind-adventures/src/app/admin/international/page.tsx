@@ -850,7 +850,7 @@ export default function AdminInternationalPage() {
       {/* FULL-FEATURED EDIT / CREATE MODAL */}
       {isModalOpen && editingItem && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-in fade-in">
-          <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden my-auto">
+          <div className="bg-white w-full max-w-6xl h-[92vh] max-h-[94vh] rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden my-auto">
             {/* Modal Header */}
             <div className="px-6 py-4 bg-gradient-to-r from-slate-900 to-blue-950 text-white flex items-center justify-between border-b border-white/10 shrink-0">
               <div className="flex items-center gap-2.5">
@@ -870,43 +870,68 @@ export default function AdminInternationalPage() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition"
+                className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Tab Navigation */}
-            <div className="px-6 bg-slate-100 border-b border-slate-200 flex items-center gap-1 overflow-x-auto shrink-0 py-1.5">
-              {[
-                { key: "basic", label: "1. Basic & Media", icon: FileText },
-                { key: "itinerary", label: "2. Day-by-Day Itinerary", icon: Calendar },
-                { key: "inclusions", label: "3. Inclusions & Exclusions", icon: CheckCircle2 },
-                { key: "overview", label: "4. Overview & Visa Info", icon: Info },
-                { key: "faqs", label: "5. Traveler FAQs", icon: HelpCircle },
-              ].map((tab) => {
-                const Icon = tab.icon;
-                const isActive = modalTab === tab.key;
-                return (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    onClick={() => setModalTab(tab.key as ModalTab)}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
-                      isActive
-                        ? "bg-white text-[#0F3A2E] shadow-2xs border border-slate-200"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5 text-blue-600" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+            {/* Modal Body with Left Sidebar */}
+            <div className="flex-1 flex flex-row min-h-0 overflow-hidden">
+              {/* Left Sidebar Navigation */}
+              <aside className="w-56 sm:w-64 lg:w-72 shrink-0 bg-slate-50/90 border-r border-slate-200/90 flex flex-col justify-between overflow-y-auto p-3 sm:p-4">
+                <div className="space-y-1.5">
+                  <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    Tour Sections
+                  </div>
+                  <nav className="flex flex-col gap-1.5">
+                    {[
+                      { key: "basic", label: "Basic Details & Media", icon: FileText, count: undefined },
+                      { key: "itinerary", label: "Day-by-Day Itinerary", icon: Calendar, count: `${editingItem.itinerary?.length || 0} Days` },
+                      { key: "inclusions", label: "Inclusions & Exclusions", icon: CheckCircle2, count: `${editingItem.inclusions?.length || 0}/${editingItem.exclusions?.length || 0}` },
+                      { key: "overview", label: "Overview & Visa Info", icon: Info, count: undefined },
+                      { key: "faqs", label: "Traveler FAQs", icon: HelpCircle, count: editingItem.faqs?.length || 0 },
+                    ].map((tab) => {
+                      const Icon = tab.icon;
+                      const isActive = modalTab === tab.key;
+                      return (
+                        <button
+                          key={tab.key}
+                          type="button"
+                          onClick={() => setModalTab(tab.key as ModalTab)}
+                          className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                            isActive
+                              ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                              : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className={`p-1.5 rounded-xl transition ${
+                              isActive ? "bg-white/15 text-white" : "bg-slate-100 text-slate-600 group-hover:text-slate-900"
+                            }`}>
+                              <Icon className="w-4 h-4" />
+                            </span>
+                            <span className="truncate">{tab.label}</span>
+                          </div>
+                          {tab.count !== undefined && (
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                              isActive
+                                ? "bg-emerald-400/20 text-emerald-200 border border-emerald-400/30"
+                                : "bg-slate-200/70 text-slate-600"
+                            }`}>
+                              {tab.count}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </nav>
+                </div>
+              </aside>
 
-            {/* Modal Body (Scrollable) */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
+              {/* Right Content Area */}
+              <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-white overflow-hidden">
+                <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
               {/* TAB 1: BASIC & MEDIA */}
               {modalTab === "basic" && (
                 <div className="space-y-5 animate-in fade-in">
@@ -1578,34 +1603,42 @@ export default function AdminInternationalPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-4 bg-slate-100 border-t border-slate-200 flex items-center justify-between shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition"
-              >
-                Cancel
-              </button>
+                <div className="px-6 py-4 bg-slate-50/70 border-t border-slate-200/80 flex items-center justify-between shrink-0">
+                  <div className="text-xs text-slate-500 hidden sm:flex items-center gap-2">
+                    <span>Active Section:</span>
+                    <span className="text-[#0F3A2E] bg-emerald-100/80 px-2.5 py-0.5 rounded-lg border border-emerald-200/80 capitalize font-bold">
+                      {modalTab}
+                    </span>
+                  </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={actionLoading}
-                  onClick={handleSaveItem}
-                  className="px-6 py-2 rounded-xl bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold transition flex items-center gap-2 shadow-md disabled:opacity-60 cursor-pointer"
-                >
-                  {actionLoading ? (
-                    <>
-                      <div className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                      <span>Saving Changes...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Check className="w-4 h-4 text-emerald-400" />
-                      <span>Save International Tour</span>
-                    </>
-                  )}
-                </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      disabled={actionLoading}
+                      onClick={handleSaveItem}
+                      className="px-6 py-2 rounded-xl bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold transition flex items-center gap-2 shadow-md disabled:opacity-60 cursor-pointer"
+                    >
+                      {actionLoading ? (
+                        <>
+                          <div className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                          <span>Saving Changes...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-400" />
+                          <span>Save International Tour</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

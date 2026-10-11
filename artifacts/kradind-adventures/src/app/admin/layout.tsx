@@ -25,6 +25,8 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronRight,
+  FileText,
+  Kanban,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -168,12 +170,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navGroups = [
     {
-      group: "OPERATIONS & CRM",
+      group: "OPERATIONS",
       items: [
         { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-        { label: "CRM & Customers", href: "/admin/crm", icon: Users, badge: "New" },
-        { label: "Customer Leads", href: "/admin/leads", icon: Inbox },
         { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
+        { label: "Customer Leads", href: "/admin/leads", icon: Inbox },
+      ],
+    },
+    {
+      group: "DEDICATED CRM CONTROL CENTER",
+      items: [
+        { label: "CRM Hub & Directory", href: "/admin/crm", icon: Users, badge: "360°" },
+        { label: "✨ Itinerary Studio", href: "/admin/crm?tab=itinerary-builder", icon: Sparkles, badge: "Creator" },
+        { label: "📊 Sales Pipeline", href: "/admin/crm?tab=kanban", icon: Kanban },
+        { label: "📄 Saved Proposals", href: "/admin/crm?tab=proposals", icon: FileText, badge: "Vouchers" },
       ],
     },
     {
@@ -209,6 +219,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (!targetQuery) {
       if (pathname === "/admin/treks") {
         return !currentQuery || currentQuery.includes("type=treks");
+      }
+      if (pathname === "/admin/crm") {
+        return !currentQuery || currentQuery === "" || currentQuery.includes("tab=directory");
       }
       return true;
     }

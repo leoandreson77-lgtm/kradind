@@ -38,6 +38,10 @@ import {
   Bookmark,
   Shield,
   ArrowUpRight,
+  Maximize2,
+  Minimize2,
+  MapPin,
+  User,
 } from "lucide-react";
 import {
   CustomerRecord,
@@ -49,18 +53,27 @@ import {
   AuditLogRecord,
   TimelineEventType,
   AdminRole,
+  CustomerItineraryProposal,
+  TrekData,
 } from "@/lib/cms-store";
+import { ProposalVoucherModal } from "@/components/admin/crm/proposal-voucher-modal";
+import { ItineraryStudio } from "@/components/admin/crm/itinerary-studio";
+import { SavedProposalsArchive } from "@/components/admin/crm/saved-proposals-archive";
 
 export default function AdminCRMPage() {
   // State
   const [customers, setCustomers] = useState<CustomerRecord[]>([]);
   const [tasks, setTasks] = useState<CustomerTask[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogRecord[]>([]);
+  const [packages, setPackages] = useState<TrekData[]>([]);
+  const [proposals, setProposals] = useState<CustomerItineraryProposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState("");
 
   // Views & Filters
-  const [activeTab, setActiveTab] = useState<"directory" | "kanban" | "tasks" | "audit">("directory");
+  const [activeTab, setActiveTab] = useState<
+    "directory" | "itinerary-builder" | "proposals" | "kanban" | "tasks" | "audit"
+  >("directory");
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -68,8 +81,15 @@ export default function AdminCRMPage() {
   const [tierFilter, setTierFilter] = useState("All");
   const [density, setDensity] = useState<"comfortable" | "compact">("comfortable");
 
-  // Customer 360 Slide-Over
+  // Proposals & Itinerary Studio State
+  const [builderProposal, setBuilderProposal] = useState<CustomerItineraryProposal | null>(null);
+  const [previewProposal, setPreviewProposal] = useState<CustomerItineraryProposal | null>(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [savingProposal, setSavingProposal] = useState(false);
+
+  // Customer 360 Full Popup Panel
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [isModalExpanded, setIsModalExpanded] = useState(false);
   const [drawerTab, setDrawerTab] = useState<"timeline" | "collab" | "medical" | "edit">("timeline");
   const [customerTimeline, setCustomerTimeline] = useState<CustomerTimelineEvent[]>([]);
   const [loadingTimeline, setLoadingTimeline] = useState(false);
@@ -134,19 +154,52 @@ export default function AdminCRMPage() {
     setTimeout(() => setToastMessage(""), 3500);
   };
 
+  // URL query synchronizer
+  const changeTab = (tab: "directory" | "itinerary-builder" | "proposals" | "kanban" | "tasks" | "audit") => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", tab);
+      window.history.replaceState(null, "", url.toString());
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab");
+      if (
+        tabParam &&
+        ["directory", "itinerary-builder", "proposals", "kanban", "tasks", "audit"].includes(tabParam)
+      ) {
+        setActiveTab(tabParam as any);
+      }
+    }
+  }, []);
+
   // Fetch Core Data
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [custRes, taskRes, auditRes] = await Promise.all([
+      const [custRes, taskRes, auditRes, pkgRes, propRes] = await Promise.all([
         fetch("/api/admin/crm/customers"),
         fetch("/api/admin/crm/tasks"),
         fetch("/api/admin/crm/audit"),
+        fetch("/api/admin/treks"),
+        fetch("/api/admin/crm/proposals"),
       ]);
 
       if (custRes.ok) setCustomers(await custRes.json());
       if (taskRes.ok) setTasks(await taskRes.json());
       if (auditRes.ok) setAuditLogs(await auditRes.json());
+      if (pkgRes.ok) {
+        const pkgs = await pkgRes.json();
+        setPackages(Array.isArray(pkgs) ? pkgs : []);
+      }
+      if (propRes.ok) {
+        const props = await propRes.json();
+        setProposals(Array.isArray(props) ? props : []);
+      }
     } catch (err) {
       console.error("Failed to load CRM data:", err);
       showToast("Error loading CRM records");
@@ -206,6 +259,17 @@ export default function AdminCRMPage() {
     fetchCollab();
   }, [selectedCustomerId, customers]);
 
+  // Close full modal popup on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedCustomerId) {
+        setSelectedCustomerId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedCustomerId]);
+
   // Selected customer computed
   const selectedCustomer = useMemo(() => {
     return customers.find((c) => c.id === selectedCustomerId) || null;
@@ -238,6 +302,7 @@ export default function AdminCRMPage() {
     const leadsCount = customers.filter((c) => c.lifecycleStage === "Lead" || c.lifecycleStage === "Prospect").length;
     const totalCLV = customers.reduce((sum, c) => sum + (c.totalSpent || 0), 0);
     const pendingTasks = tasks.filter((t) => t.status === "Pending").length;
+    const totalProposals = proposals.length;
     const vipCount = customers.filter(
       (c) =>
         c.lifecycleStage === "VIP Explorer" ||
@@ -245,8 +310,138 @@ export default function AdminCRMPage() {
         c.loyaltyTier.includes("Alpinist")
     ).length;
 
-    return { totalCustomers, leadsCount, totalCLV, pendingTasks, vipCount };
-  }, [customers, tasks]);
+    return { totalCustomers, leadsCount, totalCLV, pendingTasks, vipCount, totalProposals };
+  }, [customers, tasks, proposals]);
+
+  // Proposal Actions
+  const handleSaveProposal = async (proposal: CustomerItineraryProposal) => {
+    setSavingProposal(true);
+    try {
+      const res = await fetch("/api/admin/crm/proposals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(proposal),
+      });
+
+      if (res.ok) {
+        const saved = await res.json();
+        showToast(`Itinerary Proposal "${saved.packageTitle}" saved!`);
+        setProposals((prev) => {
+          const idx = prev.findIndex((p) => p.id === saved.id);
+          if (idx >= 0) {
+            const next = [...prev];
+            next[idx] = saved;
+            return next;
+          }
+          return [saved, ...prev];
+        });
+        setBuilderProposal(saved);
+        setPreviewProposal(saved);
+        setShowPreviewModal(true);
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to save proposal");
+      }
+    } catch {
+      alert("Error saving proposal");
+    } finally {
+      setSavingProposal(false);
+    }
+  };
+
+  const handleDeleteProposal = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete proposal "${title}" (${id})?`)) return;
+    try {
+      const res = await fetch(`/api/admin/crm/proposals?id=${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        showToast(`Proposal ${id} deleted.`);
+        setProposals((prev) => prev.filter((p) => p.id !== id));
+      } else {
+        alert("Failed to delete proposal");
+      }
+    } catch {
+      alert("Error deleting proposal");
+    }
+  };
+
+  const handleProposalStatusChange = async (id: string, newStatus: string) => {
+    const existing = proposals.find((p) => p.id === id);
+    if (!existing) return;
+    const updated = { ...existing, status: newStatus as any };
+
+    try {
+      const res = await fetch("/api/admin/crm/proposals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+
+      if (res.ok) {
+        showToast(`Proposal status updated to ${newStatus}`);
+        setProposals((prev) => prev.map((p) => (p.id === id ? updated : p)));
+      }
+    } catch {
+      alert("Failed to update proposal status");
+    }
+  };
+
+  const handleEditProposal = (proposal: CustomerItineraryProposal) => {
+    setBuilderProposal(proposal);
+    changeTab("itinerary-builder");
+  };
+
+  const handlePreviewProposal = (proposal: CustomerItineraryProposal) => {
+    setPreviewProposal(proposal);
+    setShowPreviewModal(true);
+  };
+
+  const handleWhatsAppProposal = (proposal: CustomerItineraryProposal) => {
+    const digits = (proposal.customerPhone || "").replace(/\D/g, "");
+    const phone = digits.length === 10 ? `91${digits}` : digits;
+    const msg = `Hi ${proposal.customerName}, here is your customized travel proposal for *${proposal.packageTitle}* (${proposal.duration}) from KRADIND Adventures.\n\nTotal Quoted: ₹${proposal.totalQuotedPrice.toLocaleString("en-IN")}\nAdvance to Reserve: ₹${(proposal.advanceDepositRequired || 0).toLocaleString("en-IN")}\n\nPlease review your day-by-day itinerary and let us know if you need any adjustments!`;
+    const encoded = encodeURIComponent(msg);
+    const url = phone ? `https://wa.me/${phone}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
+    window.open(url, "_blank");
+  };
+
+  const handleStartProposalForCustomer = (cust: CustomerRecord) => {
+    setSelectedCustomerId(null);
+    setBuilderProposal({
+      id: `KRAD-PROP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      customerId: cust.id,
+      customerName: cust.name,
+      customerPhone: cust.phone,
+      customerEmail: cust.email,
+      customerCity: cust.city,
+      packageTitle: "",
+      basePackageSlug: "",
+      destination: "",
+      duration: "",
+      startDate: "",
+      endDate: "",
+      adultsCount: 2,
+      childrenCount: 0,
+      pickupLocation: "",
+      dropLocation: "",
+      hotelCategory: "Standard 3-Star / Alpine Camp",
+      vehicleType: "Private AC Sedan / Ertiga",
+      itinerary: [],
+      inclusions: [],
+      exclusions: [],
+      basePricePerPerson: 0,
+      totalQuotedPrice: 0,
+      advanceDepositRequired: 0,
+      validUntil: "",
+      specialNotes: cust.dietaryPreference ? `Dietary Preference: ${cust.dietaryPreference}` : "",
+      status: "Draft",
+      author: "Sales CRM Agent",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    changeTab("itinerary-builder");
+  };
 
   // Handlers
   const handleCreateCustomer = async (e: React.FormEvent) => {
@@ -709,6 +904,13 @@ export default function AdminCRMPage() {
             <span>Team Chat</span>
           </a>
           <button
+            onClick={() => changeTab("itinerary-builder")}
+            className="px-3.5 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-900 text-xs font-bold rounded-xl border border-purple-200 transition-colors flex items-center gap-1.5 shadow-2xs"
+          >
+            <Sparkles className="w-4 h-4 text-purple-600" />
+            <span>+ Itinerary Studio</span>
+          </button>
+          <button
             onClick={() => setShowAddTaskModal(true)}
             className="px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold rounded-xl border border-amber-200 transition-colors flex items-center gap-1.5"
           >
@@ -749,6 +951,17 @@ export default function AdminCRMPage() {
           <div className="text-[11px] text-slate-400 mt-1">Active leads & prospects</div>
         </div>
 
+        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-purple-300 transition-colors">
+          <div className="flex items-center justify-between text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-1">
+            <span>Proposals Created</span>
+            <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <div className="text-2xl font-extrabold text-purple-700">{metrics.totalProposals}</div>
+          <div className="text-[11px] text-slate-400 mt-1">Itinerary vouchers issued</div>
+        </div>
+
         <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-300 transition-colors">
           <div className="flex items-center justify-between text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-1">
             <span>Customer Lifetime Val</span>
@@ -760,7 +973,7 @@ export default function AdminCRMPage() {
           <div className="text-[11px] text-slate-400 mt-1">Aggregated booking spend</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-orange-300 transition-colors">
+        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-orange-300 transition-colors col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-1">
             <span>Pending Follow-ups</span>
             <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
@@ -770,24 +983,13 @@ export default function AdminCRMPage() {
           <div className="text-2xl font-extrabold text-orange-600">{metrics.pendingTasks}</div>
           <div className="text-[11px] text-slate-400 mt-1">Calls & actions due</div>
         </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-purple-300 transition-colors col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-1">
-            <span>VIP & Repeat</span>
-            <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-              <Flame className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-extrabold text-purple-700">{metrics.vipCount}</div>
-          <div className="text-[11px] text-slate-400 mt-1">High-value alumni</div>
-        </div>
       </div>
 
       {/* Main Tabs Navigation */}
       <div className="flex items-center justify-between border-b border-slate-200 pb-2">
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
           <button
-            onClick={() => setActiveTab("directory")}
+            onClick={() => changeTab("directory")}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
               activeTab === "directory"
                 ? "bg-emerald-700 text-white shadow-xs"
@@ -806,7 +1008,45 @@ export default function AdminCRMPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("kanban")}
+            onClick={() => changeTab("itinerary-builder")}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+              activeTab === "itinerary-builder"
+                ? "bg-emerald-700 text-white shadow-xs"
+                : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+            <span>✨ Itinerary Studio</span>
+            <span
+              className={`text-[9px] px-1.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider ${
+                activeTab === "itinerary-builder" ? "bg-white/20 text-white" : "bg-purple-100 text-purple-800"
+              }`}
+            >
+              Creator
+            </span>
+          </button>
+
+          <button
+            onClick={() => changeTab("proposals")}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+              activeTab === "proposals"
+                ? "bg-emerald-700 text-white shadow-xs"
+                : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>📄 Saved Proposals</span>
+            <span
+              className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                activeTab === "proposals" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600"
+              }`}
+            >
+              {proposals.length}
+            </span>
+          </button>
+
+          <button
+            onClick={() => changeTab("kanban")}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
               activeTab === "kanban"
                 ? "bg-emerald-700 text-white shadow-xs"
@@ -818,7 +1058,7 @@ export default function AdminCRMPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("tasks")}
+            onClick={() => changeTab("tasks")}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
               activeTab === "tasks"
                 ? "bg-emerald-700 text-white shadow-xs"
@@ -837,7 +1077,7 @@ export default function AdminCRMPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("audit")}
+            onClick={() => changeTab("audit")}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
               activeTab === "audit"
                 ? "bg-emerald-700 text-white shadow-xs"
@@ -1136,7 +1376,39 @@ export default function AdminCRMPage() {
         </div>
       )}
 
-      {/* TAB 2: PIPELINE KANBAN BOARD */}
+      {/* TAB: ITINERARY & QUOTATION STUDIO */}
+      {activeTab === "itinerary-builder" && (
+        <ItineraryStudio
+          packages={packages}
+          customers={customers}
+          initialProposal={builderProposal}
+          onSave={handleSaveProposal}
+          onPreview={handlePreviewProposal}
+          onWhatsApp={handleWhatsAppProposal}
+          onReset={() => {
+            setBuilderProposal(null);
+          }}
+          saving={savingProposal}
+        />
+      )}
+
+      {/* TAB: SAVED PROPOSALS ARCHIVE */}
+      {activeTab === "proposals" && (
+        <SavedProposalsArchive
+          proposals={proposals}
+          onPreview={handlePreviewProposal}
+          onWhatsApp={handleWhatsAppProposal}
+          onEdit={handleEditProposal}
+          onDelete={handleDeleteProposal}
+          onStatusChange={handleProposalStatusChange}
+          onCreateNew={() => {
+            setBuilderProposal(null);
+            changeTab("itinerary-builder");
+          }}
+        />
+      )}
+
+      {/* TAB: PIPELINE KANBAN BOARD */}
       {activeTab === "kanban" && (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5 overflow-x-auto pb-4">
           {(
@@ -1419,62 +1691,106 @@ export default function AdminCRMPage() {
       )}
 
       {/* ========================================================= */}
-      {/* CUSTOMER 360 SLIDE-OVER DRAWER (FULL PROFILE & HISTORY) */}
+      {/* CUSTOMER 360 FULL POPUP PANEL (FULL PROFILE & HISTORY) */}
       {/* ========================================================= */}
       {selectedCustomer && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-fade-in">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 bg-black/75 backdrop-blur-md animate-fade-in"
+          onClick={() => setSelectedCustomerId(null)}
+        >
           <div
-            className="w-full max-w-2xl bg-white border-l border-slate-200 h-full flex flex-col shadow-2xl overflow-hidden animate-slide-left text-slate-800"
+            className={`w-full ${
+              isModalExpanded
+                ? "h-full max-h-none rounded-none max-w-none"
+                : "max-w-6xl xl:max-w-7xl h-[92vh] max-h-[95vh] rounded-3xl"
+            } bg-white border border-slate-200/90 flex flex-col shadow-2xl overflow-hidden animate-scale-up text-slate-800 transition-all duration-200`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Drawer Header with deep forest green background for majestic contrast */}
-            <div className="p-6 bg-gradient-to-r from-[#0F3A2E] to-[#0A261E] text-white flex items-start justify-between">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center font-extrabold text-xl shadow-md">
+            {/* Header: Forest green brand gradient */}
+            <div className="px-6 py-5 bg-gradient-to-r from-[#0a2f24] via-[#0F3A2E] to-[#124235] text-white flex items-center justify-between shadow-sm relative shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 via-teal-500 to-emerald-700 text-white flex items-center justify-center font-extrabold text-2xl shadow-lg ring-2 ring-white/20 shrink-0">
                   {selectedCustomer.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-extrabold text-white">{selectedCustomer.name}</h2>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-mono font-bold">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                      {selectedCustomer.name}
+                    </h2>
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 text-white font-mono font-bold tracking-wider">
                       {selectedCustomer.id}
                     </span>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] border ${getPriorityBadgeClasses(
+                        selectedCustomer.priority
+                      )}`}
+                    >
+                      {selectedCustomer.priority} Priority
+                    </span>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] border ${getStageBadgeClasses(
+                        selectedCustomer.lifecycleStage
+                      )}`}
+                    >
+                      {selectedCustomer.lifecycleStage}
+                    </span>
                   </div>
-                  <div className="text-xs text-emerald-200 flex items-center gap-2 mt-0.5">
-                    <span>
+                  <div className="text-xs text-emerald-200 flex items-center gap-3 mt-1.5 flex-wrap">
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-300" />
                       {selectedCustomer.city}, {selectedCustomer.state || "India"}
                     </span>
                     <span>•</span>
-                    <span className="text-amber-300 font-bold">{selectedCustomer.loyaltyTier}</span>
+                    <span className="text-amber-300 font-bold flex items-center gap-1">
+                      <Award className="w-3.5 h-3.5" />
+                      {selectedCustomer.loyaltyTier}
+                    </span>
+                    <span>•</span>
+                    <span className="text-slate-200 flex items-center gap-1">
+                      <User className="w-3.5 h-3.5 text-slate-300" />
+                      Assigned: {selectedCustomer.assignedTo || "Unassigned"}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <button
-                onClick={() => setSelectedCustomerId(null)}
-                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalExpanded(!isModalExpanded)}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  title={isModalExpanded ? "Exit Fullscreen" : "Fullscreen Panel"}
+                >
+                  {isModalExpanded ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCustomerId(null)}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  title="Close (Esc)"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Quick Action Ribbon */}
-            <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2 overflow-x-auto text-xs">
-              <div className="flex items-center gap-2">
+            <div className="px-6 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3 overflow-x-auto text-xs shrink-0">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <a
                   href={`https://wa.me/${cleanPhoneForWhatsApp(selectedCustomer.phone)}?text=Hi%20${encodeURIComponent(
                     selectedCustomer.name
                   )},%20greetings%20from%20KRADIND%20Adventures!`}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs"
+                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center gap-2 transition-colors shadow-xs"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
-                  <span>WhatsApp</span>
+                  <span>WhatsApp Chat</span>
                 </a>
                 <a
                   href={`tel:${selectedCustomer.phone}`}
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs"
+                  className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center gap-2 transition-colors shadow-xs"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   <span>Call {selectedCustomer.phone}</span>
@@ -1482,366 +1798,474 @@ export default function AdminCRMPage() {
                 {selectedCustomer.email && (
                   <a
                     href={`mailto:${selectedCustomer.email}`}
-                    className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-xl flex items-center gap-1.5 transition-colors border border-slate-200 shadow-xs"
+                    className="px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-xl flex items-center gap-2 transition-colors border border-slate-200 shadow-xs"
                   >
                     <Mail className="w-3.5 h-3.5" />
-                    <span>Email</span>
+                    <span>Email ({selectedCustomer.email})</span>
                   </a>
                 )}
+                <button
+                  type="button"
+                  onClick={() => handleStartProposalForCustomer(selectedCustomer)}
+                  className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-xl flex items-center gap-2 transition-all shadow-xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+                  <span>Create Itinerary Proposal</span>
+                </button>
               </div>
 
-              <div className="flex items-center gap-1 text-xs">
-                <span className="text-slate-500 font-medium">Priority:</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-slate-500 font-medium text-xs">Customer Status:</span>
                 <span
-                  className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${getPriorityBadgeClasses(
-                    selectedCustomer.priority
-                  )}`}
+                  className={`px-2.5 py-1 rounded-lg font-bold text-xs ${
+                    selectedCustomer.status === "Active"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : selectedCustomer.status === "Won"
+                      ? "bg-purple-100 text-purple-800"
+                      : "bg-slate-100 text-slate-700"
+                  }`}
                 >
-                  {selectedCustomer.priority}
+                  {selectedCustomer.status}
                 </span>
               </div>
             </div>
 
             {/* Key Stats Bar */}
-            <div className="grid grid-cols-4 gap-2 p-3 bg-white border-b border-slate-200 text-center text-xs">
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Spend</div>
-                <div className="font-extrabold text-amber-700 text-sm mt-0.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 bg-white border-b border-slate-200 text-xs shrink-0">
+              <div className="bg-amber-50/60 p-3 rounded-xl border border-amber-100 text-center">
+                <div className="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Total Spend</div>
+                <div className="font-extrabold text-amber-900 text-base mt-0.5">
                   {formatCurrency(selectedCustomer.totalSpent)}
                 </div>
               </div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trips Taken</div>
-                <div className="font-extrabold text-emerald-700 text-sm mt-0.5">{selectedCustomer.totalTrips}</div>
-              </div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Touchpoints</div>
-                <div className="font-extrabold text-blue-700 text-sm mt-0.5">
-                  {customerTimeline.length || selectedCustomer.notesCount || 0}
+              <div className="bg-emerald-50/60 p-3 rounded-xl border border-emerald-100 text-center">
+                <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Trips Taken</div>
+                <div className="font-extrabold text-emerald-900 text-base mt-0.5">
+                  {selectedCustomer.totalTrips} Treks
                 </div>
               </div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Source</div>
-                <div className="font-bold text-slate-800 text-xs truncate mt-0.5">{selectedCustomer.source}</div>
+              <div className="bg-blue-50/60 p-3 rounded-xl border border-blue-100 text-center">
+                <div className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">Touchpoints</div>
+                <div className="font-extrabold text-blue-900 text-base mt-0.5">
+                  {customerTimeline.length || selectedCustomer.notesCount || 0} Logs
+                </div>
+              </div>
+              <div className="bg-purple-50/60 p-3 rounded-xl border border-purple-100 text-center">
+                <div className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">Lead Source</div>
+                <div className="font-bold text-purple-900 text-xs truncate mt-1">
+                  {selectedCustomer.source || "Direct Entry"}
+                </div>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Assigned Agent</div>
+                <div className="font-bold text-slate-800 text-xs truncate mt-1">
+                  {selectedCustomer.assignedTo || "Unassigned"}
+                </div>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dietary / Health</div>
+                <div className="font-bold text-slate-800 text-xs truncate mt-1">
+                  {selectedCustomer.dietaryPreference || "Standard"}
+                </div>
               </div>
             </div>
 
             {/* Subtabs Header */}
-            <div className="flex items-center border-b border-slate-200 px-6 bg-slate-50">
+            <div className="flex items-center border-b border-slate-200 px-6 bg-slate-50/80 shrink-0 overflow-x-auto">
               <button
+                type="button"
                 onClick={() => setDrawerTab("timeline")}
-                className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 transition-colors ${
+                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "timeline"
-                    ? "border-emerald-600 text-emerald-800"
+                    ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
-                <Clock className="w-3.5 h-3.5" />
-                <span>Timeline History ({customerTimeline.length})</span>
+                <Clock className="w-4 h-4" />
+                <span>Timeline History</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700 font-mono">
+                  {customerTimeline.length}
+                </span>
               </button>
 
               <button
+                type="button"
                 onClick={() => setDrawerTab("collab")}
-                className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 transition-colors ${
+                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "collab"
-                    ? "border-emerald-600 text-emerald-800"
+                    ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
-                <Users className="w-3.5 h-3.5" />
-                <span>Multi-Agent Notes ({collabMessages.length})</span>
+                <Users className="w-4 h-4" />
+                <span>Multi-Agent Notes & Handover</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700 font-mono">
+                  {collabMessages.length}
+                </span>
               </button>
 
               <button
+                type="button"
                 onClick={() => setDrawerTab("medical")}
-                className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 transition-colors ${
+                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "medical"
-                    ? "border-emerald-600 text-emerald-800"
+                    ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
-                <HeartPulse className="w-3.5 h-3.5" />
-                <span>Medical & Emergency</span>
+                <HeartPulse className="w-4 h-4 text-rose-500" />
+                <span>Medical & Emergency Info</span>
               </button>
 
               <button
+                type="button"
                 onClick={() => setDrawerTab("edit")}
-                className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 transition-colors ${
+                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "edit"
-                    ? "border-emerald-600 text-emerald-800"
+                    ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Profile & Lifecycle</span>
+                <Edit3 className="w-4 h-4 text-blue-500" />
+                <span>Profile & Lifecycle Settings</span>
               </button>
             </div>
 
-            {/* Drawer Body */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/60">
+            {/* Panel Body */}
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/60">
               {/* SUBTAB 1: TIMELINE HISTORY */}
               {drawerTab === "timeline" && (
-                <div className="space-y-5">
-                  {/* New Interaction Form */}
-                  <form
-                    onSubmit={handleAddTimelineLog}
-                    className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                        <Plus className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Log Touchpoint / Note</span>
-                      </span>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Form + Quick Info */}
+                  <div className="lg:col-span-5 space-y-4">
+                    {/* Log Touchpoint Form */}
+                    <form
+                      onSubmit={handleAddTimelineLog}
+                      className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                          <Plus className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Log Touchpoint / Note</span>
+                        </span>
 
-                      <div className="flex items-center gap-1">
-                        {(
-                          [
-                            { type: "call_logged" as TimelineEventType, label: "📞 Call" },
-                            { type: "whatsapp_sent" as TimelineEventType, label: "💬 WhatsApp" },
-                            { type: "note_added" as TimelineEventType, label: "📝 Note" },
-                            { type: "email_sent" as TimelineEventType, label: "✉️ Email" },
-                          ] as const
-                        ).map((item) => (
-                          <button
-                            key={item.type}
-                            type="button"
-                            onClick={() => setNewLogType(item.type)}
-                            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
-                              newLogType === item.type
-                                ? "bg-emerald-600 text-white"
-                                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                            }`}
-                          >
-                            {item.label}
-                          </button>
-                        ))}
+                        <div className="flex items-center gap-1">
+                          {(
+                            [
+                              { type: "call_logged" as TimelineEventType, label: "📞 Call" },
+                              { type: "whatsapp_sent" as TimelineEventType, label: "💬 WhatsApp" },
+                              { type: "note_added" as TimelineEventType, label: "📝 Note" },
+                              { type: "email_sent" as TimelineEventType, label: "✉️ Email" },
+                            ] as const
+                          ).map((item) => (
+                            <button
+                              key={item.type}
+                              type="button"
+                              onClick={() => setNewLogType(item.type)}
+                              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
+                                newLogType === item.type
+                                  ? "bg-emerald-600 text-white shadow-xs"
+                                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                              }`}
+                            >
+                              {item.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <input
+                        type="text"
+                        placeholder="Brief headline (e.g. Discussed Chadar trek acclimatization, sent itinerary)"
+                        value={newLogTitle}
+                        onChange={(e) => setNewLogTitle(e.target.value)}
+                        required
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                      />
+
+                      <textarea
+                        placeholder="Detailed notes or customer feedback..."
+                        rows={3}
+                        value={newLogDesc}
+                        onChange={(e) => setNewLogDesc(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white resize-none"
+                      />
+
+                      <div className="flex justify-end">
+                        <button
+                          type="submit"
+                          disabled={submittingLog || !newLogTitle.trim()}
+                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs"
+                        >
+                          <Send className="w-3 h-3" />
+                          <span>{submittingLog ? "Logging..." : "Save Interaction"}</span>
+                        </button>
+                      </div>
+                    </form>
+
+                    {/* Quick Customer Profile Card */}
+                    <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2.5 text-xs">
+                      <div className="font-extrabold text-slate-900 text-xs border-b border-slate-100 pb-2">
+                        Quick Dossier
+                      </div>
+                      <div className="space-y-1.5 text-slate-600">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Phone:</span>
+                          <span className="font-bold text-slate-800">{selectedCustomer.phone}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Email:</span>
+                          <span className="font-bold text-slate-800">{selectedCustomer.email || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Location:</span>
+                          <span className="font-bold text-slate-800">{selectedCustomer.city}, {selectedCustomer.state || "India"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Tags:</span>
+                          <span className="font-bold text-emerald-700">{selectedCustomer.tags?.join(", ") || "General"}</span>
+                        </div>
                       </div>
                     </div>
+                  </div>
 
-                    <input
-                      type="text"
-                      placeholder="Brief headline (e.g. Discussed Chadar trek acclimatization, sent itinerary)"
-                      value={newLogTitle}
-                      onChange={(e) => setNewLogTitle(e.target.value)}
-                      required
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                    />
-
-                    <textarea
-                      placeholder="Detailed notes or customer feedback..."
-                      rows={2}
-                      value={newLogDesc}
-                      onChange={(e) => setNewLogDesc(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white resize-none"
-                    />
-
-                    <div className="flex justify-end">
+                  {/* Right Column: Timeline Stream */}
+                  <div className="lg:col-span-7 space-y-3.5">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
+                      <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Touchpoints & Interactions ({customerTimeline.length})
+                      </span>
                       <button
-                        type="submit"
-                        disabled={submittingLog || !newLogTitle.trim()}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs"
+                        type="button"
+                        onClick={() => {
+                          const fetchTimeline = async () => {
+                            setLoadingTimeline(true);
+                            try {
+                              const res = await fetch(`/api/admin/crm/timeline?customerId=${selectedCustomerId}`);
+                              if (res.ok) setCustomerTimeline(await res.json());
+                            } finally {
+                              setLoadingTimeline(false);
+                            }
+                          };
+                          fetchTimeline();
+                        }}
+                        className="text-xs text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1"
                       >
-                        <Send className="w-3 h-3" />
-                        <span>{submittingLog ? "Logging..." : "Save Interaction"}</span>
+                        <RefreshCw className={`w-3 h-3 ${loadingTimeline ? "animate-spin" : ""}`} />
+                        <span>Refresh</span>
                       </button>
                     </div>
-                  </form>
 
-                  {/* Feed */}
-                  <div className="space-y-3 relative before:absolute before:inset-0 before:left-3 before:w-0.5 before:bg-slate-200">
-                    {loadingTimeline ? (
-                      <div className="py-8 text-center text-slate-400 text-xs">
-                        <RefreshCw className="w-4 h-4 animate-spin mx-auto mb-2 text-emerald-600" />
-                        Loading activity logs...
-                      </div>
-                    ) : customerTimeline.length === 0 ? (
-                      <div className="py-8 text-center text-slate-400 text-xs">
-                        No activity recorded for this customer yet. Use the form above to log the first call or note!
-                      </div>
-                    ) : (
-                      customerTimeline.map((item) => (
-                        <div key={item.id} className="relative pl-7 group">
-                          {/* Marker */}
-                          <div className="absolute left-1.5 top-2 -translate-x-1/2 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white shadow-xs" />
-
-                          <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <h4 className="text-xs font-bold text-slate-900">{item.title}</h4>
-                              <span className="text-[10px] text-slate-400 font-semibold">
-                                {new Date(item.timestamp).toLocaleString("en-IN", {
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
-                              </span>
-                            </div>
-
-                            {item.description && <p className="text-xs text-slate-600">{item.description}</p>}
-
-                            <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-400 font-semibold">
-                              <span>By: {item.author}</span>
-                              <span>•</span>
-                              <span className="uppercase tracking-wider">{item.type.replace("_", " ")}</span>
+                    <div className="space-y-3 relative before:absolute before:inset-0 before:left-3 before:w-0.5 before:bg-slate-200">
+                      {loadingTimeline ? (
+                        <div className="py-12 text-center text-slate-400 text-xs">
+                          <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2 text-emerald-600" />
+                          Loading interaction history...
+                        </div>
+                      ) : customerTimeline.length === 0 ? (
+                        <div className="py-12 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200 p-6">
+                          No activity recorded for this customer yet. Use the form on the left to log the first call or note!
+                        </div>
+                      ) : (
+                        customerTimeline.map((item) => (
+                          <div key={item.id} className="relative pl-7 group">
+                            <div className="absolute left-1.5 top-2.5 -translate-x-1/2 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white shadow-xs" />
+                            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+                              <div className="flex items-center justify-between gap-2">
+                                <h4 className="text-xs font-bold text-slate-900">{item.title}</h4>
+                                <span className="text-[10px] text-slate-400 font-semibold whitespace-nowrap">
+                                  {new Date(item.timestamp).toLocaleString("en-IN", {
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+                              </div>
+                              {item.description && <p className="text-xs text-slate-600 leading-relaxed">{item.description}</p>}
+                              <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-400 font-semibold">
+                                <span>Logged by: <strong className="text-slate-600">{item.author}</strong></span>
+                                <span>•</span>
+                                <span className="uppercase tracking-wider px-1.5 py-0.5 bg-slate-100 rounded text-slate-600">
+                                  {item.type.replace("_", " ")}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))
-                    )}
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* SUBTAB 2: MULTI-AGENT INTERNAL NOTES & HANDOVER */}
               {drawerTab === "collab" && (
-                <div className="space-y-4">
-                  {/* Lead Handover Box */}
-                  <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
-                        <UserCheck className="w-4 h-4 text-emerald-600" />
-                        <span>Multi-Agent Lead Handover</span>
-                      </span>
-                      <span className="text-[11px] text-slate-500 font-medium">
-                        Current: <strong className="text-slate-800">{selectedCustomer.assignedTo || "Unassigned"}</strong>
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                          Transfer Case To
-                        </label>
-                        <select
-                          value={handoverAgent}
-                          onChange={(e) => setHandoverAgent(e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 font-bold mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                        >
-                          <option value="Vikram Rawat">Vikram Rawat (Operations Manager)</option>
-                          <option value="Priya Sharma">Priya Sharma (Sales / CRM Agent)</option>
-                          <option value="Tashi Dorje">Tashi Dorje (Expedition Leader)</option>
-                          <option value="Admin User">Admin User (Super Admin)</option>
-                        </select>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Handover Form + Persona + Note Input */}
+                  <div className="lg:col-span-5 space-y-4">
+                    {/* Lead Handover Box */}
+                    <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                          <UserCheck className="w-4 h-4 text-emerald-600" />
+                          <span>Multi-Agent Lead Handover</span>
+                        </span>
+                        <span className="text-[11px] text-slate-500 font-medium">
+                          Current: <strong className="text-slate-800">{selectedCustomer.assignedTo || "Unassigned"}</strong>
+                        </span>
                       </div>
 
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                          Handover Instructions / Note
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Quotation accepted, verify hotel slot..."
-                          value={handoverNote}
-                          onChange={(e) => setHandoverNote(e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 font-medium mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleTransferLead}
-                      disabled={submittingHandover}
-                      className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-xs"
-                    >
-                      {submittingHandover ? "Transferring..." : `Transfer Case to ${handoverAgent}`}
-                    </button>
-                  </div>
-
-                  {/* Multi-Agent Speaking Persona Switcher */}
-                  <div className="p-3.5 bg-slate-100 rounded-2xl border border-slate-200 flex items-center justify-between gap-2 text-xs">
-                    <span className="font-bold text-slate-600 text-[11px]">Post Internal Note As:</span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {[
-                        { id: "admin-sales", name: "Priya Sharma", role: "Sales / CRM Agent" as AdminRole },
-                        { id: "admin-ops", name: "Vikram Rawat", role: "Operations Manager" as AdminRole },
-                        { id: "admin-guide", name: "Tashi Dorje", role: "Expedition Leader" as AdminRole },
-                        { id: "admin-root", name: "Admin User", role: "Super Admin" as AdminRole },
-                      ].map((p) => {
-                        const isSelected = collabPersona.name === p.name;
-                        return (
-                          <button
-                            key={p.id}
-                            type="button"
-                            onClick={() => setCollabPersona(p)}
-                            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border ${
-                              isSelected
-                                ? "bg-slate-900 text-white border-slate-900"
-                                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-200"
-                            }`}
+                      <div className="space-y-3 text-xs">
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Transfer Case To
+                          </label>
+                          <select
+                            value={handoverAgent}
+                            onChange={(e) => setHandoverAgent(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 font-bold mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
                           >
-                            {p.name.split(" ")[0]} ({p.role.split(" ")[0]})
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                            <option value="Vikram Rawat">Vikram Rawat (Operations Manager)</option>
+                            <option value="Priya Sharma">Priya Sharma (Sales / CRM Agent)</option>
+                            <option value="Tashi Dorje">Tashi Dorje (Expedition Leader)</option>
+                            <option value="Admin User">Admin User (Super Admin)</option>
+                          </select>
+                        </div>
 
-                  {/* Post Internal Note Input */}
-                  <form onSubmit={handlePostCollabNote} className="space-y-2">
-                    <textarea
-                      rows={2}
-                      value={collabInput}
-                      onChange={(e) => setCollabInput(e.target.value)}
-                      placeholder={`Add internal agent note as ${collabPersona.name} (e.g. @Vikram Rawat cab quotes finalized)...`}
-                      className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 shadow-xs resize-none"
-                    />
-                    <div className="flex justify-end">
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Handover Instructions / Note
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Quotation accepted, verify hotel slot..."
+                            value={handoverNote}
+                            onChange={(e) => setHandoverNote(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 font-medium mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                          />
+                        </div>
+                      </div>
+
                       <button
-                        type="submit"
-                        disabled={!collabInput.trim()}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-xs flex items-center gap-1.5"
+                        type="button"
+                        onClick={handleTransferLead}
+                        disabled={submittingHandover}
+                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-xs"
                       >
-                        <Send className="w-3 h-3" />
-                        <span>Post Multi-Agent Note</span>
+                        {submittingHandover ? "Transferring..." : `Transfer Case to ${handoverAgent}`}
                       </button>
                     </div>
-                  </form>
 
-                  {/* Multi-Agent Conversation Thread */}
-                  <div className="space-y-2.5">
-                    {loadingCollab ? (
-                      <div className="py-8 text-center text-slate-400 text-xs">Loading notes...</div>
-                    ) : collabMessages.length === 0 ? (
-                      <div className="py-8 text-center text-slate-400 text-xs bg-white rounded-xl border border-slate-200">
-                        No internal multi-agent notes recorded for this customer yet. Post the first one above!
+                    {/* Speaking Persona Switcher */}
+                    <div className="p-4 bg-slate-100 rounded-2xl border border-slate-200 space-y-2 text-xs">
+                      <span className="font-bold text-slate-600 text-[11px] block">Post Internal Note As:</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { id: "admin-sales", name: "Priya Sharma", role: "Sales / CRM Agent" as AdminRole },
+                          { id: "admin-ops", name: "Vikram Rawat", role: "Operations Manager" as AdminRole },
+                          { id: "admin-guide", name: "Tashi Dorje", role: "Expedition Leader" as AdminRole },
+                          { id: "admin-root", name: "Admin User", role: "Super Admin" as AdminRole },
+                        ].map((p) => {
+                          const isSelected = collabPersona.name === p.name;
+                          return (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => setCollabPersona(p)}
+                              className={`px-3 py-2 rounded-xl text-[11px] font-bold transition-all border text-left ${
+                                isSelected
+                                  ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-200"
+                              }`}
+                            >
+                              <div>{p.name}</div>
+                              <div className={`text-[9px] font-normal ${isSelected ? "text-slate-300" : "text-slate-500"}`}>{p.role}</div>
+                            </button>
+                          );
+                        })}
                       </div>
-                    ) : (
-                      collabMessages.map((m: any) => (
-                        <div key={m.id} className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-extrabold text-slate-900">{m.senderName}</span>
-                              <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border ${getRoleBadgeClasses(m.senderRole)}`}>
-                                {m.senderRole}
+                    </div>
+
+                    {/* Post Internal Note Input */}
+                    <form onSubmit={handlePostCollabNote} className="space-y-2 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        New Internal Discussion Note
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={collabInput}
+                        onChange={(e) => setCollabInput(e.target.value)}
+                        placeholder={`Add internal note as ${collabPersona.name} (e.g. @Vikram Rawat cab quotes finalized)...`}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white resize-none"
+                      />
+                      <div className="flex justify-end pt-1">
+                        <button
+                          type="submit"
+                          disabled={!collabInput.trim()}
+                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-xs flex items-center gap-1.5"
+                        >
+                          <Send className="w-3 h-3" />
+                          <span>Post Note</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* Right Column: Discussion Thread */}
+                  <div className="lg:col-span-7 space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
+                      <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Internal Discussion Thread ({collabMessages.length})
+                      </span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {loadingCollab ? (
+                        <div className="py-12 text-center text-slate-400 text-xs">Loading notes...</div>
+                      ) : collabMessages.length === 0 ? (
+                        <div className="py-12 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200 p-6">
+                          No internal multi-agent notes recorded for this customer yet. Post the first one using the form on the left!
+                        </div>
+                      ) : (
+                        collabMessages.map((m: any) => (
+                          <div key={m.id} className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
+                            <div className="flex items-center justify-between text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-slate-900">{m.senderName}</span>
+                                <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${getRoleBadgeClasses(m.senderRole)}`}>
+                                  {m.senderRole}
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-slate-400 font-medium">
+                                {new Date(m.timestamp).toLocaleDateString([], { month: "short", day: "numeric" })} •{" "}
+                                {new Date(m.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                               </span>
                             </div>
-                            <span className="text-[10px] text-slate-400 font-medium">
-                              {new Date(m.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                            </span>
+                            <p className="text-xs text-slate-700 whitespace-pre-wrap leading-relaxed">{m.content}</p>
                           </div>
-                          <p className="text-xs text-slate-700 whitespace-pre-wrap">{m.content}</p>
-                        </div>
-                      ))
-                    )}
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* SUBTAB 2: MEDICAL & EMERGENCY */}
+              {/* SUBTAB 3: MEDICAL & EMERGENCY */}
               {drawerTab === "medical" && (
-                <div className="space-y-4">
-                  <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
-                    <h3 className="text-xs font-bold text-rose-700 flex items-center gap-1.5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                  {/* Emergency Contact */}
+                  <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                    <h3 className="text-xs font-bold text-rose-700 flex items-center gap-2 border-b border-rose-100 pb-3">
                       <ShieldAlert className="w-4 h-4 text-rose-600" />
                       <span>Primary Emergency Contact</span>
                     </h3>
 
                     {selectedCustomer.emergencyContact?.name ? (
-                      <div className="grid grid-cols-3 gap-3 text-xs">
+                      <div className="space-y-3 text-xs">
                         <div>
-                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Name</div>
-                          <div className="font-bold text-slate-900 mt-0.5">
+                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Contact Person</div>
+                          <div className="font-bold text-slate-900 text-sm mt-0.5">
                             {selectedCustomer.emergencyContact.name}
                           </div>
                         </div>
@@ -1852,61 +2276,107 @@ export default function AdminCRMPage() {
                           </div>
                         </div>
                         <div>
-                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Contact Phone</div>
+                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Emergency Phone</div>
                           <a
                             href={`tel:${selectedCustomer.emergencyContact.phone}`}
-                            className="font-bold text-emerald-700 hover:underline mt-0.5 block"
+                            className="font-bold text-emerald-700 hover:underline mt-0.5 block text-sm"
                           >
-                            {selectedCustomer.emergencyContact.phone}
+                            📞 {selectedCustomer.emergencyContact.phone}
                           </a>
                         </div>
                       </div>
                     ) : (
-                      <div className="text-xs text-slate-400 italic">
+                      <div className="text-xs text-slate-400 italic py-4">
                         No emergency contact provided yet. You can add it in the Profile & Lifecycle tab.
                       </div>
                     )}
                   </div>
 
-                  <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
-                    <h3 className="text-xs font-bold text-amber-700 flex items-center gap-1.5">
+                  {/* Dietary & Clothing Requirements */}
+                  <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                    <h3 className="text-xs font-bold text-amber-700 flex items-center gap-2 border-b border-amber-100 pb-3">
                       <HeartPulse className="w-4 h-4 text-amber-600" />
-                      <span>Medical & Dietary Profile</span>
+                      <span>Dietary & Expedition Sizing</span>
                     </h3>
-                    <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="space-y-3 text-xs">
                       <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                           Dietary Preference:
                         </span>
-                        <div className="font-bold text-slate-900 mt-0.5">
+                        <div className="font-bold text-slate-900 text-sm mt-0.5">
                           {selectedCustomer.dietaryPreference || "Vegetarian"}
                         </div>
                       </div>
                       <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                          T-Shirt Size:
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                          T-Shirt / Expedition Layer Size:
                         </span>
-                        <div className="font-bold text-slate-900 mt-0.5">{selectedCustomer.tShirtSize || "L"}</div>
+                        <div className="font-bold text-slate-900 text-sm mt-0.5">{selectedCustomer.tShirtSize || "L"}</div>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="pt-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        Medical Conditions & High Altitude Notes:
-                      </span>
-                      <p className="text-xs text-slate-700 font-medium mt-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  {/* High Altitude & Medical Conditions */}
+                  <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                    <h3 className="text-xs font-bold text-blue-700 flex items-center gap-2 border-b border-blue-100 pb-3">
+                      <Shield className="w-4 h-4 text-blue-600" />
+                      <span>Medical Conditions & Altitude Alerts</span>
+                    </h3>
+                    <div>
+                      <p className="text-xs text-slate-700 font-medium leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                         {selectedCustomer.medicalNotes ||
-                          "No past medical alerts or asthma/cardiac contraindications recorded."}
+                          "No past medical alerts or asthma/cardiac contraindications recorded for this traveler."}
                       </p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* SUBTAB 3: EDIT PROFILE & LIFECYCLE */}
+              {/* SUBTAB 4: EDIT PROFILE & LIFECYCLE */}
               {drawerTab === "edit" && (
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
+                  <div className="border-b border-slate-100 pb-3">
+                    <h3 className="text-sm font-extrabold text-slate-900">Edit Customer 360 Information</h3>
+                    <p className="text-xs text-slate-500">Update lifecycle stages, tags, emergency details, and sales assignments.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    <div>
+                      <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={editFormData.name !== undefined ? editFormData.name : selectedCustomer.name}
+                        onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                        Phone Number
+                      </label>
+                      <input
+                        type="text"
+                        value={editFormData.phone !== undefined ? editFormData.phone : selectedCustomer.phone}
+                        onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={editFormData.email !== undefined ? editFormData.email : selectedCustomer.email}
+                        onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                      />
+                    </div>
+
                     <div>
                       <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                         Lifecycle Stage
@@ -2028,11 +2498,11 @@ export default function AdminCRMPage() {
                     />
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-2 flex justify-end">
                     <button
                       onClick={handleUpdateCustomer}
                       disabled={savingEdit}
-                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+                      className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
                     >
                       <Check className="w-4 h-4" />
                       <span>{savingEdit ? "Updating Profile..." : "Save Customer 360 Changes"}</span>
@@ -2295,6 +2765,13 @@ export default function AdminCRMPage() {
           </div>
         </div>
       )}
+
+      {/* Printable Branded Proposal Voucher Modal */}
+      <ProposalVoucherModal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        proposal={previewProposal}
+      />
     </div>
   );
 }

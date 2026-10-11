@@ -6,6 +6,7 @@ import Link from "next/link";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { PrintHeader, PrintFooter } from "@/components/print-header";
 import { BookingModal } from "@/components/booking-modal";
 import { DestinationData, TrekData } from "@/lib/cms-store";
 import {
@@ -123,8 +124,11 @@ export function DestinationDetailView({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      {/* Fixed Sticky Top Navigation Header */}
-      <div className="sticky top-0 z-50 w-full shadow-xs">
+      {/* 1. Official Document Print Header (sabse uper logo in print & PDF export) */}
+      <PrintHeader />
+
+      {/* Fixed Sticky Top Navigation Header (Screen Only) */}
+      <div className="sticky top-0 z-50 w-full shadow-xs no-print print:hidden">
         <TopBar />
         <Header />
       </div>
@@ -692,7 +696,12 @@ export function DestinationDetailView({
         </section>
       </main>
 
-      <Footer />
+      <div className="no-print print:hidden">
+        <Footer />
+      </div>
+
+      {/* Official Printable Document Footer */}
+      <PrintFooter />
 
       {/* Quick Booking / Lead Modal */}
       <BookingModal

@@ -373,11 +373,13 @@ export default function LandingPageRoute({
                           </label>
                           <input
                             type="tel"
+                            inputMode="numeric"
+                            maxLength={10}
                             required
                             value={leadPhone}
-                            onChange={(e) => setLeadPhone(e.target.value)}
-                            placeholder="+91 9797941414"
-                            className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                            onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                            placeholder="9797941414"
+                            className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
                           />
                         </div>
 

@@ -70,7 +70,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
   };
 
   return (
-    <header className="w-full relative z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <header className="w-full relative z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs no-print print:hidden">
       <div className="w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-6 xl:px-8 h-18 sm:h-20 flex items-center justify-between gap-2 lg:gap-3 xl:gap-4">
         
         {/* Brand Logo */}

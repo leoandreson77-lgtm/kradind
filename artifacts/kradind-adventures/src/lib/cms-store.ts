@@ -52,6 +52,7 @@ export interface TrekData {
   altitude: string;
   distance?: string;
   baseCamp?: string;
+  pickupDrop?: string;
   rating: number;
   reviewCount: number;
   price: number;
@@ -169,6 +170,7 @@ export interface HomeSectionsConfig {
     twitterUrl: string;
     threadsUrl: string;
     pinterestUrl: string;
+    linkedinUrl?: string;
     copyrightText: string;
   };
 }
@@ -443,6 +445,51 @@ export interface InternalChatChannel {
   icon: string;
 }
 
+export interface ItineraryProposalDay {
+  day: number;
+  title: string;
+  description: string;
+  stay?: string;
+  meal?: string;
+  activities?: string;
+  distance?: string;
+  duration?: string;
+  altitude?: string;
+}
+
+export interface CustomerItineraryProposal {
+  id: string;
+  customerId?: string;
+  customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  customerCity?: string;
+  packageTitle: string;
+  basePackageSlug?: string;
+  destination: string;
+  duration: string;
+  startDate?: string;
+  endDate?: string;
+  adultsCount: number;
+  childrenCount: number;
+  pickupLocation?: string;
+  dropLocation?: string;
+  hotelCategory: string;
+  vehicleType: string;
+  itinerary: ItineraryProposalDay[];
+  inclusions: string[];
+  exclusions: string[];
+  basePricePerPerson: number;
+  totalQuotedPrice: number;
+  advanceDepositRequired?: number;
+  validUntil?: string;
+  specialNotes?: string;
+  status: "Draft" | "Sent" | "Accepted" | "Under Review" | "Expired";
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CMSStoreData {
   admins: AdminUser[];
   homeSections: HomeSectionsConfig;
@@ -455,6 +502,7 @@ export interface CMSStoreData {
   customers?: CustomerRecord[];
   customerTimeline?: CustomerTimelineEvent[];
   customerTasks?: CustomerTask[];
+  customerProposals?: CustomerItineraryProposal[];
   auditLogs?: AuditLogRecord[];
   chatMessages?: InternalChatMessage[];
   chatChannels?: InternalChatChannel[];
@@ -2737,6 +2785,7 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       twitterUrl: "https://x.com/KradGlobalTour",
       threadsUrl: "https://www.threads.net/@kradglobal",
       pinterestUrl: "https://in.pinterest.com/KradGlobalTravels/",
+      linkedinUrl: "https://www.linkedin.com/company/krad-india/",
       copyrightText: "© 2026 KRADIND Adventures Private Limited. All rights reserved. Registered under Ministry of Tourism.",
     },
   };
@@ -3319,6 +3368,7 @@ export function readStore(): CMSStoreData {
         twitterUrl: rawHome?.contactAndFooter?.twitterUrl || defaultSections.contactAndFooter.twitterUrl,
         threadsUrl: rawHome?.contactAndFooter?.threadsUrl || defaultSections.contactAndFooter.threadsUrl,
         pinterestUrl: rawHome?.contactAndFooter?.pinterestUrl || defaultSections.contactAndFooter.pinterestUrl,
+        linkedinUrl: rawHome?.contactAndFooter?.linkedinUrl || defaultSections.contactAndFooter.linkedinUrl,
         copyrightText: rawHome?.contactAndFooter?.copyrightText || defaultSections.contactAndFooter.copyrightText,
       },
     };
@@ -3984,6 +4034,216 @@ export async function deleteCustomerTaskAsync(id: string): Promise<boolean> {
   return true;
 }
 
+export async function getProposalsAsync(customerId?: string): Promise<CustomerItineraryProposal[]> {
+  try {
+    const db = await getDb();
+    const query = customerId ? { customerId } : {};
+    const docs = await db.collection("kradind_proposals").find(query).sort({ updatedAt: -1 }).toArray();
+    if (docs && docs.length > 0) {
+      return docs.map(({ _id, ...rest }) => rest as CustomerItineraryProposal);
+    }
+  } catch (err) {
+    console.warn("MongoDB getProposals error, fallback to local store:", err);
+  }
+  const store = readStore();
+  let all = store.customerProposals || [];
+  if (all.length === 0) {
+    // Seed initial realistic proposals
+    all = [
+      {
+        id: "KRAD-PROP-2026-1042",
+        customerId: "cust-1",
+        customerName: "Ananya Verma",
+        customerPhone: "+91 9811234567",
+        customerEmail: "ananya.v@gmail.com",
+        customerCity: "Delhi NCR",
+        packageTitle: "Rajasthan Royal Heritage Tour",
+        basePackageSlug: "rajasthan-tour-package-6-days",
+        destination: "Jaipur, Jodhpur & Udaipur, Rajasthan",
+        duration: "6 Days / 5 Nights",
+        startDate: "2026-10-25",
+        endDate: "2026-10-30",
+        adultsCount: 2,
+        childrenCount: 0,
+        pickupLocation: "Jaipur Airport (JAI)",
+        dropLocation: "Udaipur Airport (UDR)",
+        hotelCategory: "Heritage Havelis & 4-Star Deluxe",
+        vehicleType: "Private AC Sedan (Swift Dzire)",
+        itinerary: [
+          { day: 1, title: "Jaipur Arrival & Chokhi Dhani Cultural Evening", description: "Pickup from Jaipur Airport. Check-in to heritage hotel. Evening visit to Chokhi Dhani ethnic resort with traditional Rajasthani dinner.", stay: "Heritage Hotel Jaipur", meal: "Dinner", distance: "25 km" },
+          { day: 2, title: "Jaipur Forts & Palaces Sightseeing", description: "Full-day sightseeing of Amber Fort with elephant/jeep ride, Jal Mahal photo stop, City Palace, and Jantar Mantar.", stay: "Heritage Hotel Jaipur", meal: "Breakfast & Dinner", distance: "40 km" },
+          { day: 3, title: "Jaipur to Jodhpur via Pushkar Brahma Temple", description: "Scenic highway drive to Jodhpur stopping at holy Pushkar Lake and Brahma Temple. Check in to Jodhpur boutique hotel.", stay: "Boutique Hotel Jodhpur", meal: "Breakfast & Dinner", distance: "330 km" },
+          { day: 4, title: "Mehrangarh Fort & Umaid Bhawan Palace", description: "Explore the majestic Mehrangarh Fort, Jaswant Thada marble cenotaph, and Umaid Bhawan Palace museum.", stay: "Boutique Hotel Jodhpur", meal: "Breakfast & Dinner", distance: "30 km" },
+          { day: 5, title: "Jodhpur to Udaipur via Ranakpur Jain Temples", description: "Drive to the City of Lakes Udaipur stopping at the 1444 marble pillared Ranakpur Jain Temple. Sunset boat ride at Lake Pichola.", stay: "Lake View Hotel Udaipur", meal: "Breakfast & Dinner", distance: "260 km" },
+          { day: 6, title: "Udaipur City Palace & Airport Departure", description: "Morning visit to grand City Palace complex, Jagdish Temple, and Saheliyon Ki Bari. Evening drop-off at Udaipur Airport.", stay: "Departure", meal: "Breakfast", distance: "25 km" },
+        ],
+        inclusions: [
+          "5 nights accommodation in verified 4-star heritage hotels",
+          "Private dedicated AC Swift Dzire for all 6 days with fuel & tolls",
+          "Daily buffet breakfast and 5 special dinners included",
+          "Lake Pichola sunset boat ride tickets for 2 adults",
+          "Driver allowance, interstate taxes, and 24/7 on-ground assistance",
+        ],
+        exclusions: [
+          "Flight tickets to Jaipur and from Udaipur",
+          "Monument & fort entrance tickets",
+          "Personal shopping, camera charges, and tipping",
+        ],
+        basePricePerPerson: 24999,
+        totalQuotedPrice: 49998,
+        advanceDepositRequired: 15000,
+        validUntil: "2026-10-15",
+        specialNotes: "Complimentary honeymoon cake & room decoration arranged on Night 1 in Jaipur.",
+        status: "Sent",
+        author: "Priya Sharma (Sales Lead)",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: "KRAD-PROP-2026-1089",
+        customerId: "cust-2",
+        customerName: "Rahul Sharma",
+        customerPhone: "+91 9718876543",
+        customerEmail: "rahul.sharma@techcorp.in",
+        customerCity: "Chandigarh",
+        packageTitle: "Chopta Tungnath Chandrashila Summit Trek",
+        basePackageSlug: "chopta-tungnath-chandrashila",
+        destination: "Rudraprayag, Uttarakhand",
+        duration: "3 Days / 2 Nights",
+        startDate: "2026-10-18",
+        endDate: "2026-10-20",
+        adultsCount: 3,
+        childrenCount: 0,
+        pickupLocation: "Rishikesh Natraj Chowk",
+        dropLocation: "Rishikesh Railway Station",
+        hotelCategory: "Alpine Swiss Tents & Camps",
+        vehicleType: "Private AC SUV (Innova / Ertiga)",
+        itinerary: [
+          { day: 1, title: "Rishikesh to Chopta Alpine Meadows via Devprayag", description: "Scenic mountain drive along the holy Ganga and Alaknanda rivers. Halt at Devprayag Sangam. Arrive in Chopta and check in to alpine Swiss tents.", stay: "Alpine Swiss Tents Chopta", meal: "Dinner", distance: "190 km" },
+          { day: 2, title: "Tungnath Temple Darshan & Chandrashila Summit Climb", description: "Early morning trek to Tungnath Shiva temple (12,073 ft) and continue steep climb to Chandrashila summit (13,100 ft) for 360° views of Chaukhamba and Nanda Devi peaks.", stay: "Alpine Swiss Tents Chopta", meal: "Breakfast, Trail Lunch & Dinner", distance: "10 km trek" },
+          { day: 3, title: "Deoria Tal Trek & Return Drive to Rishikesh", description: "Morning hike to emerald Deoria Tal lake with reflection of Chaukhamba massif. Drive back to Rishikesh for evening drop-off.", stay: "Departure", meal: "Breakfast & Packed Lunch", distance: "195 km" },
+        ],
+        inclusions: [
+          "2 nights stay in comfortable Swiss alpine tents with attached washrooms",
+          "All nutritious mountain meals from Day 1 dinner to Day 3 lunch",
+          "Private Ertiga SUV for Rishikesh - Chopta - Rishikesh transfers",
+          "Certified NIM/IMF mountain trek lead and local trail guide",
+          "Forest permits, camping fees, medical first-aid kit with portable oxygen",
+        ],
+        exclusions: [
+          "Travel to/from Rishikesh",
+          "Mule or porter charges for personal luggage offloading",
+          "Personal trekking gear and warm clothing",
+        ],
+        basePricePerPerson: 5499,
+        totalQuotedPrice: 16497,
+        advanceDepositRequired: 5000,
+        validUntil: "2026-10-12",
+        specialNotes: "Small private batch with customized early morning summit departure.",
+        status: "Accepted",
+        author: "Vikram Rawat (Mountain Lead)",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ];
+    store.customerProposals = all;
+    writeStore(store);
+  }
+  if (customerId) {
+    return all.filter((p) => p.customerId === customerId);
+  }
+  return all;
+}
+
+export async function saveProposalAsync(
+  proposal: CustomerItineraryProposal,
+  actorName = "Admin Agent"
+): Promise<CustomerItineraryProposal> {
+  const store = readStore();
+  if (!store.customerProposals) store.customerProposals = [];
+  const idx = store.customerProposals.findIndex((p) => p.id === proposal.id);
+  const isNew = idx === -1;
+  const now = new Date().toISOString();
+
+  if (isNew) {
+    proposal.createdAt = proposal.createdAt || now;
+    proposal.updatedAt = now;
+    store.customerProposals.unshift(proposal);
+  } else {
+    proposal.updatedAt = now;
+    store.customerProposals[idx] = proposal;
+  }
+
+  // If linked to a customer, record on timeline
+  if (proposal.customerId) {
+    if (!store.customerTimeline) store.customerTimeline = [];
+    store.customerTimeline.unshift({
+      id: `TL-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      customerId: proposal.customerId,
+      type: "note_added",
+      title: isNew ? "Itinerary Proposal Created" : "Itinerary Proposal Updated",
+      description: `Generated proposal "${proposal.packageTitle}" (${proposal.duration}) for ₹${proposal.totalQuotedPrice.toLocaleString("en-IN")}. Ref: ${proposal.id}.`,
+      author: actorName,
+      timestamp: now,
+    });
+  }
+
+  // Add audit log
+  if (!store.auditLogs) store.auditLogs = [];
+  store.auditLogs.unshift({
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    actorName,
+    actorEmail: "admin@kradind.com",
+    action: isNew ? "Created Proposal" : "Updated Proposal",
+    targetEntity: "Customer",
+    targetId: proposal.id,
+    details: `Itinerary proposal "${proposal.packageTitle}" for ${proposal.customerName} (₹${proposal.totalQuotedPrice.toLocaleString("en-IN")}).`,
+    timestamp: now,
+  });
+
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    const col = db.collection("kradind_proposals");
+    await col.updateOne({ id: proposal.id }, { $set: proposal }, { upsert: true });
+  } catch (err) {
+    console.error("Failed to sync proposal to MongoDB:", err);
+  }
+
+  return proposal;
+}
+
+export async function deleteProposalAsync(id: string, actorName = "Admin Agent"): Promise<boolean> {
+  const store = readStore();
+  if (!store.customerProposals) return false;
+  const idx = store.customerProposals.findIndex((p) => p.id === id);
+  if (idx === -1) return false;
+
+  const removed = store.customerProposals.splice(idx, 1)[0];
+
+  if (!store.auditLogs) store.auditLogs = [];
+  store.auditLogs.unshift({
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    actorName,
+    actorEmail: "admin@kradind.com",
+    action: "Deleted Proposal",
+    targetEntity: "Customer",
+    targetId: id,
+    details: `Proposal "${removed.packageTitle}" for ${removed.customerName} deleted.`,
+    timestamp: new Date().toISOString(),
+  });
+
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    await db.collection("kradind_proposals").deleteOne({ id });
+  } catch {}
+
+  return true;
+}
+
 export async function getAuditLogsAsync(): Promise<AuditLogRecord[]> {
   const store = readStore();
   return store.auditLogs || [];
@@ -4151,4 +4411,5 @@ export async function toggleChatReactionAsync(
 
   return msg;
 }
+
 

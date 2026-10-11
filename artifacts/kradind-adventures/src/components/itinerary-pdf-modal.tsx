@@ -154,8 +154,13 @@ export function ItineraryPdfModal({
       setLeadError("Please enter your full name.");
       return;
     }
-    if (!queryPhone.trim() || queryPhone.trim().length < 8) {
+    const cleanPhone = queryPhone.replace(/\D/g, "");
+    if (!cleanPhone || cleanPhone.length !== 10) {
       setLeadError("Please enter a valid 10-digit WhatsApp/phone number.");
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setLeadError("Please enter a valid Indian mobile number starting with 6, 7, 8, or 9.");
       return;
     }
     if (!queryEmail.trim() || !queryEmail.includes("@")) {
@@ -851,13 +856,35 @@ export function ItineraryPdfModal({
                   </span>
                   <input
                     type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    pattern="[6-9][0-9]{9}"
+                    autoComplete="tel-national"
                     required
                     value={queryPhone}
-                    onChange={(e) => setQueryPhone(e.target.value)}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                      setQueryPhone(digits);
+                    }}
                     placeholder="97979 41414"
-                    className="w-full pl-16 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-[#0F3A2E] focus:outline-none transition font-mono"
+                    className="w-full pl-16 pr-12 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-[#0F3A2E] focus:outline-none transition font-mono tracking-wider"
                   />
+                  <span className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold ${
+                    queryPhone.length === 10 ? "text-emerald-600" : "text-slate-400"
+                  }`}>
+                    {queryPhone.length}/10
+                  </span>
                 </div>
+                {queryPhone.length > 0 && queryPhone.length < 10 && (
+                  <p className="text-[11px] text-amber-600 font-medium mt-1">
+                    Please enter complete 10-digit mobile number ({10 - queryPhone.length} digits left).
+                  </p>
+                )}
+                {queryPhone.length === 10 && !/^[6-9]/.test(queryPhone) && (
+                  <p className="text-[11px] text-rose-600 font-medium mt-1">
+                    Number should start with 6, 7, 8, or 9.
+                  </p>
+                )}
               </div>
 
               {/* Email */}

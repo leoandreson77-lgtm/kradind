@@ -535,11 +535,13 @@ function BookingContent() {
                         <label className="block text-[11px] font-bold text-slate-600 mb-1">WhatsApp / Phone Number *</label>
                         <input
                           type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
                           required
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+91 9797941414"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-600"
+                          onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                          placeholder="9797941414"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-600 font-mono"
                         />
                       </div>
 
@@ -763,11 +765,13 @@ function BookingContent() {
                         <label className="block text-[11px] font-bold text-slate-600 mb-1">WhatsApp / Phone *</label>
                         <input
                           type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
                           required
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+91 9797941414"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-600"
+                          onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                          placeholder="9797941414"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-600 font-mono"
                         />
                       </div>
 

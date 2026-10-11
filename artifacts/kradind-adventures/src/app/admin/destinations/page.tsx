@@ -1457,11 +1457,11 @@ export default function AdminDestinationsPage() {
       {/* Add / Edit Destination Modal with 5 Comprehensive Tabs */}
       {isModalOpen && editingDestination && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto print:hidden">
-          <div className="bg-white rounded-3xl max-w-5xl w-full p-5 sm:p-8 space-y-5 shadow-2xl border border-slate-200 my-6 animate-in fade-in zoom-in-95 max-h-[92vh] flex flex-col">
+          <div className="bg-white rounded-3xl max-w-6xl w-full h-[92vh] max-h-[94vh] shadow-2xl border border-slate-200 overflow-hidden my-auto animate-in fade-in zoom-in-95 flex flex-col">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
+            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between shrink-0 bg-slate-50/70">
               <div className="flex items-center gap-3">
-                <span className="p-2 rounded-xl bg-emerald-50 text-emerald-700">
+                <span className="p-2.5 rounded-2xl bg-emerald-100 text-emerald-800 shadow-2xs">
                   <MapPin className="w-5 h-5" />
                 </span>
                 <div>
@@ -1474,83 +1474,152 @@ export default function AdminDestinationsPage() {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* 5 Modal Tabs Navigation */}
-            <div className="flex items-center gap-1.5 border-b border-slate-200 pb-2 shrink-0 overflow-x-auto">
-              <button
-                type="button"
-                onClick={() => setModalTab("basic")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "basic"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                <Compass className="w-3.5 h-3.5" />
-                <span>Basic Details & Media</span>
-              </button>
+            {/* Modal Form Body with Left Sidebar */}
+            <form onSubmit={handleSave} className="flex-1 flex flex-row min-h-0 overflow-hidden">
+              
+              {/* Left Sidebar Navigation */}
+              <aside className="w-56 sm:w-64 lg:w-72 shrink-0 bg-slate-50/90 border-r border-slate-200/90 flex flex-col justify-between overflow-y-auto p-3 sm:p-4">
+                <div className="space-y-1.5">
+                  <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    Tour Sections
+                  </div>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("itinerary")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "itinerary"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                <span>Day-by-Day Itinerary ({editingDestination.itinerary?.length || 0} Days)</span>
-              </button>
+                  <nav className="flex flex-col gap-1.5">
+                    {/* Basic */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("basic")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "basic"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "basic" ? "bg-white/15 text-white" : "bg-slate-100 text-slate-600 group-hover:text-slate-900"
+                        }`}>
+                          <Compass className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Basic Details & Media</span>
+                      </div>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("inclusions")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "inclusions"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Inclusions & Exclusions ({editingDestination.inclusions?.length || 0}/{editingDestination.exclusions?.length || 0})</span>
-              </button>
+                    {/* Itinerary */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("itinerary")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "itinerary"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "itinerary" ? "bg-white/15 text-white" : "bg-slate-100 text-cyan-600 group-hover:text-cyan-700"
+                        }`}>
+                          <Calendar className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Itinerary</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "itinerary"
+                          ? "bg-cyan-400/20 text-cyan-200 border border-cyan-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {editingDestination.itinerary?.length || 0} Days
+                      </span>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("overview")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "overview"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Overview & Tips</span>
-              </button>
+                    {/* Inclusions */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("inclusions")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "inclusions"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "inclusions" ? "bg-white/15 text-white" : "bg-slate-100 text-emerald-600 group-hover:text-emerald-700"
+                        }`}>
+                          <CheckCircle2 className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Inclusions & Exclusions</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "inclusions"
+                          ? "bg-emerald-400/20 text-emerald-200 border border-emerald-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {editingDestination.inclusions?.length || 0}/{editingDestination.exclusions?.length || 0}
+                      </span>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("faqs")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "faqs"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                <HelpCircle className="w-3.5 h-3.5" />
-                <span>FAQs ({editingDestination.faqs?.length || 0})</span>
-              </button>
-            </div>
+                    {/* Overview & Tips */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("overview")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "overview"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "overview" ? "bg-white/15 text-white" : "bg-slate-100 text-amber-500 group-hover:text-amber-600"
+                        }`}>
+                          <FileText className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Overview & Tips</span>
+                      </div>
+                    </button>
 
-            {/* Form Body (Scrollable) */}
-            <form onSubmit={handleSave} className="space-y-6 overflow-y-auto pr-1 flex-1">
+                    {/* FAQs */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("faqs")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "faqs"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "faqs" ? "bg-white/15 text-white" : "bg-slate-100 text-rose-500 group-hover:text-rose-600"
+                        }`}>
+                          <HelpCircle className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">FAQs</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "faqs"
+                          ? "bg-rose-400/20 text-rose-200 border border-rose-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {editingDestination.faqs?.length || 0}
+                      </span>
+                    </button>
+                  </nav>
+                </div>
+              </aside>
+
+              {/* Right Content Column */}
+              <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-white overflow-hidden">
+                <div className="p-5 sm:p-7 overflow-y-auto space-y-6 flex-1">
               {/* TAB 1: BASIC DETAILS & PRICING */}
               {modalTab === "basic" && (
                 <div className="space-y-4">
@@ -2399,29 +2468,40 @@ export default function AdminDestinationsPage() {
                 </div>
               )}
 
-              {/* Form Action Buttons */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={actionLoading}
-                  className="px-6 py-2.5 text-xs font-extrabold bg-[#0F3A2E] hover:bg-[#154d3d] text-white rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50 flex items-center gap-2"
-                >
-                  {actionLoading ? (
-                    "Saving..."
-                  ) : (
-                    <>
-                      <Check className="w-4 h-4" />
-                      <span>{editingDestination.id ? "Update Destination & Full Details" : "Publish Full Destination"}</span>
-                    </>
-                  )}
-                </button>
+                </div>
+
+                {/* Form Action Buttons (Pinned to Right Content Column) */}
+                <div className="p-4 px-6 border-t border-slate-200/80 flex items-center justify-between gap-3 shrink-0 bg-slate-50/70">
+                  <div className="text-xs text-slate-500 hidden sm:flex items-center gap-2">
+                    <span>Active Section:</span>
+                    <span className="text-[#0F3A2E] bg-emerald-100/80 px-2.5 py-0.5 rounded-lg border border-emerald-200/80 capitalize font-bold">
+                      {modalTab}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={actionLoading}
+                      className="px-6 py-2.5 text-xs font-extrabold bg-[#0F3A2E] hover:bg-[#154d3d] text-white rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                    >
+                      {actionLoading ? (
+                        "Saving..."
+                      ) : (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span>{editingDestination.id ? "Update Destination & Full Details" : "Publish Full Destination"}</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
             </form>
           </div>

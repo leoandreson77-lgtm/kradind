@@ -6,6 +6,7 @@ import Link from "next/link";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { PrintHeader, PrintFooter } from "@/components/print-header";
 import {
   MapPin,
   Calendar,
@@ -95,8 +96,11 @@ export function RajasthanTourClient() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-[#FF6B35] selection:text-white">
-      {/* Fixed Sticky Top Navigation Header */}
-      <div className="sticky top-0 z-50 w-full shadow-xs">
+      {/* 1. Official Document Print Header (sabse uper logo in print & PDF export) */}
+      <PrintHeader />
+
+      {/* Fixed Sticky Top Navigation Header (Screen Only) */}
+      <div className="sticky top-0 z-50 w-full shadow-xs no-print print:hidden">
         <TopBar />
         <Header />
       </div>
@@ -1106,11 +1110,13 @@ export function RajasthanTourClient() {
                       <label className="text-[11px] font-bold text-slate-700">Phone / WhatsApp Number *</label>
                       <input
                         type="tel"
+                        inputMode="numeric"
+                        maxLength={10}
                         required
-                        placeholder="+91 9797941414"
+                        placeholder="9797941414"
                         value={leadPhone}
-                        onChange={(e) => setLeadPhone(e.target.value)}
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:border-[#FF6B35]"
+                        onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:border-[#FF6B35] font-mono"
                       />
                     </div>
 
@@ -1197,7 +1203,12 @@ export function RajasthanTourClient() {
         </div>
       </div>
 
-      <Footer />
+      <div className="no-print print:hidden">
+        <Footer />
+      </div>
+
+      {/* Official Printable Document Footer */}
+      <PrintFooter />
     </div>
   );
 }

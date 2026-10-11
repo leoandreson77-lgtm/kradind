@@ -1039,12 +1039,15 @@ export default function AdminTeamChatPage() {
       )}
 
       {/* ========================================================= */}
-      {/* CUSTOMER 360 PREVIEW DRAWER (OPENS FROM CHAT TAGS) */}
+      {/* CUSTOMER 360 PREVIEW MODAL (OPENS FROM CHAT TAGS) */}
       {/* ========================================================= */}
       {previewCustomerId && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-fade-in">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/75 backdrop-blur-md animate-fade-in"
+          onClick={() => setPreviewCustomerId(null)}
+        >
           <div
-            className="w-full max-w-lg bg-white border-l border-slate-200 h-full flex flex-col shadow-2xl overflow-hidden animate-slide-left"
+            className="w-full max-w-2xl bg-white border border-slate-200 rounded-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up text-slate-800"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5 bg-gradient-to-r from-[#0F3A2E] to-[#0A261E] text-white flex items-center justify-between">

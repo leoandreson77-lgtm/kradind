@@ -38,6 +38,9 @@ import {
   ChevronDown,
   ArrowUpDown,
   Hash,
+  Milestone,
+  Utensils,
+  Bed,
 } from "lucide-react";
 import { TrekData, TrekBatch, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
@@ -2101,136 +2104,267 @@ export default function AdminTreksPage() {
       {/* Add / Edit Modal */}
       {isModalOpen && editingTrek && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 my-auto">
+          <div className="bg-white rounded-3xl max-w-6xl w-full h-[92vh] max-h-[94vh] flex flex-col shadow-2xl border border-slate-200/90 overflow-hidden my-auto animate-fade-in">
             
             {/* Modal Header */}
-            <div className="p-5 pb-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-slate-50/50 rounded-t-2xl">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">
-                  {editingTrek.id ? `Edit: ${editingTrek.name || "Trek"}` : "Create New Trek"}
-                </h2>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Manage photos, departure batches, multi-day itineraries, overview, and FAQs.
-                </p>
+            <div className="p-4 sm:p-5 border-b border-slate-200/80 flex items-center justify-between shrink-0 bg-slate-50/70">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#0F3A2E] text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                  {editingTrek.name ? editingTrek.name.slice(0, 2).toUpperCase() : "TR"}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg sm:text-xl font-bold text-slate-900 line-clamp-1">
+                      {editingTrek.id ? `Edit: ${editingTrek.name || "Trek"}` : "Create New Trek"}
+                    </h2>
+                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 hidden sm:inline-flex">
+                      {isDomesticPackage(editingTrek) ? "🚗 Domestic Tour" : "🏔️ Himalayan Trek"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5 hidden sm:block">
+                    Manage photos, departure batches, multi-day itineraries, overview, and FAQs.
+                  </p>
+                </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition"
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-200/60 transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="flex items-center gap-1.5 px-5 pt-3 pb-2 border-b border-slate-200 overflow-x-auto scrollbar-none shrink-0 bg-white">
-              <button
-                type="button"
-                onClick={() => setModalTab("basic")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "basic"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <Mountain className="w-3.5 h-3.5" />
-                <span>Basic & Pricing</span>
-              </button>
+            {/* Modal Form Body with Left Sidebar */}
+            <form onSubmit={handleSaveTrek} className="flex-1 flex flex-row min-h-0 overflow-hidden">
+              
+              {/* Left Sidebar Navigation */}
+              <aside className="w-56 sm:w-64 lg:w-72 shrink-0 bg-slate-50/90 border-r border-slate-200/90 flex flex-col justify-between overflow-y-auto p-3 sm:p-4">
+                <div className="space-y-1.5">
+                  <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    Package Sections
+                  </div>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("media")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "media"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <ImageIcon className="w-3.5 h-3.5 text-emerald-500" />
-                <span>Photos & Gallery ({(editingTrek.gallery?.length || 0) + (editingTrek.image ? 1 : 0)})</span>
-              </button>
+                  <nav className="flex flex-col gap-1.5">
+                    {/* 1. Basic & Pricing */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("basic")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "basic"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "basic" ? "bg-white/15 text-white" : "bg-slate-100 text-slate-600 group-hover:text-slate-900"
+                        }`}>
+                          <Mountain className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Basic & Pricing</span>
+                      </div>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("itinerary")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "itinerary"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <Clock className="w-3.5 h-3.5 text-cyan-500" />
-                <span>Itinerary ({editingTrek.itinerary?.length || 0} Days)</span>
-              </button>
+                    {/* 2. Photos & Gallery */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("media")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "media"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "media" ? "bg-white/15 text-white" : "bg-slate-100 text-emerald-600 group-hover:text-emerald-700"
+                        }`}>
+                          <ImageIcon className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Photos & Gallery</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "media"
+                          ? "bg-emerald-400/20 text-emerald-200 border border-emerald-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {(editingTrek.gallery?.length || 0) + (editingTrek.image ? 1 : 0)}
+                      </span>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("batches")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "batches"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <Calendar className="w-3.5 h-3.5 text-blue-500" />
-                <span>Batches ({editingTrek.batches?.length || 0})</span>
-              </button>
+                    {/* 3. Itinerary */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("itinerary")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "itinerary"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "itinerary" ? "bg-white/15 text-white" : "bg-slate-100 text-cyan-600 group-hover:text-cyan-700"
+                        }`}>
+                          <Clock className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Itinerary</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "itinerary"
+                          ? "bg-cyan-400/20 text-cyan-200 border border-cyan-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {editingTrek.itinerary?.length || 0} Days
+                      </span>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("categories")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "categories"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <Tag className="w-3.5 h-3.5 text-indigo-500" />
-                <span>Categories ({editingTrek.categories?.length || 0})</span>
-              </button>
+                    {/* 4. Batches */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("batches")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "batches"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "batches" ? "bg-white/15 text-white" : "bg-slate-100 text-blue-600 group-hover:text-blue-700"
+                        }`}>
+                          <Calendar className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Batches</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "batches"
+                          ? "bg-blue-400/20 text-blue-200 border border-blue-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {editingTrek.batches?.length || 0}
+                      </span>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("overview")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "overview"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>Overview & Highlights</span>
-              </button>
+                    {/* 5. Categories */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("categories")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "categories"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "categories" ? "bg-white/15 text-white" : "bg-slate-100 text-indigo-600 group-hover:text-indigo-700"
+                        }`}>
+                          <Tag className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Categories</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "categories"
+                          ? "bg-indigo-400/20 text-indigo-200 border border-indigo-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {editingTrek.categories?.length || 0}
+                      </span>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("inclusions")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "inclusions"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                <span>Inclusions</span>
-              </button>
+                    {/* 6. Overview & Highlights */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("overview")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "overview"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "overview" ? "bg-white/15 text-white" : "bg-slate-100 text-amber-500 group-hover:text-amber-600"
+                        }`}>
+                          <Sparkles className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Overview & Highlights</span>
+                      </div>
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => setModalTab("faqs")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  modalTab === "faqs"
-                    ? "bg-[#0F3A2E] text-white shadow-xs"
-                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
-              >
-                <HelpCircle className="w-3.5 h-3.5 text-rose-500" />
-                <span>FAQs ({editingTrek.faqs?.length || 0})</span>
-              </button>
-            </div>
+                    {/* 7. Inclusions */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("inclusions")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "inclusions"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "inclusions" ? "bg-white/15 text-white" : "bg-slate-100 text-emerald-600 group-hover:text-emerald-700"
+                        }`}>
+                          <CheckCircle2 className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">Inclusions</span>
+                      </div>
+                    </button>
 
-            {/* Modal Form Body */}
-            <form onSubmit={handleSaveTrek} className="flex-1 flex flex-col min-h-0">
-              <div className="flex-1 overflow-y-auto p-6 space-y-5">
+                    {/* 8. FAQs */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("faqs")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "faqs"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "faqs" ? "bg-white/15 text-white" : "bg-slate-100 text-rose-500 group-hover:text-rose-600"
+                        }`}>
+                          <HelpCircle className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">FAQs</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        modalTab === "faqs"
+                          ? "bg-rose-400/20 text-rose-200 border border-rose-400/30"
+                          : "bg-slate-200/70 text-slate-600"
+                      }`}>
+                        {editingTrek.faqs?.length || 0}
+                      </span>
+                    </button>
+                  </nav>
+                </div>
+
+                {/* Bottom Stats Card in Sidebar */}
+                <div className="pt-3 mt-3 border-t border-slate-200/70">
+                  <div className="p-3 bg-white/90 rounded-2xl border border-slate-200/80 text-[11px] space-y-1.5 shadow-2xs">
+                    <div className="flex items-center justify-between text-slate-500">
+                      <span>Duration:</span>
+                      <span className="font-bold text-slate-800">{editingTrek.duration || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-500">
+                      <span>Base Price:</span>
+                      <span className="font-bold text-emerald-700">₹{editingTrek.price?.toLocaleString() || "0"}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-500">
+                      <span>Difficulty:</span>
+                      <span className="font-bold text-slate-800">{editingTrek.difficulty || "Moderate"}</span>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+
+              {/* Right Main Content & Footer Area */}
+              <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-white overflow-hidden">
+                <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5">
                 
                 {/* TAB 1: BASIC & PRICING */}
                 {modalTab === "basic" && (
@@ -2555,30 +2689,6 @@ export default function AdminTreksPage() {
                             Full day-by-day route, distance, elevations, meals, and overnight camps.
                           </p>
                         </div>
-
-                        {/* Add Day Button */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const days = [...(editingTrek.itinerary || [])];
-                            const nextDayNum = days.length + 1;
-                            days.push({
-                              day: nextDayNum,
-                              title: `Day ${nextDayNum}: Scenic Trail & Mountain Camp`,
-                              description: "Ascend along the alpine trail with scenic panoramic views. Arrive at campsite for warm dinner and overnight stay.",
-                              distance: "5 km",
-                              altitude: "10,500 Ft",
-                              meal: "Breakfast, Lunch & Dinner",
-                              stay: "Alpine Tents",
-                            });
-                            setEditingTrek({ ...editingTrek, itinerary: days });
-                            showToast(`Added Day ${nextDayNum}`);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0F3A2E] text-white text-xs font-bold rounded-xl hover:bg-[#164e3f] transition shadow-2xs"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Add Next Day</span>
-                        </button>
                       </div>
 
                       {/* Quick Multi-Day Templates */}
@@ -2621,14 +2731,67 @@ export default function AdminTreksPage() {
                     {/* Day-by-Day Cards */}
                     <div className="space-y-4">
                       {(editingTrek.itinerary || []).map((day, idx) => (
-                        <div key={idx} className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white space-y-3 shadow-2xs">
-                          {/* Day Header */}
-                          <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
-                            <div className="flex items-center gap-2.5 flex-1 min-w-[200px]">
-                              <div className="w-10 h-10 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shrink-0 border border-white ring-2 ring-[#0F3A2E]/20 shadow-xs select-none">
-                                <span className="text-[8px] font-bold uppercase leading-none">Day</span>
-                                <span className="text-xs font-black leading-none mt-0.5">{day.day}</span>
+                        <div
+                          key={idx}
+                          className="bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden"
+                        >
+                          <div className="p-5 sm:p-6 space-y-4">
+                            {/* Top Header: Day Badge & Action Controls */}
+                            <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
+                              <div className="flex items-center gap-2">
+                                <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
+                                  <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+                                  Day {day.day} Schedule
+                                </span>
                               </div>
+
+                              {/* Row Action Controls */}
+                              <div className="flex items-center gap-1 text-slate-500">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDuplicateDay(idx)}
+                                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition flex items-center gap-1 text-[11px]"
+                                  title="Duplicate this day"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                  <span className="hidden sm:inline">Duplicate</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={idx === 0}
+                                  onClick={() => handleMoveDay(idx, idx - 1)}
+                                  className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
+                                  title="Move Day Up"
+                                >
+                                  <ArrowUp className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={idx === (editingTrek.itinerary?.length || 0) - 1}
+                                  onClick={() => handleMoveDay(idx, idx + 1)}
+                                  className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
+                                  title="Move Day Down"
+                                >
+                                  <ArrowDown className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const days = (editingTrek.itinerary || [])
+                                      .filter((_, i) => i !== idx)
+                                      .map((d, i) => ({ ...d, day: i + 1 }));
+                                    setEditingTrek({ ...editingTrek, itinerary: days });
+                                  }}
+                                  className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
+                                  title="Delete this day"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Day Title Input */}
+                            <div>
                               <input
                                 type="text"
                                 value={day.title}
@@ -2637,116 +2800,118 @@ export default function AdminTreksPage() {
                                   days[idx] = { ...days[idx], title: e.target.value };
                                   setEditingTrek({ ...editingTrek, itinerary: days });
                                 }}
-                                className="flex-1 font-bold text-xs sm:text-sm px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                                placeholder={`Day ${day.day} Route / Title`}
+                                className="w-full text-base sm:text-lg font-extrabold text-slate-900 placeholder:text-slate-400 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                                placeholder={`Day ${day.day} Route / Title (e.g. Scenic Drive to Sankri Basecamp)`}
                               />
                             </div>
 
-                            {/* Row Action Controls */}
-                            <div className="flex items-center gap-1 text-slate-500">
-                              <button
-                                type="button"
-                                onClick={() => handleDuplicateDay(idx)}
-                                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition flex items-center gap-1 text-[11px]"
-                                title="Duplicate this day"
-                              >
-                                <Copy className="w-3.5 h-3.5" />
-                                <span className="hidden sm:inline">Duplicate</span>
-                              </button>
-                              <button
-                                type="button"
-                                disabled={idx === 0}
-                                onClick={() => handleMoveDay(idx, idx - 1)}
-                                className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
-                                title="Move Day Up"
-                              >
-                                <ArrowUp className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                disabled={idx === (editingTrek.itinerary?.length || 0) - 1}
-                                onClick={() => handleMoveDay(idx, idx + 1)}
-                                className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
-                                title="Move Day Down"
-                              >
-                                <ArrowDown className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const days = (editingTrek.itinerary || [])
-                                    .filter((_, i) => i !== idx)
-                                    .map((d, i) => ({ ...d, day: i + 1 }));
-                                  setEditingTrek({ ...editingTrek, itinerary: days });
-                                }}
-                                className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
-                                title="Delete this day"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                            {/* 4-Item Metric Ribbon (Matches Website Exactly!) */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                              {/* Duration */}
+                              <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                                  <Clock className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-amber-600">Duration</span>
+                                  <input
+                                    type="text"
+                                    placeholder="5-6 Hours"
+                                    value={day.duration || ""}
+                                    onChange={(e) => {
+                                      const days = [...(editingTrek.itinerary || [])];
+                                      days[idx] = { ...days[idx], duration: e.target.value };
+                                      setEditingTrek({ ...editingTrek, itinerary: days });
+                                    }}
+                                    className="w-full bg-transparent text-xs font-extrabold text-amber-950 placeholder-amber-400/70 focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Distance */}
+                              <div className="bg-purple-50/80 border border-purple-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                                  <Milestone className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-purple-600">Distance</span>
+                                  <input
+                                    type="text"
+                                    placeholder="6 km Trek"
+                                    value={day.distance || ""}
+                                    onChange={(e) => {
+                                      const days = [...(editingTrek.itinerary || [])];
+                                      days[idx] = { ...days[idx], distance: e.target.value };
+                                      setEditingTrek({ ...editingTrek, itinerary: days });
+                                    }}
+                                    className="w-full bg-transparent text-xs font-extrabold text-purple-950 placeholder-purple-400/70 focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Altitude / Elevation */}
+                              <div className="bg-sky-50/80 border border-sky-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
+                                  <Mountain className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-sky-600">Elevation</span>
+                                  <input
+                                    type="text"
+                                    placeholder="11,800 Ft"
+                                    value={day.altitude || ""}
+                                    onChange={(e) => {
+                                      const days = [...(editingTrek.itinerary || [])];
+                                      days[idx] = { ...days[idx], altitude: e.target.value };
+                                      setEditingTrek({ ...editingTrek, itinerary: days });
+                                    }}
+                                    className="w-full bg-transparent text-xs font-extrabold text-sky-950 placeholder-sky-400/70 focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Meals */}
+                              <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                  <Utensils className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-600">Meals</span>
+                                  <input
+                                    type="text"
+                                    placeholder="Breakfast, Lunch, Dinner"
+                                    value={day.meal || ""}
+                                    onChange={(e) => {
+                                      const days = [...(editingTrek.itinerary || [])];
+                                      days[idx] = { ...days[idx], meal: e.target.value };
+                                      setEditingTrek({ ...editingTrek, itinerary: days });
+                                    }}
+                                    className="w-full bg-transparent text-xs font-extrabold text-emerald-950 placeholder-emerald-400/70 focus:outline-none"
+                                  />
+                                </div>
+                              </div>
                             </div>
+
+                            {/* Day Description */}
+                            <RichTextEditor
+                              compact
+                              label="Day Narrative & Activities"
+                              value={day.description || ""}
+                              onChange={(val) => {
+                                const days = [...(editingTrek.itinerary || [])];
+                                days[idx] = { ...days[idx], description: val };
+                                setEditingTrek({ ...editingTrek, itinerary: days });
+                              }}
+                              rows={3}
+                              placeholder="Describe the trail terrain, river crossings, views, and resting points..."
+                            />
                           </div>
 
-                          {/* Day Description */}
-                          <RichTextEditor
-                            compact
-                            label="Day Narrative & Activities"
-                            value={day.description || ""}
-                            onChange={(val) => {
-                              const days = [...(editingTrek.itinerary || [])];
-                              days[idx] = { ...days[idx], description: val };
-                              setEditingTrek({ ...editingTrek, itinerary: days });
-                            }}
-                            rows={3}
-                            placeholder="Describe the trail terrain, river crossings, views, and resting points..."
-                          />
-
-                          {/* 4 Metrics: Distance, Altitude, Meals, Stay */}
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">Trek Distance</label>
-                              <input
-                                type="text"
-                                value={day.distance || ""}
-                                onChange={(e) => {
-                                  const days = [...(editingTrek.itinerary || [])];
-                                  days[idx] = { ...days[idx], distance: e.target.value };
-                                  setEditingTrek({ ...editingTrek, itinerary: days });
-                                }}
-                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
-                                placeholder="6 km Trek"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">Max Altitude</label>
-                              <input
-                                type="text"
-                                value={day.altitude || ""}
-                                onChange={(e) => {
-                                  const days = [...(editingTrek.itinerary || [])];
-                                  days[idx] = { ...days[idx], altitude: e.target.value };
-                                  setEditingTrek({ ...editingTrek, itinerary: days });
-                                }}
-                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
-                                placeholder="11,800 Ft"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">Meals Included</label>
-                              <input
-                                type="text"
-                                value={day.meal || ""}
-                                onChange={(e) => {
-                                  const days = [...(editingTrek.itinerary || [])];
-                                  days[idx] = { ...days[idx], meal: e.target.value };
-                                  setEditingTrek({ ...editingTrek, itinerary: days });
-                                }}
-                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
-                                placeholder="Breakfast, Lunch, Dinner"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">Overnight Stay</label>
+                          {/* Bottom Hospitality Bar */}
+                          <div className="bg-slate-50/90 px-5 sm:px-6 py-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+                            <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                              <Bed className="w-4 h-4 text-emerald-700 shrink-0" />
+                              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Overnight Stay:</span>
                               <input
                                 type="text"
                                 value={day.stay || ""}
@@ -2755,8 +2920,8 @@ export default function AdminTreksPage() {
                                   days[idx] = { ...days[idx], stay: e.target.value };
                                   setEditingTrek({ ...editingTrek, itinerary: days });
                                 }}
-                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
-                                placeholder="Alpine Tents / Homestay"
+                                className="flex-1 bg-transparent text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none"
+                                placeholder="Alpine Tents / Homestay / Resort"
                               />
                             </div>
                           </div>
@@ -2764,14 +2929,41 @@ export default function AdminTreksPage() {
                       ))}
 
                       {(!editingTrek.itinerary || editingTrek.itinerary.length === 0) && (
-                        <div className="text-center py-8 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
-                          <Clock className="w-8 h-8 text-slate-300 mx-auto mb-1.5" />
+                        <div className="text-center py-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 space-y-2">
+                          <Clock className="w-8 h-8 text-slate-300 mx-auto" />
                           <p className="text-xs text-slate-500 font-semibold">No itinerary days scheduled yet.</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5">
-                            Click "+ 5-Day Himalayan Plan" or "Add Next Day" above to populate the day-by-day plan.
+                          <p className="text-[11px] text-slate-400">
+                            Click &ldquo;+ 5-Day Himalayan Plan&rdquo; above or &ldquo;Add Day&rdquo; below to populate the day-by-day plan.
                           </p>
                         </div>
                       )}
+
+                      {/* Add Day Button - Positioned at Bottom Right */}
+                      <div className="flex justify-end pt-3 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const days = [...(editingTrek.itinerary || [])];
+                            const nextDayNum = days.length + 1;
+                            days.push({
+                              day: nextDayNum,
+                              title: `Day ${nextDayNum}: Scenic Trail & Mountain Camp`,
+                              description: "Ascend along the alpine trail with scenic panoramic views. Arrive at campsite for warm dinner and overnight stay.",
+                              distance: "5 km",
+                              duration: "5-6 Hours",
+                              altitude: "10,500 Ft",
+                              meal: "Breakfast, Lunch & Dinner",
+                              stay: "Alpine Tents",
+                            });
+                            setEditingTrek({ ...editingTrek, itinerary: days });
+                            showToast(`Added Day ${nextDayNum}`);
+                          }}
+                          className="px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#14483a] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow active:scale-95"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Add Day {(editingTrek.itinerary?.length || 0) + 1}</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -3686,29 +3878,47 @@ export default function AdminTreksPage() {
 
               </div>
 
-              {/* Modal Footer */}
-              <div className="p-4 px-6 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0 bg-slate-50/50 rounded-b-2xl">
-                <div className="text-xs text-slate-500 hidden sm:block">
-                  Active Tab: <strong className="text-slate-800 capitalize">{modalTab}</strong>
+              {/* Modal Footer (Pinned to Right Content Column) */}
+              <div className="p-4 px-6 border-t border-slate-200/80 flex items-center justify-between gap-3 shrink-0 bg-slate-50/70">
+                <div className="text-xs text-slate-500 hidden sm:flex items-center gap-2">
+                  <span>Active Section:</span>
+                  <span className="text-[#0F3A2E] bg-emerald-100/80 px-2.5 py-0.5 rounded-lg border border-emerald-200/80 capitalize font-bold">
+                    {modalTab === "basic"
+                      ? "Basic & Pricing"
+                      : modalTab === "media"
+                      ? "Photos & Gallery"
+                      : modalTab === "itinerary"
+                      ? "Itinerary"
+                      : modalTab === "batches"
+                      ? "Batches"
+                      : modalTab === "categories"
+                      ? "Categories"
+                      : modalTab === "overview"
+                      ? "Overview & Highlights"
+                      : modalTab === "inclusions"
+                      ? "Inclusions"
+                      : "FAQs"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-100 transition"
+                    className="px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-100 transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={actionLoading}
-                    className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-60"
+                    className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-60 cursor-pointer"
                   >
                     {actionLoading ? "Saving Trek..." : "Save All Changes"}
                   </button>
                 </div>
               </div>
-            </form>
+            </div>
+          </form>
 
           </div>
         </div>

@@ -294,11 +294,13 @@ export default function TravelServicesPage() {
                     <label className="block text-xs font-semibold text-slate-300 mb-1">Phone / WhatsApp Number</label>
                     <input
                       type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
                       required
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 9797941414"
-                      className="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                      placeholder="9797941414"
+                      className="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
                     />
                   </div>
                 </div>

@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { PrintHeader, PrintFooter } from "@/components/print-header";
 import { BookingModal } from "@/components/booking-modal";
 import { TrekData } from "@/lib/cms-store";
 import { getImageAlt } from "@/lib/image-alt";
@@ -422,8 +424,11 @@ export function TrekDetailClient({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      {/* Fixed Sticky Top Navigation Header */}
-      <div className="sticky top-0 z-50 w-full shadow-xs">
+      {/* 1. Official Document Print Header (sabse uper logo in print & PDF export) */}
+      <PrintHeader />
+
+      {/* Fixed Sticky Top Navigation Header (Screen Only) */}
+      <div className="sticky top-0 z-50 w-full shadow-xs no-print print:hidden">
         <TopBar />
         <Header />
       </div>
@@ -444,11 +449,26 @@ export function TrekDetailClient({
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto w-full space-y-5">
-          {/* Back Navigation */}
-          <div>
+          {/* Top Brand Identity & Back Navigation */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 group bg-slate-950/70 hover:bg-slate-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/20 transition-all shadow-md"
+              title="KRADIND Adventures Homepage"
+            >
+              <Image
+                src="/logo.png"
+                alt="KRADIND Adventures"
+                width={160}
+                height={48}
+                priority
+                className="h-8 sm:h-9 w-auto object-contain brightness-110 drop-shadow-sm group-hover:scale-105 transition-transform"
+              />
+            </Link>
+
             <Link
               href="/treks"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-200 hover:text-white bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 transition-all shadow-md group"
+              className="no-print print:hidden inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-200 hover:text-white bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 transition-all shadow-md group"
             >
               <ArrowLeft className="w-4 h-4 text-emerald-400 group-hover:-translate-x-0.5 transition-transform" />
               <span>Back to all Treks & Packages</span>
@@ -535,8 +555,8 @@ export function TrekDetailClient({
         {/* Left Column (Content Sections) */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Quick Navigation Tabs - Sticky below header without overlap */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 scrollbar-none sticky top-[72px] sm:top-[80px] z-30 bg-slate-50/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 shadow-xs">
+          {/* Quick Navigation Tabs - Sticky below header without overlap (Screen Only) */}
+          <div className="no-print print:hidden flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 scrollbar-none sticky top-[72px] sm:top-[80px] z-30 bg-slate-50/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 shadow-xs">
             <button
               onClick={() => scrollToSection("itinerary", "itinerary")}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-xs ${
@@ -618,7 +638,7 @@ export function TrekDetailClient({
                 </h2>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="no-print print:hidden flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setIsPdfOpen(true)}
@@ -1031,8 +1051,8 @@ export function TrekDetailClient({
 
       </main>
 
-      {/* Mobile Sticky Booking Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-between gap-3">
+      {/* Mobile Sticky Booking Bar (Screen Only) */}
+      <div className="no-print print:hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-between gap-3">
         <div>
           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
             Starting from
@@ -1069,7 +1089,12 @@ export function TrekDetailClient({
         </div>
       </div>
 
-      <Footer />
+      <div className="no-print print:hidden">
+        <Footer />
+      </div>
+
+      {/* Official Printable Document Footer */}
+      <PrintFooter />
 
       {/* Booking Modal */}
       <BookingModal

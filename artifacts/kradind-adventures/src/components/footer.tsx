@@ -10,6 +10,7 @@ import {
   FaXTwitter,
   FaPinterestP,
   FaThreads,
+  FaLinkedinIn,
 } from "react-icons/fa6";
 import {
   Phone,
@@ -99,6 +100,13 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
       icon: FaPinterestP,
       color: "hover:bg-[#BD081C] hover:text-white hover:border-[#BD081C]",
       bg: "bg-[#BD081C]/10 text-rose-500 border-[#BD081C]/30",
+    },
+    {
+      name: "LinkedIn",
+      url: config?.linkedinUrl || "https://www.linkedin.com/company/krad-india/",
+      icon: FaLinkedinIn,
+      color: "hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2]",
+      bg: "bg-[#0A66C2]/10 text-[#0A66C2] border-[#0A66C2]/30",
     },
   ];
 

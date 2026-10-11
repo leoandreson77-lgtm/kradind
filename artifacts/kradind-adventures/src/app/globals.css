@@ -155,6 +155,17 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     page-break-inside: avoid !important;
   }
 
+  /* Show official branded document header and footer when printing */
+  .print-header {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
+  .print-footer {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
   /* Hide admin shells, sidebars, buttons, toolbars, and floaters */
   aside,
   header:not(.print-header),

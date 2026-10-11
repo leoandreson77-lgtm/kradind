@@ -1853,6 +1853,25 @@ export default function AdminSectionsPage() {
               />
             </div>
 
+            <div>
+              <label className="block font-bold text-slate-700 mb-1.5">LinkedIn Company URL</label>
+              <input
+                type="text"
+                value={sections.contactAndFooter?.linkedinUrl || ""}
+                placeholder="https://www.linkedin.com/company/krad-india/"
+                onChange={(e) =>
+                  setSections({
+                    ...sections,
+                    contactAndFooter: {
+                      ...(sections.contactAndFooter as any),
+                      linkedinUrl: e.target.value,
+                    },
+                  })
+                }
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono"
+              />
+            </div>
+
             <div className="sm:col-span-2">
               <label className="block font-bold text-slate-700 mb-1.5">Copyright Notice</label>
               <input

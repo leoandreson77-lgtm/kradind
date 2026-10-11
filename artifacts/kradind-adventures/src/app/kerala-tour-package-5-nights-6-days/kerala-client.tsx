@@ -6,6 +6,7 @@ import Link from "next/link";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { PrintHeader, PrintFooter } from "@/components/print-header";
 import {
   MapPin,
   Calendar,
@@ -89,8 +90,11 @@ export function KeralaTourClient() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-emerald-600 selection:text-white">
-      {/* Fixed Sticky Top Navigation Header */}
-      <div className="sticky top-0 z-50 w-full shadow-xs">
+      {/* 1. Official Document Print Header (sabse uper logo in print & PDF export) */}
+      <PrintHeader />
+
+      {/* Fixed Sticky Top Navigation Header (Screen Only) */}
+      <div className="sticky top-0 z-50 w-full shadow-xs no-print print:hidden">
         <TopBar />
         <Header />
       </div>
@@ -1301,11 +1305,13 @@ export function KeralaTourClient() {
                     </label>
                     <input
                       type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
                       required
-                      placeholder="+91 9797941414"
+                      placeholder="9797941414"
                       value={leadPhone}
-                      onChange={(e) => setLeadPhone(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+                      onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-600 focus:outline-none font-mono"
                     />
                   </div>
                 </div>
@@ -1409,7 +1415,12 @@ export function KeralaTourClient() {
         </a>
       </div>
 
-      <Footer />
+      <div className="no-print print:hidden">
+        <Footer />
+      </div>
+
+      {/* Official Printable Document Footer */}
+      <PrintFooter />
     </div>
   );
 }

@@ -154,6 +154,7 @@ export async function PUT(request: NextRequest) {
         twitterUrl: body.contactAndFooter?.twitterUrl ?? currentSections?.contactAndFooter?.twitterUrl ?? "https://x.com/KradGlobalTour",
         threadsUrl: body.contactAndFooter?.threadsUrl ?? currentSections?.contactAndFooter?.threadsUrl ?? "https://www.threads.net/@kradglobal",
         pinterestUrl: body.contactAndFooter?.pinterestUrl ?? currentSections?.contactAndFooter?.pinterestUrl ?? "https://in.pinterest.com/KradGlobalTravels/",
+        linkedinUrl: body.contactAndFooter?.linkedinUrl ?? currentSections?.contactAndFooter?.linkedinUrl ?? "https://www.linkedin.com/company/krad-india/",
         copyrightText: body.contactAndFooter?.copyrightText ?? currentSections?.contactAndFooter?.copyrightText ?? "© 2026 KRADIND Adventures Private Limited. All rights reserved.",
       },
     };

@@ -27,7 +27,12 @@ export default async function TreksPage() {
         </div>
       }
     >
-      <TreksContent initialTreks={publishedTreks} />
+      <TreksContent
+        initialCategory="Himalayas"
+        initialTreks={publishedTreks}
+        titleOverride="Himalayan Treks & Mountain Expeditions"
+        subtitleOverride="Explore certified Himalayan treks, high-altitude alpine passes, and mountain adventures across Uttarakhand and Himachal Pradesh with verified local guides."
+      />
     </Suspense>
   );
 }

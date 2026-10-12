@@ -134,6 +134,31 @@ export default function AdminCRMPage() {
     dietaryPreference: "Vegetarian" as const,
   });
 
+  // Auto-save new customer draft so closing or leaving modal doesn't lose inputs
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("kradind_crm_new_customer_draft");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && (parsed.name || parsed.phone || parsed.email)) {
+            setNewCustomer((prev) => ({ ...prev, ...parsed }));
+          }
+        }
+      } catch {}
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (newCustomer.name || newCustomer.phone || newCustomer.email) {
+          localStorage.setItem("kradind_crm_new_customer_draft", JSON.stringify(newCustomer));
+        }
+      } catch {}
+    }
+  }, [newCustomer]);
+
   // Edit Customer in 360 Form
   const [editFormData, setEditFormData] = useState<Partial<CustomerRecord>>({});
   const [savingEdit, setSavingEdit] = useState(false);
@@ -473,6 +498,9 @@ export default function AdminCRMPage() {
       if (res.ok) {
         const saved = await res.json();
         showToast(`Customer ${saved.name} added successfully!`);
+        try {
+          localStorage.removeItem("kradind_crm_new_customer_draft");
+        } catch {}
         setShowAddCustomerModal(false);
         setNewCustomer({
           name: "",
@@ -1377,7 +1405,7 @@ export default function AdminCRMPage() {
       )}
 
       {/* TAB: ITINERARY & QUOTATION STUDIO */}
-      {activeTab === "itinerary-builder" && (
+      <div style={{ display: activeTab === "itinerary-builder" ? "block" : "none" }}>
         <ItineraryStudio
           packages={packages}
           customers={customers}
@@ -1390,7 +1418,7 @@ export default function AdminCRMPage() {
           }}
           saving={savingProposal}
         />
-      )}
+      </div>
 
       {/* TAB: SAVED PROPOSALS ARCHIVE */}
       {activeTab === "proposals" && (

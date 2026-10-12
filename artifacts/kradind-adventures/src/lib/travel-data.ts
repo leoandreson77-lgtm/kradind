@@ -69,7 +69,7 @@ export interface TrekData {
   status?: string;
 }
 
-export const treks: TrekData[] = [
+const rawTreks: TrekData[] = [
   {
     "id": 1,
     "slug": "chopta-tungnath-chandrashila",
@@ -3877,3 +3877,13 @@ export const treks: TrekData[] = [
   ]
 }
 ];
+
+const OBSOLETE_TREK_DATA_SLUGS = new Set([
+  "kerala-tour-package",
+  "maharashtra-tour-package",
+  "goa-tour-package",
+  "meghalaya-tour-package",
+  "nainital-tour-package",
+]);
+
+export const treks: TrekData[] = rawTreks.filter((t) => !OBSOLETE_TREK_DATA_SLUGS.has(t.slug));

@@ -261,6 +261,7 @@ function matchesCategoryOrTag(t: TrekData, tagOrCat: string): boolean {
     );
   }
   if (target === "himalayan treks" || target === "treks" || target === "himalayas" || target === "trek") {
+    if (isDomesticPackage(t)) return false;
     return (
       ["himalayas", "trek"].includes((t.category || "").toLowerCase()) ||
       (t.categories || []).some((c) => ["himalayas", "trek"].includes(c.toLowerCase()))
@@ -734,11 +735,12 @@ export default function AdminTreksPage() {
     if (!editingTrek) return;
     const currentCats = editingTrek.categories || [];
     if (type === "Domestic") {
+      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
       const cleaned = currentCats.filter(
         (c) =>
-          !["Trek", "Summit", "High Pass", "Expedition", "Himalayas"].includes(c) &&
-          c !== "Domestic" &&
-          c !== "Holiday Package"
+          !trekTagKeywords.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "domestic" &&
+          c.toLowerCase().trim() !== "holiday package"
       );
       setEditingTrek({
         ...editingTrek,
@@ -752,8 +754,12 @@ export default function AdminTreksPage() {
       });
       showToast("🚗 Switched to Domestic Tour Package format");
     } else {
+      const domesticTagKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours", "leisure"];
       const cleaned = currentCats.filter(
-        (c) => !["Domestic", "Holiday Package", "Road Trip"].includes(c) && c !== "Trek" && c !== "Himalayas"
+        (c) =>
+          !domesticTagKeywords.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "trek" &&
+          c.toLowerCase().trim() !== "himalayas"
       );
       setEditingTrek({
         ...editingTrek,
@@ -901,8 +907,30 @@ export default function AdminTreksPage() {
       day: i + 1,
     }));
 
+    const isDomestic = isDomesticPackage(editingTrek);
+    let finalCategory = editingTrek.category;
+    let finalCategories = [...(editingTrek.categories || [])];
+
+    if (isDomestic) {
+      finalCategory = "Domestic";
+      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
+      finalCategories = finalCategories.filter((c) => !trekTagKeywords.includes(c.toLowerCase().trim()));
+      if (!finalCategories.some((c) => c.toLowerCase() === "domestic")) {
+        finalCategories.unshift("Domestic");
+      }
+    } else {
+      const domesticKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours"];
+      finalCategories = finalCategories.filter((c) => !domesticKeywords.includes(c.toLowerCase().trim()));
+      if (finalCategory?.toLowerCase() === "domestic") {
+        finalCategory = "Himalayas";
+      }
+    }
+
     const payload = {
       ...editingTrek,
+      category: finalCategory,
+      categories: finalCategories,
+      slug: (editingTrek.slug || "").replace(/^\/+/, ""),
       image: trekImage,
       gallery: editingTrek.gallery || [trekImage].filter(Boolean),
       itinerary: cleanItinerary,

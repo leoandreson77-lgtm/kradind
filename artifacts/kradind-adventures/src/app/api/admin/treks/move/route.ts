@@ -60,16 +60,17 @@ export async function POST(request: NextRequest) {
     let updatedTrek: TrekData;
 
     if (targetType === "Domestic") {
-      // Clean existing trek-specific tags
+      // Clean ALL trek-specific tags case-insensitively
+      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
       const filteredCategories = prevCategories.filter(
         (c) =>
-          !["Trek", "Summit", "High Pass", "Expedition", "Himalayas"].includes(c) &&
-          c !== "Domestic" &&
-          c !== "Holiday Package"
+          !trekTagKeywords.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "domestic" &&
+          c.toLowerCase().trim() !== "holiday package"
       );
 
       const newCategories = ["Domestic", "Holiday Package", ...filteredCategories];
-      if (targetRegion && !newCategories.includes(targetRegion)) {
+      if (targetRegion && !newCategories.some((c) => c.toLowerCase() === targetRegion.toLowerCase())) {
         newCategories.push(targetRegion);
       }
 
@@ -88,16 +89,17 @@ export async function POST(request: NextRequest) {
       // targetType === "Trek"
       const chosenCollection = targetCollection || "Himalayas";
 
-      // Clean existing domestic tags
+      // Clean ALL domestic tags case-insensitively
+      const domesticTagKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours"];
       const filteredCategories = prevCategories.filter(
         (c) =>
-          !["Domestic", "Holiday Package", "Road Trip"].includes(c) &&
-          c !== "Trek" &&
-          c !== chosenCollection
+          !domesticTagKeywords.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "trek" &&
+          c.toLowerCase().trim() !== chosenCollection.toLowerCase()
       );
 
       const newCategories = [chosenCollection, "Trek", ...filteredCategories];
-      if (targetRegion && !newCategories.includes(targetRegion)) {
+      if (targetRegion && !newCategories.some((c) => c.toLowerCase() === targetRegion.toLowerCase())) {
         newCategories.push(targetRegion);
       }
 

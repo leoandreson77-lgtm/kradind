@@ -135,9 +135,11 @@ export function TreksContent({
         catLower === "treks" ||
         catLower.includes("himalayan");
 
+      // A domestic package must NEVER show under Himalayan Treks
       const isHimalayasTrek =
-        ["himalayas", "trek"].includes((trek.category || "").toLowerCase()) ||
-        (trek.categories || []).some((c) => ["himalayas", "trek", "summit"].includes(c.toLowerCase()));
+        !isDomesticTrek &&
+        (["himalayas", "trek"].includes((trek.category || "").toLowerCase()) ||
+        (trek.categories || []).some((c) => ["himalayas", "trek", "summit"].includes(c.toLowerCase())));
 
       const isInternationalCat =
         catLower === "international" ||
@@ -153,17 +155,26 @@ export function TreksContent({
           (trek.name || "").toLowerCase().includes(country)
         );
 
-      const matchesCategory =
-        selectedCategory === "All" ||
-        (isDomesticCat && isDomesticTrek) ||
-        (isWeekendCat && isWeekendTrek) ||
-        (isFixedDepartureCat && isFixedDepartureTrek) ||
-        (isHimalayasCat && isHimalayasTrek) ||
-        (isInternationalCat && isInternationalTrek) ||
-        (trek.category || "").toLowerCase().includes(catLower) ||
-        (trek.categories || []).some((c) => c.toLowerCase().includes(catLower)) ||
-        (trek.location || "").toLowerCase().includes(catLower) ||
-        (trek.region || "").toLowerCase().includes(catLower);
+      let matchesCategory = false;
+      if (selectedCategory === "All") {
+        matchesCategory = true;
+      } else if (isDomesticCat) {
+        matchesCategory = isDomesticTrek;
+      } else if (isHimalayasCat) {
+        matchesCategory = isHimalayasTrek;
+      } else if (isWeekendCat) {
+        matchesCategory = isWeekendTrek;
+      } else if (isFixedDepartureCat) {
+        matchesCategory = isFixedDepartureTrek;
+      } else if (isInternationalCat) {
+        matchesCategory = isInternationalTrek;
+      } else {
+        matchesCategory =
+          (trek.category || "").toLowerCase().includes(catLower) ||
+          (trek.categories || []).some((c) => c.toLowerCase().includes(catLower)) ||
+          (trek.location || "").toLowerCase().includes(catLower) ||
+          (trek.region || "").toLowerCase().includes(catLower);
+      }
 
       const queryLower = searchQuery.toLowerCase().trim();
       const isDomesticQuery = queryLower === "domestic" || queryLower.includes("domestic");

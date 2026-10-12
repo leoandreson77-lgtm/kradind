@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Sparkles,
   Plus,
@@ -45,6 +45,9 @@ interface ItineraryStudioProps {
   onReset: () => void;
   saving?: boolean;
 }
+
+const DRAFT_STORAGE_KEY = "kradind_crm_itinerary_studio_draft";
+const DRAFT_TIMESTAMP_KEY = "kradind_crm_itinerary_studio_draft_time";
 
 export function ItineraryStudio({
   packages,
@@ -97,6 +100,167 @@ export function ItineraryStudio({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
   const [newInclusion, setNewInclusion] = useState("");
   const [newExclusion, setNewExclusion] = useState("");
+
+  // Auto-save & draft restoration state
+  const [lastSavedTime, setLastSavedTime] = useState<string>("");
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"Saved" | "Saving..." | "Ready">("Ready");
+  const [draftRecoveredNotice, setDraftRecoveredNotice] = useState<boolean>(false);
+
+  // De-duplicate packages and classify cleanly
+  const distinctPackages = useMemo(() => {
+    const seen = new Set<string>();
+    return (packages || []).filter((p) => {
+      const cleanSlug = (p.slug || "").replace(/^\/+/, "").toLowerCase().trim();
+      if (!cleanSlug || seen.has(cleanSlug)) return false;
+      seen.add(cleanSlug);
+      return true;
+    });
+  }, [packages]);
+
+  const isDomesticPkg = (p: TrekData) =>
+    (p.category || "").toLowerCase() === "domestic" ||
+    (p.categories || []).some((c) => c.toLowerCase() === "domestic");
+
+  const isInternationalPkg = (p: TrekData) =>
+    (p.category || "").toLowerCase() === "international" ||
+    (p.categories || []).some((c) => c.toLowerCase() === "international") ||
+    ["bali", "thailand", "dubai", "vietnam", "singapore", "maldives", "nepal"].some((c) =>
+      (p.slug || "").toLowerCase().includes(c)
+    );
+
+  const isTrekPkg = (p: TrekData) => !isDomesticPkg(p) && !isInternationalPkg(p);
+
+  // Auto-restore draft from localStorage on load if not editing an existing saved proposal
+  useEffect(() => {
+    if (typeof window !== "undefined" && !initialProposal) {
+      try {
+        const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (savedDraft) {
+          const parsed: CustomerItineraryProposal = JSON.parse(savedDraft);
+          const hasContent = Boolean(
+            parsed.customerName?.trim() ||
+            parsed.packageTitle?.trim() ||
+            parsed.customerPhone?.trim() ||
+            (parsed.itinerary && parsed.itinerary.length > 0)
+          );
+          if (hasContent) {
+            setFormData(parsed);
+            if (parsed.basePackageSlug) setSelectedPackageSlug(parsed.basePackageSlug);
+            if (parsed.customerId) setSelectedCustomerId(parsed.customerId);
+            const savedTime = localStorage.getItem(DRAFT_TIMESTAMP_KEY) || "";
+            setLastSavedTime(savedTime);
+            setDraftRecoveredNotice(true);
+            setAutoSaveStatus("Saved");
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to restore itinerary studio draft:", err);
+      }
+    }
+  }, [initialProposal]);
+
+  // Debounced auto-save to localStorage whenever formData changes
+  useEffect(() => {
+    if (typeof window === "undefined" || initialProposal) return;
+
+    const hasContent = Boolean(
+      formData.customerName?.trim() ||
+      formData.packageTitle?.trim() ||
+      formData.customerPhone?.trim() ||
+      formData.destination?.trim() ||
+      (formData.itinerary && formData.itinerary.length > 0)
+    );
+
+    if (!hasContent) return;
+
+    setAutoSaveStatus("Saving...");
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
+        const now = new Date().toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        localStorage.setItem(DRAFT_TIMESTAMP_KEY, now);
+        setLastSavedTime(now);
+        setAutoSaveStatus("Saved");
+      } catch (err) {
+        console.warn("Failed to auto-save itinerary studio draft:", err);
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [formData, initialProposal]);
+
+  // Warn user before leaving or reloading page if dirty unsaved proposal data exists
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      const hasContent = Boolean(
+        formData.customerName?.trim() ||
+        formData.packageTitle?.trim() ||
+        formData.itinerary.length > 0
+      );
+      if (hasContent) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData]);
+
+  // Clear Draft & Start Fresh handler
+  const handleClearDraft = () => {
+    if (
+      confirm(
+        "Are you sure you want to discard this draft and start fresh? All typed customer details and custom itinerary days will be cleared."
+      )
+    ) {
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+        localStorage.removeItem(DRAFT_TIMESTAMP_KEY);
+      } catch {}
+      setSelectedPackageSlug("");
+      setSelectedCustomerId("");
+      setDraftRecoveredNotice(false);
+      setLastSavedTime("");
+      setAutoSaveStatus("Ready");
+      setFormData({
+        id: `KRAD-PROP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+        customerId: "",
+        customerName: "",
+        customerPhone: "",
+        customerEmail: "",
+        customerCity: "",
+        packageTitle: "",
+        basePackageSlug: "",
+        destination: "",
+        duration: "",
+        startDate: "",
+        endDate: "",
+        adultsCount: 2,
+        childrenCount: 0,
+        pickupLocation: "",
+        dropLocation: "",
+        hotelCategory: "Standard 3-Star / Alpine Camp",
+        vehicleType: "Private AC Sedan / Ertiga",
+        itinerary: [],
+        inclusions: [],
+        exclusions: [],
+        basePricePerPerson: 0,
+        totalQuotedPrice: 0,
+        advanceDepositRequired: 0,
+        validUntil: "",
+        specialNotes: "",
+        status: "Draft",
+        author: "Admin Agent",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+      onReset();
+    }
+  };
 
   // Sync if initialProposal changes from outside
   useEffect(() => {
@@ -313,6 +477,12 @@ export function ItineraryStudio({
     }
 
     await onSave(formData);
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+      localStorage.removeItem(DRAFT_TIMESTAMP_KEY);
+    } catch {}
+    setDraftRecoveredNotice(false);
+    setAutoSaveStatus("Saved");
   };
 
   const formatCurrency = (val: number) => {
@@ -325,17 +495,58 @@ export function ItineraryStudio({
 
   return (
     <div className="space-y-6">
+      {/* Draft Recovered Notice Banner */}
+      {draftRecoveredNotice && (
+        <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-amber-500/5 border border-amber-400/40 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-900 shadow-xs animate-fade-in">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold">Auto-Saved Draft Restored!</span>
+              <p className="text-[11px] text-amber-800/80 mt-0.5">
+                Your previous proposal draft {lastSavedTime ? `(saved at ${lastSavedTime})` : ""} was automatically restored. You will never lose typed itinerary data when navigating or reloading.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleClearDraft}
+              className="px-3 py-1.5 rounded-xl bg-amber-600/15 hover:bg-amber-600/25 text-amber-900 font-bold transition text-xs flex items-center gap-1.5"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Discard Draft</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setDraftRecoveredNotice(false)}
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-slate-700 font-bold transition text-xs border border-amber-300/60"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Studio Header Card */}
       <div className="bg-gradient-to-r from-slate-900 via-[#0F3A2E] to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Executive Itinerary Studio</span>
               </span>
+
+              {/* Real-time Auto-save Indicator */}
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span>Auto-Save: {autoSaveStatus} {lastSavedTime ? `• ${lastSavedTime}` : ""}</span>
+              </span>
+
               <span className="text-slate-500 text-xs">•</span>
-              <span className="text-slate-300 text-xs font-semibold">27 Verified Blueprint Templates</span>
+              <span className="text-slate-300 text-xs font-semibold">{distinctPackages.length} Verified Blueprints</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               Create & Customize Travel Proposals
@@ -347,6 +558,15 @@ export function ItineraryStudio({
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              type="button"
+              onClick={handleClearDraft}
+              className="px-3.5 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-rose-500/30"
+              title="Clear draft and start with a blank proposal"
+            >
+              <Trash2 className="w-4 h-4 text-rose-300" />
+              <span>Clear Draft</span>
+            </button>
             <button
               type="button"
               onClick={onReset}
@@ -382,10 +602,10 @@ export function ItineraryStudio({
             onChange={(e) => handleSelectPackageTemplate(e.target.value)}
             className="w-full bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600 transition-all cursor-pointer"
           >
-            <option value="">-- Choose from 27 Existing Packages --</option>
+            <option value="">-- Choose from {distinctPackages.length} Existing Packages --</option>
             <optgroup label="🏔️ Himalayan Treks">
-              {packages
-                .filter((p) => p.region === "Himalayas" || p.location?.includes("Uttarakhand") || p.location?.includes("Himachal"))
+              {distinctPackages
+                .filter(isTrekPkg)
                 .map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.name} ({p.duration} • ₹{p.price.toLocaleString("en-IN")})
@@ -393,14 +613,8 @@ export function ItineraryStudio({
                 ))}
             </optgroup>
             <optgroup label="🏖️ Domestic & Weekend Tours">
-              {packages
-                .filter(
-                  (p) =>
-                    p.region !== "Himalayas" &&
-                    !p.location?.includes("Uttarakhand") &&
-                    !p.location?.includes("Himachal") &&
-                    !["bali", "thailand", "dubai", "vietnam"].includes(p.slug)
-                )
+              {distinctPackages
+                .filter(isDomesticPkg)
                 .map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.name} ({p.duration} • ₹{p.price.toLocaleString("en-IN")})
@@ -408,8 +622,8 @@ export function ItineraryStudio({
                 ))}
             </optgroup>
             <optgroup label="🌐 International Destinations">
-              {packages
-                .filter((p) => ["bali", "thailand", "dubai", "vietnam"].includes(p.slug))
+              {distinctPackages
+                .filter(isInternationalPkg)
                 .map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.name} ({p.duration} • ₹{p.price.toLocaleString("en-IN")})

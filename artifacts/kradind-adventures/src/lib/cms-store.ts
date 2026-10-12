@@ -3702,6 +3702,14 @@ export async function syncHomeSectionsToMongo(sections: HomeSectionsConfig): Pro
   }
 }
 
+const OBSOLETE_TREK_SLUGS = new Set([
+  "kerala-tour-package",
+  "maharashtra-tour-package",
+  "goa-tour-package",
+  "meghalaya-tour-package",
+  "nainital-tour-package",
+]);
+
 export async function getTreksAsync(): Promise<TrekData[]> {
   try {
     const db = await getDb();
@@ -3711,20 +3719,30 @@ export async function getTreksAsync(): Promise<TrekData[]> {
       for (const doc of docs) {
         const { _id, ...rest } = doc;
         const trek = rest as TrekData;
-        if (!slugMap.has(trek.slug)) {
-          slugMap.set(trek.slug, trek);
+        const cleanSlug = (trek.slug || "").replace(/^\/+/, "");
+        trek.slug = cleanSlug;
+
+        // Skip obsolete duplicate stubs
+        if (OBSOLETE_TREK_SLUGS.has(cleanSlug)) continue;
+
+        if (!slugMap.has(cleanSlug)) {
+          slugMap.set(cleanSlug, trek);
         } else {
-          const existing = slugMap.get(trek.slug)!;
+          const existing = slugMap.get(cleanSlug)!;
           if (existing.status !== "Published" && trek.status === "Published") {
-            slugMap.set(trek.slug, trek);
+            slugMap.set(cleanSlug, trek);
           }
         }
       }
 
       for (const staticTrek of defaultTreks) {
-        if (!slugMap.has(staticTrek.slug)) {
-          slugMap.set(staticTrek.slug, {
+        const cleanStaticSlug = (staticTrek.slug || "").replace(/^\/+/, "");
+        if (OBSOLETE_TREK_SLUGS.has(cleanStaticSlug)) continue;
+
+        if (!slugMap.has(cleanStaticSlug)) {
+          slugMap.set(cleanStaticSlug, {
             ...(staticTrek as unknown as TrekData),
+            slug: cleanStaticSlug,
             status: (staticTrek as any).status || "Published",
           });
         }
@@ -3735,7 +3753,28 @@ export async function getTreksAsync(): Promise<TrekData[]> {
         jaisalmer.image = "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1920&q=85";
       }
 
-      const cleanTreks = Array.from(slugMap.values());
+      const cleanTreks = Array.from(slugMap.values()).map((t) => {
+        // Enforce mutual exclusivity
+        const isDom =
+          (t.category || "").toLowerCase() === "domestic" ||
+          (t.categories || []).some((c) => c.toLowerCase() === "domestic");
+        if (isDom) {
+          const trekKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
+          const sanitizedCats = (t.categories || []).filter(
+            (c) => !trekKeywords.includes(c.toLowerCase().trim())
+          );
+          if (!sanitizedCats.some((c) => c.toLowerCase() === "domestic")) {
+            sanitizedCats.unshift("Domestic");
+          }
+          return {
+            ...t,
+            category: "Domestic",
+            categories: sanitizedCats,
+          };
+        }
+        return t;
+      });
+
       const store = readStore();
       store.treks = cleanTreks;
       try {
@@ -3746,7 +3785,12 @@ export async function getTreksAsync(): Promise<TrekData[]> {
   } catch (err) {
     console.warn("MongoDB getTreks error, fallback to local store:", err);
   }
-  return readStore().treks || [];
+
+  const localStore = readStore();
+  const filteredLocal = (localStore.treks || []).filter(
+    (t) => !OBSOLETE_TREK_SLUGS.has((t.slug || "").replace(/^\/+/, ""))
+  );
+  return filteredLocal;
 }
 
 export async function syncTreksToMongo(treks: TrekData[]): Promise<void> {

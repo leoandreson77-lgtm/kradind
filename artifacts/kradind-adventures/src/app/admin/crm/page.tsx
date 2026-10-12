@@ -43,7 +43,7 @@ import {
   MapPin,
   User,
 } from "lucide-react";
-import {
+import type {
   CustomerRecord,
   CustomerLifecycleStage,
   CustomerStatus,
@@ -56,6 +56,7 @@ import {
   CustomerItineraryProposal,
   TrekData,
 } from "@/lib/cms-store";
+import { getPackageSection } from "@/lib/package-sections";
 import { ProposalVoucherModal } from "@/components/admin/crm/proposal-voucher-modal";
 import { ItineraryStudio } from "@/components/admin/crm/itinerary-studio";
 import { SavedProposalsArchive } from "@/components/admin/crm/saved-proposals-archive";
@@ -952,6 +953,56 @@ export default function AdminCRMPage() {
             <Plus className="w-4 h-4" />
             <span>New Customer</span>
           </button>
+        </div>
+      </div>
+
+      {/* 4 Packages & Tours Sections (Domestic, International, Fixed Departure, Treks) */}
+      <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+            <span>📦 Packages Catalog:</span>
+          </span>
+          <span className="text-[11px] text-slate-400 hidden sm:inline">
+            4 Strictly Separated Product Sections
+          </span>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <a
+            href="/admin/treks?type=domestic"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition shadow-2xs"
+          >
+            <span>🏖️ Domestic Tours</span>
+            <span className="bg-amber-200/80 text-amber-900 text-[10px] px-1.5 py-0.2 rounded-full font-black">
+              {packages.filter((p) => getPackageSection(p) === "Domestic").length}
+            </span>
+          </a>
+          <a
+            href="/admin/treks?type=international"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 text-xs font-bold transition shadow-2xs"
+          >
+            <span>🌐 International Tours</span>
+            <span className="bg-blue-200/80 text-blue-900 text-[10px] px-1.5 py-0.2 rounded-full font-black">
+              {packages.filter((p) => getPackageSection(p) === "International").length}
+            </span>
+          </a>
+          <a
+            href="/admin/treks?type=fixed"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold transition shadow-2xs"
+          >
+            <span>📅 Fixed Departures</span>
+            <span className="bg-purple-200/80 text-purple-900 text-[10px] px-1.5 py-0.2 rounded-full font-black">
+              {packages.filter((p) => getPackageSection(p) === "Fixed").length}
+            </span>
+          </a>
+          <a
+            href="/admin/treks?type=treks"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition shadow-2xs"
+          >
+            <span>🏔️ Himalayan Treks</span>
+            <span className="bg-emerald-200/80 text-emerald-900 text-[10px] px-1.5 py-0.2 rounded-full font-black">
+              {packages.filter((p) => getPackageSection(p) === "Trek").length}
+            </span>
+          </a>
         </div>
       </div>
 

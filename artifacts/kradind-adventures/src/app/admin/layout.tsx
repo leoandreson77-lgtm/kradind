@@ -10,6 +10,7 @@ import {
   Radio,
   Sliders,
   CalendarCheck,
+  Calendar,
   Settings,
   LogOut,
   Menu,
@@ -187,12 +188,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ],
     },
     {
-      group: "PACKAGES MANAGEMENT",
+      group: "PACKAGES MANAGEMENT (4 SECTIONS)",
       items: [
+        { label: "🏖️ Domestic", href: "/admin/treks?type=domestic", icon: MapPin, badge: "Tours" },
+        { label: "🌐 International", href: "/admin/treks?type=international", icon: Globe, badge: "Global" },
+        { label: "📅 Fixed Departure", href: "/admin/treks?type=fixed", icon: Calendar, badge: "Fixed" },
         { label: "🏔️ Trek Packages", href: "/admin/treks?type=treks", icon: Mountain, badge: "Treks" },
-        { label: "🏖️ Destination Packages", href: "/admin/treks?type=domestic", icon: MapPin, badge: "Tours" },
-        { label: "📍 Destinations Explorer", href: "/admin/destinations", icon: Sparkles },
-        { label: "🌐 International CMS", href: "/admin/international", icon: Globe },
       ],
     },
     {
@@ -201,6 +202,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { label: "Landing Pages", href: "/admin/landing-pages", icon: Sparkles },
         { label: "Live Trail Radar", href: "/admin/radar", icon: Radio },
         { label: "Home Sections", href: "/admin/sections", icon: Sliders },
+        { label: "Destinations Explorer", href: "/admin/destinations", icon: Sparkles },
       ],
     },
     {
@@ -218,7 +220,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (pathname !== targetPath) return false;
     if (!targetQuery) {
       if (pathname === "/admin/treks") {
-        return !currentQuery || currentQuery.includes("type=treks");
+        return !currentQuery || currentQuery === "" || currentQuery.includes("type=treks");
       }
       if (pathname === "/admin/crm") {
         return !currentQuery || currentQuery === "" || currentQuery.includes("tab=directory");

@@ -18,7 +18,7 @@ export const revalidate = 0;
 
 export interface MoveTrekRequest {
   id: number | string;
-  targetType: "Domestic" | "Trek";
+  targetType: "Domestic" | "International" | "Fixed" | "Trek";
   targetRegion?: string;
   targetCollection?: string;
   transferToDestinations?: boolean;
@@ -26,7 +26,7 @@ export interface MoveTrekRequest {
 
 /**
  * POST /api/admin/treks/move
- * Moves or converts a package between Himalayan Trek and Domestic Tour Package.
+ * Moves or converts a package between the 4 sections: Domestic, International, Fixed Departure, and Trek.
  * Can also copy/transfer to Destinations CMS if requested.
  */
 export async function POST(request: NextRequest) {
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     if (!id || !targetType) {
       return NextResponse.json(
-        { error: "Trek ID and targetType ('Domestic' | 'Trek') are required" },
+        { error: "Trek ID and targetType ('Domestic' | 'International' | 'Fixed' | 'Trek') are required" },
         { status: 400 }
       );
     }
@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
     let updatedTrek: TrekData;
 
     if (targetType === "Domestic") {
-      // Clean ALL trek-specific tags case-insensitively
-      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
+      // Clean ALL trek-specific, international and fixed tags
+      const conflictingKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine", "international", "fixed departure"];
       const filteredCategories = prevCategories.filter(
         (c) =>
-          !trekTagKeywords.includes(c.toLowerCase().trim()) &&
+          !conflictingKeywords.includes(c.toLowerCase().trim()) &&
           c.toLowerCase().trim() !== "domestic" &&
           c.toLowerCase().trim() !== "holiday package"
       );
@@ -78,22 +78,62 @@ export async function POST(request: NextRequest) {
         ...currentTrek,
         category: "Domestic",
         categories: newCategories,
-        // If difficulty was a strenuous trekking grade, soften default to leisure / sightseeing
         difficulty:
           currentTrek.difficulty.includes("Difficult") || currentTrek.difficulty.includes("Challenging")
             ? "Leisure / Scenic"
             : currentTrek.difficulty || "Moderate",
         imageAlt: currentTrek.imageAlt || getImageAlt(currentTrek, "domesticTour"),
       };
+    } else if (targetType === "International") {
+      const conflictingKeywords = ["domestic", "himalayas", "himalayan", "summit", "high pass", "expedition", "alpine"];
+      const filteredCategories = prevCategories.filter(
+        (c) =>
+          !conflictingKeywords.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "international"
+      );
+
+      const newCategories = ["International", "Holiday Package", ...filteredCategories];
+      if (targetRegion && !newCategories.some((c) => c.toLowerCase() === targetRegion.toLowerCase())) {
+        newCategories.push(targetRegion);
+      }
+
+      updatedTrek = {
+        ...currentTrek,
+        category: "International",
+        categories: newCategories,
+        difficulty:
+          currentTrek.difficulty.includes("Difficult") || currentTrek.difficulty.includes("Challenging")
+            ? "Leisure / Global"
+            : currentTrek.difficulty || "Moderate",
+        imageAlt: currentTrek.imageAlt || getImageAlt(currentTrek, "domesticTour"),
+      };
+    } else if (targetType === "Fixed") {
+      const conflictingKeywords = ["international"];
+      const filteredCategories = prevCategories.filter(
+        (c) =>
+          !conflictingKeywords.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "fixed departure"
+      );
+
+      const newCategories = ["Fixed Departure", ...filteredCategories];
+      if (targetRegion && !newCategories.some((c) => c.toLowerCase() === targetRegion.toLowerCase())) {
+        newCategories.push(targetRegion);
+      }
+
+      updatedTrek = {
+        ...currentTrek,
+        category: "Fixed Departure",
+        categories: newCategories,
+        imageAlt: currentTrek.imageAlt || getImageAlt(currentTrek, "trekking"),
+      };
     } else {
       // targetType === "Trek"
       const chosenCollection = targetCollection || "Himalayas";
 
-      // Clean ALL domestic tags case-insensitively
-      const domesticTagKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours"];
+      const conflictingKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours", "international"];
       const filteredCategories = prevCategories.filter(
         (c) =>
-          !domesticTagKeywords.includes(c.toLowerCase().trim()) &&
+          !conflictingKeywords.includes(c.toLowerCase().trim()) &&
           c.toLowerCase().trim() !== "trek" &&
           c.toLowerCase().trim() !== chosenCollection.toLowerCase()
       );

@@ -47,8 +47,27 @@ const ALLOWED_MIME_TYPES = new Set([
   "application/octet-stream",
 ]);
 
+function getAllUploadDirs(): string[] {
+  const dirs: string[] = [];
+  const primary = path.join(process.cwd(), "public", "uploads");
+  dirs.push(primary);
+  const monorepoPath = path.join(process.cwd(), "artifacts", "kradind-adventures", "public", "uploads");
+  if (!dirs.includes(monorepoPath)) {
+    dirs.push(monorepoPath);
+  }
+  const containerPath = "/app/artifacts/kradind-adventures/public/uploads";
+  if (!dirs.includes(containerPath)) {
+    dirs.push(containerPath);
+  }
+  return dirs;
+}
+
 function getPublicUploadDir(): string {
-  return path.join(process.cwd(), "public", "uploads");
+  const directPath = path.join(process.cwd(), "public", "uploads");
+  if (fs.existsSync(path.join(process.cwd(), "public"))) return directPath;
+  const artifactPath = path.join(process.cwd(), "artifacts", "kradind-adventures", "public", "uploads");
+  if (fs.existsSync(path.join(process.cwd(), "artifacts", "kradind-adventures"))) return artifactPath;
+  return directPath;
 }
 
 function getTmpUploadDir(): string {
@@ -101,7 +120,31 @@ async function persistFile(
 ): Promise<boolean> {
   let stored = false;
 
-  // 1. Store in MongoDB Atlas (Persisted across serverless restarts and Vercel builds)
+  // 1. Write to server public/uploads folder(s) - Server single uploads directory
+  const targetDirs = getAllUploadDirs();
+  for (const uploadDir of targetDirs) {
+    try {
+      if (!fs.existsSync(uploadDir)) {
+        await fs.promises.mkdir(uploadDir, { recursive: true });
+      }
+      await fs.promises.writeFile(path.join(uploadDir, safeFilename), buffer);
+      stored = true;
+    } catch (fsErr) {
+      // ignore read-only warnings in serverless
+    }
+  }
+
+  // 2. Cache in /tmp directory (Always writable on Linux/Docker/Lambda)
+  try {
+    const tmpDir = getTmpUploadDir();
+    if (!fs.existsSync(tmpDir)) {
+      await fs.promises.mkdir(tmpDir, { recursive: true });
+    }
+    await fs.promises.writeFile(path.join(tmpDir, safeFilename), buffer);
+    stored = true;
+  } catch {}
+
+  // 3. Store in MongoDB Atlas as persistent backup
   if (db) {
     try {
       await db.collection("media_uploads").updateOne(
@@ -121,33 +164,6 @@ async function persistFile(
       stored = true;
     } catch (mongoErr) {
       console.error("Failed saving image to MongoDB Atlas:", mongoErr);
-    }
-  }
-
-  // 2. Cache in /tmp directory (Always writable on Vercel / AWS Lambda / Linux)
-  try {
-    const tmpDir = getTmpUploadDir();
-    if (!fs.existsSync(tmpDir)) {
-      await fs.promises.mkdir(tmpDir, { recursive: true });
-    }
-    await fs.promises.writeFile(path.join(tmpDir, safeFilename), buffer);
-    stored = true;
-  } catch (tmpErr) {
-    // Ignore tmp write warnings
-  }
-
-  // 3. Write to public/uploads (Writable in local dev environment)
-  try {
-    const publicDir = getPublicUploadDir();
-    if (!fs.existsSync(publicDir)) {
-      await fs.promises.mkdir(publicDir, { recursive: true });
-    }
-    await fs.promises.writeFile(path.join(publicDir, safeFilename), buffer);
-    stored = true;
-  } catch (fsErr: any) {
-    // EROFS is expected on Vercel read-only filesystem, ignore if stored in Mongo or tmp
-    if (fsErr?.code !== "EROFS" && !stored) {
-      console.warn("Public directory write notice:", fsErr);
     }
   }
 

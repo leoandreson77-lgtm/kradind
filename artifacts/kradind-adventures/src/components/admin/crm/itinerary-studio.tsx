@@ -28,12 +28,13 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
-import {
+import type {
   CustomerItineraryProposal,
   ItineraryProposalDay,
   CustomerRecord,
   TrekData,
 } from "@/lib/cms-store";
+import { getPackageSection } from "@/lib/package-sections";
 
 interface ItineraryStudioProps {
   packages: TrekData[];
@@ -117,18 +118,10 @@ export function ItineraryStudio({
     });
   }, [packages]);
 
-  const isDomesticPkg = (p: TrekData) =>
-    (p.category || "").toLowerCase() === "domestic" ||
-    (p.categories || []).some((c) => c.toLowerCase() === "domestic");
-
-  const isInternationalPkg = (p: TrekData) =>
-    (p.category || "").toLowerCase() === "international" ||
-    (p.categories || []).some((c) => c.toLowerCase() === "international") ||
-    ["bali", "thailand", "dubai", "vietnam", "singapore", "maldives", "nepal"].some((c) =>
-      (p.slug || "").toLowerCase().includes(c)
-    );
-
-  const isTrekPkg = (p: TrekData) => !isDomesticPkg(p) && !isInternationalPkg(p);
+  const isDomesticPkg = (p: TrekData) => getPackageSection(p) === "Domestic";
+  const isInternationalPkg = (p: TrekData) => getPackageSection(p) === "International";
+  const isFixedPkg = (p: TrekData) => getPackageSection(p) === "Fixed";
+  const isTrekPkg = (p: TrekData) => getPackageSection(p) === "Trek";
 
   // Auto-restore draft from localStorage on load if not editing an existing saved proposal
   useEffect(() => {
@@ -603,16 +596,7 @@ export function ItineraryStudio({
             className="w-full bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600 transition-all cursor-pointer"
           >
             <option value="">-- Choose from {distinctPackages.length} Existing Packages --</option>
-            <optgroup label="🏔️ Himalayan Treks">
-              {distinctPackages
-                .filter(isTrekPkg)
-                .map((p) => (
-                  <option key={p.slug} value={p.slug}>
-                    {p.name} ({p.duration} • ₹{p.price.toLocaleString("en-IN")})
-                  </option>
-                ))}
-            </optgroup>
-            <optgroup label="🏖️ Domestic & Weekend Tours">
+            <optgroup label="🏖️ Domestic Tours">
               {distinctPackages
                 .filter(isDomesticPkg)
                 .map((p) => (
@@ -621,9 +605,27 @@ export function ItineraryStudio({
                   </option>
                 ))}
             </optgroup>
-            <optgroup label="🌐 International Destinations">
+            <optgroup label="🌐 International Tours">
               {distinctPackages
                 .filter(isInternationalPkg)
+                .map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.name} ({p.duration} • ₹{p.price.toLocaleString("en-IN")})
+                  </option>
+                ))}
+            </optgroup>
+            <optgroup label="📅 Fixed Departures">
+              {distinctPackages
+                .filter(isFixedPkg)
+                .map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.name} ({p.duration} • ₹{p.price.toLocaleString("en-IN")})
+                  </option>
+                ))}
+            </optgroup>
+            <optgroup label="🏔️ Himalayan Treks">
+              {distinctPackages
+                .filter(isTrekPkg)
                 .map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.name} ({p.duration} • ₹{p.price.toLocaleString("en-IN")})

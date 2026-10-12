@@ -35,21 +35,28 @@ export async function GET(
   const ext = path.extname(safeFilename).toLowerCase();
   const defaultContentType = EXTENSION_TO_MIME[ext] || "image/jpeg";
 
-  // 1. Check local public/uploads directory (Local development)
-  try {
-    const diskPath = path.join(process.cwd(), "public", "uploads", safeFilename);
-    if (fs.existsSync(diskPath)) {
-      const buffer = await fs.promises.readFile(diskPath);
-      return new NextResponse(new Uint8Array(buffer), {
-        status: 200,
-        headers: {
-          "Content-Type": defaultContentType,
-          "Content-Length": String(buffer.length),
-          "Cache-Control": "public, max-age=31536000, immutable",
-        },
-      });
-    }
-  } catch {}
+  // 1. Check local public/uploads directory on server
+  const candidateDirs = [
+    path.join(process.cwd(), "public", "uploads"),
+    path.join(process.cwd(), "artifacts", "kradind-adventures", "public", "uploads"),
+    "/app/artifacts/kradind-adventures/public/uploads",
+  ];
+  for (const dir of candidateDirs) {
+    try {
+      const diskPath = path.join(dir, safeFilename);
+      if (fs.existsSync(diskPath)) {
+        const buffer = await fs.promises.readFile(diskPath);
+        return new NextResponse(new Uint8Array(buffer), {
+          status: 200,
+          headers: {
+            "Content-Type": defaultContentType,
+            "Content-Length": String(buffer.length),
+            "Cache-Control": "public, max-age=31536000, immutable",
+          },
+        });
+      }
+    } catch {}
+  }
 
   // 2. Check /tmp/kradind_uploads cache (Serverless writable cache)
   try {

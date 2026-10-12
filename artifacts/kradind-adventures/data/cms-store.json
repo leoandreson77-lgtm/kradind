@@ -79,155 +79,23 @@
       "badge": "Certified Himalayan Guides . Small Safe Batches",
       "title": "Explore New Horizons",
       "subtitle": "Where Every Journey Becomes a Story",
-      "bgImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
-      "imageAlt": "Domestic and international tour packages by KRAD Global in Dehradun",
-      "searchPlaceholder": "Search by trek name, state, pass or elevation...",
-      "popularTags": [
-        "Kedarkantha",
-        "Chopta Tungnath",
-        "Hampta Pass",
-        "Leh Ladakh",
-        "Char Dham"
-      ]
+      "bgImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
     },
     "monsoon": {
       "enabled": true,
       "title": "Monsoon Specials & Valley Blooms",
-      "subtitle": "Unlock exclusive rainy season discounts on UNESCO Valley of Flowers, Hampta Pass, and Kashmir circuits.",
       "promoCode": "MONSOON2026",
-      "discountPercent": 20,
-      "badge": "Limited Season Offer"
+      "discountPercent": 20
     },
     "topBar": {
       "supportPhone": "+91 9797941414",
       "leaveNoTrace": "🌱 Leave No Trace Certified Operator",
-      "whatsappNumber": "+91 9797941414",
-      "announcementText": "🔥 2026 Himalayan Batches Now Live with Early-Bird Discounts",
-      "announcementLink": "/treks"
-    },
-    "bestTreks": {
-      "badge": "4.9+ Rated Flagship Expeditions",
-      "title": "Top Himalayan Treks & High Passes",
-      "subtitle": "Highest rated high-altitude alpine routes led by NIM-certified leaders.",
-      "featuredSlugs": [
-        "chopta-tungnath-chandrashila",
-        "hampta-pass",
-        "kheerganga-trek",
-        "leh-ladakh-tour-package"
-      ]
-    },
-    "weekendTreks": {
-      "badge": "Zero Work Leave Needed",
-      "title": "Weekend Escapes & Short Breaks",
-      "subtitle": "Quick Himalayan recharges designed to fit comfortably into Friday to Sunday departures.",
-      "featuredSlugs": [
-        "chopta-tungnath-chandrashila",
-        "kheerganga-trek",
-        "nainital-tour-package",
-        "jaipur-tour-package"
-      ]
-    },
-    "international": {
-      "enabled": true,
-      "badge": "World Expeditions & Island Escapes",
-      "title": "International Holiday Packages",
-      "subtitle": "Explore handpicked global destinations with complete visa assistance, verified stays, and private transfers.",
-      "featuredSlugs": [
-        "nepal",
-        "bali",
-        "thailand",
-        "dubai",
-        "vietnam",
-        "singapore",
-        "maldives"
-      ]
-    },
-    "seasonalCollection": {
-      "enabled": true,
-      "badge": "High Altitude Autumn Window",
-      "title": "Top 5 Treks for October-November",
-      "subtitle": "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
-      "seasonTag": "October - November",
-      "featuredSlugs": [
-        "kuari-pass-trek",
-        "dayara-bugyal-trek",
-        "chopta-tungnath-chandrashila",
-        "pench-tiger-trail",
-        "hampta-pass"
-      ]
-    },
-    "eeat": {
-      "badge": "Expedition Authority & Curation",
-      "title": "Curated by KRADIND Expedition Team",
-      "role": "Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified",
-      "description": "Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring.",
-      "lastReviewed": "14 September 2026",
-      "policyLinkText": "Read Our Editorial & Safety Policy",
-      "policyLinkUrl": "/editorial-policy",
-      "auditBadgeText": "Fact-Checked & NIM/HMI Audited",
-      "trustCards": [
-        {
-          "title": "4.9 / 5 Verified Rating",
-          "desc": "Consistently rated top-tier by over 2,480+ trekkers across India for certified safety, authentic trail guidance, and hygienic summit camps.",
-          "badge": "Award",
-          "icon": "Award"
-        },
-        {
-          "title": "Wilderness First Aid (WFA)",
-          "desc": "All guides undergo rigorous Wilderness First Aid training, carry dedicated oxygen canisters, pulse oximeters, and adhere to strict AMS protocols.",
-          "badge": "Activity",
-          "icon": "Activity"
-        },
-        {
-          "title": "Leave No Trace (LNT)",
-          "desc": "We adhere to strict zero-waste alpine ethics. All non-biodegradable waste is catalogued and packed down for eco-certified recycling in Dehradun.",
-          "badge": "Compass",
-          "icon": "Compass"
-        },
-        {
-          "title": "Small Batches (Max 15)",
-          "desc": "We limit departures to small groups for personalized guiding, optimal safety management, and uncompromised silence on pristine Himalayan ridges.",
-          "badge": "HeartHandshake",
-          "icon": "HeartHandshake"
-        }
-      ],
-      "faqs": [
-        {
-          "q": "How does KRADIND Adventures verify high-altitude trail safety and weather?",
-          "a": "Our certified expedition leaders maintain direct VHF radio and satellite communication with base camps across Uttarakhand, Himachal Pradesh, and Ladakh. Every 24 hours, our ground coordinators inspect ridge stability, avalanche risks, and fresh snow levels before batch movements. When conditions change, updates are posted immediately to our Live Ground Radar."
-        },
-        {
-          "q": "What medical and safety equipment is carried on Himalayan treks?",
-          "a": "Every departure carries high-altitude medical oxygen cylinders, pulse oximeters, automated first-aid trauma kits, and Gamow hyperbaric emergency protocols. All expedition directors are graduates of the Nehru Institute of Mountaineering (NIM) and hold Wilderness First Aid (WFA) certification to manage Acute Mountain Sickness (AMS) and high-altitude emergencies."
-        },
-        {
-          "q": "What is your batch size policy and Leave No Trace (LNT) standard?",
-          "a": "We operate with a strict cap of 15 trekkers per batch to preserve trail silence, minimize alpine degradation, and provide 1:5 guide-to-trekker safety ratios. Under our Leave No Trace protocol, our teams collect and pack back all non-biodegradable waste from camps and mountain ridges for certified recycling in Dehradun."
-        },
-        {
-          "q": "Why choose KRAD Global as your tour and travel company in Dehradun?",
-          "a": "KRAD Global is a trusted Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, Himalayan treks, and complete travel planning. We provide local Himalayan expertise, verified accommodations, licensed wilderness leaders, and 24/7 ground assistance."
-        },
-        {
-          "q": "How can beginner trekkers prepare for their first Himalayan summit?",
-          "a": "We recommend four to six weeks of cardiovascular conditioning, including stair climbing, brisk walking, and core strengthening. Our trek desk provides customized training guides, gear rental checklists, and personalized consultations to ensure you have the correct footwear, layered clothing, and physical stamina before your departure."
-        }
-      ]
+      "whatsappNumber": "+91 9797941414"
     },
     "contactAndFooter": {
       "supportEmail": "info@kradind.com",
       "supportPhone": "+91 9797941414",
-      "whatsappLink": "https://wa.me/919797941414",
-      "address": "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
-      "officeHours": "Open 24/7 for Expedition & Ground Support",
-      "instagramUrl": "https://www.instagram.com/kradglobal/",
-      "facebookUrl": "https://www.facebook.com/share/189E2RUcH4/",
-      "youtubeUrl": "https://www.youtube.com/@kradglobaltravels",
-      "twitterUrl": "https://x.com/KradGlobalTour",
-      "threadsUrl": "https://www.threads.net/@kradglobal",
-      "pinterestUrl": "https://in.pinterest.com/KradGlobalTravels/",
-      "linkedinUrl": "https://www.linkedin.com/company/krad-india/",
-      "copyrightText": "© 2026 KRADIND Adventures Private Limited. All rights reserved. Registered under Ministry of Tourism."
+      "whatsappLink": "https://wa.me/919797941414"
     }
   },
   "treks": [
@@ -1461,8 +1329,8 @@
     },
     {
       "id": 1791483918438,
-      "slug": "goa-trip-package-4-nights-5-days",
-      "name": "Goa Trip Package 4 Nights 5 Days",
+      "slug": "goa-tour-package-4-nights-5-days",
+      "name": "Goa Tour Package 4 Nights 5 Days",
       "location": "Goa",
       "region": "North Goa • South Goa • Old Goa • Beaches • Forts • Temples",
       "image": "/uploads/1791482878813-40240b0b-goa-tropical-beach-tour-package.webp",
@@ -1614,7 +1482,7 @@
         }
       ],
       "createdAt": "2026-10-08T18:25:18.438Z",
-      "updatedAt": "2026-10-08T18:25:18.438Z"
+      "updatedAt": "2026-10-12T09:59:24.890Z"
     },
     {
       "id": 1,
@@ -1625,8 +1493,7 @@
       "categories": [
         "Domestic",
         "Holiday Package",
-        "Weekend",
-        "Fixed Departure"
+        "Weekend"
       ],
       "location": "Rudraprayag, Uttarakhand",
       "region": "Garhwal Himalayas",
@@ -1802,7 +1669,6 @@
       "categories": [
         "Himalayas",
         "Trek",
-        "Fixed Departure",
         "High Pass"
       ],
       "location": "Manali to Lahaul, Himachal Pradesh",
@@ -2094,7 +1960,6 @@
       "categories": [
         "Weekend",
         "Trek",
-        "Fixed Departure",
         "Hot Springs"
       ],
       "location": "Parvati Valley, Kasol, Himachal Pradesh",
@@ -2256,7 +2121,6 @@
       "categories": [
         "Domestic",
         "Weekend",
-        "Fixed Departure",
         "Heritage"
       ],
       "location": "Jaipur, Rajasthan",
@@ -2470,7 +2334,6 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
-        "Fixed Departure",
         "Adventure"
       ],
       "location": "Leh, Nubra Valley, Pangong Tso, Ladakh",
@@ -2764,7 +2627,6 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
-        "Fixed Departure",
         "Northeast"
       ],
       "location": "Gangtok, Lachung, Yumthang Valley, North Sikkim",
@@ -3037,7 +2899,6 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
-        "Fixed Departure",
         "Wildlife",
         "Northeast"
       ],
@@ -3251,7 +3112,6 @@
       "category": "Domestic",
       "categories": [
         "Domestic",
-        "Fixed Departure",
         "Desert",
         "Heritage"
       ],
@@ -3507,7 +3367,6 @@
       "badge": "Featured",
       "categories": [
         "Domestic",
-        "Fixed Departure",
         "Holiday Package",
         "Kashmir"
       ],
@@ -3552,7 +3411,6 @@
       "categories": [
         "Weekend",
         "Domestic",
-        "Fixed Departure",
         "Hill Station"
       ],
       "location": "Nainital, Bhimtal, Pangot, Uttarakhand",
@@ -3565,7 +3423,7 @@
       "badge": "Quick Hill Getaway",
       "rating": 4.8,
       "reviewCount": 230,
-      "image": "https://images.unsplash.com/photo-1610484826967-09c5720778c7?auto=format&fit=crop&w=1920&q=85",
+      "image": "/uploads/1791808746563-2a9ea2a3-nainital-lake-views-tour-package.webp",
       "gallery": [
         "https://images.unsplash.com/photo-1610484826967-09c5720778c7?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
@@ -3612,7 +3470,7 @@
         {
           "day": 1,
           "title": "Arrival in Nainital",
-          "description": "Arrive in Nainital and check into your hotel. After some rest, head out for a relaxed walk around Mall Road and Naini Lake. Overnight: Nainital",
+          "description": "Arrive in **Nainital** and check into your hotel. After some rest, head out for a relaxed walk around [highlight]Mall Road and Naini Lake[/highlight]. Overnight: Nainital",
           "altitude": "6,837 Ft",
           "meal": "Breakfast & Dinner",
           "stay": "Hotel / Resort / Campsite"
@@ -3620,7 +3478,7 @@
         {
           "day": 2,
           "title": "Nainital Sightseeing",
-          "description": "After breakfast, explore the major attractions around the town. Suggested sightseeing:\n• Naina Devi Temple\n• Naini Lake\n• Snow View Point\n• Eco Cave Gardens\n• Tiffin Top, subject to accessibility\n• Mall Road Keep the evening free for shopping and local food. Overnight: Nainital",
+          "description": "After breakfast, explore the major attractions around the town. **Suggested sightseeing:**\n• Naina Devi Temple\n• Naini Lake\n• Snow View Point\n• Eco Cave Gardens\n• Tiffin Top, subject to accessibility\n• Mall Road Keep the evening free for shopping and local food. Overnight: Nainital",
           "altitude": "6,837 Ft",
           "meal": "Breakfast & Dinner",
           "stay": "Hotel / Resort / Campsite"
@@ -3628,7 +3486,7 @@
         {
           "day": 3,
           "title": "Bhimtal & Nearby Lakes",
-          "description": "After breakfast, leave for the nearby lake region. Possible stops:\n• Bhimtal\n• Sattal\n• Naukuchiatal Return to Nainital in the evening. Overnight: Nainital",
+          "description": "After breakfast, leave for the nearby lake region. **Possible stops:**\n[highlight]• Bhimtal\n• Sattal\n• Naukuchiatal Return to Nainital in the evening.[/highlight] Overnight: Nainital",
           "altitude": "6,837 Ft",
           "meal": "Breakfast & Dinner",
           "stay": "Hotel / Resort / Campsite"
@@ -3636,7 +3494,7 @@
         {
           "day": 4,
           "title": "Departure",
-          "description": "Enjoy breakfast overlooking the mist-covered Kumaon hills and complete check-out. Depending on your departure schedule from Kathgodam Railway Station, Pantnagar Airport, or Delhi, spend a relaxed morning boating on Naini Lake or shopping for handcrafted candles and woolens along the Mall Road.\n\nTransfer to your departure point according to your travel schedule. Your Nainital lake tour concludes with beautiful memories of emerald waters, colonial architecture, and Himalayan views.",
+          "description": "Enjoy breakfast overlooking the mist-covered [highlight]Kumaon hills[/highlight] and complete check-out. Depending on your departure schedule from Kathgodam Railway Station, Pantnagar Airport, or Delhi, spend a relaxed morning boating on Naini Lake or shopping for handcrafted candles and woolens along the Mall Road.\n\nTransfer to your departure point according to your travel schedule. Your Nainital lake tour concludes with beautiful memories of emerald waters, colonial architecture, and Himalayan views.",
           "altitude": "6,837 Ft",
           "meal": "Breakfast & Dinner",
           "stay": "Hotel / Resort / Campsite"
@@ -3691,7 +3549,7 @@
           "answer": "Yes. Nainital works well for couples who want lake views, mountain weather, scenic drives and relaxed sightseeing. A 3–5 night honeymoon package can be customized around a couple-friendly hotel, private transportation and leisure time."
         }
       ],
-      "overview": "Emerald lake boating, scenic Kumaon ridge viewpoints, Mall Road strolls, and peaceful pine forests.",
+      "overview": "[highlight]Emerald lake boating, scenic Kumaon ridge viewpoints, Mall Road strolls, and peaceful pine forests.[/highlight]",
       "batches": [
         {
           "id": 121,
@@ -3748,7 +3606,8 @@
         "Hotel category (Lake Facing / Hill View / Luxury Heritage)",
         "Transport options (Kathgodam transfer vs Delhi roundtrip cab)",
         "Sightseeing excursions (Mukteshwar, Ranikhet, or Corbett National Park)"
-      ]
+      ],
+      "updatedAt": "2026-10-12T12:39:51.981Z"
     },
     {
       "slug": "rajasthan-tour-package-6-days",
@@ -3756,7 +3615,6 @@
       "badge": "Royal Circuit",
       "categories": [
         "Domestic",
-        "Fixed Departure",
         "Heritage",
         "Road Trip"
       ],
@@ -4525,8 +4383,7 @@
       "categories": [
         "International",
         "Fixed Departure",
-        "Trek",
-        "Himalayas"
+        "Trek"
       ],
       "category": "International",
       "defaultHighlights": [
@@ -4638,7 +4495,6 @@
       "categories": [
         "Himalayas",
         "Trek",
-        "Fixed Departure",
         "Summit"
       ],
       "category": "Himalayas",
@@ -4694,7 +4550,6 @@
       "categories": [
         "Himalayas",
         "Trek",
-        "Fixed Departure",
         "Meadows"
       ],
       "category": "Himalayas",
@@ -4749,8 +4604,7 @@
       "categories": [
         "Domestic",
         "Holiday Package",
-        "Weekend",
-        "Fixed Departure"
+        "Weekend"
       ],
       "category": "Domestic",
       "defaultHighlights": [
@@ -4786,7 +4640,59 @@
       "reviewCount": 340,
       "status": "Published",
       "tagline": "Sacred emerald lake reflecting Chaukhamba peaks, ancient Tungnath temple, and Chandrashila 360° summit.",
-      "imageAlt": "Himalayan trekking package by KRAD Global"
+      "imageAlt": "Himalayan trekking package by KRAD Global",
+      "gallery": [
+        "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrival at Base Camp | Acclimatization & Orientation",
+          "description": "Arrival at base camp. Meet your certified expedition leaders, conduct health checks (pulse/oximeter), inspect gear, and take a gentle evening acclimatization walk.",
+          "altitude": "6,400 Ft",
+          "distance": "Drive / 3 km Walk",
+          "meal": "Welcome Tea & Dinner",
+          "stay": "Base Camp Guesthouse / Alpine Camp"
+        },
+        {
+          "day": 2,
+          "title": "Trailhead Trek to Forest Camp",
+          "description": "After a nutritious mountain breakfast, begin the trek through dense pine, birch, and rhododendron forests along the mountain stream. Arrive at the forest clearing campsite.",
+          "altitude": "9,200 Ft",
+          "distance": "6 km Trek (4–5 Hours)",
+          "meal": "Breakfast, Packed Lunch & Dinner",
+          "stay": "Wilderness Alpine Tents"
+        },
+        {
+          "day": 3,
+          "title": "Forest Camp to High Altitude Meadow Camp",
+          "description": "Ascend past the tree line into expansive **alpine meadows** with dramatic panoramic mountain vistas. Cross gentle glacial streams to reach high camp before evening.",
+          "altitude": "11,800 Ft",
+          "distance": "7 km Trek (5–6 Hours)",
+          "meal": "Breakfast, Hot Trail Lunch & Dinner",
+          "stay": "High Altitude Alpine Tents"
+        },
+        {
+          "day": 4,
+          "title": "Summit Day / High Pass Push & Descent to Lower Camp",
+          "description": "Pre-dawn push towards the summit ridge / mountain pass. Reach the summit for breathtaking 360° Himalayan views of prominent snow-clad peaks. Celebrate and begin careful descent.",
+          "altitude": "14,000 Ft Summit (Camp: 10,500 Ft)",
+          "distance": "9–10 km Trek (7–9 Hours)",
+          "meal": "Early Breakfast, Energy Trail Snacks & Celebration Dinner",
+          "stay": "Riverside Alpine Camp"
+        },
+        {
+          "day": 5,
+          "title": "Descent to Roadhead & Onward Journey / Departure",
+          "description": "Wake up to glorious sunrise views. Gentle final descent through alpine pastures back to the roadhead. Board shared vehicles for transfer to the nearest transit hub.",
+          "altitude": "6,000 Ft",
+          "distance": "5 km Trek + Vehicle Drive",
+          "meal": "Breakfast & Farewell Lunch",
+          "stay": "Departure / Return Journey"
+        }
+      ],
+      "faqs": [],
+      "updatedAt": "2026-10-12T10:33:50.905Z"
     },
     {
       "slug": "pench-tiger-trail",
@@ -4806,7 +4712,6 @@
         "Domestic",
         "Holiday Package",
         "Weekend",
-        "Fixed Departure",
         "Wildlife",
         "Pench National Park"
       ],

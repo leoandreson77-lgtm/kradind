@@ -42,7 +42,15 @@ import {
   Utensils,
   Bed,
 } from "lucide-react";
-import { TrekData, TrekBatch, TrekItineraryDay } from "@/lib/cms-store";
+import type {
+  TrekData,
+  TrekBatch,
+  TrekItineraryDay,
+} from "@/lib/cms-store";
+import {
+  getPackageSection,
+  type PackageSectionType,
+} from "@/lib/package-sections";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
@@ -396,13 +404,17 @@ export default function AdminTreksPage() {
   const [treks, setTreks] = useState<TrekData[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [classificationFilter, setClassificationFilter] = useState<
+    "All" | "Domestic" | "International" | "Fixed" | "Treks"
+  >("Domestic");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [classificationFilter, setClassificationFilter] = useState<"All" | "Treks" | "Domestic">("All");
   const [selectedTrekIds, setSelectedTrekIds] = useState<(number | string)[]>([]);
 
   // Move Modal State
   const [moveModalTrek, setMoveModalTrek] = useState<TrekData | null>(null);
-  const [targetMoveType, setTargetMoveType] = useState<"Domestic" | "Trek">("Domestic");
+  const [targetMoveType, setTargetMoveType] = useState<
+    "Domestic" | "International" | "Fixed" | "Trek"
+  >("Domestic");
   const [targetMoveRegion, setTargetMoveRegion] = useState("Uttarakhand");
   const [targetMoveCollection, setTargetMoveCollection] = useState("Himalayas");
   const [transferToDestinationsCopy, setTransferToDestinationsCopy] = useState(false);
@@ -556,7 +568,7 @@ export default function AdminTreksPage() {
     const updateFromUrl = () => {
       if (typeof window === "undefined") return;
       const params = new URLSearchParams(window.location.search);
-      const typeParam = params.get("type");
+      const typeParam = (params.get("type") || "").toLowerCase();
       if (typeParam === "trek" || typeParam === "treks") {
         setClassificationFilter("Treks");
       } else if (
@@ -566,8 +578,14 @@ export default function AdminTreksPage() {
         typeParam === "destinations"
       ) {
         setClassificationFilter("Domestic");
-      } else {
+      } else if (typeParam === "international" || typeParam === "global") {
+        setClassificationFilter("International");
+      } else if (typeParam === "fixed" || typeParam === "fixed-departure") {
+        setClassificationFilter("Fixed");
+      } else if (typeParam === "all") {
         setClassificationFilter("All");
+      } else {
+        setClassificationFilter("Domestic");
       }
     };
     updateFromUrl();
@@ -577,21 +595,31 @@ export default function AdminTreksPage() {
     };
   }, []);
 
-  const handleSwitchClassification = (filter: "All" | "Treks" | "Domestic") => {
+  const handleSwitchClassification = (filter: "All" | "Domestic" | "International" | "Fixed" | "Treks") => {
     setClassificationFilter(filter);
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
       if (filter === "Treks") url.searchParams.set("type", "treks");
       else if (filter === "Domestic") url.searchParams.set("type", "domestic");
-      else url.searchParams.delete("type");
+      else if (filter === "International") url.searchParams.set("type", "international");
+      else if (filter === "Fixed") url.searchParams.set("type", "fixed");
+      else url.searchParams.set("type", "all");
       window.history.replaceState({}, "", url.toString());
     }
   };
 
   // Quick 1-Click Move Handler
-  const handleQuickMoveTrek = async (trek: TrekData, targetType?: "Domestic" | "Trek") => {
-    const isDomestic = isDomesticPackage(trek);
-    const nextType = targetType || (isDomestic ? "Trek" : "Domestic");
+  const handleQuickMoveTrek = async (trek: TrekData, targetType?: "Domestic" | "International" | "Fixed" | "Trek") => {
+    const currentSection = getPackageSection(trek);
+    const nextType: "Domestic" | "International" | "Fixed" | "Trek" =
+      targetType ||
+      (currentSection === "Domestic"
+        ? "International"
+        : currentSection === "International"
+        ? "Fixed"
+        : currentSection === "Fixed"
+        ? "Trek"
+        : "Domestic");
     setActionLoading(true);
     try {
       const res = await fetch("/api/admin/treks/move", {
@@ -606,7 +634,7 @@ export default function AdminTreksPage() {
       if (!res.ok) {
         throw new Error(data.error || "Failed to move package");
       }
-      showToast(data.message || `Moved "${trek.name}" to ${nextType === "Domestic" ? "Domestic Tours" : "Himalayan Treks"}`);
+      showToast(data.message || `Moved "${trek.name}" to ${nextType}`);
       setTreks((prev) =>
         prev.map((t) => (String(t.id) === String(trek.id) ? data.trek : t))
       );
@@ -619,9 +647,17 @@ export default function AdminTreksPage() {
 
   // Open Interactive Move Modal
   const handleOpenMoveModal = (trek: TrekData) => {
-    const isDomestic = isDomesticPackage(trek);
+    const currentSection = getPackageSection(trek);
     setMoveModalTrek(trek);
-    setTargetMoveType(isDomestic ? "Trek" : "Domestic");
+    setTargetMoveType(
+      currentSection === "Domestic"
+        ? "International"
+        : currentSection === "International"
+        ? "Fixed"
+        : currentSection === "Fixed"
+        ? "Trek"
+        : "Domestic"
+    );
     setTargetMoveRegion(trek.location.split(",")[0]?.trim() || "Uttarakhand");
     setTargetMoveCollection("Himalayas");
     setTransferToDestinationsCopy(false);
@@ -661,7 +697,7 @@ export default function AdminTreksPage() {
   };
 
   // Bulk Move Handler
-  const handleBulkMove = async (targetType: "Domestic" | "Trek") => {
+  const handleBulkMove = async (targetType: PackageSectionType) => {
     if (selectedTrekIds.length === 0) return;
     setActionLoading(true);
     try {
@@ -674,7 +710,7 @@ export default function AdminTreksPage() {
         });
         if (res.ok) successCount++;
       }
-      showToast(`Successfully moved ${successCount} packages to ${targetType === "Domestic" ? "Domestic Tours" : "Himalayan Treks"}!`);
+      showToast(`Successfully moved ${successCount} packages to ${targetType}!`);
       setSelectedTrekIds([]);
       await fetchTreks();
     } catch (err: any) {
@@ -730,12 +766,13 @@ export default function AdminTreksPage() {
     }
   };
 
-  // Toggle Type in Add/Edit modal
-  const handleSetEditingType = (type: "Trek" | "Domestic") => {
+  // Toggle Type in Add/Edit modal (Domestic, International, Fixed Departure, Trek)
+  const handleSetEditingType = (type: "Domestic" | "International" | "Fixed" | "Trek") => {
     if (!editingTrek) return;
     const currentCats = editingTrek.categories || [];
+
     if (type === "Domestic") {
-      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
+      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine", "international", "fixed departure"];
       const cleaned = currentCats.filter(
         (c) =>
           !trekTagKeywords.includes(c.toLowerCase().trim()) &&
@@ -753,11 +790,41 @@ export default function AdminTreksPage() {
             : editingTrek.difficulty || "Moderate",
       });
       showToast("🚗 Switched to Domestic Tour Package format");
-    } else {
-      const domesticTagKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours", "leisure"];
+    } else if (type === "International") {
+      const conflicting = ["domestic", "himalayas", "summit", "high pass", "expedition", "alpine"];
       const cleaned = currentCats.filter(
         (c) =>
-          !domesticTagKeywords.includes(c.toLowerCase().trim()) &&
+          !conflicting.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "international"
+      );
+      setEditingTrek({
+        ...editingTrek,
+        category: "International",
+        categories: ["International", "Holiday Package", ...cleaned],
+        badge: "International Tour",
+        difficulty: "Leisure / Global",
+      });
+      showToast("🌐 Switched to International Tour Package format");
+    } else if (type === "Fixed") {
+      const conflicting = ["international"];
+      const cleaned = currentCats.filter(
+        (c) =>
+          !conflicting.includes(c.toLowerCase().trim()) &&
+          c.toLowerCase().trim() !== "fixed departure"
+      );
+      setEditingTrek({
+        ...editingTrek,
+        category: "Fixed Departure",
+        categories: ["Fixed Departure", ...cleaned],
+        badge: "Fixed Departure",
+      });
+      showToast("📅 Switched to Fixed Departure format");
+    } else {
+      // Trek
+      const domesticKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours", "international", "fixed departure"];
+      const cleaned = currentCats.filter(
+        (c) =>
+          !domesticKeywords.includes(c.toLowerCase().trim()) &&
           c.toLowerCase().trim() !== "trek" &&
           c.toLowerCase().trim() !== "himalayas"
       );
@@ -775,60 +842,90 @@ export default function AdminTreksPage() {
     }
   };
 
-  const handleOpenAdd = (preferredType?: "Trek" | "Domestic") => {
+  const handleOpenAdd = (preferredType?: "Domestic" | "International" | "Fixed" | "Trek") => {
     setModalTab("basic");
-    const isDomestic = preferredType ? preferredType === "Domestic" : classificationFilter === "Domestic";
+    const activeType: "Domestic" | "International" | "Fixed" | "Trek" =
+      preferredType ||
+      (classificationFilter === "Treks"
+        ? "Trek"
+        : classificationFilter === "International"
+        ? "International"
+        : classificationFilter === "Fixed"
+        ? "Fixed"
+        : "Domestic");
+
+    const isDomestic = activeType === "Domestic";
+    const isIntl = activeType === "International";
+    const isFixed = activeType === "Fixed";
 
     setEditingTrek({
       id: "",
       slug: "",
       name: "",
-      category: isDomestic ? "Domestic" : "Himalayas",
-      location: isDomestic ? "Kashmir" : "Uttarakhand",
-      region: isDomestic ? "Srinagar & Gulmarg" : "Garhwal",
-      image: isDomestic
+      category: isIntl ? "International" : isFixed ? "Fixed Departure" : isDomestic ? "Domestic" : "Himalayas",
+      location: isIntl ? "Bali, Indonesia" : isDomestic ? "Kashmir" : "Uttarakhand",
+      region: isIntl ? "Southeast Asia" : isDomestic ? "Srinagar & Gulmarg" : "Garhwal",
+      image: isIntl
+        ? "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1600&q=80"
+        : isDomestic
         ? "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80"
         : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
-      imageAlt: isDomestic ? "Domestic holiday tour package by KRAD Global" : "Himalayan trekking package by KRAD Global",
+      imageAlt: isIntl
+        ? "International tour package by KRAD Global"
+        : isDomestic
+        ? "Domestic holiday tour package by KRAD Global"
+        : "Himalayan trekking package by KRAD Global",
       gallery: [
-        isDomestic
+        isIntl
+          ? "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1600&q=80"
+          : isDomestic
           ? "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80"
           : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
       ],
-      tagline: isDomestic ? "Scenic leisure holidays, sightseeing & private travel" : "Leading Himalayan High-Altitude Expedition",
+      tagline: isIntl
+        ? "International holiday with visa assistance and luxury stays"
+        : isDomestic
+        ? "Scenic leisure holidays, sightseeing & private travel"
+        : "Leading Himalayan High-Altitude Expedition",
       overview: "",
-      highlights: isDomestic
+      highlights: isIntl
+        ? ["Airport meet & greet", "4-star resort accommodation", "Daily international buffet breakfast", "Private airport and tour transfers"]
+        : isDomestic
         ? ["Private sanitized AC vehicle for all transfers", "Handpicked 3-star / 4-star boutique stays", "Daily breakfast & hot dinner included", "Complimentary boat ride / local sightseeing"]
         : ["Experienced mountain guide", "All camp equipment & safety gear", "Nutritious mountain meals"],
-      duration: isDomestic ? "6 Days / 5 Nights" : "5 Days / 4 Nights",
-      difficulty: isDomestic ? "Leisure / Scenic" : "Moderate",
-      altitude: isDomestic ? "Sightseeing" : "12,000 Ft",
-      distance: isDomestic ? "350 km Sightseeing" : "20 km",
-      baseCamp: isDomestic ? "Airport / Railway Station" : "Base Camp",
+      duration: isIntl ? "6 Days / 5 Nights" : isDomestic ? "6 Days / 5 Nights" : "5 Days / 4 Nights",
+      difficulty: isIntl || isDomestic ? "Leisure / Scenic" : "Moderate",
+      altitude: isIntl || isDomestic ? "Sightseeing" : "12,000 Ft",
+      distance: isIntl || isDomestic ? "City Tours" : "20 km",
+      baseCamp: isIntl || isDomestic ? "Airport" : "Base Camp",
       rating: 4.9,
       reviewCount: 1,
-      price: isDomestic ? 18999 : 8999,
-      originalPrice: isDomestic ? 22999 : 10999,
-      badge: isDomestic ? "Domestic Holiday" : "Featured",
-      categories: isDomestic ? ["Domestic", "Holiday Package"] : ["Himalayas", "Trek"],
+      price: isIntl ? 34999 : isDomestic ? 18999 : 8999,
+      originalPrice: isIntl ? 39999 : isDomestic ? 22999 : 10999,
+      badge: isIntl ? "International Tour" : isFixed ? "Fixed Departure" : isDomestic ? "Domestic Holiday" : "Featured",
+      categories: isIntl
+        ? ["International", "Holiday Package"]
+        : isFixed
+        ? ["Fixed Departure"]
+        : isDomestic
+        ? ["Domestic", "Holiday Package"]
+        : ["Himalayas", "Trek"],
       status: "Published",
       batches: [
-        { id: 1, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 12, price: isDomestic ? 18999 : 8999 },
-        { id: 2, startDate: "Jun 21", endDate: "Jun 25, 2026", slotsLeft: 14, price: isDomestic ? 18999 : 8999 },
-        { id: 3, startDate: "Jul 05", endDate: "Jul 09, 2026", slotsLeft: 10, price: isDomestic ? 18999 : 8999 },
+        { id: 1, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 12, price: isIntl ? 34999 : isDomestic ? 18999 : 8999 },
       ],
-      itinerary: getDefaultItinerary(isDomestic ? 6 : 5),
-      inclusions: isDomestic
+      itinerary: getDefaultItinerary(6),
+      inclusions: isIntl
+        ? ["Hotel accommodation", "Daily breakfast", "Airport transfers", "Guided city tour"]
+        : isDomestic
         ? ["Hotel accommodation on twin sharing", "Daily breakfast and dinner", "Private AC transport for transfers and sightseeing", "All toll tax, parking, and driver allowance"]
         : ["All meals during the trek", "Certified mountain guides", "Tents, sleeping bags, and mattress"],
       exclusions: ["Personal expenses & tips", "Travel insurance", "Entry fees or monument passes"],
       faqs: [
         {
-          question: isDomestic ? "Can this tour package be customized?" : "What is the fitness level required?",
-          answer: isDomestic
-            ? "Yes! All domestic tour packages can be customized based on your preferred travel dates, hotel choices, and group size."
+          question: isDomestic || isIntl ? "Can this tour package be customized?" : "What is the fitness level required?",
+          answer: isDomestic || isIntl
+            ? "Yes! All tour packages can be customized based on your preferred travel dates, hotel choices, and group size."
             : "Moderate fitness. 3-4 km jogging daily for 2 weeks prior is recommended."
         }
       ],
@@ -907,22 +1004,40 @@ export default function AdminTreksPage() {
       day: i + 1,
     }));
 
-    const isDomestic = isDomesticPackage(editingTrek);
+    const section = getPackageSection(editingTrek);
     let finalCategory = editingTrek.category;
     let finalCategories = [...(editingTrek.categories || [])];
 
-    if (isDomestic) {
+    if (section === "Domestic") {
       finalCategory = "Domestic";
-      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
+      const trekTagKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine", "international", "fixed departure"];
       finalCategories = finalCategories.filter((c) => !trekTagKeywords.includes(c.toLowerCase().trim()));
       if (!finalCategories.some((c) => c.toLowerCase() === "domestic")) {
         finalCategories.unshift("Domestic");
       }
+    } else if (section === "International") {
+      finalCategory = "International";
+      const excludeKeywords = ["domestic", "himalayas", "summit", "high pass", "expedition", "alpine"];
+      finalCategories = finalCategories.filter((c) => !excludeKeywords.includes(c.toLowerCase().trim()));
+      if (!finalCategories.some((c) => c.toLowerCase() === "international")) {
+        finalCategories.unshift("International");
+      }
+    } else if (section === "Fixed") {
+      finalCategory = "Fixed Departure";
+      const excludeKeywords = ["international"];
+      finalCategories = finalCategories.filter((c) => !excludeKeywords.includes(c.toLowerCase().trim()));
+      if (!finalCategories.some((c) => c.toLowerCase().includes("fixed"))) {
+        finalCategories.unshift("Fixed Departure");
+      }
     } else {
-      const domesticKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours"];
+      // Trek
+      const domesticKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours", "international", "fixed departure"];
       finalCategories = finalCategories.filter((c) => !domesticKeywords.includes(c.toLowerCase().trim()));
-      if (finalCategory?.toLowerCase() === "domestic") {
+      if (finalCategory?.toLowerCase() === "domestic" || finalCategory?.toLowerCase() === "international") {
         finalCategory = "Himalayas";
+      }
+      if (!finalCategories.some((c) => c.toLowerCase() === "himalayas" || c.toLowerCase() === "trek")) {
+        finalCategories.unshift("Himalayas");
       }
     }
 
@@ -1047,8 +1162,10 @@ export default function AdminTreksPage() {
     showToast(`Applied ${count}-Day Itinerary Template`);
   };
 
-  const trekCount = treks.filter((t) => !isDomesticPackage(t)).length;
-  const domesticCount = treks.filter((t) => isDomesticPackage(t)).length;
+  const domesticCount = treks.filter((t) => getPackageSection(t) === "Domestic").length;
+  const internationalCount = treks.filter((t) => getPackageSection(t) === "International").length;
+  const fixedCount = treks.filter((t) => getPackageSection(t) === "Fixed").length;
+  const trekCount = treks.filter((t) => getPackageSection(t) === "Trek").length;
 
   // Dynamically extract all available tags across all packages
   const availableTags = useMemo(() => {
@@ -1087,12 +1204,14 @@ export default function AdminTreksPage() {
   const filtered = useMemo(() => {
     return treks
       .filter((t) => {
-        const isDom = isDomesticPackage(t);
+        const pkgSection = getPackageSection(t);
 
         const matchesClassification =
           classificationFilter === "All" ||
-          (classificationFilter === "Domestic" && isDom) ||
-          (classificationFilter === "Treks" && !isDom);
+          (classificationFilter === "Domestic" && pkgSection === "Domestic") ||
+          (classificationFilter === "International" && pkgSection === "International") ||
+          (classificationFilter === "Fixed" && pkgSection === "Fixed") ||
+          (classificationFilter === "Treks" && pkgSection === "Trek");
 
         const cleanSearch = search.trim().toLowerCase().replace(/^#/, "");
         const matchesSearch =
@@ -1185,7 +1304,11 @@ export default function AdminTreksPage() {
                 ? "Himalayan Treks & Expeditions Catalog"
                 : classificationFilter === "Domestic"
                 ? "Domestic Destination Tour Packages Catalog"
-                : "Treks & Domestic Tour Packages Catalog"}
+                : classificationFilter === "International"
+                ? "International Tour Packages Catalog"
+                : classificationFilter === "Fixed"
+                ? "Fixed Departure Tour Packages Catalog"
+                : "All Packages (Domestic, International, Fixed, Treks) Catalog"}
             </h1>
             <p className="text-[10px] text-slate-500">
               Official KRAD Global Travels &amp; KRADIND Adventures Portfolio
@@ -1209,36 +1332,54 @@ export default function AdminTreksPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            {classificationFilter === "Treks" ? (
+            {classificationFilter === "Domestic" ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                <Car className="w-3.5 h-3.5 text-amber-600" />
+                <span>Domestic Tour Packages Management</span>
+              </span>
+            ) : classificationFilter === "International" ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 border border-sky-300">
+                <Globe className="w-3.5 h-3.5 text-sky-600" />
+                <span>International Tours Management</span>
+              </span>
+            ) : classificationFilter === "Fixed" ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-300">
+                <Calendar className="w-3.5 h-3.5 text-purple-600" />
+                <span>Fixed Departure Group Tours</span>
+              </span>
+            ) : classificationFilter === "Treks" ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
                 <Mountain className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Himalayan & Weekend Treks Management</span>
               </span>
-            ) : classificationFilter === "Domestic" ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
-                <Car className="w-3.5 h-3.5 text-amber-600" />
-                <span>Destination & Holiday Packages Management</span>
-              </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-slate-200 text-slate-700 border border-slate-300">
                 <Globe className="w-3.5 h-3.5 text-slate-600" />
-                <span>Combined Catalog Portfolio</span>
+                <span>All 4 Product Sections Combined</span>
               </span>
             )}
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            {classificationFilter === "Treks"
+            {classificationFilter === "Domestic"
+              ? "🏖️ Domestic Tour Packages CMS"
+              : classificationFilter === "International"
+              ? "🌐 International Tour Packages CMS"
+              : classificationFilter === "Fixed"
+              ? "📅 Fixed Departure Packages CMS"
+              : classificationFilter === "Treks"
               ? "🏔️ Trek Packages CMS"
-              : classificationFilter === "Domestic"
-              ? "🏖️ Destination Tour Packages CMS"
               : "All Adventures & Holiday Packages CMS"}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-            {classificationFilter === "Treks"
-              ? "Manage high-altitude mountain expeditions, summit passes, departure batches, and trekking itineraries."
-              : classificationFilter === "Domestic"
+            {classificationFilter === "Domestic"
               ? "Manage domestic holiday tours, sightseeing itineraries, state vacation circuits, and hotel/vehicle inclusions."
-              : "Unified management for Himalayan expeditions, holiday destination packages, departure dates, and pricing."}
+              : classificationFilter === "International"
+              ? "Manage international holiday packages, overseas trips, visa/flight inclusions, and destination highlights."
+              : classificationFilter === "Fixed"
+              ? "Manage scheduled fixed departure group tours, fixed departure dates, slot limits, and per-head pricing."
+              : classificationFilter === "Treks"
+              ? "Manage high-altitude mountain expeditions, summit passes, basecamps, and trekking itineraries."
+              : "Unified management across all 4 sections with 100% separate data and no cross-sync bleed."}
           </p>
         </div>
 
@@ -1259,7 +1400,23 @@ export default function AdminTreksPage() {
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
             >
               <Plus className="w-4 h-4 text-amber-200" />
-              <span>+ Add Destination Tour Package</span>
+              <span>+ Add Domestic Tour</span>
+            </button>
+          ) : classificationFilter === "International" ? (
+            <button
+              onClick={() => handleOpenAdd("International")}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-sky-200" />
+              <span>+ Add International Tour</span>
+            </button>
+          ) : classificationFilter === "Fixed" ? (
+            <button
+              onClick={() => handleOpenAdd("Fixed")}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-purple-200" />
+              <span>+ Add Fixed Departure</span>
             </button>
           ) : classificationFilter === "Treks" ? (
             <button
@@ -1267,23 +1424,37 @@ export default function AdminTreksPage() {
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
             >
               <Plus className="w-4 h-4 text-emerald-400" />
-              <span>+ Add New Trek Expedition</span>
+              <span>+ Add New Trek</span>
             </button>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <button
+                onClick={() => handleOpenAdd("Domestic")}
+                className="inline-flex items-center gap-1 px-2.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5 text-amber-200" />
+                <span>+ Domestic</span>
+              </button>
+              <button
+                onClick={() => handleOpenAdd("International")}
+                className="inline-flex items-center gap-1 px-2.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5 text-sky-200" />
+                <span>+ International</span>
+              </button>
+              <button
+                onClick={() => handleOpenAdd("Fixed")}
+                className="inline-flex items-center gap-1 px-2.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5 text-purple-200" />
+                <span>+ Fixed</span>
+              </button>
               <button
                 onClick={() => handleOpenAdd("Trek")}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5 text-emerald-400" />
                 <span>+ Trek</span>
-              </button>
-              <button
-                onClick={() => handleOpenAdd("Domestic")}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5 text-amber-200" />
-                <span>+ Tour Package</span>
               </button>
             </div>
           )}
@@ -1292,7 +1463,100 @@ export default function AdminTreksPage() {
 
       {/* Quick KPI Overview & 1-Click Type Switcher Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 print:hidden">
-        {/* Card 1: Trek Packages */}
+        {/* Card 1: Domestic Packages */}
+        <button
+          type="button"
+          onClick={() => handleSwitchClassification("Domestic")}
+          className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between group ${
+            classificationFilter === "Domestic"
+              ? "bg-gradient-to-br from-amber-50 via-white to-amber-50/50 border-amber-500 shadow-md ring-2 ring-amber-500/20"
+              : "bg-white hover:bg-slate-50 border-slate-200 shadow-xs"
+          }`}
+        >
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800">
+              <Car className="w-4 h-4 text-amber-600" />
+              <span>Domestic Tours</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-1">
+              {domesticCount} <span className="text-xs font-medium text-slate-400">packages</span>
+            </div>
+            <span className="text-[10px] text-amber-700 font-semibold block mt-0.5">
+              India holiday & state circuits
+            </span>
+          </div>
+          <span
+            className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
+              classificationFilter === "Domestic" ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-600"
+            }`}
+          >
+            {classificationFilter === "Domestic" ? "Viewing" : "View"}
+          </span>
+        </button>
+
+        {/* Card 2: International Packages */}
+        <button
+          type="button"
+          onClick={() => handleSwitchClassification("International")}
+          className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between group ${
+            classificationFilter === "International"
+              ? "bg-gradient-to-br from-sky-50 via-white to-sky-50/50 border-sky-500 shadow-md ring-2 ring-sky-500/20"
+              : "bg-white hover:bg-slate-50 border-slate-200 shadow-xs"
+          }`}
+        >
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-sky-800">
+              <Globe className="w-4 h-4 text-sky-600" />
+              <span>International Tours</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-1">
+              {internationalCount} <span className="text-xs font-medium text-slate-400">packages</span>
+            </div>
+            <span className="text-[10px] text-sky-700 font-semibold block mt-0.5">
+              Worldwide overseas holidays
+            </span>
+          </div>
+          <span
+            className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
+              classificationFilter === "International" ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-600"
+            }`}
+          >
+            {classificationFilter === "International" ? "Viewing" : "View"}
+          </span>
+        </button>
+
+        {/* Card 3: Fixed Departure Packages */}
+        <button
+          type="button"
+          onClick={() => handleSwitchClassification("Fixed")}
+          className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between group ${
+            classificationFilter === "Fixed"
+              ? "bg-gradient-to-br from-purple-50 via-white to-purple-50/50 border-purple-500 shadow-md ring-2 ring-purple-500/20"
+              : "bg-white hover:bg-slate-50 border-slate-200 shadow-xs"
+          }`}
+        >
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-purple-800">
+              <Calendar className="w-4 h-4 text-purple-600" />
+              <span>Fixed Departures</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 mt-1">
+              {fixedCount} <span className="text-xs font-medium text-slate-400">packages</span>
+            </div>
+            <span className="text-[10px] text-purple-700 font-semibold block mt-0.5">
+              Scheduled group tour batches
+            </span>
+          </div>
+          <span
+            className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
+              classificationFilter === "Fixed" ? "bg-purple-600 text-white" : "bg-slate-100 text-slate-600"
+            }`}
+          >
+            {classificationFilter === "Fixed" ? "Viewing" : "View"}
+          </span>
+        </button>
+
+        {/* Card 4: Trek Packages */}
         <button
           type="button"
           onClick={() => handleSwitchClassification("Treks")}
@@ -1308,10 +1572,10 @@ export default function AdminTreksPage() {
               <span>Trek Packages</span>
             </div>
             <div className="text-2xl font-black text-slate-900 mt-1">
-              {trekCount} <span className="text-xs font-medium text-slate-400">active</span>
+              {trekCount} <span className="text-xs font-medium text-slate-400">packages</span>
             </div>
             <span className="text-[10px] text-emerald-700 font-semibold block mt-0.5">
-              Himalayas & Weekend Treks
+              Himalayas & high passes
             </span>
           </div>
           <span
@@ -1322,100 +1586,11 @@ export default function AdminTreksPage() {
             {classificationFilter === "Treks" ? "Viewing" : "View"}
           </span>
         </button>
-
-        {/* Card 2: Destination Tour Packages */}
-        <button
-          type="button"
-          onClick={() => handleSwitchClassification("Domestic")}
-          className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between group ${
-            classificationFilter === "Domestic"
-              ? "bg-gradient-to-br from-amber-50 via-white to-amber-50/50 border-amber-500 shadow-md ring-2 ring-amber-500/20"
-              : "bg-white hover:bg-slate-50 border-slate-200 shadow-xs"
-          }`}
-        >
-          <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800">
-              <Car className="w-4 h-4 text-amber-600" />
-              <span>Destination Packages</span>
-            </div>
-            <div className="text-2xl font-black text-slate-900 mt-1">
-              {domesticCount} <span className="text-xs font-medium text-slate-400">active</span>
-            </div>
-            <span className="text-[10px] text-amber-700 font-semibold block mt-0.5">
-              Kashmir, Kerala, Rajasthan, etc.
-            </span>
-          </div>
-          <span
-            className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
-              classificationFilter === "Domestic" ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-600"
-            }`}
-          >
-            {classificationFilter === "Domestic" ? "Viewing" : "View"}
-          </span>
-        </button>
-
-        {/* Card 3: Departure Batches */}
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
-              <Calendar className="w-4 h-4 text-sky-600" />
-              <span>Departure Batches</span>
-            </div>
-            <div className="text-2xl font-black text-slate-900 mt-1">
-              {totalBatchesCount} <span className="text-xs font-medium text-slate-400">batches</span>
-            </div>
-            <span className="text-[10px] text-slate-500 font-medium block mt-0.5">
-              Across current {filtered.length} packages
-            </span>
-          </div>
-        </div>
-
-        {/* Card 4: Quick Add Shortcuts */}
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-center gap-2">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            Quick Add New
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => handleOpenAdd("Trek")}
-              className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
-            >
-              <Mountain className="w-3.5 h-3.5 text-emerald-600" />
-              <span>+ Trek</span>
-            </button>
-            <button
-              onClick={() => handleOpenAdd("Domestic")}
-              className="px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
-            >
-              <Car className="w-3.5 h-3.5 text-amber-600" />
-              <span>+ Tour</span>
-            </button>
-          </div>
-        </div>
       </div>
 
-      {/* Primary Classification Filter Bar (Treks vs Domestic Packages Tabs) */}
+      {/* Primary Classification Filter Bar (4 Mutually Exclusive Sections + All) */}
       <div className="bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none w-full sm:w-auto">
-          <button
-            onClick={() => handleSwitchClassification("Treks")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-              classificationFilter === "Treks"
-                ? "bg-[#0F3A2E] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-            }`}
-          >
-            <Mountain className="w-3.5 h-3.5 text-emerald-400" />
-            <span>🏔️ Trek Packages</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ${
-                classificationFilter === "Treks" ? "bg-emerald-950 text-emerald-300" : "bg-emerald-100 text-emerald-800"
-              }`}
-            >
-              {trekCount}
-            </span>
-          </button>
-
           <button
             onClick={() => handleSwitchClassification("Domestic")}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
@@ -1425,38 +1600,60 @@ export default function AdminTreksPage() {
             }`}
           >
             <Car className="w-3.5 h-3.5 text-amber-200" />
-            <span>🏖️ Destination Packages</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ${
-                classificationFilter === "Domestic" ? "bg-amber-800 text-amber-200" : "bg-amber-100 text-amber-800"
-              }`}
-            >
-              {domesticCount}
-            </span>
+            <span>🏖️ Domestic ({domesticCount})</span>
+          </button>
+
+          <button
+            onClick={() => handleSwitchClassification("International")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+              classificationFilter === "International"
+                ? "bg-sky-600 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5 text-sky-200" />
+            <span>🌐 International ({internationalCount})</span>
+          </button>
+
+          <button
+            onClick={() => handleSwitchClassification("Fixed")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+              classificationFilter === "Fixed"
+                ? "bg-purple-600 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            }`}
+          >
+            <Calendar className="w-3.5 h-3.5 text-purple-200" />
+            <span>📅 Fixed Departure ({fixedCount})</span>
+          </button>
+
+          <button
+            onClick={() => handleSwitchClassification("Treks")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+              classificationFilter === "Treks"
+                ? "bg-[#0F3A2E] text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            }`}
+          >
+            <Mountain className="w-3.5 h-3.5 text-emerald-400" />
+            <span>🏔️ Treks ({trekCount})</span>
           </button>
 
           <button
             onClick={() => handleSwitchClassification("All")}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
               classificationFilter === "All"
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
             }`}
           >
-            <span>All Combined</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ${
-                classificationFilter === "All" ? "bg-slate-800 text-slate-300" : "bg-slate-200 text-slate-700"
-              }`}
-            >
-              {treks.length}
-            </span>
+            <span>All Combined ({treks.length})</span>
           </button>
         </div>
 
         <div className="text-[11px] font-medium text-slate-400 hidden sm:flex items-center gap-2">
           <span>Tip:</span>
-          <span>Click <span className="font-semibold text-slate-700">⇄ To Tour</span> or <span className="font-semibold text-slate-700">⇄ To Trek</span> on any row to instantly move between sections.</span>
+          <span>Click <span className="font-semibold text-slate-700">⇄ Move</span> on any row to instantly transfer a package between the 4 sections.</span>
         </div>
       </div>
 
@@ -1468,23 +1665,41 @@ export default function AdminTreksPage() {
             <span>{selectedTrekIds.length} packages selected</span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => handleBulkMove("Domestic")}
               disabled={actionLoading}
-              className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+              className="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition flex items-center gap-1 shadow-xs disabled:opacity-50"
             >
               <Car className="w-3.5 h-3.5" />
-              <span>Move Selected to Domestic</span>
+              <span>To Domestic</span>
+            </button>
+
+            <button
+              onClick={() => handleBulkMove("International")}
+              disabled={actionLoading}
+              className="px-2.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-slate-950 text-xs font-bold transition flex items-center gap-1 shadow-xs disabled:opacity-50"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>To International</span>
+            </button>
+
+            <button
+              onClick={() => handleBulkMove("Fixed")}
+              disabled={actionLoading}
+              className="px-2.5 py-1.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-slate-950 text-xs font-bold transition flex items-center gap-1 shadow-xs disabled:opacity-50"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>To Fixed</span>
             </button>
 
             <button
               onClick={() => handleBulkMove("Trek")}
               disabled={actionLoading}
-              className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+              className="px-2.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold transition flex items-center gap-1 shadow-xs disabled:opacity-50"
             >
               <Mountain className="w-3.5 h-3.5" />
-              <span>Move Selected to Treks</span>
+              <span>To Trek</span>
             </button>
 
             <button
@@ -1885,7 +2100,7 @@ export default function AdminTreksPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filtered.map((t, idx) => {
-                const isDom = isDomesticPackage(t);
+                const pkgSection = getPackageSection(t);
                 const isSelected = selectedTrekIds.includes(t.id);
                 const { createdDate, updatedDate } = parseItemDate(t, idx);
                 const isRecent = isRecentlyAdded(createdDate, 7);
@@ -1930,16 +2145,26 @@ export default function AdminTreksPage() {
                                 <span>NEW</span>
                               </span>
                             )}
-                            {/* Classification Badge */}
-                            {isDom ? (
+                            {/* Classification Badge (4 Mutually Exclusive Sections) */}
+                            {pkgSection === "Domestic" ? (
                               <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 font-bold border border-amber-200 flex items-center gap-1 shrink-0">
                                 <Car className="w-3 h-3 text-amber-600" />
-                                <span>Domestic Tour</span>
+                                <span>Domestic</span>
+                              </span>
+                            ) : pkgSection === "International" ? (
+                              <span className="text-[10px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-800 font-bold border border-sky-200 flex items-center gap-1 shrink-0">
+                                <Globe className="w-3 h-3 text-sky-600" />
+                                <span>International</span>
+                              </span>
+                            ) : pkgSection === "Fixed" ? (
+                              <span className="text-[10px] px-2 py-0.5 rounded-md bg-purple-50 text-purple-800 font-bold border border-purple-200 flex items-center gap-1 shrink-0">
+                                <Calendar className="w-3 h-3 text-purple-600" />
+                                <span>Fixed Departure</span>
                               </span>
                             ) : (
                               <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 flex items-center gap-1 shrink-0">
                                 <Mountain className="w-3 h-3 text-emerald-600" />
-                                <span>Himalayan Trek</span>
+                                <span>Trek</span>
                               </span>
                             )}
                             {t.badge && (
@@ -2032,36 +2257,15 @@ export default function AdminTreksPage() {
                       </button>
                     </td>
                     <td className="px-5 py-3.5 text-right space-x-1 whitespace-nowrap print:hidden">
-                      {/* One-Click Move Action Button */}
-                      {isDom ? (
-                        <button
-                          onClick={() => handleQuickMoveTrek(t, "Trek")}
-                          disabled={actionLoading}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/90 rounded-lg text-[10px] font-bold transition shadow-2xs cursor-pointer disabled:opacity-50"
-                          title="Quick Move: Convert this package to Himalayan Trek"
-                        >
-                          <Mountain className="w-3 h-3 text-emerald-600" />
-                          <span>To Trek</span>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleQuickMoveTrek(t, "Domestic")}
-                          disabled={actionLoading}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/90 rounded-lg text-[10px] font-bold transition shadow-2xs cursor-pointer disabled:opacity-50"
-                          title="Quick Move: Convert this package to Destination Tour Package"
-                        >
-                          <Car className="w-3 h-3 text-amber-600" />
-                          <span>To Tour</span>
-                        </button>
-                      )}
-
-                      {/* Detailed Move with Options Modal */}
+                      {/* Move to another of the 4 sections */}
                       <button
                         onClick={() => handleOpenMoveModal(t)}
-                        className="p-1.5 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-lg transition"
-                        title="Move / Convert with options & region..."
+                        disabled={actionLoading}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/90 rounded-lg text-[10px] font-bold transition shadow-2xs cursor-pointer disabled:opacity-50"
+                        title="Move to another section (Domestic, International, Fixed Departure, Trek)"
                       >
-                        <ArrowRightLeft className="w-4 h-4" />
+                        <ArrowRightLeft className="w-3 h-3 text-indigo-600" />
+                        <span>Move</span>
                       </button>
 
                       <a
@@ -2145,9 +2349,35 @@ export default function AdminTreksPage() {
                     <h2 className="text-lg sm:text-xl font-bold text-slate-900 line-clamp-1">
                       {editingTrek.id ? `Edit: ${editingTrek.name || "Trek"}` : "Create New Trek"}
                     </h2>
-                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 hidden sm:inline-flex">
-                      {isDomesticPackage(editingTrek) ? "🚗 Domestic Tour" : "🏔️ Himalayan Trek"}
-                    </span>
+                    {(() => {
+                      const sec = getPackageSection(editingTrek);
+                      if (sec === "Domestic") {
+                        return (
+                          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 hidden sm:inline-flex">
+                            🚗 Domestic Tour
+                          </span>
+                        );
+                      }
+                      if (sec === "International") {
+                        return (
+                          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200 hidden sm:inline-flex">
+                            🌐 International Tour
+                          </span>
+                        );
+                      }
+                      if (sec === "Fixed") {
+                        return (
+                          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200 hidden sm:inline-flex">
+                            📅 Fixed Departure
+                          </span>
+                        );
+                      }
+                      return (
+                        <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 hidden sm:inline-flex">
+                          🏔️ Himalayan Trek
+                        </span>
+                      );
+                    })()}
                   </div>
                   <p className="text-xs text-slate-500 mt-0.5 hidden sm:block">
                     Manage photos, departure batches, multi-day itineraries, overview, and FAQs.
@@ -2397,55 +2627,93 @@ export default function AdminTreksPage() {
                 {/* TAB 1: BASIC & PRICING */}
                 {modalTab === "basic" && (
                   <div className="space-y-4">
-                    {/* Package Classification Toggle */}
+                    {/* Package Classification 4-way Switcher */}
                     {(() => {
-                      const isEditingDomestic = isDomesticPackage(editingTrek);
+                      const editingSec = getPackageSection(editingTrek);
                       return (
                         <div className="p-3.5 bg-gradient-to-r from-slate-50 to-slate-100/80 rounded-2xl border border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-slate-800">Package Classification:</span>
+                              <span className="text-xs font-bold text-slate-800">Section:</span>
                               <span
                                 className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full ${
-                                  isEditingDomestic
+                                  editingSec === "Domestic"
                                     ? "bg-amber-100 text-amber-900 border border-amber-300"
+                                    : editingSec === "International"
+                                    ? "bg-sky-100 text-sky-900 border border-sky-300"
+                                    : editingSec === "Fixed"
+                                    ? "bg-purple-100 text-purple-900 border border-purple-300"
                                     : "bg-emerald-100 text-emerald-900 border border-emerald-300"
                                 }`}
                               >
-                                {isEditingDomestic ? "🚗 Domestic Tour Package" : "🏔️ Himalayan / Mountain Trek"}
+                                {editingSec === "Domestic"
+                                  ? "🚗 Domestic Tour Package"
+                                  : editingSec === "International"
+                                  ? "🌐 International Tour Package"
+                                  : editingSec === "Fixed"
+                                  ? "📅 Fixed Departure Group Tour"
+                                  : "🏔️ Himalayan / Mountain Trek"}
                               </span>
                             </div>
                             <p className="text-[11px] text-slate-500 mt-0.5">
-                              {isEditingDomestic
+                              {editingSec === "Domestic"
                                 ? "Published under /domestic-trips and domestic holiday circuits."
+                                : editingSec === "International"
+                                ? "Published under /international and overseas holiday circuits."
+                                : editingSec === "Fixed"
+                                ? "Published under fixed departures and scheduled group dates."
                                 : "Published under /treks and mountain expedition collections."}
                             </p>
                           </div>
 
-                          <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => handleSetEditingType("Trek")}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                                !isEditingDomestic
-                                  ? "bg-[#0F3A2E] text-white shadow-2xs"
-                                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                              }`}
-                            >
-                              <Mountain className="w-3.5 h-3.5" />
-                              <span>🏔️ Himalayan Trek</span>
-                            </button>
+                          <div className="flex flex-wrap items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shrink-0">
                             <button
                               type="button"
                               onClick={() => handleSetEditingType("Domestic")}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                                isEditingDomestic
+                              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                                editingSec === "Domestic"
                                   ? "bg-amber-600 text-white shadow-2xs"
                                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                               }`}
                             >
                               <Car className="w-3.5 h-3.5" />
-                              <span>🚗 Domestic Tour</span>
+                              <span>Domestic</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSetEditingType("International")}
+                              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                                editingSec === "International"
+                                  ? "bg-sky-600 text-white shadow-2xs"
+                                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                              }`}
+                            >
+                              <Globe className="w-3.5 h-3.5" />
+                              <span>International</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSetEditingType("Fixed")}
+                              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                                editingSec === "Fixed"
+                                  ? "bg-purple-600 text-white shadow-2xs"
+                                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                              }`}
+                            >
+                              <Calendar className="w-3.5 h-3.5" />
+                              <span>Fixed</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSetEditingType("Trek")}
+                              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                                editingSec === "Trek"
+                                  ? "bg-[#0F3A2E] text-white shadow-2xs"
+                                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                              }`}
+                            >
+                              <Mountain className="w-3.5 h-3.5" />
+                              <span>Trek</span>
                             </button>
                           </div>
                         </div>
@@ -2455,7 +2723,7 @@ export default function AdminTreksPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          {isDomesticPackage(editingTrek) ? "Tour Package Name *" : "Trek Name *"}
+                          {getPackageSection(editingTrek) === "Trek" ? "Trek Name *" : "Package Name *"}
                         </label>
                         <input
                           type="text"
@@ -3997,7 +4265,7 @@ export default function AdminTreksPage() {
                     Move Package: {moveModalTrek.name}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Switch between Himalayan Trek and Domestic Tour Package catalog.
+                    Move package cleanly between Domestic, International, Fixed Departure, and Trek sections.
                   </p>
                 </div>
               </div>
@@ -4012,45 +4280,46 @@ export default function AdminTreksPage() {
             <form onSubmit={handleDetailedMoveSubmit} className="space-y-4 pt-4">
               {/* Current Status */}
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Currently Classified As:</span>
+                <span className="text-slate-500 font-medium">Currently In Section:</span>
                 <span className="font-bold flex items-center gap-1.5">
-                  {isDomesticPackage(moveModalTrek) ? (
-                    <span className="text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
-                      🚗 Domestic Tour Package
-                    </span>
-                  ) : (
-                    <span className="text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                      🏔️ Himalayan Trek
-                    </span>
-                  )}
+                  {(() => {
+                    const curr = getPackageSection(moveModalTrek);
+                    if (curr === "Domestic") {
+                      return (
+                        <span className="text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
+                          🚗 Domestic Tour
+                        </span>
+                      );
+                    }
+                    if (curr === "International") {
+                      return (
+                        <span className="text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-full border border-sky-300">
+                          🌐 International Tour
+                        </span>
+                      );
+                    }
+                    if (curr === "Fixed") {
+                      return (
+                        <span className="text-purple-800 bg-purple-100 px-2.5 py-0.5 rounded-full border border-purple-300">
+                          📅 Fixed Departure
+                        </span>
+                      );
+                    }
+                    return (
+                      <span className="text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                        🏔️ Himalayan Trek
+                      </span>
+                    );
+                  })()}
                 </span>
               </div>
 
-              {/* Target Selection */}
+              {/* Target Selection - 4 Sections */}
               <div>
                 <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Select Target Package Classification:
+                  Select Target Section:
                 </label>
                 <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => setTargetMoveType("Trek")}
-                    className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
-                      targetMoveType === "Trek"
-                        ? "border-[#0F3A2E] bg-emerald-50/50 text-emerald-950 ring-2 ring-[#0F3A2E]/20"
-                        : "border-slate-200 hover:bg-slate-50 text-slate-700"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-lg">🏔️</span>
-                      {targetMoveType === "Trek" && <Check className="w-4 h-4 text-emerald-700" />}
-                    </div>
-                    <span className="font-bold text-xs">Himalayan Trek</span>
-                    <span className="text-[10px] text-slate-500 mt-0.5 leading-tight">
-                      Publishes on /treks & mountain collections
-                    </span>
-                  </button>
-
                   <button
                     type="button"
                     onClick={() => setTargetMoveType("Domestic")}
@@ -4066,74 +4335,67 @@ export default function AdminTreksPage() {
                     </div>
                     <span className="font-bold text-xs">Domestic Tour</span>
                     <span className="text-[10px] text-slate-500 mt-0.5 leading-tight">
-                      Publishes on /domestic-trips & holiday tours
+                      India holiday packages & circuits
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setTargetMoveType("International")}
+                    className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
+                      targetMoveType === "International"
+                        ? "border-sky-500 bg-sky-50/50 text-sky-950 ring-2 ring-sky-500/20"
+                        : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-lg">🌐</span>
+                      {targetMoveType === "International" && <Check className="w-4 h-4 text-sky-600" />}
+                    </div>
+                    <span className="font-bold text-xs">International Tour</span>
+                    <span className="text-[10px] text-slate-500 mt-0.5 leading-tight">
+                      Overseas holiday packages
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setTargetMoveType("Fixed")}
+                    className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
+                      targetMoveType === "Fixed"
+                        ? "border-purple-500 bg-purple-50/50 text-purple-950 ring-2 ring-purple-500/20"
+                        : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-lg">📅</span>
+                      {targetMoveType === "Fixed" && <Check className="w-4 h-4 text-purple-600" />}
+                    </div>
+                    <span className="font-bold text-xs">Fixed Departure</span>
+                    <span className="text-[10px] text-slate-500 mt-0.5 leading-tight">
+                      Confirmed departure date batches
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setTargetMoveType("Trek")}
+                    className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
+                      targetMoveType === "Trek"
+                        ? "border-[#0F3A2E] bg-emerald-50/50 text-emerald-950 ring-2 ring-[#0F3A2E]/20"
+                        : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-lg">🏔️</span>
+                      {targetMoveType === "Trek" && <Check className="w-4 h-4 text-emerald-700" />}
+                    </div>
+                    <span className="font-bold text-xs">Himalayan Trek</span>
+                    <span className="text-[10px] text-slate-500 mt-0.5 leading-tight">
+                      Mountain summits & trekking routes
                     </span>
                   </button>
                 </div>
-              </div>
-
-              {/* Region or Collection dropdown */}
-              {targetMoveType === "Domestic" ? (
-                <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1">
-                    Destination Region / State
-                  </label>
-                  <select
-                    value={targetMoveRegion}
-                    onChange={(e) => setTargetMoveRegion(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-white font-medium focus:ring-2 focus:ring-[#0F3A2E]"
-                  >
-                    {DOMESTIC_REGIONS.map((reg) => (
-                      <option key={reg} value={reg}>
-                        {reg}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Adds relevant regional tag to enable filtering under /domestic-trips/{targetMoveRegion.toLowerCase().replace(/\s+/g, "-")}.
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1">
-                    Trek Collection / Range
-                  </label>
-                  <select
-                    value={targetMoveCollection}
-                    onChange={(e) => setTargetMoveCollection(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-white font-medium focus:ring-2 focus:ring-[#0F3A2E]"
-                  >
-                    {TREK_COLLECTIONS.map((col) => (
-                      <option key={col} value={col}>
-                        {col}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Sets primary category tag for trekking seasons, difficulty and collections.
-                  </p>
-                </div>
-              )}
-
-              {/* Cross-CMS Bridge Option */}
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <label className="flex items-start gap-2.5 cursor-pointer text-xs">
-                  <input
-                    type="checkbox"
-                    checked={transferToDestinationsCopy}
-                    onChange={(e) => setTransferToDestinationsCopy(e.target.checked)}
-                    className="mt-0.5 rounded text-[#0F3A2E] focus:ring-[#0F3A2E] w-3.5 h-3.5"
-                  />
-                  <div>
-                    <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                      <Globe className="w-3.5 h-3.5 text-blue-600" />
-                      <span>Also sync copy to Destinations CMS</span>
-                    </span>
-                    <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                      Creates or updates a corresponding itinerary package in the Destinations CMS (/admin/destinations).
-                    </p>
-                  </div>
-                </label>
               </div>
 
               {/* Actions */}
@@ -4151,7 +4413,7 @@ export default function AdminTreksPage() {
                   className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5 disabled:opacity-60"
                 >
                   <ArrowRightLeft className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{actionLoading ? "Moving..." : `Confirm Move to ${targetMoveType === "Domestic" ? "Domestic" : "Trek"}`}</span>
+                  <span>{actionLoading ? "Moving..." : `Confirm Move to ${targetMoveType}`}</span>
                 </button>
               </div>
             </form>

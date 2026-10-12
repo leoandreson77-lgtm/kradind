@@ -3710,6 +3710,24 @@ const OBSOLETE_TREK_SLUGS = new Set([
   "nainital-tour-package",
 ]);
 
+import {
+  getPackageSection,
+  isDomesticPackage,
+  isInternationalPackage,
+  isFixedPackage,
+  isTrekPackage,
+  type PackageSectionType,
+} from "./package-sections";
+export {
+  getPackageSection,
+  isDomesticPackage,
+  isInternationalPackage,
+  isFixedPackage,
+  isTrekPackage,
+  type PackageSectionType,
+};
+
+
 export async function getTreksAsync(): Promise<TrekData[]> {
   try {
     const db = await getDb();
@@ -3754,12 +3772,37 @@ export async function getTreksAsync(): Promise<TrekData[]> {
       }
 
       const cleanTreks = Array.from(slugMap.values()).map((t) => {
-        // Enforce mutual exclusivity
-        const isDom =
-          (t.category || "").toLowerCase() === "domestic" ||
-          (t.categories || []).some((c) => c.toLowerCase() === "domestic");
-        if (isDom) {
-          const trekKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine"];
+        // Enforce strict mutual exclusivity across 4 sections: Domestic, International, Fixed, Trek
+        const section = getPackageSection(t);
+        if (section === "International") {
+          const excludeKeywords = ["domestic", "himalayas", "summit", "high pass", "alpine"];
+          const sanitized = (t.categories || []).filter(
+            (c) => !excludeKeywords.includes(c.toLowerCase().trim())
+          );
+          if (!sanitized.some((c) => c.toLowerCase() === "international")) {
+            sanitized.unshift("International");
+          }
+          return {
+            ...t,
+            category: "International",
+            categories: sanitized,
+          };
+        }
+        if (section === "Fixed") {
+          const sanitized = (t.categories || []).filter(
+            (c) => !["international", "domestic", "himalayas"].includes(c.toLowerCase().trim())
+          );
+          if (!sanitized.some((c) => c.toLowerCase().includes("fixed"))) {
+            sanitized.unshift("Fixed Departure");
+          }
+          return {
+            ...t,
+            category: "Fixed Departure",
+            categories: sanitized,
+          };
+        }
+        if (section === "Domestic") {
+          const trekKeywords = ["trek", "treks", "summit", "high pass", "expedition", "himalayas", "himalayan", "alpine", "international", "fixed departure"];
           const sanitizedCats = (t.categories || []).filter(
             (c) => !trekKeywords.includes(c.toLowerCase().trim())
           );
@@ -3772,7 +3815,20 @@ export async function getTreksAsync(): Promise<TrekData[]> {
             categories: sanitizedCats,
           };
         }
-        return t;
+        // Section === "Trek"
+        const domesticKeywords = ["domestic", "holiday package", "road trip", "domestic tour", "domestic tours", "international", "fixed departure"];
+        const sanitizedCats = (t.categories || []).filter(
+          (c) => !domesticKeywords.includes(c.toLowerCase().trim())
+        );
+        let finalCat = t.category;
+        if (!finalCat || finalCat.toLowerCase() === "domestic" || finalCat.toLowerCase() === "international" || finalCat.toLowerCase().includes("fixed")) {
+          finalCat = "Himalayas";
+        }
+        return {
+          ...t,
+          category: finalCat,
+          categories: sanitizedCats,
+        };
       });
 
       const store = readStore();

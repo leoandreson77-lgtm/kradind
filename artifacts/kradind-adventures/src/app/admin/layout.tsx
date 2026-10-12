@@ -28,6 +28,7 @@ import {
   ChevronRight,
   FileText,
   Kanban,
+  Share2,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -202,6 +203,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { label: "Landing Pages", href: "/admin/landing-pages", icon: Sparkles },
         { label: "Live Trail Radar", href: "/admin/radar", icon: Radio },
         { label: "Home Sections", href: "/admin/sections", icon: Sliders },
+        { label: "LinkedIn & Socials (QR)", href: "/admin/sections?tab=socials", icon: Share2, badge: "Hub" },
         { label: "Destinations Explorer", href: "/admin/destinations", icon: Sparkles },
       ],
     },

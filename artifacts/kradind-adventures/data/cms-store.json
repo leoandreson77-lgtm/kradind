@@ -100,6 +100,157 @@
   },
   "treks": [
     {
+      "id": 1791816705492,
+      "slug": "sikkim-darjeeling-tour",
+      "name": "Sikkim & Darjeeling Tour",
+      "location": "NJP New jalpaiguri railway station/ Bagdogra airport",
+      "region": "Sikkim,darjeeling ",
+      "image": "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80",
+      "imageAlt": "Domestic holiday tour package by KRAD Global",
+      "gallery": [
+        "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "tagline": "Explore the breathtaking beauty of Sikkim and Darjeeling with this 5 Nights / 6 Days holiday package. Discover the charm of Gangtok, visit the scenic Tsomgo Lake and Baba Mandir, explore the peaceful landscapes of Pelling, and experience the mesmerizing sunrise at Tiger Hill in Darjeeling. Enjoy beautiful Himalayan views, monasteries, waterfalls, local sightseeing and leisure time at MG Marg and Chowrasta. This package offers a memorable blend of nature, culture and mountain experiences, making it ideal for families, couples and friends.",
+      "description": "",
+      "overview": "Gangtok Exploration: Discover the charming capital of Sikkim and enjoy shopping, cafés and evening walks at MG Marg.\n\nTsomgo Lake: Experience the spectacular beauty of this high-altitude Himalayan lake.\n\nBaba Harbhajan Singh Mandir: Visit the famous shrine near the Indo-China border.\n\nScenic Sikkim Road Trip: Enjoy picturesque mountain landscapes while travelling between Gangtok, Pelling and Darjeeling.\n\nPelling Sightseeing: Explore attractions such as the Chenrezig Statue and Sky Walk, Pemayangtse Monastery, Rabdentse Ruins and nearby waterfalls, subject to available time.\n\nDarjeeling Sunrise Experience: Visit Tiger Hill for a chance to witness sunrise over the Himalayan peaks, weather permitting.\n\nIconic Darjeeling Attractions: Explore Ghoom Monastery, Batasia Loop, the Himalayan Mountaineering Institute and other local attractions, subject to opening hours.\n\nChowrasta & Mall Road: Enjoy leisure time, shopping and the pleasant atmosphere of Darjeeling.",
+      "highlights": [
+        "Private sanitized AC vehicle for all transfers",
+        "Handpicked 3-star / 4-star boutique stays",
+        "Daily breakfast & hot dinner included",
+        "Sightseeing as per itinerary"
+      ],
+      "duration": "6 Days / 5 Nights",
+      "difficulty": "Leisure / Scenic",
+      "altitude": "12,000 Ft",
+      "distance": "City Tours",
+      "baseCamp": "railway station / airport",
+      "rating": 4.9,
+      "reviewCount": 1,
+      "price": 105000,
+      "originalPrice": 110000,
+      "badge": "Domestic Holiday",
+      "category": "Domestic",
+      "categories": [
+        "Domestic",
+        "Holiday Package"
+      ],
+      "status": "Published",
+      "batches": [
+        {
+          "id": 1,
+          "startDate": "Oct 16",
+          "endDate": "Oct 21",
+          "slotsLeft": 12,
+          "price": 105000
+        }
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Day 1: NJP / Bagdogra → Gangtok",
+          "description": "Distance: Approx. 120–125 km\nTravel Time: 5–6 hours\nPickup from NJP Railway Station / Bagdogra Airport\nDrive towards Gangtok through the scenic Teesta Valley\nEn-route enjoy views of the Himalayan mountains and Teesta River\nArrival in Gangtok and hotel check-in\nRest and freshen up\nEvening visit to MG Marg\nEnjoy shopping, cafés and a leisurely walk around the main market\nOvernight stay: Gangtok",
+          "altitude": "6,400 Ft",
+          "distance": "Drive / 3 km Walk",
+          "meal": "Welcome Tea & Dinner",
+          "stay": "Gangtok ( 3 star deluxe room)"
+        },
+        {
+          "day": 2,
+          "title": "Gangtok – Tsomgo Lake & Baba Mandir",
+          "description": "Approx. sightseeing duration: Full day\nEarly breakfast at the hotel\nProceed for the famous Tsomgo (Changu) Lake\nEnjoy the beautiful high-altitude Himalayan scenery\nVisit Baba Harbhajan Singh Mandir\nNathula Pass can be added subject to permit, weather and operational conditions\nReturn to Gangtok by evening free for leisure/shopping at MG Marg \nOvernight stay: Gangtok\nNote: Tsomgo Lake and Nathula pass (cost exclude) area visits are subject to permits and local/weather conditions.",
+          "altitude": "9,200 Ft",
+          "distance": "6 km Trek (4–5 Hours)",
+          "meal": "Breakfast, Packed Lunch & Dinner",
+          "stay": "Gangtok ( 3 star deluxe room)"
+        },
+        {
+          "day": 3,
+          "title": "Day 3: Gangtok → Pelling",
+          "description": "Distance: Approx. 120–160 km depending on route\nTravel Time: Around 4 –5 hours\nBreakfast and check out from Gangtok\nDrive towards Pelling through the scenic Sikkim hills\nOptional stop at Ravangla / Buddha Park depending on road conditions and available time\nContinue towards Pelling check in at the hotel\nEvening at leisure enjoy the peaceful surroundings and mountain views\nOvernight stay: Pelling",
+          "altitude": "11,800 Ft",
+          "distance": "7 km Trek (5–6 Hours)",
+          "meal": "Breakfast, Hot Trail Lunch & Dinner",
+          "stay": "Pelling ( 3 star deluxe room)"
+        },
+        {
+          "day": 4,
+          "title": "Pelling Sightseeing → Darjeeling",
+          "description": "Pelling sightseeing: Approx. 3–4 hours\nPelling → Darjeeling: Approx. 4–5 hours\nAfter breakfast, explore Pelling:\nSky Walk / Chenrezig Statue Pemayangtse Monastery Rabdentse Ruins Khecheopalri Lake Kanchenjunga Waterfalls / Rimbi Falls depending on time\nAfter sightseeing, drive towards Darjeeling.\nArrival in Darjeeling hotel check-in evening visit to Chowrasta / Mall Road \nFree time for shopping and enjoying Darjeeling's \nOvernight stay: Darjeeling",
+          "altitude": "14,000 Ft Summit (Camp: 10,500 Ft)",
+          "distance": "9–10 km Trek (7–9 Hours)",
+          "meal": "Early Breakfast, Energy Trail Snacks & Celebration Dinner",
+          "stay": "Darjeeling ( 3 star deluxe room)"
+        },
+        {
+          "day": 5,
+          "title": "Darjeeling Local Sightseeing",
+          "description": "Sightseeing: Full day\nEarly morning: Depart around 4:00 AM\nVisit Tiger Hill for sunrise and views of Kanchenjunga\nVisit Ghoom Monastery Stop at Batasia Loop\nAfter breakfast:\nPadmaja Naidu Himalayan Zoological Park\nHimalayan Mountaineering Institute\nTenzing Rock Tea Garden Japanese Peace Pagoda Darjeeling Ropeway if desired Evening free at Chowrasta / Mall Road\nOvernight stay: Darjeeling\nTiger Hill, Ghoom Monastery and Batasia Loop are among the standard early-morning Darjeeling sightseeing stops.\n",
+          "altitude": "6,000 Ft",
+          "distance": "5 km Trek + Vehicle Drive",
+          "meal": "Breakfast & Farewell Lunch",
+          "stay": "Darjeeling ( 3 star deluxe room)"
+        },
+        {
+          "day": 6,
+          "title": "Darjeeling → NJP / Bagdogra Drop",
+          "description": "Distance: Approx. 70–90 km\nTravel Time: Around 3–4 hours, depending on traffic and road conditions\nBreakfast at the hotel check out drive from Darjeeling towards Siliguri drop at NJP Railway Station / Bagdogra Airport\nTour concludes with beautiful memories of Sikkim & Darjeeling\nTour ends.",
+          "altitude": "7,500 Ft",
+          "distance": "Local Sightseeing & Transfers",
+          "meal": "Breakfast & Dinner",
+          "stay": "drop"
+        }
+      ],
+      "inclusions": [
+        "5 nights hotel accommodation",
+        "Daily breakfast and dinner",
+        "Private AC transport for transfers and sightseeing",
+        "NJP/Bagdogra pickup and drop",
+        "Gangtok sightseeing Tsomgo Lake & Baba Mandir excursion Pelling sightseeing Darjeeling sightseeing",
+        "All toll tax, parking, and driver allowance"
+      ],
+      "exclusions": [
+        "Flight/train tickets",
+        "Nathula Pass additional charges, if applicable",
+        "Entry tickets and attraction fees",
+        "Ropeway/Toy Train tickets",
+        "Personal expenses",
+        "Travel insurance Any activities not mentioned above",
+        "Anything not specifically mentioned under inclusions"
+      ],
+      "faqs": [
+        {
+          "question": " What is the duration of this Sikkim and Darjeeling tour?",
+          "answer": "The package is for 5 Nights / 6 Days, covering Gangtok, Pelling and Darjeeling."
+        },
+        {
+          "question": "What are the pickup and drop locations?",
+          "answer": "Pickup and drop are available at NJP Railway Station or Bagdogra Airport, as arranged at the time of booking."
+        },
+        {
+          "question": " Is Tsomgo Lake included in the itinerary?",
+          "answer": "Yes, Tsomgo Lake is included in the sightseeing plan for Day 2. Applicable entry, vehicle, permit or other excursion charges may be extra, depending on the package inclusions."
+        },
+        {
+          "question": " Can we visit Nathula Pass during the trip?",
+          "answer": "Yes, Nathula Pass may be added if permits are approved and the route is operational. Additional charges apply, and the visit is subject to weather, local regulations and availability."
+        },
+        {
+          "question": "Is a permit required for Tsomgo Lake and Nathula Pass?",
+          "answer": "Yes, permits and valid identification documents are required for these restricted-area visits. Availability depends on applicable rules, weather and local administrative approval."
+        },
+        {
+          "question": "Will we definitely see the sunrise at Tiger Hill?",
+          "answer": "Tiger Hill is planned for an early-morning sunrise visit. However, visibility of Kanchenjunga depends on weather conditions and cloud cover."
+        },
+        {
+          "question": "Are meals included in the package?",
+          "answer": "Meals depend on the selected package plan. Please confirm whether breakfast, dinner or other meals are included in your booking.\n\nQ8. Are sightseeing entry tickets inclu"
+        }
+      ],
+      "createdAt": "2026-10-12T14:51:45.492Z",
+      "updatedAt": "2026-10-12T14:51:45.492Z"
+    },
+    {
       "id": 1791571874221,
       "slug": "maharashtra-tour-package-4-nights-5-days",
       "name": "Maharashtra Tour Package – 5 Days / 4 Nights",

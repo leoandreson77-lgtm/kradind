@@ -32,12 +32,26 @@ import {
   Calendar,
   CalendarCheck,
   Eye,
+  QrCode,
+  Copy,
+  Download,
 } from "lucide-react";
+import {
+  FaLinkedinIn,
+  FaInstagram,
+  FaWhatsapp,
+  FaYoutube,
+  FaFacebookF,
+  FaXTwitter,
+  FaThreads,
+  FaPinterestP,
+} from "react-icons/fa6";
+import QRCode from "qrcode";
 import { HomeSectionsConfig, SectionFaqItem, TrustSignalItem, TrekData, DestinationData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
-type SectionTab = "hero" | "seasonal" | "topBar" | "monsoon" | "treks" | "international" | "eeat" | "footer";
+type SectionTab = "hero" | "seasonal" | "topBar" | "monsoon" | "treks" | "international" | "eeat" | "socials" | "footer";
 
 export default function AdminSectionsPage() {
   const [sections, setSections] = useState<HomeSectionsConfig | null>(null);
@@ -47,6 +61,8 @@ export default function AdminSectionsPage() {
   const [activeTab, setActiveTab] = useState<SectionTab>("hero");
   const [savingSection, setSavingSection] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
+  const [adminQrUrl, setAdminQrUrl] = useState<string>("");
+  const [copiedHub, setCopiedHub] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -79,7 +95,49 @@ export default function AdminSectionsPage() {
 
   useEffect(() => {
     fetchData();
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab") as SectionTab;
+      if (
+        tabParam &&
+        ["hero", "seasonal", "topBar", "monsoon", "treks", "international", "eeat", "socials", "footer"].includes(tabParam)
+      ) {
+        setActiveTab(tabParam);
+      }
+
+      const hubUrl = `${window.location.origin}/connect`;
+      QRCode.toDataURL(hubUrl, {
+        width: 320,
+        margin: 2,
+        color: { dark: "#0F3A2E", light: "#FFFFFF" },
+      })
+        .then(setAdminQrUrl)
+        .catch(() => {});
+    }
   }, []);
+
+  const handleCopyAdminHub = async () => {
+    if (typeof window === "undefined") return;
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/connect`);
+      setCopiedHub(true);
+      showToast("✅ Social & QR Hub URL copied to clipboard!");
+      setTimeout(() => setCopiedHub(false), 2500);
+    } catch {
+      showToast("Failed to copy URL");
+    }
+  };
+
+  const handleDownloadAdminQr = () => {
+    if (!adminQrUrl) return;
+    const a = document.createElement("a");
+    a.href = adminQrUrl;
+    a.download = "kradind-connect-qr.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast("✅ Hub QR code PNG downloaded!");
+  };
 
   const handleSave = async (sectionName?: string) => {
     if (!sections) return;
@@ -209,7 +267,8 @@ export default function AdminSectionsPage() {
     { id: "treks" as SectionTab, label: "Featured & Weekend", icon: Mountain, desc: "Homepage showcase curations" },
     { id: "international" as SectionTab, label: "International Tours", icon: Plane, desc: "Global destinations showcase" },
     { id: "eeat" as SectionTab, label: "Authority & FAQs", icon: ShieldCheck, desc: "Curation byline & FAQs" },
-    { id: "footer" as SectionTab, label: "Footer & Social", icon: Globe, desc: "Contact info & social links" },
+    { id: "socials" as SectionTab, label: "LinkedIn & Socials (QR)", icon: Share2, desc: "LinkedIn company, QR hub & social networks" },
+    { id: "footer" as SectionTab, label: "Footer & Contact", icon: Globe, desc: "Contact info & social links" },
   ];
 
   return (
@@ -239,6 +298,16 @@ export default function AdminSectionsPage() {
 
         <div className="flex items-center gap-2.5 shrink-0">
           <a
+            href="/connect"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-bold rounded-xl transition shadow-xs"
+          >
+            <QrCode className="w-3.5 h-3.5 text-emerald-700" />
+            <span>📱 View Social & QR Hub</span>
+            <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
+          </a>
+          <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
@@ -259,7 +328,7 @@ export default function AdminSectionsPage() {
       </div>
 
       {/* Tab Navigation Pill Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 bg-slate-200/70 p-1.5 rounded-2xl">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-2 bg-slate-200/70 p-1.5 rounded-2xl">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -1638,7 +1707,570 @@ export default function AdminSectionsPage() {
         </div>
       )}
 
-      {/* TAB 6: FOOTER, SOCIAL MEDIA & COMPANY CONTACT */}
+      {/* TAB 8: LINKEDIN COMPANY SECTION & ANIMATED SOCIAL QR HUB */}
+      {activeTab === "socials" && (
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-8 space-y-8">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-100 gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A66C2] to-[#004182] text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
+                <FaLinkedinIn className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                    LinkedIn Official Section &amp; Social QR Hub
+                  </h2>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 text-[#0A66C2] border border-blue-200">
+                    Official CMS
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Manage official LinkedIn company profile, interactive QR directory, and all brand social channels.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <a
+                href="/connect"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-bold rounded-xl transition shadow-xs"
+              >
+                <QrCode className="w-4 h-4 text-emerald-700" />
+                <span>Open Live Hub (/connect)</span>
+                <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
+              </a>
+              <button
+                onClick={() => handleSave("socials")}
+                disabled={savingSection === "socials"}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-sm disabled:opacity-60"
+              >
+                <Save className="w-4 h-4" />
+                <span>{savingSection === "socials" ? "Saving..." : "Save Social & LinkedIn"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* QUICK BANNER / CALLOUT */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-950 via-[#0F3A2E] to-slate-900 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-emerald-500/30 shadow-lg">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Animated Social &amp; QR Hub is Active</span>
+              </div>
+              <p className="text-xs text-slate-200">
+                A dedicated, high-converting luxury hub is published at <strong>/connect</strong> and <strong>/socials</strong> matching KRADIND&apos;s Himalayan emerald theme with live QR code scanning, vCard download, and interactive channel cards.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleCopyAdminHub}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition"
+              >
+                {copiedHub ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedHub ? "Copied Link!" : "Copy Hub URL"}</span>
+              </button>
+              {adminQrUrl && (
+                <button
+                  type="button"
+                  onClick={handleDownloadAdminQr}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-sm"
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>Download Hub QR</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* SECTION 1: PROMINENT LINKEDIN COMPANY CARD */}
+          <div className="rounded-3xl border-2 border-[#0A66C2]/30 bg-gradient-to-br from-[#0A66C2]/5 via-white to-blue-50/20 p-6 sm:p-7 space-y-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-blue-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#0A66C2] text-white flex items-center justify-center font-bold shadow-md">
+                  <FaLinkedinIn className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <span>LinkedIn Official Company Section</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#0A66C2] text-white">
+                      B2B &amp; Corporate
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Official organization URL for corporate treks, college expeditions, and institutional partnerships.
+                  </p>
+                </div>
+              </div>
+
+              {sections.contactAndFooter?.linkedinUrl && (
+                <a
+                  href={sections.contactAndFooter.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0A66C2] hover:bg-[#084e96] text-white text-xs font-bold transition shadow-xs self-start sm:self-auto"
+                >
+                  <span>Test Open LinkedIn</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4">
+                <div>
+                  <label className="block font-bold text-slate-800 text-xs mb-1.5">
+                    Official LinkedIn Company Page URL
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#0A66C2]">
+                      <FaLinkedinIn className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="url"
+                      value={sections.contactAndFooter?.linkedinUrl || ""}
+                      placeholder="https://www.linkedin.com/company/krad-india/"
+                      onChange={(e) =>
+                        setSections({
+                          ...sections,
+                          contactAndFooter: {
+                            ...(sections.contactAndFooter as any),
+                            linkedinUrl: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full pl-10 pr-4 py-3 border border-blue-200 rounded-xl text-xs sm:text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-[#0A66C2] outline-none bg-white shadow-xs"
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-1.5">
+                    Default: <code className="text-[#0A66C2] bg-blue-50 px-1 py-0.5 rounded font-mono">https://www.linkedin.com/company/krad-india/</code>. This URL updates the website footer icon, proposal PDFs, and the animated Social Hub.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 text-xs text-slate-600 space-y-1.5">
+                  <div className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-[#0A66C2]" />
+                    <span>How this LinkedIn section is used:</span>
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-600 pl-1">
+                    <li>Displays with official verified blue badge on <strong>/connect</strong> and <strong>/socials</strong></li>
+                    <li>Included in downloadable vCard contact card (<code className="font-mono text-slate-700">kradind-adventures.vcf</code>)</li>
+                    <li>Linked in the global website footer social row alongside Instagram and WhatsApp</li>
+                    <li>Used for B2B corporate mountaineering queries, CSR expeditions, and campus travel clubs</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* LinkedIn Preview Card */}
+              <div className="rounded-2xl bg-slate-900 text-white p-5 flex flex-col justify-between border border-slate-800 shadow-md relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#0A66C2]/20 rounded-full blur-2xl pointer-events-none" />
+                <div className="space-y-3 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-800">
+                      Live Hub Preview
+                    </span>
+                    <FaLinkedinIn className="w-4 h-4 text-[#0A66C2]" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
+                      <span>KRADIND Adventures</span>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mt-0.5 font-mono">
+                      @krad-india
+                    </p>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Corporate Treks, Institutional Expeditions, B2B Travel Tie-ups &amp; Career Opportunities.
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-slate-800 mt-4 relative z-10 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400">Dehradun, UK • Travel &amp; Treks</span>
+                  <span className="text-[11px] font-bold text-blue-400 flex items-center gap-1">
+                    <span>Connect</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 2: LIVE QR CODE HUB STATION */}
+          <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-6 sm:p-7 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#0F3A2E] text-white flex items-center justify-center font-bold shadow-md">
+                  <QrCode className="w-5 h-5 text-emerald-300" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Interactive QR Code Hub Station
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    High-resolution dynamic QR code linking to all official social channels &amp; contacts
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyAdminHub}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition"
+                >
+                  {copiedHub ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedHub ? "Copied" : "Copy Link"}</span>
+                </button>
+                {adminQrUrl && (
+                  <button
+                    type="button"
+                    onClick={handleDownloadAdminQr}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-semibold transition"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download PNG</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                {adminQrUrl ? (
+                  <img
+                    src={adminQrUrl}
+                    alt="KRADIND Connect QR Code"
+                    className="w-48 h-48 rounded-xl object-contain"
+                  />
+                ) : (
+                  <div className="w-48 h-48 rounded-xl bg-slate-100 flex items-center justify-center text-xs text-slate-400">
+                    Generating QR...
+                  </div>
+                )}
+                <span className="text-[11px] font-bold text-slate-600 mt-2 flex items-center gap-1">
+                  <span>Target:</span>
+                  <code className="text-[#0F3A2E] bg-emerald-50 px-1 py-0.5 rounded font-mono">/connect</code>
+                </span>
+              </div>
+
+              <div className="md:col-span-2 space-y-3 text-xs text-slate-600">
+                <h4 className="font-extrabold text-sm text-slate-900">
+                  Deploy KRADIND QR Code Across All Touchpoints:
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  When travelers scan this QR code with any iOS or Android camera, they are instantly taken to the animated KRADIND Hub where they can follow your LinkedIn, Instagram, WhatsApp 24/7 helpline, YouTube channel, and save your official vCard directly into their phone contacts.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                  <div className="p-3 rounded-xl bg-white border border-slate-200">
+                    <span className="font-bold text-slate-800 block text-xs">🏔️ Physical Ground Marketing</span>
+                    <span className="text-[11px] text-slate-500">Print on Sankri, Joshimath &amp; Leh basecamp standees, vehicle fleet stickers, and trek completion certificates.</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white border border-slate-200">
+                    <span className="font-bold text-slate-800 block text-xs">📄 Digital Travel Vouchers</span>
+                    <span className="text-[11px] text-slate-500">Embed on booking confirmation PDFs, WhatsApp departure broadcasts, and proposal vouchers.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 3: ALL SOCIAL MEDIA CHANNELS GRID */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  All Social Media Profiles &amp; Direct Handles
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Update any handle below. They are updated globally across the website and in the QR Hub.
+                </p>
+              </div>
+              <button
+                onClick={() => handleSave("socials")}
+                disabled={savingSection === "socials"}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-xs disabled:opacity-60"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>Save All Socials</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
+              {/* Instagram */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-600 to-purple-600 text-white flex items-center justify-center">
+                      <FaInstagram className="w-4 h-4" />
+                    </div>
+                    <label className="font-bold text-slate-800">Instagram Profile URL</label>
+                  </div>
+                  {sections.contactAndFooter?.instagramUrl && (
+                    <a
+                      href={sections.contactAndFooter.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-rose-600 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sections.contactAndFooter?.instagramUrl || ""}
+                  placeholder="https://www.instagram.com/kradglobal/"
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      contactAndFooter: {
+                        ...(sections.contactAndFooter as any),
+                        instagramUrl: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              {/* WhatsApp */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#25D366] text-white flex items-center justify-center">
+                      <FaWhatsapp className="w-4 h-4" />
+                    </div>
+                    <label className="font-bold text-slate-800">WhatsApp Direct Link</label>
+                  </div>
+                  {sections.contactAndFooter?.whatsappLink && (
+                    <a
+                      href={sections.contactAndFooter.whatsappLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-600 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sections.contactAndFooter?.whatsappLink || ""}
+                  placeholder="https://wa.me/919797941414"
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      contactAndFooter: {
+                        ...(sections.contactAndFooter as any),
+                        whatsappLink: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              {/* YouTube */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#FF0000] text-white flex items-center justify-center">
+                      <FaYoutube className="w-4 h-4" />
+                    </div>
+                    <label className="font-bold text-slate-800">YouTube Channel URL</label>
+                  </div>
+                  {sections.contactAndFooter?.youtubeUrl && (
+                    <a
+                      href={sections.contactAndFooter.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-red-600 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sections.contactAndFooter?.youtubeUrl || ""}
+                  placeholder="https://www.youtube.com/@kradglobaltravels"
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      contactAndFooter: {
+                        ...(sections.contactAndFooter as any),
+                        youtubeUrl: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              {/* Facebook */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#1877F2] text-white flex items-center justify-center">
+                      <FaFacebookF className="w-4 h-4" />
+                    </div>
+                    <label className="font-bold text-slate-800">Facebook Page URL</label>
+                  </div>
+                  {sections.contactAndFooter?.facebookUrl && (
+                    <a
+                      href={sections.contactAndFooter.facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sections.contactAndFooter?.facebookUrl || ""}
+                  placeholder="https://www.facebook.com/share/189E2RUcH4/"
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      contactAndFooter: {
+                        ...(sections.contactAndFooter as any),
+                        facebookUrl: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              {/* X / Twitter */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-black text-white flex items-center justify-center">
+                      <FaXTwitter className="w-4 h-4" />
+                    </div>
+                    <label className="font-bold text-slate-800">X (Twitter) URL</label>
+                  </div>
+                  {sections.contactAndFooter?.twitterUrl && (
+                    <a
+                      href={sections.contactAndFooter.twitterUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-800 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sections.contactAndFooter?.twitterUrl || ""}
+                  placeholder="https://x.com/KradGlobalTour"
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      contactAndFooter: {
+                        ...(sections.contactAndFooter as any),
+                        twitterUrl: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              {/* Threads */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-black text-white flex items-center justify-center">
+                      <FaThreads className="w-4 h-4" />
+                    </div>
+                    <label className="font-bold text-slate-800">Threads URL</label>
+                  </div>
+                  {sections.contactAndFooter?.threadsUrl && (
+                    <a
+                      href={sections.contactAndFooter.threadsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-800 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sections.contactAndFooter?.threadsUrl || ""}
+                  placeholder="https://www.threads.net/@kradglobal"
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      contactAndFooter: {
+                        ...(sections.contactAndFooter as any),
+                        threadsUrl: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              {/* Pinterest */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2 sm:col-span-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#BD081C] text-white flex items-center justify-center">
+                      <FaPinterestP className="w-4 h-4" />
+                    </div>
+                    <label className="font-bold text-slate-800">Pinterest URL</label>
+                  </div>
+                  {sections.contactAndFooter?.pinterestUrl && (
+                    <a
+                      href={sections.contactAndFooter.pinterestUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-red-700 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sections.contactAndFooter?.pinterestUrl || ""}
+                  placeholder="https://in.pinterest.com/KradGlobalTravels/"
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      contactAndFooter: {
+                        ...(sections.contactAndFooter as any),
+                        pinterestUrl: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-mono"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 9: FOOTER, OFFICIAL CONTACT & COMPANY DETAILS */}
       {activeTab === "footer" && (
         <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-8 space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-slate-100">
@@ -1853,8 +2485,24 @@ export default function AdminSectionsPage() {
               />
             </div>
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">LinkedIn Company URL</label>
+            <div className="p-3.5 rounded-xl border border-blue-200 bg-blue-50/40 space-y-1.5 sm:col-span-2">
+              <div className="flex items-center justify-between">
+                <label className="font-extrabold text-[#0A66C2] flex items-center gap-1.5">
+                  <FaLinkedinIn className="w-3.5 h-3.5" />
+                  <span>LinkedIn Official Company URL (Corporate & B2B)</span>
+                </label>
+                {sections.contactAndFooter?.linkedinUrl && (
+                  <a
+                    href={sections.contactAndFooter.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0A66C2] hover:underline font-bold text-[11px] flex items-center gap-1"
+                  >
+                    <span>Test Link</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
               <input
                 type="text"
                 value={sections.contactAndFooter?.linkedinUrl || ""}
@@ -1868,7 +2516,7 @@ export default function AdminSectionsPage() {
                     },
                   })
                 }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono"
+                className="w-full px-4 py-2.5 border border-blue-300 rounded-xl text-xs sm:text-sm font-mono bg-white"
               />
             </div>
 

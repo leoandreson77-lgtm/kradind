@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
   Printer,
@@ -36,10 +37,35 @@ export function ProposalVoucherModal({
   onClose,
   proposal,
 }: ProposalVoucherModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
   const printAreaRef = useRef<HTMLDivElement>(null);
 
-  if (!isOpen || !proposal) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("proposal-voucher-open");
+    } else {
+      document.body.classList.remove("proposal-voucher-open");
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.classList.remove("proposal-voucher-open");
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !proposal || !mounted) return null;
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("en-IN", {
@@ -94,36 +120,123 @@ KRADIND Adventures | Himalayas & Beyond
     return phone ? `https://wa.me/${phone}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
   };
 
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex justify-center items-start p-2 sm:p-4 md:p-6 print:p-0 print:bg-white animate-fade-in">
+  const modalContent = (
+    <div
+      id="proposal-voucher-portal-root"
+      className="fixed inset-0 z-[9999] overflow-y-auto bg-black/75 backdrop-blur-sm flex justify-center items-start p-2 sm:p-4 md:p-6 print:p-0 print:m-0 print:bg-white print:static print:overflow-visible proposal-voucher-backdrop animate-fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       {/* Print Specific CSS Override */}
       <style jsx global>{`
         @media print {
-          body * {
-            visibility: hidden;
+          @page {
+            size: A4 portrait;
+            margin: 12mm 10mm 12mm 10mm;
           }
-          #printable-itinerary-voucher,
-          #printable-itinerary-voucher * {
-            visibility: visible;
-          }
-          #printable-itinerary-voucher {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            margin: 0;
-            padding: 20px;
-            background: white !important;
-            color: black !important;
-          }
-          .no-print {
+
+          /* Hide all app contents outside the portal during voucher printing */
+          body.proposal-voucher-open > *:not(#proposal-voucher-portal-root) {
             display: none !important;
+          }
+
+          body.proposal-voucher-open,
+          html {
+            background: #ffffff !important;
+            color: #0f172a !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            height: auto !important;
+            min-height: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          #proposal-voucher-portal-root {
+            display: block !important;
+            position: static !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+            overflow: visible !important;
+          }
+
+          .proposal-voucher-backdrop {
+            position: static !important;
+            inset: auto !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: #ffffff !important;
+            display: block !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+          }
+
+          .proposal-voucher-container {
+            position: static !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+          }
+
+          #printable-itinerary-voucher {
+            position: static !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            overflow: visible !important;
+          }
+
+          /* Screen-only UI controls */
+          .no-print,
+          button,
+          header,
+          footer,
+          nav,
+          aside,
+          .floating-whatsapp {
+            display: none !important;
+          }
+
+          /* Pagination and card integrity rules */
+          .page-break-avoid,
+          .page-break-inside-avoid,
+          .break-inside-avoid {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          *,
+          *::before,
+          *::after {
+            box-shadow: none !important;
+            text-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            transition: none !important;
+            animation: none !important;
           }
         }
       `}</style>
 
       {/* Main Modal Shell */}
-      <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden my-4 print:my-0 print:rounded-none print:shadow-none border border-slate-200">
+      <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden my-4 print:my-0 print:border-none print:shadow-none print:rounded-none print:max-w-none print:w-full print:static print:overflow-visible border border-slate-200 proposal-voucher-container">
         {/* Floating Top Control Bar (Screen only) */}
         <div className="no-print bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between gap-3 border-b border-slate-800 sticky top-0 z-20">
           <div className="flex items-center gap-2.5">
@@ -136,7 +249,7 @@ KRADIND Adventures | Himalayas & Beyond
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopySummary}
-              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700"
+              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700 cursor-pointer"
               title="Copy Summary text for messaging"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -156,7 +269,7 @@ KRADIND Adventures | Himalayas & Beyond
 
             <button
               onClick={handlePrint}
-              className="px-3 py-1.5 rounded-xl bg-[#FF6B35] hover:bg-[#e05a27] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-3 py-1.5 rounded-xl bg-[#FF6B35] hover:bg-[#e05a27] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
               title="Print voucher or Save as PDF"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -165,7 +278,7 @@ KRADIND Adventures | Himalayas & Beyond
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
               title="Close Preview"
             >
               <X className="w-4 h-4" />
@@ -174,9 +287,9 @@ KRADIND Adventures | Himalayas & Beyond
         </div>
 
         {/* Printable Document Area */}
-        <div id="printable-itinerary-voucher" ref={printAreaRef} className="p-6 sm:p-10 text-slate-900 bg-white">
+        <div id="printable-itinerary-voucher" ref={printAreaRef} className="p-6 sm:p-10 text-slate-900 bg-white print:p-0 print:m-0 print:w-full print:bg-white print:text-slate-900">
           {/* Header & Logo */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b-2 border-slate-900">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b-2 border-slate-900 page-break-avoid">
             <div className="flex items-center gap-3.5">
               <div className="w-14 h-14 relative shrink-0">
                 <Image
@@ -184,6 +297,7 @@ KRADIND Adventures | Himalayas & Beyond
                   alt="KRADIND Adventures"
                   width={56}
                   height={56}
+                  priority
                   className="object-contain"
                 />
               </div>
@@ -201,7 +315,7 @@ KRADIND Adventures | Himalayas & Beyond
             </div>
 
             <div className="text-left sm:text-right text-xs">
-              <div className="inline-block px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-slate-900 text-white mb-1.5">
+              <div className="inline-block px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-slate-900 text-white mb-1.5 print:bg-slate-900 print:text-white">
                 {proposal.status || "CONFIRMED QUOTATION"}
               </div>
               <div className="font-mono font-bold text-slate-800 text-sm">Ref: {proposal.id}</div>
@@ -221,9 +335,9 @@ KRADIND Adventures | Himalayas & Beyond
           </div>
 
           {/* Trip & Customer Profile Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 page-break-avoid">
             {/* Customer Details Box */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2 page-break-avoid print:bg-slate-50">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                 Prepared Exclusively For
               </div>
@@ -251,7 +365,7 @@ KRADIND Adventures | Himalayas & Beyond
             </div>
 
             {/* Expedition Summary Box */}
-            <div className="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 space-y-2">
+            <div className="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 space-y-2 page-break-avoid print:bg-emerald-50/60">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">
                 Expedition Blueprint
               </div>
@@ -283,7 +397,7 @@ KRADIND Adventures | Himalayas & Beyond
           </div>
 
           {/* Hospitality & Transit Logistics Strip */}
-          <div className="bg-slate-100/70 border border-slate-200 rounded-2xl p-3.5 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="bg-slate-100/70 border border-slate-200 rounded-2xl p-3.5 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs page-break-avoid print:bg-slate-100">
             <div className="flex items-center gap-2.5">
               <Bed className="w-4 h-4 text-emerald-700 shrink-0" />
               <div>
@@ -311,7 +425,7 @@ KRADIND Adventures | Himalayas & Beyond
 
           {/* Detailed Day-by-Day Itinerary */}
           <div className="mb-8">
-            <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-900 pb-2 mb-4 border-b border-slate-200 flex items-center justify-between">
+            <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-900 pb-2 mb-4 border-b border-slate-200 flex items-center justify-between page-break-avoid">
               <span>Day-by-Day Customized Itinerary</span>
               <span className="text-xs font-semibold text-slate-500">
                 {proposal.itinerary?.length || 0} Scheduled Days
@@ -322,17 +436,17 @@ KRADIND Adventures | Himalayas & Beyond
               {proposal.itinerary?.map((day, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 transition-colors shadow-2xs"
+                  className="p-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 transition-colors shadow-2xs page-break-avoid print:border-slate-300"
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-extrabold text-xs flex items-center justify-center shrink-0">
+                      <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-extrabold text-xs flex items-center justify-center shrink-0 print:bg-slate-900 print:text-white">
                         D{day.day || idx + 1}
                       </span>
                       <h3 className="font-extrabold text-slate-900 text-sm">{day.title}</h3>
                     </div>
                     {day.distance && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0 print:bg-slate-100">
                         {day.distance}
                       </span>
                     )}
@@ -370,9 +484,9 @@ KRADIND Adventures | Himalayas & Beyond
           </div>
 
           {/* Inclusions & Exclusions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 page-break-avoid">
             {/* Inclusions */}
-            <div className="bg-emerald-50/40 border border-emerald-200 rounded-2xl p-4">
+            <div className="bg-emerald-50/40 border border-emerald-200 rounded-2xl p-4 page-break-avoid print:bg-emerald-50/40">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-emerald-900 mb-3 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>Package Inclusions</span>
@@ -388,7 +502,7 @@ KRADIND Adventures | Himalayas & Beyond
             </div>
 
             {/* Exclusions */}
-            <div className="bg-rose-50/40 border border-rose-200 rounded-2xl p-4">
+            <div className="bg-rose-50/40 border border-rose-200 rounded-2xl p-4 page-break-avoid print:bg-rose-50/40">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-rose-900 mb-3 flex items-center gap-2">
                 <XCircle className="w-4 h-4 text-rose-500" />
                 <span>Package Exclusions</span>
@@ -406,7 +520,7 @@ KRADIND Adventures | Himalayas & Beyond
 
           {/* Special Notes */}
           {proposal.specialNotes && (
-            <div className="p-3.5 bg-amber-50/80 border border-amber-200 rounded-2xl text-xs text-amber-900 mb-8 space-y-1">
+            <div className="p-3.5 bg-amber-50/80 border border-amber-200 rounded-2xl text-xs text-amber-900 mb-8 space-y-1 page-break-avoid print:bg-amber-50/80">
               <div className="font-bold flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                 <span>Special Instructions & Dietary Notes:</span>
@@ -416,7 +530,7 @@ KRADIND Adventures | Himalayas & Beyond
           )}
 
           {/* Commercials & Pricing Schedule */}
-          <div className="bg-slate-900 text-white rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          <div className="bg-slate-900 text-white rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 page-break-avoid print:bg-slate-900 print:text-white">
             <div>
               <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-1">
                 Commercial Quotation
@@ -443,7 +557,7 @@ KRADIND Adventures | Himalayas & Beyond
           </div>
 
           {/* Signoff & Booking Terms Footer */}
-          <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] text-slate-500">
+          <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] text-slate-500 page-break-avoid">
             <div className="space-y-1">
               <div className="font-bold text-slate-800">KRADIND ADVENTURES PRIVATE LIMITED</div>
               <div>Dehradun Head Office, Uttarakhand • Contact: +91 97979 41414</div>
@@ -460,4 +574,6 @@ KRADIND Adventures | Himalayas & Beyond
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

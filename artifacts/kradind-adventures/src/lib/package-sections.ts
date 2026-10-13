@@ -36,7 +36,7 @@ export function getPackageSection(t?: { category?: string; categories?: string[]
   if (cat === "fixed departure" || cat === "fixed departures" || cat === "fixed") {
     return "Fixed";
   }
-  if (cat === "domestic" || cats.includes("domestic")) {
+  if (cat === "domestic" || cats.includes("domestic") || cats.includes("holiday package") || cat === "holiday package") {
     return "Domestic";
   }
   return "Trek";

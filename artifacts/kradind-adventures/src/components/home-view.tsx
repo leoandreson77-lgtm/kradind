@@ -68,6 +68,20 @@ export function HomeView({
     loadContent();
   }, []);
 
+  useEffect(() => {
+    // Auto-open registration/enquiry popup when website loads
+    const hasSeen = typeof window !== "undefined" ? sessionStorage.getItem("krad_popup_opened") : null;
+    if (hasSeen) return;
+
+    const timer = setTimeout(() => {
+      setBookingOpen(true);
+      try {
+        sessionStorage.setItem("krad_popup_opened", "true");
+      } catch {}
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleOpenBooking = (trekName?: string, batchDate?: string) => {
     if (trekName) setSelectedTrek(trekName);
     if (batchDate) setSelectedBatchDate(batchDate);
@@ -183,7 +197,7 @@ export function HomeView({
 
             {/* 2. Domestic Tours */}
             <Link
-              href="/treks?type=Domestic"
+              href="/domestic-trips"
               className="group relative rounded-2xl overflow-hidden h-44 sm:h-52 p-5 flex flex-col justify-end text-white shadow-md hover:shadow-xl transition duration-300 hover:-translate-y-1"
             >
               <img

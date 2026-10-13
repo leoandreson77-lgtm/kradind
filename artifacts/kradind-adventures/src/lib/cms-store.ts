@@ -69,6 +69,10 @@ export interface TrekData {
   costFactors?: string[];
   createdAt?: string;
   updatedAt?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  primaryKeyword?: string;
 }
 
 export interface TrailRadarReport {

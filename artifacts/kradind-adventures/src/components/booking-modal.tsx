@@ -125,64 +125,85 @@ export function BookingModal({
             
             <div className="flex items-center gap-2 text-[#0F3A2E]">
               <Mountain className="w-6 h-6 text-[#FF6B35]" />
-              <h2 className="text-xl font-black brand-font text-slate-900">
-                Reserve Departure Batch
-              </h2>
+              <div>
+                <h2 className="text-xl font-black brand-font text-slate-900 leading-tight">
+                  Quick Enquiry &amp; Registration
+                </h2>
+                <p className="text-[11px] text-slate-500 font-medium">
+                  Get personalized itineraries, group quotes &amp; departure offers.
+                </p>
+              </div>
             </div>
             
             <div className="space-y-3">
               <div>
                 <label htmlFor="booking-trek" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  Select Trek
+                  Select Tour / Trek Package
                 </label>
                 <select
                   id="booking-trek"
                   name="trekName"
-                  aria-label="Select Trek"
+                  aria-label="Select Tour or Trek"
                   value={trekName}
                   onChange={(e) => setTrekName(e.target.value)}
                   className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-900 text-xs font-semibold rounded-xl p-3 focus:ring-2 focus:ring-[#0F3A2E] outline-none"
                 >
-                  <option value="Kedarkantha Summit Trek">Kedarkantha Summit Trek (₹8,999)</option>
-                  <option value="Ali Bedni Bugyal Meadow">Ali Bedni Bugyal Meadow (₹10,499)</option>
-                  <option value="Kashmir Great Lakes">Kashmir Great Lakes (₹15,999)</option>
-                  <option value="Valley of Flowers & Hemkund">Valley of Flowers & Hemkund (₹9,999)</option>
-                  <option value="Hampta Pass Crossover">Hampta Pass Crossover (₹11,199)</option>
-                  <option value="Nag Tibba Weekend Summit">Nag Tibba Weekend Summit (₹2,899)</option>
+                  <optgroup label="🏖️ Domestic Holiday Packages">
+                    <option value="Uttarakhand Tour Package – 5 Nights 6 Days">Uttarakhand Tour Package (5N/6D)</option>
+                    <option value="Kerala Tour Package – 5 Nights 6 Days">Kerala Tour Package (5N/6D)</option>
+                    <option value="Kashmir Tour Package 5 Nights 6 Days">Kashmir Tour Package (5N/6D)</option>
+                    <option value="Rajasthan Tour Package 5 Nights 6 Days">Rajasthan Tour Package (5N/6D)</option>
+                    <option value="Nainital Tour Package 3 Nights 4 Days">Nainital Tour Package (3N/4D)</option>
+                    <option value="Goa Tour Package 4 Nights 5 Days">Goa Tour Package (4N/5D)</option>
+                    <option value="Meghalaya Tour Package 5 Nights 6 Days">Meghalaya Tour Package (5N/6D)</option>
+                    <option value="Sikkim Tour Package 5 Nights 6 Days">Sikkim Tour Package (5N/6D)</option>
+                    <option value="Leh Ladakh Itinerary – 6 Nights 7 Days">Leh Ladakh Package (6N/7D)</option>
+                    <option value="Rishikesh Tour Package 3 Nights 4 days">Rishikesh Tour Package (3N/4D)</option>
+                  </optgroup>
+                  <optgroup label="🏔️ Himalayan Treks">
+                    <option value="Kedarkantha Summit Trek">Kedarkantha Summit Trek (₹8,999)</option>
+                    <option value="Ali Bedni Bugyal Meadow">Ali Bedni Bugyal Meadow (₹10,499)</option>
+                    <option value="Kashmir Great Lakes">Kashmir Great Lakes (₹15,999)</option>
+                    <option value="Valley of Flowers & Hemkund">Valley of Flowers & Hemkund (₹9,999)</option>
+                    <option value="Hampta Pass Crossover">Hampta Pass Crossover (₹11,199)</option>
+                    <option value="Nag Tibba Weekend Summit">Nag Tibba Weekend Summit (₹2,899)</option>
+                  </optgroup>
+                  <optgroup label="✨ Custom / Other">
+                    <option value="Customized Domestic Holiday">Customized Domestic Holiday</option>
+                    <option value="Customized Himalayan Expedition">Customized Himalayan Expedition</option>
+                    <option value="Customized International Tour">Customized International Tour</option>
+                  </optgroup>
                 </select>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="booking-batch" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                    <Calendar className="w-3 h-3" /> Batch Date
+                    <Calendar className="w-3 h-3" /> Batch / Travel Date
                   </label>
-                  <select
+                  <input
                     id="booking-batch"
                     name="batchDate"
-                    aria-label="Batch Date"
+                    aria-label="Batch / Travel Date"
+                    type="text"
+                    placeholder="e.g. Next Weekend / Nov 2026"
                     value={batchDate}
                     onChange={(e) => setBatchDate(e.target.value)}
                     className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-900 text-xs font-semibold rounded-xl p-2.5 outline-none"
-                  >
-                    <option>Jun 14 - Jun 18, 2026</option>
-                    <option>Jun 28 - Jul 02, 2026</option>
-                    <option>Jul 12 - Jul 16, 2026</option>
-                    <option>Aug 02 - Aug 06, 2026</option>
-                  </select>
+                  />
                 </div>
 
                 <div>
                   <label htmlFor="booking-trekkers" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                    <Users className="w-3 h-3" /> Trekkers
+                    <Users className="w-3 h-3" /> Travelers
                   </label>
                   <input
                     id="booking-trekkers"
                     name="trekkersCount"
-                    aria-label="Number of trekkers"
+                    aria-label="Number of travelers"
                     type="number"
                     min={1}
-                    max={10}
+                    max={50}
                     value={trekkersCount}
                     onChange={(e) => setTrekkersCount(Math.max(1, parseInt(e.target.value) || 1))}
                     className="w-full mt-1 bg-slate-100 border border-slate-300 text-slate-900 text-xs font-semibold rounded-xl p-2.5 outline-none"
@@ -290,9 +311,10 @@ export function BookingModal({
               </div>
               <button
                 type="submit"
-                className="bg-[#FF6B35] hover:bg-[#e8590c] text-white font-bold px-6 py-3 rounded-full text-xs transition shadow-lg flex items-center gap-1 cursor-pointer"
+                disabled={isSubmitting}
+                className="bg-[#FF6B35] hover:bg-[#e8590c] text-white font-bold px-6 py-3 rounded-full text-xs transition shadow-lg flex items-center gap-1 cursor-pointer disabled:opacity-60"
               >
-                <ShieldCheck className="w-4 h-4" /> Confirm Reservation
+                <ShieldCheck className="w-4 h-4" /> {isSubmitting ? "Sending..." : "Submit Enquiry & Reserve"}
               </button>
             </div>
 

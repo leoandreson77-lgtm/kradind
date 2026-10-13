@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { treks } from "@/lib/travel-data";
 import { getTreksAsync } from "@/lib/cms-store";
+import { isDomesticPackage } from "@/lib/package-sections";
 
 export async function generateMetadata({
   params,
@@ -22,14 +23,26 @@ export async function generateMetadata({
     treks[0];
 
   const pageUrl = `https://kradind.com/treks/${slug}`;
-  const title = `${trek.name} (${trek.duration}) | KRADIND Adventures`;
+  const title = trek.metaTitle || `${trek.name} (${trek.duration}) | KRADIND Adventures`;
   const description =
+    trek.metaDescription ||
     trek.overview ||
     `Book ${trek.name} in ${trek.region}. Duration: ${trek.duration}, Altitude: ${trek.altitude}, Difficulty: ${trek.difficulty}. Certified guides, small batches, verified trails.`;
+  const keywords = trek.metaKeywords
+    ? trek.metaKeywords.split(",").map((k: string) => k.trim())
+    : [
+        trek.name,
+        trek.region,
+        "tour package",
+        "holiday package",
+        "KRAD Global",
+        "KRADIND Adventures",
+      ];
 
   return {
     title,
     description,
+    keywords,
     alternates: {
       canonical: `/treks/${slug}`,
     },
@@ -85,7 +98,9 @@ export default async function TrekDetailLayout({
         "@id": `https://kradind.com/treks/${slug}#trip`,
         name: trek.name,
         description: trek.overview || trek.tagline || "",
-        touristType: ["Adventure Traveler", "Trekker", "High Altitude Hiker"],
+        touristType: isDomesticPackage(trek)
+          ? ["Holiday Traveler", "Family Vacationer", "Leisure Explorer"]
+          : ["Adventure Traveler", "Trekker", "High Altitude Hiker"],
         offers: {
           "@type": "Offer",
           price: trek.price,
@@ -125,8 +140,8 @@ export default async function TrekDetailLayout({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Himalayan Treks",
-            item: "https://kradind.com/treks",
+            name: isDomesticPackage(trek) ? "Domestic Tour Packages" : "Himalayan Treks",
+            item: isDomesticPackage(trek) ? "https://kradind.com/domestic-trips" : "https://kradind.com/treks",
           },
           {
             "@type": "ListItem",

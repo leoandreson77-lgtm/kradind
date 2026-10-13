@@ -51,35 +51,41 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "A trek with this slug already exists" }, { status: 400 });
     }
 
+    const isDomestic =
+      (body.category || "").toLowerCase() === "domestic" ||
+      (body.categories || []).some((c) => c.toLowerCase() === "domestic" || c.toLowerCase() === "holiday package");
+
     const newTrek: TrekData = {
       id: Date.now(),
       slug: body.slug,
       name: body.name,
-      location: body.location || "Uttarakhand",
-      region: body.region || "Himalayas",
-      image: body.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+      location: body.location || (isDomestic ? "India" : "Uttarakhand"),
+      region: body.region || (isDomestic ? "Domestic Circuit" : "Himalayas"),
+      image: body.image || (isDomestic
+        ? "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80"
+        : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"),
       imageAlt: body.imageAlt || "",
-      gallery: body.gallery || [body.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"],
-      tagline: body.tagline || "",
+      gallery: body.gallery || [body.image || (isDomestic
+        ? "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80"
+        : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80")],
+      tagline: body.tagline || (isDomestic ? "Scenic leisure holidays, sightseeing & private travel" : ""),
       description: body.description || "",
       overview: body.overview || "",
       highlights: body.highlights || [],
-      duration: body.duration || "5 Days",
-      difficulty: (body.difficulty as "Easy" | "Moderate" | "Challenging") || "Moderate",
-      altitude: body.altitude || "12,000 Ft",
-      distance: body.distance || "20 km",
-      baseCamp: body.baseCamp || "Base Camp",
+      duration: body.duration || (isDomestic ? "5 Nights / 6 Days" : "5 Days"),
+      difficulty: (body.difficulty as any) || (isDomestic ? "Leisure / Scenic" : "Moderate"),
+      altitude: body.altitude || (isDomestic ? "Sightseeing" : "12,000 Ft"),
+      distance: body.distance || (isDomestic ? "Sightseeing Circuit" : "20 km"),
+      baseCamp: body.baseCamp || (isDomestic ? "Airport / Railway Station" : "Base Camp"),
       rating: body.rating || 4.9,
       reviewCount: body.reviewCount || 1,
-      price: Number(body.price) || 8999,
-      originalPrice: Number(body.originalPrice) || 10999,
-      badge: body.badge || "Featured",
-      category:
-        body.category ||
-        (body.categories?.some((c) => c.toLowerCase() === "domestic")
-          ? "Domestic"
-          : body.categories?.[0] || "Himalayas"),
-      categories: body.categories || ["Himalayas"],
+      price: Number(body.price) || (isDomestic ? 18999 : 8999),
+      originalPrice: Number(body.originalPrice) || (isDomestic ? 22999 : 10999),
+      badge: body.badge || (isDomestic ? "Domestic Holiday" : "Featured"),
+      category: isDomestic ? "Domestic" : (body.category || body.categories?.[0] || "Himalayas"),
+      categories: isDomestic
+        ? ["Domestic", "Holiday Package", ...Array.from(new Set((body.categories || []).filter(c => !["trek", "treks", "summit", "high pass", "himalayas", "himalayan", "alpine", "expedition"].includes(c.toLowerCase().trim()))))]
+        : (body.categories || ["Himalayas"]),
       status: body.status || "Published",
       batches: body.batches || [
         { id: Date.now() + 1, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 12, price: Number(body.price) || 8999 },
@@ -90,6 +96,10 @@ export async function POST(request: NextRequest) {
       inclusions: body.inclusions || [],
       exclusions: body.exclusions || [],
       faqs: body.faqs || [],
+      metaTitle: body.metaTitle || "",
+      metaDescription: body.metaDescription || "",
+      metaKeywords: body.metaKeywords || "",
+      primaryKeyword: body.primaryKeyword || "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

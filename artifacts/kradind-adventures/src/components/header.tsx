@@ -805,6 +805,18 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             <span className="hidden 2xl:inline whitespace-nowrap">Voice Search</span>
           </button>
 
+          {/* Quick Enquire Now Button */}
+          {onBookClick && (
+            <button
+              type="button"
+              onClick={onBookClick}
+              className="inline-flex items-center gap-1.5 bg-[#0F3A2E] hover:bg-[#185343] text-white text-xs sm:text-[13px] font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-full shadow-md transition-all duration-200 shrink-0 whitespace-nowrap cursor-pointer ring-1 ring-emerald-400/30"
+              title="Quick Enquiry / Registration"
+            >
+              <span>Enquire Now</span>
+            </button>
+          )}
+
           {/* Glowing Vibrant Plan Your Trip CTA - Full Visibility & Zero Clipping */}
           <Link
             href="/booking"
@@ -828,6 +840,18 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-8 space-y-3 max-h-[85vh] overflow-y-auto">
+          {onBookClick && (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onBookClick();
+              }}
+              className="w-full bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-extrabold text-xs py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>📋 Quick Enquiry / Registration</span>
+            </button>
+          )}
           
           {/* Quick Actions in Drawer */}
           <div className="grid grid-cols-3 gap-2 pb-2 border-b border-slate-100">

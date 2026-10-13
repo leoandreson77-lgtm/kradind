@@ -1,4 +1,5 @@
 import React from "react";
+import { Metadata } from "next";
 import { treks } from "@/lib/travel-data";
 import { getTreksAsync, readStore, TrekData } from "@/lib/cms-store";
 import { TreksContent } from "@/components/treks-catalog";

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { TrekData, HomeSectionsConfig } from "@/lib/cms-store";
 import { TrekDatesModal } from "@/components/trek-dates-modal";
+import { isDomesticPackage, isInternationalPackage } from "@/lib/package-sections";
 
 interface SeasonalTreksCarouselProps {
   treks: TrekData[];
@@ -58,21 +59,21 @@ export function SeasonalTreksCarousel({
   const featuredTreks = React.useMemo(() => {
     if (!allTreks || allTreks.length === 0) return [];
 
-    // Match in specified order
+    // Match in specified order (pure treks only)
     const ordered: TrekData[] = [];
     featuredSlugs.forEach((slug) => {
       const found = allTreks.find(
-        (t) => t.slug === slug || t.slug.includes(slug) || slug.includes(t.slug)
+        (t) => (t.slug === slug || t.slug.includes(slug) || slug.includes(t.slug)) && !isDomesticPackage(t) && !isInternationalPackage(t)
       );
       if (found && !ordered.some((item) => item.id === found.id)) {
         ordered.push(found);
       }
     });
 
-    // If less than 4, fill with remaining published treks
+    // If less than 4, fill with remaining published treks (excluding domestic & international)
     if (ordered.length < 5) {
       allTreks.forEach((t) => {
-        if (!ordered.some((item) => item.id === t.id) && t.status === "Published") {
+        if (!ordered.some((item) => item.id === t.id) && t.status === "Published" && !isDomesticPackage(t) && !isInternationalPackage(t)) {
           ordered.push(t);
         }
       });

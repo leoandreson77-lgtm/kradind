@@ -10,6 +10,7 @@ import { PrintHeader, PrintFooter } from "@/components/print-header";
 import { BookingModal } from "@/components/booking-modal";
 import { TrekData } from "@/lib/cms-store";
 import { getImageAlt } from "@/lib/image-alt";
+import { isDomesticPackage, isInternationalPackage } from "@/lib/package-sections";
 import {
   Clock,
   Mountain,
@@ -418,8 +419,13 @@ export function TrekDetailClient({
 
   if (!trek) return null;
 
+  const isDomestic = isDomesticPackage(trek);
+  const isIntl = isInternationalPackage(trek);
+
   const whatsappMessage = encodeURIComponent(
-    `Hi KRADIND Adventures! I am interested in booking or getting details for "${trek.name || "Trek"}" (${trek.duration || "Tour"}). Please share details.`
+    `Hi KRADIND Adventures! I am interested in booking or getting details for ${
+      isDomestic ? "domestic tour package" : isIntl ? "international tour package" : "trek"
+    } "${trek.name || "Package"}" (${trek.duration || "Tour"}). Please share pricing and itinerary.`
   );
 
   return (
@@ -466,13 +472,31 @@ export function TrekDetailClient({
               />
             </Link>
 
-            <Link
-              href="/treks"
-              className="no-print print:hidden inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-200 hover:text-white bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 transition-all shadow-md group"
-            >
-              <ArrowLeft className="w-4 h-4 text-emerald-400 group-hover:-translate-x-0.5 transition-transform" />
-              <span>Back to all Treks & Packages</span>
-            </Link>
+            {isDomestic ? (
+              <Link
+                href="/domestic-trips"
+                className="no-print print:hidden inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-amber-200 hover:text-white bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-amber-500/30 transition-all shadow-md group"
+              >
+                <ArrowLeft className="w-4 h-4 text-amber-400 group-hover:-translate-x-0.5 transition-transform" />
+                <span>Back to Domestic Tour Packages</span>
+              </Link>
+            ) : isIntl ? (
+              <Link
+                href="/international-trips"
+                className="no-print print:hidden inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-sky-200 hover:text-white bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-sky-500/30 transition-all shadow-md group"
+              >
+                <ArrowLeft className="w-4 h-4 text-sky-400 group-hover:-translate-x-0.5 transition-transform" />
+                <span>Back to International Tours</span>
+              </Link>
+            ) : (
+              <Link
+                href="/treks"
+                className="no-print print:hidden inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-200 hover:text-white bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 transition-all shadow-md group"
+              >
+                <ArrowLeft className="w-4 h-4 text-emerald-400 group-hover:-translate-x-0.5 transition-transform" />
+                <span>Back to all Treks</span>
+              </Link>
+            )}
           </div>
 
           {/* Badges */}
@@ -484,11 +508,11 @@ export function TrekDetailClient({
             </span>
             <span className="inline-flex items-center gap-1.5 bg-slate-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full text-slate-100 border border-white/20 font-medium shadow-md">
               <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{trek.location || trek.region || "Himalayas"}</span>
+              <span>{trek.location || trek.region || (isDomestic ? "India" : "Himalayas")}</span>
             </span>
             <span className="inline-flex items-center gap-1.5 bg-amber-600/85 backdrop-blur-md text-white border border-amber-400/40 px-3.5 py-1.5 rounded-full font-semibold shadow-md">
               <Sparkles className="w-3.5 h-3.5 text-amber-200" />
-              <span>{trek.badge || "Verified Tour"}</span>
+              <span>{trek.badge || (isDomestic ? "Domestic Holiday" : isIntl ? "International Tour" : "Verified Adventure")}</span>
             </span>
           </div>
 
@@ -520,7 +544,9 @@ export function TrekDetailClient({
                   <Mountain className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">Max Altitude / Type</span>
+                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
+                    {isDomestic ? "Tour Style / Altitude" : isIntl ? "Tour Type" : "Max Altitude"}
+                  </span>
                   <strong className="text-white text-xs sm:text-sm font-bold block leading-tight">{trek.altitude}</strong>
                 </div>
               </div>
@@ -530,7 +556,9 @@ export function TrekDetailClient({
                   <Award className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">Grade</span>
+                  <span className="text-slate-300 block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
+                    {isDomestic || isIntl ? "Pace / Style" : "Difficulty Grade"}
+                  </span>
                   <strong className="text-white text-xs sm:text-sm font-bold block leading-tight">{trek.difficulty}</strong>
                 </div>
               </div>
@@ -565,7 +593,7 @@ export function TrekDetailClient({
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
               }`}
             >
-              🗓️ Detailed Itinerary ({trek.itinerary?.length || 0} Days)
+              🗓️ {isDomestic || isIntl ? "Tour Itinerary" : "Detailed Itinerary"} ({trek.itinerary?.length || 0} Days)
             </button>
             <button
               onClick={() => scrollToSection("highlights", "highlights")}
@@ -963,7 +991,9 @@ export function TrekDetailClient({
                 className="w-full bg-[#0F3A2E] hover:bg-[#164e3f] text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2 text-center"
               >
                 <Calendar className="w-4 h-4" />
-                <span>Book This Adventure Now</span>
+                <span>
+                  {isDomestic ? "Book Tour Package / Get Quote" : isIntl ? "Book International Tour" : "Book This Adventure Now"}
+                </span>
               </Link>
 
               <a

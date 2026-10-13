@@ -434,7 +434,7 @@ export default function AdminTreksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTrek, setEditingTrek] = useState<TrekData | null>(null);
   const [modalTab, setModalTab] = useState<
-    "basic" | "media" | "batches" | "categories" | "overview" | "itinerary" | "inclusions" | "faqs"
+    "basic" | "media" | "batches" | "categories" | "overview" | "itinerary" | "inclusions" | "faqs" | "seo"
   >("basic");
   const [newCategoryInput, setNewCategoryInput] = useState("");
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | number | null>(null);
@@ -1070,7 +1070,15 @@ export default function AdminTreksPage() {
         return;
       }
 
-      showToast(isNew ? "Trek created successfully!" : "Trek updated successfully!");
+      const itemType =
+        section === "Domestic"
+          ? "Domestic Tour Package"
+          : section === "International"
+          ? "International Tour Package"
+          : section === "Fixed"
+          ? "Fixed Departure"
+          : "Trek";
+      showToast(isNew ? `${itemType} created successfully!` : `${itemType} updated successfully!`);
       setIsModalOpen(false);
       setEditingTrek(null);
       fetchTreks();
@@ -2347,7 +2355,17 @@ export default function AdminTreksPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <h2 className="text-lg sm:text-xl font-bold text-slate-900 line-clamp-1">
-                      {editingTrek.id ? `Edit: ${editingTrek.name || "Trek"}` : "Create New Trek"}
+                      {editingTrek.id
+                        ? `Edit: ${editingTrek.name || (getPackageSection(editingTrek) === "Trek" ? "Trek" : "Package")}`
+                        : `Create New ${
+                            getPackageSection(editingTrek) === "Domestic"
+                              ? "Domestic Tour Package"
+                              : getPackageSection(editingTrek) === "International"
+                              ? "International Tour Package"
+                              : getPackageSection(editingTrek) === "Fixed"
+                              ? "Fixed Departure Tour"
+                              : "Himalayan Trek"
+                          }`}
                     </h2>
                     {(() => {
                       const sec = getPackageSection(editingTrek);
@@ -2598,6 +2616,33 @@ export default function AdminTreksPage() {
                         {editingTrek.faqs?.length || 0}
                       </span>
                     </button>
+
+                    {/* 9. SEO & Meta Tags */}
+                    <button
+                      type="button"
+                      onClick={() => setModalTab("seo")}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center justify-between gap-2.5 group cursor-pointer ${
+                        modalTab === "seo"
+                          ? "bg-[#0F3A2E] text-white shadow-md font-bold ring-2 ring-[#0F3A2E]/20"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`p-1.5 rounded-xl transition ${
+                          modalTab === "seo" ? "bg-white/15 text-white" : "bg-purple-100 text-purple-600 group-hover:text-purple-700"
+                        }`}>
+                          <Sparkles className="w-4 h-4" />
+                        </span>
+                        <span className="truncate">SEO &amp; Meta Tags</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition shrink-0 ${
+                        editingTrek.metaTitle || editingTrek.metaDescription
+                          ? "bg-emerald-100 text-emerald-800"
+                          : "bg-slate-200/70 text-slate-500"
+                      }`}>
+                        {editingTrek.metaTitle ? "Active" : "Add"}
+                      </span>
+                    </button>
                   </nav>
                 </div>
 
@@ -2778,13 +2823,15 @@ export default function AdminTreksPage() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Max Altitude</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {getPackageSection(editingTrek) === "Trek" ? "Max Altitude" : "Tour Style / Altitude"}
+                        </label>
                         <input
                           type="text"
                           value={editingTrek.altitude}
                           onChange={(e) => setEditingTrek({ ...editingTrek, altitude: e.target.value })}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="14,000 Ft"
+                          placeholder={getPackageSection(editingTrek) === "Trek" ? "14,000 Ft" : "Scenic / Hill Station"}
                         />
                       </div>
 
@@ -2795,42 +2842,49 @@ export default function AdminTreksPage() {
                           value={editingTrek.duration}
                           onChange={(e) => setEditingTrek({ ...editingTrek, duration: e.target.value })}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="5 Days / 4 Nights"
+                          placeholder="5 Nights / 6 Days"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Trek Distance</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {getPackageSection(editingTrek) === "Trek" ? "Trek Distance" : "Circuit Distance / Route"}
+                        </label>
                         <input
                           type="text"
                           value={editingTrek.distance || ""}
                           onChange={(e) => setEditingTrek({ ...editingTrek, distance: e.target.value })}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="26 km"
+                          placeholder={getPackageSection(editingTrek) === "Trek" ? "26 km" : "Sightseeing Circuit"}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Base Camp</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {getPackageSection(editingTrek) === "Trek" ? "Base Camp" : "Pickup / Drop Point"}
+                        </label>
                         <input
                           type="text"
                           value={editingTrek.baseCamp || ""}
                           onChange={(e) => setEditingTrek({ ...editingTrek, baseCamp: e.target.value })}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="Jobra / Sankri"
+                          placeholder={getPackageSection(editingTrek) === "Trek" ? "Sankri / Jobra" : "Airport / Railway Station"}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Difficulty / Grade</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {getPackageSection(editingTrek) === "Trek" ? "Difficulty / Grade" : "Tour Pace / Style"}
+                        </label>
                         <select
                           value={editingTrek.difficulty}
                           onChange={(e) => setEditingTrek({ ...editingTrek, difficulty: e.target.value })}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white"
                         >
+                          <option value="Leisure / Scenic">Leisure / Scenic (Family & Couples)</option>
                           <option value="Easy">Easy (Beginner Friendly)</option>
                           <option value="Easy to Moderate">Easy to Moderate</option>
-                          <option value="Moderate">Moderate</option>
+                          <option value="Moderate">Moderate (Active Sightseeing)</option>
                           <option value="Moderate to Difficult">Moderate to Difficult</option>
                           <option value="Challenging">Challenging / Strenuous</option>
                           <option value="Difficult">Difficult (High Altitude Pass)</option>
@@ -4172,6 +4226,116 @@ export default function AdminTreksPage() {
                   </div>
                 )}
 
+                {/* TAB 9: SEO & META TAGS */}
+                {modalTab === "seo" && (
+                  <div className="space-y-5">
+                    <div className="p-4 bg-purple-50/70 rounded-2xl border border-purple-200/80">
+                      <div className="flex items-center gap-2 text-purple-900 font-bold text-xs sm:text-sm">
+                        <Sparkles className="w-4 h-4 text-purple-600" />
+                        <span>Search Engine Optimization (SEO) &amp; Meta Tags</span>
+                      </div>
+                      <p className="text-[11px] text-purple-700/90 mt-1 leading-relaxed">
+                        Customize how this package ranks on Google and appears across search snippets, social shares, and link previews.
+                      </p>
+                    </div>
+
+                    {/* Google SERP Preview Box */}
+                    <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-1.5">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Google Search Snippet Preview
+                      </span>
+                      <div className="text-xs text-emerald-700 font-mono flex items-center gap-1 truncate">
+                        <span>https://www.kradind.com</span>
+                        <span>›</span>
+                        <span>treks</span>
+                        <span>›</span>
+                        <span className="text-slate-600 font-semibold">{editingTrek.slug || "package-slug"}</span>
+                      </div>
+                      <h4 className="text-base sm:text-lg font-medium text-blue-700 hover:underline cursor-pointer leading-snug line-clamp-1">
+                        {editingTrek.metaTitle || `${editingTrek.name || "Package Title"} | KRADIND Holidays`}
+                      </h4>
+                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                        {editingTrek.metaDescription || editingTrek.overview || "Explore detailed tour itinerary, best seasonal batches, inclusions, and verified customer reviews on KRADIND."}
+                      </p>
+                    </div>
+
+                    {/* Meta Title Field */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-bold text-slate-800">
+                          Meta Title Tag (SEO Title)
+                        </label>
+                        <span className={`text-[10px] font-mono font-semibold ${
+                          (editingTrek.metaTitle?.length || 0) > 60
+                            ? "text-amber-600 font-bold"
+                            : "text-slate-400"
+                        }`}>
+                          {editingTrek.metaTitle?.length || 0} / 60 chars recommended
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        value={editingTrek.metaTitle || ""}
+                        onChange={(e) => setEditingTrek({ ...editingTrek, metaTitle: e.target.value })}
+                        placeholder="e.g. Kerala Tour Package 5 Nights 6 Days | Hills & Backwaters"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                      />
+                    </div>
+
+                    {/* Meta Description Field */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-bold text-slate-800">
+                          Meta Description Tag
+                        </label>
+                        <span className={`text-[10px] font-mono font-semibold ${
+                          (editingTrek.metaDescription?.length || 0) > 160
+                            ? "text-amber-600 font-bold"
+                            : "text-slate-400"
+                        }`}>
+                          {editingTrek.metaDescription?.length || 0} / 160 chars recommended
+                        </span>
+                      </div>
+                      <textarea
+                        rows={3}
+                        value={editingTrek.metaDescription || ""}
+                        onChange={(e) => setEditingTrek({ ...editingTrek, metaDescription: e.target.value })}
+                        placeholder="e.g. Book a 5 nights 6 days Kerala tour package. Explore misty Munnar tea hills, Thekkady wildlife, and an Alleppey backwater houseboat stay. Get best deals now!"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                      />
+                    </div>
+
+                    {/* Primary Keyword & Meta Keywords */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold text-slate-800">
+                          Primary Target Keyword
+                        </label>
+                        <input
+                          type="text"
+                          value={editingTrek.primaryKeyword || ""}
+                          onChange={(e) => setEditingTrek({ ...editingTrek, primaryKeyword: e.target.value })}
+                          placeholder="e.g. Kerala tour package 5 nights 6 days"
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold text-slate-800">
+                          Meta Keywords (Comma separated)
+                        </label>
+                        <input
+                          type="text"
+                          value={editingTrek.metaKeywords || ""}
+                          onChange={(e) => setEditingTrek({ ...editingTrek, metaKeywords: e.target.value })}
+                          placeholder="kerala tour package 5 nights 6 days, munnar thekkady alleppey tour..."
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
 
               {/* Modal Footer (Pinned to Right Content Column) */}
@@ -4193,6 +4357,8 @@ export default function AdminTreksPage() {
                       ? "Overview & Highlights"
                       : modalTab === "inclusions"
                       ? "Inclusions"
+                      : modalTab === "seo"
+                      ? "SEO & Meta Tags"
                       : "FAQs"}
                   </span>
                 </div>
@@ -4209,7 +4375,15 @@ export default function AdminTreksPage() {
                     disabled={actionLoading}
                     className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-60 cursor-pointer"
                   >
-                    {actionLoading ? "Saving Trek..." : "Save All Changes"}
+                    {actionLoading
+                      ? "Saving..."
+                      : getPackageSection(editingTrek) === "Domestic"
+                      ? "Save Domestic Tour"
+                      : getPackageSection(editingTrek) === "International"
+                      ? "Save International Tour"
+                      : getPackageSection(editingTrek) === "Fixed"
+                      ? "Save Fixed Departure"
+                      : "Save Himalayan Trek"}
                   </button>
                 </div>
               </div>

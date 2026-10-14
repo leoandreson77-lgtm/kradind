@@ -293,7 +293,7 @@ export async function PUT(request: NextRequest) {
 }
 
 /**
- * DELETE: Remove an international tour package
+ * DELETE: Remove or recycle an international tour package
  */
 export async function DELETE(request: NextRequest) {
   const session = await getAdminSession(request);
@@ -305,26 +305,81 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     const slug = searchParams.get("slug");
-
-    if (!id && !slug) {
-      return NextResponse.json({ error: "Missing id or slug parameter" }, { status: 400 });
-    }
+    const emptyRecycleBin = searchParams.get("emptyRecycleBin") === "true";
+    const permanent = searchParams.get("permanent") === "true";
+    const restore = searchParams.get("restore") === "true";
 
     const store = readStore();
     if (!store.destinations) {
       store.destinations = getDefaultDestinations();
     }
 
-    const initialLen = store.destinations.length;
-    store.destinations = store.destinations.filter((d) => {
-      if (id && String(d.id) === String(id)) return false;
-      if (slug && d.slug.toLowerCase() === slug.toLowerCase()) return false;
-      return true;
-    });
+    // Operation 1: Empty entire Recycle Bin for international packages
+    if (emptyRecycleBin) {
+      const beforeCount = store.destinations.length;
+      store.destinations = store.destinations.filter(
+        (d: any) =>
+          !(d.category?.toLowerCase() === "international" && (d.isDeleted || d.status === "Trash"))
+      );
+      const removedCount = beforeCount - store.destinations.length;
+      writeStore(store);
+      await syncDestinationsToMongo(store.destinations);
+      return NextResponse.json({
+        success: true,
+        message: `Recycle Bin emptied (${removedCount} international tours purged permanently)`,
+      });
+    }
 
-    if (store.destinations.length === initialLen) {
+    if (!id && !slug) {
+      return NextResponse.json({ error: "Missing id or slug parameter" }, { status: 400 });
+    }
+
+    const index = store.destinations.findIndex(
+      (d) =>
+        (id && String(d.id) === String(id)) ||
+        (slug && d.slug.toLowerCase() === slug.toLowerCase())
+    );
+
+    if (index === -1) {
       return NextResponse.json({ error: "Package not found" }, { status: 404 });
     }
+
+    const dest = store.destinations[index];
+
+    // Operation 2: Restore from Recycle Bin
+    if (restore) {
+      (dest as any).isDeleted = false;
+      (dest as any).deletedAt = undefined;
+      dest.status = "Draft";
+      writeStore(store);
+      await syncDestinationsToMongo(store.destinations);
+      return NextResponse.json({
+        success: true,
+        message: `"${dest.name}" restored successfully as Draft!`,
+      });
+    }
+
+    // Operation 3: Permanent Delete
+    if (permanent) {
+      store.destinations = store.destinations.filter(
+        (d) =>
+          !(
+            (id && String(d.id) === String(id)) ||
+            (slug && d.slug.toLowerCase() === slug.toLowerCase())
+          )
+      );
+      writeStore(store);
+      await syncDestinationsToMongo(store.destinations);
+      return NextResponse.json({
+        success: true,
+        message: `"${dest.name}" permanently deleted from database.`,
+      });
+    }
+
+    // Operation 4: Soft Delete (Move to Recycle Bin)
+    (dest as any).isDeleted = true;
+    (dest as any).deletedAt = new Date().toISOString();
+    dest.status = "Trash";
 
     writeStore(store);
     await syncDestinationsToMongo(store.destinations);
@@ -336,9 +391,15 @@ export async function DELETE(request: NextRequest) {
       revalidatePath("/", "layout");
     } catch {}
 
-    return NextResponse.json({ success: true, message: "Package removed successfully" });
+    return NextResponse.json({
+      success: true,
+      message: `"${dest.name}" moved to Recycle Bin. You can restore it anytime.`,
+    });
   } catch (err: any) {
     console.error("Error deleting international package:", err);
-    return NextResponse.json({ error: err.message || "Failed to delete package" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || "Failed to delete package" },
+      { status: 500 }
+    );
   }
 }

@@ -316,27 +316,65 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json({ error: "Missing destination id" }, { status: 400 });
-    }
+    const emptyRecycleBin = searchParams.get("emptyRecycleBin") === "true";
+    const permanent = searchParams.get("permanent") === "true";
+    const restore = searchParams.get("restore") === "true";
 
     const store = readStore();
     if (!store.destinations) {
       store.destinations = getDefaultDestinations();
     }
 
-    const initialLength = store.destinations.length;
-    store.destinations = store.destinations.filter(
-      (d) => String(d.id) !== String(id) && d.slug !== id
+    // Operation 1: Empty entire Recycle Bin for destinations
+    if (emptyRecycleBin) {
+      const beforeCount = store.destinations.length;
+      store.destinations = store.destinations.filter((d: any) => !d.isDeleted && d.status !== "Trash");
+      const removedCount = beforeCount - store.destinations.length;
+      writeStore(store);
+      await syncDestinationsToMongo(store.destinations);
+      return NextResponse.json({ success: true, message: `Recycle Bin emptied (${removedCount} purged permanently)` });
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing destination id" }, { status: 400 });
+    }
+
+    const index = store.destinations.findIndex(
+      (d) => String(d.id) === String(id) || d.slug === id
     );
 
-    if (store.destinations.length === initialLength) {
+    if (index === -1) {
       return NextResponse.json({ error: "Destination not found" }, { status: 404 });
     }
 
-    writeStore(store);
+    const dest = store.destinations[index];
 
+    // Operation 2: Restore from Recycle Bin
+    if (restore) {
+      (dest as any).isDeleted = false;
+      (dest as any).deletedAt = undefined;
+      dest.status = "Draft";
+      writeStore(store);
+      await syncDestinationsToMongo(store.destinations);
+      return NextResponse.json({ success: true, message: `"${dest.name}" restored successfully as Draft!` });
+    }
+
+    // Operation 3: Permanent Delete
+    if (permanent) {
+      store.destinations = store.destinations.filter(
+        (d) => String(d.id) !== String(id) && d.slug !== id
+      );
+      writeStore(store);
+      await syncDestinationsToMongo(store.destinations);
+      return NextResponse.json({ success: true, message: `"${dest.name}" permanently deleted.` });
+    }
+
+    // Operation 4: Soft Delete (Move to Recycle Bin)
+    (dest as any).isDeleted = true;
+    (dest as any).deletedAt = new Date().toISOString();
+    dest.status = "Trash";
+
+    writeStore(store);
     await syncDestinationsToMongo(store.destinations);
 
     try {
@@ -347,11 +385,11 @@ export async function DELETE(request: NextRequest) {
       revalidatePath("/", "layout");
     } catch {}
 
-    return NextResponse.json({ success: true, message: "Destination deleted" });
+    return NextResponse.json({ success: true, message: `"${dest.name}" moved to Recycle Bin.` });
   } catch (error: any) {
     console.error("Failed to delete destination:", error);
     return NextResponse.json(
-      { error: error?.message || "Failed to delete destination" },
+      { error: error?.message || "Failed in destination deletion" },
       { status: 500 }
     );
   }

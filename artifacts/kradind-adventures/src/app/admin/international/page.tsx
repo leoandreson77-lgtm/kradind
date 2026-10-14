@@ -43,6 +43,8 @@ import {
   FileDown,
   History,
   RotateCcw,
+  ClipboardCopy,
+  ClipboardPaste,
 } from "lucide-react";
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
@@ -127,6 +129,9 @@ export default function AdminInternationalPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [highlightsInput, setHighlightsInput] = useState("");
+  const [showRecycleModal, setShowRecycleModal] = useState(false);
+  const [showPastePackageModal, setShowPastePackageModal] = useState(false);
+  const [pastePackageInput, setPastePackageInput] = useState("");
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -500,7 +505,7 @@ export default function AdminInternationalPage() {
       });
 
       if (res.ok) {
-        showToast("🗑️ Package removed successfully.");
+        showToast("🗑️ Package moved to Recycle Bin! You can restore it anytime.");
         setDeleteConfirmId(null);
         fetchDestinations();
       } else {
@@ -511,6 +516,79 @@ export default function AdminInternationalPage() {
       alert("Network error while deleting package");
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleRestoreItem = async (id: string | number, slug: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/international?id=${encodeURIComponent(id)}&slug=${encodeURIComponent(slug)}&restore=true`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        showToast("✅ International package restored successfully as Draft!");
+        fetchDestinations();
+      } else {
+        alert("Failed to restore package");
+      }
+    } catch {
+      alert("Error restoring package");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handlePermanentDeleteItem = async (id: string | number, slug: string) => {
+    if (!confirm("Are you sure you want to permanently delete this package? This cannot be undone.")) return;
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/international?id=${encodeURIComponent(id)}&slug=${encodeURIComponent(slug)}&permanent=true`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        showToast("🗑️ Package permanently deleted.");
+        fetchDestinations();
+      } else {
+        alert("Failed to permanently delete package");
+      }
+    } catch {
+      alert("Error permanently deleting package");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleEmptyRecycleBin = async () => {
+    if (!confirm("Are you sure you want to permanently purge all items in the Recycle Bin?")) return;
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/international?emptyRecycleBin=true`, { method: "DELETE" });
+      if (res.ok) {
+        showToast("🗑️ Recycle Bin emptied!");
+        setShowRecycleModal(false);
+        fetchDestinations();
+      } else {
+        alert("Failed to empty Recycle Bin");
+      }
+    } catch {
+      alert("Error emptying Recycle Bin");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCopyPackage = (item: DestinationData) => {
+    try {
+      const cleanData = {
+        ...item,
+        id: undefined,
+        _id: undefined,
+        status: "Draft",
+      };
+      navigator.clipboard.writeText(JSON.stringify(cleanData, null, 2));
+      showToast(`📋 Copied "${item.name}" package JSON to clipboard!`);
+    } catch {
+      alert("Failed to copy package to clipboard");
     }
   };
 
@@ -614,8 +692,12 @@ export default function AdminInternationalPage() {
     });
   };
 
+  // Separate active packages from soft-deleted / recycled items
+  const activeDestinations = destinations.filter((d) => !d.isDeleted && d.status !== "Trash");
+  const recycledDestinations = destinations.filter((d) => d.isDeleted || d.status === "Trash");
+
   // Filtered destinations list
-  const filtered = destinations.filter((dest) => {
+  const filtered = activeDestinations.filter((dest) => {
     const matchesSearch =
       searchQuery === "" ||
       dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -638,8 +720,8 @@ export default function AdminInternationalPage() {
     return matchesSearch && matchesCountry && matchesStatus;
   });
 
-  const publishedCount = destinations.filter((d) => d.status === "Published").length;
-  const draftCount = destinations.filter((d) => d.status === "Draft").length;
+  const publishedCount = activeDestinations.filter((d) => d.status === "Published").length;
+  const draftCount = activeDestinations.filter((d) => d.status === "Draft").length;
 
   return (
     <div className="space-y-6 pb-16">
@@ -711,6 +793,31 @@ export default function AdminInternationalPage() {
             >
               <FileDown className="w-4 h-4 text-emerald-300" />
               <span>Export Clean PDF</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowPastePackageModal(true)}
+              className="px-4 py-2.5 rounded-xl border border-indigo-400/40 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 text-xs font-bold transition flex items-center gap-2 backdrop-blur-xs cursor-pointer"
+              title="Import or paste full package JSON directly"
+            >
+              <Copy className="w-4 h-4 text-indigo-300" />
+              <span>📥 Paste / Import JSON</span>
+            </button>
+
+            {/* Recycle Bin Button */}
+            <button
+              type="button"
+              onClick={() => setShowRecycleModal(true)}
+              className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-2 backdrop-blur-xs cursor-pointer ${
+                recycledDestinations.length > 0
+                  ? "bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border-rose-400/40 shadow-sm"
+                  : "border-white/20 bg-white/10 hover:bg-white/20 text-white"
+              }`}
+              title="Open Recycle Bin to restore or permanently purge deleted items"
+            >
+              <Trash2 className="w-4 h-4 text-rose-400" />
+              <span>Recycle Bin ({recycledDestinations.length})</span>
             </button>
 
             <Link
@@ -1040,6 +1147,16 @@ export default function AdminInternationalPage() {
                   >
                     <Copy className="w-3.5 h-3.5" />
                   </button>
+
+                  {/* Copy Package JSON */}
+                  <button
+                    type="button"
+                    onClick={() => handleCopyPackage(item)}
+                    className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-emerald-700 text-xs transition"
+                    title="Copy Package JSON to clipboard"
+                  >
+                    <ClipboardCopy className="w-3.5 h-3.5" />
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-1">
@@ -1075,7 +1192,7 @@ export default function AdminInternationalPage() {
                       type="button"
                       onClick={() => setDeleteConfirmId(item.id)}
                       className="p-1.5 rounded-lg text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition"
-                      title="Delete this package"
+                      title="Move to Recycle Bin"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -2017,6 +2134,228 @@ export default function AdminInternationalPage() {
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
               >
                 Close History
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Recycle Bin Modal */}
+      {showRecycleModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">International Tours Recycle Bin</h3>
+                  <p className="text-xs text-slate-500">
+                    {recycledDestinations.length} deleted package{recycledDestinations.length === 1 ? "" : "s"} in recycle bin
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {recycledDestinations.length > 0 && (
+                  <button
+                    onClick={handleEmptyRecycleBin}
+                    disabled={actionLoading}
+                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer disabled:opacity-50"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Empty Recycle Bin</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowRecycleModal(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto py-4 space-y-3">
+              {recycledDestinations.length === 0 ? (
+                <div className="py-12 text-center text-slate-400">
+                  <Trash2 className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm font-semibold text-slate-600">Recycle Bin is empty</p>
+                  <p className="text-xs text-slate-400 mt-1">Deleted international packages will appear here and can be restored anytime.</p>
+                </div>
+              ) : (
+                recycledDestinations.map((d) => (
+                  <div
+                    key={d.id || d.slug}
+                    className="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200 transition flex items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-slate-900 truncate">{d.name}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-semibold">
+                          International
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                        <span>{d.duration || "N/A"}</span>
+                        <span>•</span>
+                        <span>₹{(d.price || 0).toLocaleString("en-IN")}</span>
+                        {d.deletedAt && (
+                          <>
+                            <span>•</span>
+                            <span className="text-rose-500">Deleted {new Date(d.deletedAt).toLocaleDateString()}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleRestoreItem(d.id, d.slug)}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer disabled:opacity-50"
+                        title="Restore package back to Drafts"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Restore</span>
+                      </button>
+                      <button
+                        onClick={() => handlePermanentDeleteItem(d.id, d.slug)}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                        title="Delete permanently from database"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                        <span>Purge</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+              <span>Restored packages are automatically placed in Draft mode.</span>
+              <button
+                onClick={() => setShowRecycleModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Paste / Import Package JSON Modal */}
+      {showPastePackageModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 animate-scale-up space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="p-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold">
+                  <Copy className="w-4 h-4" />
+                </span>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Paste / Import International Tour JSON
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Paste raw JSON from another package or proposal to load it directly.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPastePackageModal(false);
+                  setPastePackageInput("");
+                }}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold text-slate-700">
+                  Paste JSON Package Object
+                </label>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const clipText = await navigator.clipboard.readText();
+                      if (clipText) {
+                        setPastePackageInput(clipText);
+                        showToast("📋 Pasted from clipboard!");
+                      }
+                    } catch {
+                      alert("Please use Ctrl+V / Cmd+V in the box below to paste.");
+                    }
+                  }}
+                  className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
+                >
+                  <ClipboardPaste className="w-3.5 h-3.5" />
+                  <span>Paste from Clipboard</span>
+                </button>
+              </div>
+              <textarea
+                rows={10}
+                value={pastePackageInput}
+                onChange={(e) => setPastePackageInput(e.target.value)}
+                placeholder={'{\n  "name": "Bali Tropical Escape",\n  "slug": "bali-escape",\n  "category": "International",\n  "price": 39999,\n  "duration": "5 Nights / 6 Days",\n  "itinerary": [...]\n}'}
+                className="w-full p-3 font-mono text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E] bg-slate-50 focus:bg-white"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPastePackageModal(false);
+                  setPastePackageInput("");
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    const parsed = JSON.parse(pastePackageInput);
+                    if (!parsed || typeof parsed !== "object") throw new Error("Invalid object format");
+                    const name = parsed.name || parsed.packageTitle || "Imported International Tour";
+                    const slug = parsed.slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+                    setEditingItem({
+                      ...parsed,
+                      id: "",
+                      name,
+                      slug: `${slug}-imported-${Date.now().toString().slice(-4)}`,
+                      category: "International",
+                      status: "Draft",
+                      highlights: parsed.highlights || [],
+                      itinerary: Array.isArray(parsed.itinerary) && parsed.itinerary.length > 0 ? parsed.itinerary : [],
+                      inclusions: parsed.inclusions || [...STANDARD_INTL_INCLUSIONS],
+                      exclusions: parsed.exclusions || [...STANDARD_INTL_EXCLUSIONS],
+                      faqs: parsed.faqs || [...STANDARD_INTL_FAQS],
+                      travelTips: parsed.travelTips || [...STANDARD_INTL_TIPS],
+                      gallery: parsed.gallery || [],
+                    });
+                    setHighlightsInput((parsed.highlights || []).join(", "));
+                    setShowPastePackageModal(false);
+                    setPastePackageInput("");
+                    setModalTab("basic");
+                    setIsModalOpen(true);
+                    showToast(`✨ Successfully imported "${name}"! Review details and click Save.`);
+                  } catch (err: any) {
+                    alert(`Failed to parse JSON: ${err.message}`);
+                  }
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0F3A2E] hover:bg-[#154d3e] text-white flex items-center gap-1.5 shadow-sm cursor-pointer"
+              >
+                <span>Parse &amp; Load into Editor</span>
               </button>
             </div>
           </div>

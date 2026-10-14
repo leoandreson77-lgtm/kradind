@@ -55,7 +55,9 @@ export interface TrekData {
   price: number;
   originalPrice: number;
   badge: string;
-  status: "Published" | "Draft";
+  status: "Published" | "Draft" | "Trash" | string;
+  isDeleted?: boolean;
+  deletedAt?: string;
   version?: number;
   versionHistory?: any[];
   batches?: TrekBatch[];

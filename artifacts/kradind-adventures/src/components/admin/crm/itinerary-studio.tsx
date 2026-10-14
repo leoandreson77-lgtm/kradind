@@ -48,6 +48,7 @@ import type {
 } from "@/lib/cms-store";
 import { getPackageSection } from "@/lib/package-sections";
 import { CustomEditableField } from "@/components/admin/custom-editable-field";
+import { ItineraryRouteMap } from "@/components/itinerary-route-map";
 
 /**
  * Utility to strip raw markdown asterisks (**, *) from package text
@@ -742,6 +743,94 @@ export function ItineraryStudio({
     });
   };
 
+  // Quick Days Trimmer / Duration Adjuster (Trim or Expand seamlessly)
+  const handleTrimOrExtendDays = (targetDays: number) => {
+    if (targetDays < 1) return;
+    setFormData((prev) => {
+      const current = prev.itinerary || [];
+      if (current.length === targetDays) return prev;
+
+      let newItinerary: ItineraryProposalDay[];
+      if (current.length > targetDays) {
+        // Trim to target days
+        newItinerary = current.slice(0, targetDays).map((d, i) => ({ ...d, day: i + 1 }));
+      } else {
+        // Extend to target days
+        newItinerary = [...current];
+        for (let i = current.length + 1; i <= targetDays; i++) {
+          newItinerary.push({
+            day: i,
+            title: `Day ${i} - Guided Exploration & Mountain Viewpoints`,
+            description: "Explore prominent scenic trails, panoramic viewpoints, and authentic cultural experiences.",
+            stay: "Verified 3-Star Hotel / Resort",
+            meal: "Breakfast & Dinner",
+            distance: "35 km / Scenic Transfer",
+            duration: "Full Day Activity",
+            altitude: "",
+          });
+        }
+      }
+      return {
+        ...prev,
+        itinerary: newItinerary,
+        duration: `${targetDays} Days / ${Math.max(1, targetDays - 1)} Nights`,
+      };
+    });
+  };
+
+  // Start 100% custom from scratch (Blank Canvas)
+  const handleStartCustomBlank = () => {
+    setSelectedPackageSlug("");
+    setFormData((prev) => ({
+      ...prev,
+      packageTitle: prev.packageTitle ? `${prev.packageTitle} (Custom)` : "Bespoke Custom Travel Itinerary",
+      destination: prev.destination || "",
+      duration: "4 Days / 3 Nights",
+      basePackageSlug: "",
+      itinerary: [
+        {
+          day: 1,
+          title: "Day 1 - Arrival, VIP Transfer & Hotel Check-in",
+          description: "Arrive at destination airport / railway station. Dedicated private vehicle transfer to verified hotel. Evening at leisure for local exploration.",
+          stay: "Verified 3-Star Hotel / Resort",
+          meal: "Dinner Included",
+          distance: "25 km",
+          duration: "1 Hour Transfer",
+        },
+        {
+          day: 2,
+          title: "Day 2 - Full Day Guided Sightseeing & Scenic Highlights",
+          description: "Full day sightseeing of prominent natural monuments, heritage viewpoints, and cultural attractions with private vehicle and driver.",
+          stay: "Verified 3-Star Hotel / Resort",
+          meal: "Breakfast & Dinner",
+          distance: "45 km",
+          duration: "Full Day Excursion",
+        },
+        {
+          day: 3,
+          title: "Day 3 - Nature Trails, Waterfalls & Leisure Excursion",
+          description: "Drive through scenic landscapes and pine valleys. Explore tranquil lakes/waterfalls with time for photography and local crafts shopping.",
+          stay: "Verified 3-Star Hotel / Resort",
+          meal: "Breakfast & Dinner",
+          distance: "40 km",
+          duration: "5 Hours",
+        },
+        {
+          day: 4,
+          title: "Day 4 - Leisure Morning Breakfast & Departure Transfer",
+          description: "Wholesome breakfast at hotel and checkout. Transfer comfortably to airport / station for your return journey.",
+          stay: "Checkout",
+          meal: "Breakfast Included",
+          distance: "25 km",
+          duration: "1 Hour Transfer",
+        },
+      ],
+      totalQuotedPrice: 24999,
+      basePricePerPerson: 12499,
+      status: "Draft",
+    }));
+  };
+
   // Inclusion handlers
   const handleAddInclusion = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1119,12 +1208,23 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Step 1: Package Blueprint Dropdown */}
         <div>
-          <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5 mb-1.5">
-            <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black flex items-center justify-center">
-              1
-            </span>
-            <span>Select Existing Tour / Trek Package Template</span>
-          </label>
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black flex items-center justify-center">
+                1
+              </span>
+              <span>Tour / Trek Blueprint Template</span>
+            </label>
+            <button
+              type="button"
+              onClick={handleStartCustomBlank}
+              className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 transition flex items-center gap-1 cursor-pointer shadow-2xs"
+              title="Start a fresh, 100% custom itinerary from scratch"
+            >
+              <Sparkles className="w-3 h-3 text-emerald-600" />
+              <span>+ Build Custom Itinerary</span>
+            </button>
+          </div>
           <select
             value={selectedPackageSlug}
             onChange={(e) => handleSelectPackageTemplate(e.target.value)}
@@ -1764,7 +1864,7 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
 
         {/* Section 3: Interactive Day-by-Day Editor */}
         <div className="bg-white p-5 sm:p-7 rounded-2xl border border-slate-200 shadow-xs space-y-5">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-2">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-3">
             <div>
               <h3 className="text-sm sm:text-base font-extrabold text-slate-900 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-emerald-600" />
@@ -1774,10 +1874,56 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
                 Craft custom stops, trekking distances, elevations, stays, and meal plans.
               </p>
             </div>
-            <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-extrabold border border-emerald-200">
-              {formData.itinerary.length} Days Scheduled
-            </span>
+
+            {/* Quick Duration Trimmer / Extender Toolbar */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[11px] font-bold text-slate-500 mr-1">Quick Duration:</span>
+              {[3, 4, 5, 6, 7, 8].map((daysCount) => (
+                <button
+                  key={daysCount}
+                  type="button"
+                  onClick={() => handleTrimOrExtendDays(daysCount)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer border ${
+                    formData.itinerary.length === daysCount
+                      ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                      : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+                  }`}
+                  title={`Adjust schedule to ${daysCount} Days`}
+                >
+                  {daysCount}D
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => handleTrimOrExtendDays(Math.max(1, formData.itinerary.length - 1))}
+                disabled={formData.itinerary.length <= 1}
+                className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 disabled:opacity-30 text-rose-700 text-xs font-bold border border-rose-200 transition cursor-pointer"
+                title="Trim last day (- 1 Day)"
+              >
+                - 1D
+              </button>
+              <button
+                type="button"
+                onClick={handleAddDay}
+                className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                title="Add day (+ 1 Day)"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ 1D</span>
+              </button>
+            </div>
           </div>
+
+          {/* Visual Route Flow Map */}
+          {formData.itinerary.length > 0 && (
+            <ItineraryRouteMap
+              itinerary={formData.itinerary}
+              destination={formData.destination}
+              pickupLocation={formData.pickupLocation}
+              dropLocation={formData.dropLocation}
+            />
+          )}
 
           {formData.itinerary.length === 0 ? (
             <div className="p-10 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs space-y-2">

@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const destinations = await getDestinationsAsync();
     const published = (destinations || getDefaultDestinations()).filter(
-      (d) => d.status === "Published"
+      (d) => d.status === "Published" && !d.isDeleted
     );
     return NextResponse.json(published, {
       headers: {

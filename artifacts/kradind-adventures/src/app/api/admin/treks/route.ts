@@ -247,47 +247,77 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json({ error: "Missing trek id" }, { status: 400 });
-    }
+    const emptyRecycleBin = searchParams.get("emptyRecycleBin") === "true";
+    const permanent = searchParams.get("permanent") === "true";
+    const restore = searchParams.get("restore") === "true";
 
     const currentTreks = await getTreksAsync();
     const store = readStore();
     store.treks = currentTreks;
 
-    const trekToDelete = store.treks.find((t) => String(t.id) === String(id));
-    if (!trekToDelete) {
+    // Operation 1: Empty entire Recycle Bin
+    if (emptyRecycleBin) {
+      const beforeCount = store.treks.length;
+      store.treks = store.treks.filter((t: any) => !t.isDeleted && t.status !== "Trash");
+      const removedCount = beforeCount - store.treks.length;
+      writeStore(store);
+      await syncTreksToMongo(store.treks);
+      return NextResponse.json({ success: true, message: `Recycle Bin emptied (${removedCount} purged permanently)` });
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing trek id" }, { status: 400 });
+    }
+
+    const index = store.treks.findIndex((t) => String(t.id) === String(id));
+    if (index === -1) {
       return NextResponse.json({ error: "Trek not found" }, { status: 404 });
     }
 
-    store.treks = store.treks.filter((t) => String(t.id) !== String(id));
+    const trek = store.treks[index];
+
+    // Operation 2: Restore from Recycle Bin
+    if (restore) {
+      (trek as any).isDeleted = false;
+      (trek as any).deletedAt = undefined;
+      trek.status = "Draft";
+      writeStore(store);
+      await syncTreksToMongo(store.treks);
+      return NextResponse.json({ success: true, message: `"${trek.name}" restored successfully as Draft!` });
+    }
+
+    // Operation 3: Permanent Delete
+    if (permanent) {
+      store.treks = store.treks.filter((t) => String(t.id) !== String(id));
+      writeStore(store);
+      await syncTreksToMongo(store.treks);
+      return NextResponse.json({ success: true, message: `"${trek.name}" permanently deleted.` });
+    }
+
+    // Operation 4: Soft Delete (Move to Recycle Bin)
+    (trek as any).isDeleted = true;
+    (trek as any).deletedAt = new Date().toISOString();
+    trek.status = "Trash";
 
     writeStore(store);
-
-    // Sync to MongoDB
     await syncTreksToMongo(store.treks);
 
     // Instant Cache Invalidation
     try {
-      if (trekToDelete.slug) {
-        revalidatePath(`/treks/${trekToDelete.slug}`);
-        revalidatePath(`/domestic/${trekToDelete.slug}`);
-        revalidatePath(`/international/${trekToDelete.slug}`);
+      if (trek.slug) {
+        revalidatePath(`/treks/${trek.slug}`);
+        revalidatePath(`/domestic/${trek.slug}`);
+        revalidatePath(`/international/${trek.slug}`);
       }
       revalidatePath("/");
       revalidatePath("/treks");
-      revalidatePath("/domestic-trips");
-      revalidatePath("/international-trips");
       revalidatePath("/destinations");
       revalidatePath("/", "layout");
-    } catch (revErr) {
-      console.warn("revalidatePath warning:", revErr);
-    }
+    } catch {}
 
-    return NextResponse.json({ success: true, message: "Trek deleted successfully" });
+    return NextResponse.json({ success: true, message: `"${trek.name}" moved to Recycle Bin.` });
   } catch (error: any) {
-    console.error("Failed to delete trek:", error);
-    return NextResponse.json({ error: error?.message || "Failed to delete trek" }, { status: 500 });
+    console.error("Failed in DELETE trek:", error);
+    return NextResponse.json({ error: error?.message || "Failed in trek deletion" }, { status: 500 });
   }
 }

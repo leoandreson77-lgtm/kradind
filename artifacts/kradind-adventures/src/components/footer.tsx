@@ -269,12 +269,6 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                   Live Ground Radar
                 </Link>
               </li>
-              <li>
-                <Link href="/connect" className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1.5 transition">
-                  <QrCode className="w-3.5 h-3.5 text-amber-400" />
-                  <span>📱 Social &amp; QR Directory</span>
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -389,10 +383,11 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
             <div className="pt-2">
               <Link
                 href="/connect"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-950 to-[#0F3A2E] hover:from-[#0F3A2E] hover:to-emerald-800 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold transition shadow-xs group"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-900/60 hover:bg-[#0F3A2E] text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-bold transition shadow-xs group"
+                title="Scan QR Code & Connect Across All Channels"
               >
-                <QrCode className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
-                <span>📱 Scan QR &amp; Social Hub</span>
+                <QrCode className="w-4 h-4 text-emerald-400 group-hover:scale-110 group-hover:rotate-6 transition-transform" />
+                <span>Scan QR &amp; Social Directory</span>
               </Link>
             </div>
           </div>

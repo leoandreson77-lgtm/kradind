@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     treks = store.treks || [];
   }
 
-  let results = (treks || []).filter((t) => t.status === "Published");
+  let results = (treks || []).filter((t) => t.status === "Published" && !t.isDeleted);
 
   if (search) {
     const isDomesticSearch = search === "domestic" || search.includes("domestic");

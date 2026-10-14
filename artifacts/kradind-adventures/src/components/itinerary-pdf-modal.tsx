@@ -31,6 +31,8 @@ import {
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { parseInlineFormatting } from "@/components/formatted-text";
+import { ItineraryRouteMap } from "@/components/itinerary-route-map";
+import { downloadElementAsPdf } from "@/lib/pdf-download";
 
 export interface ItineraryPdfProps {
   isOpen: boolean;
@@ -65,7 +67,24 @@ export function ItineraryPdfModal({
     customPrice !== undefined ? customPrice : tour?.price || 9999
   );
   const [copiedLink, setCopiedLink] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const printAreaRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadDirectPdf = async () => {
+    if (!printAreaRef.current || !tour) return;
+    setDownloadingPdf(true);
+    try {
+      const cleanTour = (tour.name || "Itinerary").replace(/[^a-zA-Z0-9]/g, "_");
+      const cleanClient = (clientName || "Traveler").replace(/[^a-zA-Z0-9]/g, "_");
+      const filename = `KRADIND-${cleanTour}-${cleanClient}.pdf`;
+      await downloadElementAsPdf(printAreaRef.current, filename);
+    } catch (err) {
+      console.warn("Direct PDF error:", err);
+      window.print();
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
 
   // Lead / Query Generation Gate State
   const [hasCapturedQuery, setHasCapturedQuery] = useState(isSalesMode);
@@ -298,11 +317,31 @@ export function ItineraryPdfModal({
 
           <div className="flex items-center gap-2">
             <button
+              onClick={handleDownloadDirectPdf}
+              disabled={downloadingPdf}
+              className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer"
+              title="Download PDF directly to your device"
+            >
+              {downloadingPdf ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Generating PDF...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>Download PDF</span>
+                </>
+              )}
+            </button>
+
+            <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 bg-[#FF6B35] hover:bg-[#e05320] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-[#FF6B35] hover:bg-[#e05320] text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer"
+              title="Open browser print dialog"
             >
               <Printer className="w-4 h-4" />
-              <span>Print / Save as PDF</span>
+              <span className="hidden sm:inline">Print</span>
             </button>
 
             <button
@@ -555,6 +594,16 @@ export function ItineraryPdfModal({
                 </div>
               </div>
             )}
+
+            {/* 4.5 ITINERARY ROUTE FLOW MAP */}
+            <div className="pt-1 page-break-inside-avoid">
+              <ItineraryRouteMap
+                itinerary={effectiveDays}
+                destination={tour.name}
+                pickupLocation={tour.pickupPoint || tour.pickupDrop}
+                dropLocation={tour.pickupPoint || tour.pickupDrop}
+              />
+            </div>
 
             {/* 5. DAY BY DAY ITINERARY TABLE */}
             <div className="space-y-3 pt-2">

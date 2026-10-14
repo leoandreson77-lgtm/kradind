@@ -24,8 +24,12 @@ import {
   FileText,
   Sparkles,
   DoorClosed,
+  Download,
+  Loader2,
 } from "lucide-react";
 import { CustomerItineraryProposal } from "@/lib/cms-store";
+import { ItineraryRouteMap } from "@/components/itinerary-route-map";
+import { downloadElementAsPdf } from "@/lib/pdf-download";
 
 interface ProposalVoucherModalProps {
   isOpen: boolean;
@@ -40,7 +44,24 @@ export function ProposalVoucherModal({
 }: ProposalVoucherModalProps) {
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const printAreaRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadPdf = async () => {
+    if (!printAreaRef.current || !proposal) return;
+    setDownloading(true);
+    try {
+      const cleanCust = (proposal.customerName || "Traveler").replace(/[^a-zA-Z0-9]/g, "_");
+      const filename = `KRADIND-${proposal.id || "Proposal"}-${cleanCust}.pdf`;
+      await downloadElementAsPdf(printAreaRef.current, filename);
+    } catch (err) {
+      console.warn("Direct PDF generation error:", err);
+      // Fallback to window print
+      window.print();
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -269,12 +290,31 @@ KRADIND Adventures | Himalayas & Beyond
             </a>
 
             <button
-              onClick={handlePrint}
-              className="px-3 py-1.5 rounded-xl bg-[#FF6B35] hover:bg-[#e05a27] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
-              title="Print voucher or Save as PDF"
+              onClick={handleDownloadPdf}
+              disabled={downloading}
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+              title="Download PDF directly to your device"
             >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Print / PDF</span>
+              {downloading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Generating PDF...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download PDF</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={handlePrint}
+              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-slate-700 cursor-pointer"
+              title="Print voucher using browser print dialog"
+            >
+              <Printer className="w-3.5 h-3.5 text-[#FF6B35]" />
+              <span>Print</span>
             </button>
 
             <button
@@ -429,6 +469,16 @@ KRADIND Adventures | Himalayas & Beyond
                 </span>
               </div>
             </div>
+          </div>
+
+          {/* Itinerary Route Flow Map */}
+          <div className="mb-6 page-break-avoid">
+            <ItineraryRouteMap
+              itinerary={proposal.itinerary || []}
+              destination={proposal.destination}
+              pickupLocation={proposal.pickupLocation}
+              dropLocation={proposal.dropLocation}
+            />
           </div>
 
           {/* Detailed Day-by-Day Itinerary */}

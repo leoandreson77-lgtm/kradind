@@ -44,6 +44,8 @@ import {
   ExternalLink,
   History,
   RotateCcw,
+  ClipboardCopy,
+  ClipboardPaste,
 } from "lucide-react";
 import type {
   TrekData,
@@ -604,6 +606,7 @@ export default function AdminTreksPage() {
   >("basic");
   const [newCategoryInput, setNewCategoryInput] = useState("");
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | number | null>(null);
+  const [showRecycleModal, setShowRecycleModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -1455,7 +1458,7 @@ export default function AdminTreksPage() {
     try {
       const res = await fetch(`/api/admin/treks?id=${id}`, { method: "DELETE" });
       if (res.ok) {
-        showToast("Trek deleted successfully");
+        showToast("🗑️ Package moved to Recycle Bin! You can restore it anytime.");
         setDeleteConfirmId(null);
         fetchTreks();
       } else {
@@ -1465,6 +1468,75 @@ export default function AdminTreksPage() {
       alert("Error deleting trek");
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleRestoreTrek = async (id: string | number) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/treks?id=${id}&restore=true`, { method: "DELETE" });
+      if (res.ok) {
+        showToast("✅ Package restored successfully as Draft!");
+        fetchTreks();
+      } else {
+        alert("Failed to restore package");
+      }
+    } catch {
+      alert("Error restoring package");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handlePermanentDeleteTrek = async (id: string | number) => {
+    if (!confirm("Are you sure you want to permanently delete this package? This action cannot be reversed!")) return;
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/treks?id=${id}&permanent=true`, { method: "DELETE" });
+      if (res.ok) {
+        showToast("🗑️ Package permanently deleted.");
+        fetchTreks();
+      } else {
+        alert("Failed to permanently delete package");
+      }
+    } catch {
+      alert("Error permanently deleting package");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleEmptyRecycleBin = async () => {
+    if (!confirm("Are you sure you want to permanently purge all items in the Recycle Bin?")) return;
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/treks?emptyRecycleBin=true`, { method: "DELETE" });
+      if (res.ok) {
+        showToast("🗑️ Recycle Bin emptied!");
+        setShowRecycleModal(false);
+        fetchTreks();
+      } else {
+        alert("Failed to empty Recycle Bin");
+      }
+    } catch {
+      alert("Error emptying Recycle Bin");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCopyPackage = (trek: TrekData) => {
+    try {
+      const cleanData = {
+        ...trek,
+        id: undefined,
+        _id: undefined,
+        status: "Draft",
+      };
+      navigator.clipboard.writeText(JSON.stringify(cleanData, null, 2));
+      showToast(`📋 Copied "${trek.name}" package JSON to clipboard!`);
+    } catch {
+      alert("Failed to copy package to clipboard");
     }
   };
 
@@ -1532,15 +1604,19 @@ export default function AdminTreksPage() {
     showToast(`Applied ${count}-Day ${sec === "Trek" ? "Trek" : "Tour"} Itinerary Template`);
   };
 
-  const domesticCount = treks.filter((t) => getPackageSection(t) === "Domestic").length;
-  const internationalCount = treks.filter((t) => getPackageSection(t) === "International").length;
-  const fixedCount = treks.filter((t) => getPackageSection(t) === "Fixed").length;
-  const trekCount = treks.filter((t) => getPackageSection(t) === "Trek").length;
+  // Separate active packages from soft-deleted / recycled items
+  const activeTreks = useMemo(() => treks.filter((t) => !t.isDeleted && t.status !== "Trash"), [treks]);
+  const recycledTreks = useMemo(() => treks.filter((t) => t.isDeleted || t.status === "Trash"), [treks]);
 
-  // Dynamically extract all available tags across all packages
+  const domesticCount = activeTreks.filter((t) => getPackageSection(t) === "Domestic").length;
+  const internationalCount = activeTreks.filter((t) => getPackageSection(t) === "International").length;
+  const fixedCount = activeTreks.filter((t) => getPackageSection(t) === "Fixed").length;
+  const trekCount = activeTreks.filter((t) => getPackageSection(t) === "Trek").length;
+
+  // Dynamically extract all available tags across active packages
   const availableTags = useMemo(() => {
     const tagSet = new Set<string>();
-    treks.forEach((t) => {
+    activeTreks.forEach((t) => {
       if (t.category) tagSet.add(t.category);
       (t.categories || []).forEach((c) => {
         if (c && c.trim()) tagSet.add(c.trim());
@@ -1555,24 +1631,24 @@ export default function AdminTreksPage() {
     const otherList = list
       .filter((c) => !POPULAR_CATEGORIES.includes(c))
       .sort((a, b) => {
-        const countA = treks.filter((t) => matchesCategoryOrTag(t, a)).length;
-        const countB = treks.filter((t) => matchesCategoryOrTag(t, b)).length;
+        const countA = activeTreks.filter((t) => matchesCategoryOrTag(t, a)).length;
+        const countB = activeTreks.filter((t) => matchesCategoryOrTag(t, b)).length;
         if (countB !== countA) return countB - countA;
         return a.localeCompare(b);
       });
     return [...popularList, ...otherList];
-  }, [treks]);
+  }, [activeTreks]);
 
   // Recently added count (within 7 days)
   const recentlyAddedCount = useMemo(() => {
-    return treks.filter((t) => {
+    return activeTreks.filter((t) => {
       const { createdDate } = parseItemDate(t);
       return isRecentlyAdded(createdDate, 7);
     }).length;
-  }, [treks]);
+  }, [activeTreks]);
 
   const filtered = useMemo(() => {
-    return treks
+    return activeTreks
       .filter((t) => {
         const pkgSection = getPackageSection(t);
 
@@ -1627,7 +1703,7 @@ export default function AdminTreksPage() {
             return 0;
         }
       });
-  }, [treks, classificationFilter, search, selectedCategory, dateFilter, customStartDate, customEndDate, sortBy]);
+  }, [activeTreks, classificationFilter, search, selectedCategory, dateFilter, customStartDate, customEndDate, sortBy]);
 
   const totalBatchesCount = useMemo(() => {
     return filtered.reduce((acc, t) => acc + (t.batches?.length || 0), 0);
@@ -1772,6 +1848,21 @@ export default function AdminTreksPage() {
           >
             <Copy className="w-4 h-4 text-indigo-600" />
             <span>📥 Paste / Import JSON</span>
+          </button>
+
+          {/* Recycle Bin Button */}
+          <button
+            type="button"
+            onClick={() => setShowRecycleModal(true)}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border text-xs font-bold transition shadow-xs cursor-pointer ${
+              recycledTreks.length > 0
+                ? "bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200 shadow-sm"
+                : "bg-white hover:bg-slate-50 text-slate-600 border-slate-200"
+            }`}
+            title="Open Recycle Bin to restore or permanently purge deleted items"
+          >
+            <Trash2 className="w-4 h-4 text-rose-500" />
+            <span>Recycle Bin ({recycledTreks.length})</span>
           </button>
 
           {classificationFilter === "Domestic" ? (
@@ -2802,6 +2893,15 @@ export default function AdminTreksPage() {
                         <FileDown className="w-4 h-4" />
                       </button>
 
+                      {/* Copy Full Package Data (JSON) */}
+                      <button
+                        onClick={() => handleCopyPackage(t)}
+                        className="p-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
+                        title="Copy Package JSON to clipboard"
+                      >
+                        <ClipboardCopy className="w-4 h-4" />
+                      </button>
+
                       <button
                         onClick={() => handleDuplicateTrek(t)}
                         className="p-1.5 text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
@@ -2819,7 +2919,7 @@ export default function AdminTreksPage() {
                       <button
                         onClick={() => setDeleteConfirmId(t.id)}
                         className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition"
-                        title="Delete Trek"
+                        title="Move to Recycle Bin"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -5346,9 +5446,9 @@ export default function AdminTreksPage() {
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-slate-900">Delete this trek?</h3>
+            <h3 className="text-base font-bold text-slate-900">Move to Recycle Bin?</h3>
             <p className="text-xs text-slate-500 mt-1">
-              Are you sure you want to delete this trek? It will immediately be removed from the public catalog.
+              This package will be moved to your Recycle Bin. It will be hidden from the website, and you can restore it anytime or empty the bin.
             </p>
             <div className="mt-5 flex items-center justify-center gap-3">
               <button
@@ -5360,9 +5460,9 @@ export default function AdminTreksPage() {
               <button
                 onClick={() => handleDelete(deleteConfirmId)}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-60"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-60 cursor-pointer"
               >
-                {actionLoading ? "Deleting..." : "Yes, Delete"}
+                {actionLoading ? "Moving..." : "Move to Recycle Bin"}
               </button>
             </div>
           </div>
@@ -5731,9 +5831,29 @@ export default function AdminTreksPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Paste JSON Package Object
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold text-slate-700">
+                  Paste JSON Package Object
+                </label>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const clipText = await navigator.clipboard.readText();
+                      if (clipText) {
+                        setImportJsonText(clipText);
+                        showToast("📋 Pasted from clipboard!");
+                      }
+                    } catch {
+                      alert("Please use Ctrl+V / Cmd+V in the box below to paste.");
+                    }
+                  }}
+                  className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
+                >
+                  <ClipboardPaste className="w-3.5 h-3.5" />
+                  <span>Paste from Clipboard</span>
+                </button>
+              </div>
               <textarea
                 rows={10}
                 value={importJsonText}
@@ -5780,6 +5900,113 @@ export default function AdminTreksPage() {
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0F3A2E] hover:bg-[#154d3e] text-white flex items-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <span>Parse &amp; Load into Editor</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Recycle Bin Modal */}
+      {showRecycleModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Trek &amp; Package Recycle Bin</h3>
+                  <p className="text-xs text-slate-500">
+                    {recycledTreks.length} deleted package{recycledTreks.length === 1 ? "" : "s"} in recycle bin
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {recycledTreks.length > 0 && (
+                  <button
+                    onClick={handleEmptyRecycleBin}
+                    disabled={actionLoading}
+                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer disabled:opacity-50"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Empty Recycle Bin</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowRecycleModal(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto py-4 space-y-3">
+              {recycledTreks.length === 0 ? (
+                <div className="py-12 text-center text-slate-400">
+                  <Trash2 className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm font-semibold text-slate-600">Recycle Bin is empty</p>
+                  <p className="text-xs text-slate-400 mt-1">Deleted packages and treks will appear here and can be restored anytime.</p>
+                </div>
+              ) : (
+                recycledTreks.map((t) => (
+                  <div
+                    key={t.id}
+                    className="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200 transition flex items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-slate-900 truncate">{t.name}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-semibold">
+                          {getPackageSection(t)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                        <span>{t.duration || "N/A"}</span>
+                        <span>•</span>
+                        <span>₹{(t.price || 0).toLocaleString("en-IN")}</span>
+                        {t.deletedAt && (
+                          <>
+                            <span>•</span>
+                            <span className="text-rose-500">Deleted {new Date(t.deletedAt).toLocaleDateString()}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleRestoreTrek(t.id)}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer disabled:opacity-50"
+                        title="Restore package back to Drafts"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Restore</span>
+                      </button>
+                      <button
+                        onClick={() => handlePermanentDeleteTrek(t.id)}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                        title="Delete permanently from database"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                        <span>Purge</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+              <span>Restored packages are automatically placed in Draft mode.</span>
+              <button
+                onClick={() => setShowRecycleModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition cursor-pointer"
+              >
+                Close
               </button>
             </div>
           </div>

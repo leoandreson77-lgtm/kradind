@@ -61,7 +61,9 @@ export interface TrekData {
   price: number;
   originalPrice: number;
   badge: string;
-  status: "Published" | "Draft";
+  status: "Published" | "Draft" | "Trash" | string;
+  isDeleted?: boolean;
+  deletedAt?: string;
   version?: number;
   versionHistory?: TrekVersionSnapshot[];
   batches: TrekBatch[];
@@ -321,7 +323,9 @@ export interface DestinationData {
   highlights?: string[];
   color?: string;
   icon?: string;
-  status: "Published" | "Draft";
+  status: "Published" | "Draft" | "Trash" | string;
+  isDeleted?: boolean;
+  deletedAt?: string;
   version?: number;
   versionHistory?: DestinationVersionSnapshot[];
   createdAt?: string;

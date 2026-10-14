@@ -32,6 +32,7 @@ import {
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { parseInlineFormatting } from "@/components/formatted-text";
 import { ItineraryRouteMap } from "@/components/itinerary-route-map";
+import { ItineraryBankingDetails } from "@/components/itinerary-banking-details";
 import { downloadElementAsPdf } from "@/lib/pdf-download";
 
 export interface ItineraryPdfProps {
@@ -762,7 +763,12 @@ export function ItineraryPdfModal({
               </p>
             </div>
 
-            {/* 8. FOOTER WITH AUTHORIZED SIGNATORY STAMP & CONTACT */}
+            {/* 8. OFFICIAL BANK ACCOUNT, QR CODE & SOCIAL CHANNELS */}
+            <div className="my-6 page-break-inside-avoid">
+              <ItineraryBankingDetails showSocials={true} />
+            </div>
+
+            {/* 9. FOOTER WITH AUTHORIZED SIGNATORY STAMP & CONTACT */}
             <div className="pt-6 border-t-2 border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs page-break-inside-avoid">
               <div className="space-y-1">
                 <span className="font-extrabold text-[#0F3A2E] text-sm block">

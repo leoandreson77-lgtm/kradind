@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { CustomerItineraryProposal } from "@/lib/cms-store";
 import { ItineraryRouteMap } from "@/components/itinerary-route-map";
+import { ItineraryBankingDetails } from "@/components/itinerary-banking-details";
 import { downloadElementAsPdf } from "@/lib/pdf-download";
 
 interface ProposalVoucherModalProps {
@@ -612,6 +613,11 @@ KRADIND Adventures | Himalayas & Beyond
               ) : null}
               <div className="text-[10px] text-slate-400 mt-0.5">All applicable transport & guide taxes included</div>
             </div>
+          </div>
+
+          {/* Official Bank Account Details, QR Code & Social Channels */}
+          <div className="mb-8 page-break-avoid">
+            <ItineraryBankingDetails showSocials={true} />
           </div>
 
           {/* Signoff & Booking Terms Footer */}

@@ -49,6 +49,7 @@ import type {
 import { getPackageSection } from "@/lib/package-sections";
 import { CustomEditableField } from "@/components/admin/custom-editable-field";
 import { ItineraryRouteMap } from "@/components/itinerary-route-map";
+import { ItineraryBankingDetails } from "@/components/itinerary-banking-details";
 
 /**
  * Utility to strip raw markdown asterisks (**, *) from package text
@@ -2460,6 +2461,15 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
                 <option value="Expired">Expired</option>
               </select>
             </div>
+          </div>
+
+          {/* Official Bank Account & Deposit Information Ribbon */}
+          <div className="pt-2 pb-2">
+            <div className="mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+              <span>Official Company Bank Account &amp; UPI Details (Included in Client Voucher &amp; PDF)</span>
+              <span className="text-[10px] text-emerald-600 font-semibold">ICICI Bank • Verified Merchant</span>
+            </div>
+            <ItineraryBankingDetails compact={true} showSocials={true} />
           </div>
 
           {/* Action Buttons */}

@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
+import { ItineraryBankingDetails } from "@/components/itinerary-banking-details";
 
 interface SeasonPreset {
   id: string;
@@ -206,12 +207,18 @@ export function SalesItineraryCustomizer({
             `• *Day ${d.day}:* ${d.title}${d.distance ? ` (${d.distance})` : ""}`
         )
         .join("\n") +
-      `\n\n*✅ KEY INCLUSIONS:*\n` +
-      `• Certified Himalayan Trek Leaders & Guides\n` +
-      `• All Meals (Nutritious B/L/D + hot soups & tea)\n` +
-      `• Dome Tents, Sleeping Bags & Mattresses\n` +
-      `• Forest Permits, Camping Charges & Green Fees\n` +
-      `• Medical Kit with Oxygen Cylinder & Oximeter\n\n` +
+      `\n\n*🏦 OFFICIAL BANK & UPI DETAILS FOR TOKEN DEPOSIT:*\n` +
+      `• *Bank:* ICICI Bank\n` +
+      `• *Account Name:* KRAD GLOBAL EXIM (INDIA) PRIVATE LIMITED\n` +
+      `• *Current A/C No:* 778305500099\n` +
+      `• *IFSC Code:* ICIC0000021\n` +
+      `• *Instant UPI ID:* 9999797269.ibz@icici\n` +
+      `• *Eazypay UPI ID:* mskradglobaleximindiaprivatelimited.eazypay@icici\n\n` +
+      `*📱 FOLLOW OUR ADVENTURES (SOCIAL LINKS):*\n` +
+      `• Instagram: https://instagram.com/kradind_adventures\n` +
+      `• Facebook: https://facebook.com/kradind\n` +
+      `• YouTube: https://youtube.com/@kradind\n` +
+      `• WhatsApp: https://wa.me/919797941414\n\n` +
       `📄 *Official Itinerary PDF & Branded Proposal Available on Request.*\n` +
       `📞 Coordinator: ${salesAgentName} (+91 9797941414)\n` +
       `🌐 Website: https://kradind.com/treks/${tour.slug}`
@@ -664,6 +671,11 @@ export function SalesItineraryCustomizer({
                   <div className="p-4 bg-slate-900 text-slate-100 rounded-2xl font-mono text-xs whitespace-pre-line leading-relaxed max-h-80 overflow-y-auto border border-slate-800">
                     {generateWhatsAppPitch()}
                   </div>
+                </div>
+
+                {/* Official Bank Account & Social Links */}
+                <div className="pt-2">
+                  <ItineraryBankingDetails showSocials={true} />
                 </div>
               </div>
             )}

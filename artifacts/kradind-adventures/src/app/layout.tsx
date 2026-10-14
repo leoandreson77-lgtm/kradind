@@ -3,7 +3,6 @@ import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { FloatingWhatsApp } from "@/components/floating-whatsapp";
-import { VoiceAssistantWrapper } from "@/components/voice-assistant-wrapper";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -107,7 +106,7 @@ const globalStructuredData = {
       "@type": "Organization",
       "@id": "https://kradind.com/#organization",
       name: "KRAD Global",
-      legalName: "KRAD Global Travels / KRADIND Adventures Private Limited",
+      legalName: "KRAD Global Travels / KRADIND",
       alternateName: ["KRADIND Adventures", "KRAD Global Travels", "KRADIND"],
       url: "https://kradind.com",
       logo: {
@@ -233,7 +232,7 @@ const globalStructuredData = {
       "@type": "LocalBusiness",
       "@id": "https://kradind.com/#localbusiness",
       name: "KRADIND Adventures",
-      legalName: "KRADIND Adventures Private Limited",
+      legalName: "KRADIND",
       alternateName: ["KRADIND", "KRAD Global Travels"],
       url: "https://kradind.com",
       image: "https://kradind.com/logo.webp",
@@ -396,7 +395,6 @@ export default function RootLayout({
 
         {children}
         <FloatingWhatsApp />
-        <VoiceAssistantWrapper />
       </body>
     </html>
   );

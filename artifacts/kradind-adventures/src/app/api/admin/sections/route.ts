@@ -163,7 +163,7 @@ export async function PUT(request: NextRequest) {
         whatsappChannelUrl: body.contactAndFooter?.whatsappChannelUrl ?? currentSections?.contactAndFooter?.whatsappChannelUrl ?? "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34",
         pinterestUrl: body.contactAndFooter?.pinterestUrl ?? currentSections?.contactAndFooter?.pinterestUrl ?? "https://in.pinterest.com/KradGlobalTravels/",
         linkedinUrl: body.contactAndFooter?.linkedinUrl ?? currentSections?.contactAndFooter?.linkedinUrl ?? "https://www.linkedin.com/company/krad-india/",
-        copyrightText: body.contactAndFooter?.copyrightText ?? currentSections?.contactAndFooter?.copyrightText ?? "© 2026 KRADIND Adventures Private Limited. All rights reserved.",
+        copyrightText: body.contactAndFooter?.copyrightText ?? currentSections?.contactAndFooter?.copyrightText ?? "© 2026 KRADIND. All rights reserved.",
       },
     };
 

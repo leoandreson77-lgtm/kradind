@@ -162,7 +162,7 @@ export function SocialMediaHub({ initialConfig }: SocialMediaHubProps) {
     const vCardData = `BEGIN:VCARD
 VERSION:3.0
 FN:KRADIND Adventures
-ORG:KRAD Global Travels & KRADIND Adventures Private Limited
+ORG:KRAD Global Travels & KRADIND
 TITLE:High-Altitude Expeditions & Customized Tours
 TEL;TYPE=WORK,VOICE:+919797941414
 TEL;TYPE=CELL,WHATSAPP:+919797941414
@@ -808,7 +808,7 @@ END:VCARD`;
                 <span>Headquarters & Ground Support</span>
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                KRADIND Adventures Private Limited
+                KRADIND
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
                 {address}
@@ -855,7 +855,7 @@ END:VCARD`;
 
         {/* Footer Note */}
         <div className="text-center text-xs text-slate-500 mt-12 space-y-1">
-          <p>© {new Date().getFullYear()} KRADIND Adventures Private Limited. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} KRADIND. All rights reserved.</p>
           <p className="text-[11px] text-slate-600">
             Official Travel Portfolio • Designed for Mountain Enthusiasts & Global Travelers.
           </p>

@@ -312,7 +312,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <span>•</span>
                     <span>Last Updated: <strong>21 September 2026</strong></span>
                     <span>•</span>
-                    <span>Governing Entity: <strong>KRADIND Adventures Private Limited / KRAD Global</strong></span>
+                    <span>Governing Entity: <strong>KRADIND / KRAD Global</strong></span>
                   </div>
                 </div>
 
@@ -323,7 +323,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <span>Official Privacy &amp; Data Protection Commitment</span>
                   </div>
                   <p className="m-0">
-                    KRADIND Adventures Private Limited operating jointly with KRAD Global (&quot;KRADIND&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) provides high-altitude alpine expeditions, Himalayan trekking circuits, and domestic and international travel management via our official domain <strong className="text-emerald-900">www.kradind.com</strong>. We are resolutely committed to safeguarding your personal data in strict conformity with the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong>, the <strong>Information Technology Act, 2000</strong>, the <strong>IT (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011</strong>, and the <strong>Consumer Protection (E-Commerce) Rules, 2020</strong>.
+                    KRADIND operating jointly with KRAD Global (&quot;KRADIND&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) provides high-altitude alpine expeditions, Himalayan trekking circuits, and domestic and international travel management via our official domain <strong className="text-emerald-900">www.kradind.com</strong>. We are resolutely committed to safeguarding your personal data in strict conformity with the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong>, the <strong>Information Technology Act, 2000</strong>, the <strong>IT (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011</strong>, and the <strong>Consumer Protection (E-Commerce) Rules, 2020</strong>.
                   </p>
                   <p className="m-0 text-[11px] text-emerald-800">
                     This Privacy Policy comprehensively governs the collection, processing, storage, sharing, and statutory deletion of personal data collected from website visitors, travel inquirers, booking customers, and expedition participants.
@@ -334,7 +334,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                 <section className="space-y-3">
                   <h3 className="text-lg font-bold text-slate-900 m-0">1. Introduction, Operating Entity &amp; Scope</h3>
                   <p className="text-xs leading-relaxed">
-                    Under the DPDP Act 2023, KRADIND Adventures Private Limited functions as a <em>Data Fiduciary</em> determining the purpose and means of processing personal data provided by you (the <em>Data Principal</em>). This policy applies to:
+                    Under the DPDP Act 2023, KRADIND functions as a <em>Data Fiduciary</em> determining the purpose and means of processing personal data provided by you (the <em>Data Principal</em>). This policy applies to:
                   </p>
                   <ul className="text-xs space-y-1.5 list-disc pl-5">
                     <li>Visitors accessing <strong>www.kradind.com</strong> or our associated mobile interfaces.</li>
@@ -515,7 +515,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
                       <strong className="text-sm text-emerald-900 block mb-0.5">Strict Anti-Commercialization Guarantee</strong>
-                      KRADIND Adventures Private Limited and KRAD Global explicitly warrant that we <strong>NEVER</strong> sell, rent, lease, trade, or monetize your personal or medical data to third-party brokers, advertisers, or marketing firms under any circumstances.
+                      KRADIND and KRAD Global explicitly warrant that we <strong>NEVER</strong> sell, rent, lease, trade, or monetize your personal or medical data to third-party brokers, advertisers, or marketing firms under any circumstances.
                     </div>
                   </div>
                 </section>
@@ -699,7 +699,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-slate-200">
                     <div className="space-y-2">
                       <p className="m-0"><strong>Designation:</strong> Data Protection &amp; Grievance Redressal Officer</p>
-                      <p className="m-0"><strong>Operating Entity:</strong> KRADIND Adventures Private Limited &amp; KRAD Global</p>
+                      <p className="m-0"><strong>Operating Entity:</strong> KRADIND &amp; KRAD Global</p>
                       <p className="m-0"><strong>Official Website:</strong> <a href="https://kradind.com" className="text-emerald-400 underline">www.kradind.com</a></p>
                       <p className="m-0"><strong>Registered Office:</strong> Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                     </div>
@@ -1382,7 +1382,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
                   <h4 className="font-bold text-slate-900 text-sm m-0">Editorial Desk Contact</h4>
                   <div className="pt-2 text-slate-800 space-y-1 font-medium">
                     <p className="m-0"><strong>Chief Expedition Directorate:</strong> KRADIND Expedition Team</p>
-                    <p className="m-0"><strong>Organization:</strong> KRADIND Adventures Private Limited</p>
+                    <p className="m-0"><strong>Organization:</strong> KRADIND</p>
                     <p className="m-0"><strong>Address:</strong> Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001, India</p>
                     <p className="m-0"><strong>Email:</strong> info@kradind.com / kradglobalind@gmail.com</p>
                     <p className="m-0"><strong>Last Reviewed:</strong> 14 September 2026</p>

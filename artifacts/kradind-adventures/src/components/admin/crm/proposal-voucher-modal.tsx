@@ -623,7 +623,7 @@ KRADIND Adventures | Himalayas & Beyond
           {/* Signoff & Booking Terms Footer */}
           <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] text-slate-500 page-break-avoid">
             <div className="space-y-1">
-              <div className="font-bold text-slate-800">KRADIND ADVENTURES PRIVATE LIMITED</div>
+              <div className="font-bold text-slate-800">KRADIND</div>
               <div>Dehradun Head Office, Uttarakhand • Contact: +91 97979 41414</div>
               <div>Official Portal: https://kradind.com • Email: info@kradind.com</div>
             </div>

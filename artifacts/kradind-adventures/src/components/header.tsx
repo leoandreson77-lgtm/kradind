@@ -11,7 +11,6 @@ import {
   ArrowRight,
   ShieldCheck,
   Compass,
-  Mic,
 } from "lucide-react";
 
 const DEFAULT_HEADER_DESTINATIONS = [
@@ -62,12 +61,6 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
   };
 
   const closeDropdown = () => setActiveDropdown(null);
-
-  const triggerVoiceAssistant = () => {
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("open-voice-assistant"));
-    }
-  };
 
   return (
     <header className="w-full relative z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs no-print print:hidden">
@@ -793,17 +786,6 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
         {/* Right CTA Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-          
-          {/* Quick Voice Command Assistant Trigger */}
-          <button
-            type="button"
-            onClick={triggerVoiceAssistant}
-            className="inline-flex items-center gap-1.5 px-2.5 xl:px-3 py-2 rounded-full border border-emerald-600/30 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] text-xs font-bold transition shrink-0 cursor-pointer"
-            title="Voice Search (Treks, Tours, Destinations, Honeymoon)"
-          >
-            <Mic className="w-3.5 h-3.5 text-emerald-700 animate-pulse shrink-0" />
-            <span className="hidden 2xl:inline whitespace-nowrap">Voice Search</span>
-          </button>
 
           {/* Quick Enquire Now Button */}
           {onBookClick && (
@@ -854,18 +836,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
           )}
           
           {/* Quick Actions in Drawer */}
-          <div className="grid grid-cols-3 gap-2 pb-2 border-b border-slate-100">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                triggerVoiceAssistant();
-              }}
-              className="flex items-center justify-center gap-1 bg-emerald-50 text-[#0F3A2E] border border-emerald-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"
-            >
-              <Mic className="w-3.5 h-3.5 text-emerald-600 animate-pulse shrink-0" />
-              <span>Voice</span>
-            </button>
+          <div className="grid grid-cols-2 gap-2 pb-2 border-b border-slate-100">
             <a
               href="tel:+919797941414"
               className="flex items-center justify-center gap-1 bg-slate-50 text-[#0F3A2E] border border-slate-200 font-bold text-xs py-2.5 rounded-xl shadow-xs"

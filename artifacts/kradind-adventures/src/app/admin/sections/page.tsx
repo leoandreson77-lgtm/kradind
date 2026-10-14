@@ -2676,7 +2676,7 @@ export default function AdminSectionsPage() {
             <div className="sm:col-span-2">
               <CustomEditableField
                 label="Copyright Notice"
-                value={sections.contactAndFooter?.copyrightText || "© 2026 KRADIND Adventures Private Limited. All rights reserved."}
+                value={sections.contactAndFooter?.copyrightText || "© 2026 KRADIND. All rights reserved."}
                 onChange={(val) =>
                   setSections({
                     ...sections,

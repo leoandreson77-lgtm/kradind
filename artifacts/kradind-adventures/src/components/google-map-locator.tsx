@@ -24,7 +24,7 @@ export function GoogleMapLocator({ className = "", showTitle = true }: GoogleMap
 
   const place = {
     title: "KRAD GLOBAL",
-    businessName: "KRADIND Adventures Private Limited",
+    businessName: "KRADIND",
     addressLine1: "Hall No. H -04, 410 PRATAP PALACE, INDIRANAGAR COLONY",
     addressLine2: "Vasant Vihar, Dehradun, Uttarakhand 248001, India",
     coords: { lat: 30.3190771, lng: 78.0017444 },

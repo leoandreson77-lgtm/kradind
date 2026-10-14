@@ -2898,7 +2898,7 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       whatsappChannelUrl: "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34",
       pinterestUrl: "https://in.pinterest.com/KradGlobalTravels/",
       linkedinUrl: "https://www.linkedin.com/company/krad-india/",
-      copyrightText: "© 2026 KRADIND Adventures Private Limited. All rights reserved. Registered under Ministry of Tourism.",
+      copyrightText: "© 2026 KRADIND. All rights reserved. Registered under Ministry of Tourism.",
     },
   };
 }

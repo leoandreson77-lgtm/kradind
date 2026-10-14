@@ -100,6 +100,40 @@ export const DEFAULT_PERMISSIONS_BY_ROLE: Record<AdminRole, string[]> = {
   ],
 };
 
+export function normalizeUserPermissions(perms?: string[], role?: AdminRole): string[] {
+  if (!perms || perms.length === 0) {
+    return DEFAULT_PERMISSIONS_BY_ROLE[role || "Sales / CRM Agent"] || [];
+  }
+  if (perms.includes("all")) {
+    return SYSTEM_AUTHORITIES.map((a) => a.key);
+  }
+
+  const validKeys = new Set(SYSTEM_AUTHORITIES.map((a) => a.key));
+  const result = new Set<string>();
+
+  for (const p of perms) {
+    if (validKeys.has(p)) {
+      result.add(p);
+    } else if (p.startsWith("crm") || p.startsWith("leads")) {
+      result.add("manage_leads");
+      result.add("manage_sales");
+    } else if (p.startsWith("bookings")) {
+      result.add("manage_sales");
+      result.add("manage_payments");
+    } else if (p.startsWith("radar") || p.startsWith("treks")) {
+      result.add("manage_operations");
+    } else if (p.startsWith("cms")) {
+      result.add("cms_editor");
+    }
+  }
+
+  if (result.size === 0 && role && DEFAULT_PERMISSIONS_BY_ROLE[role]) {
+    return [...DEFAULT_PERMISSIONS_BY_ROLE[role]];
+  }
+
+  return Array.from(result);
+}
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,7 +168,12 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch("/api/admin/users");
       if (res.ok) {
-        setUsers(await res.json());
+        const rawUsers: AdminUser[] = await res.json();
+        const mapped = rawUsers.map((u) => ({
+          ...u,
+          permissions: normalizeUserPermissions(u.permissions, u.role),
+        }));
+        setUsers(mapped);
       } else {
         const err = await res.json();
         showToast(err.error || "Failed to load team users");
@@ -534,7 +573,10 @@ export default function AdminUsersPage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => {
-                            setEditingUser(user);
+                            setEditingUser({
+                              ...user,
+                              permissions: normalizeUserPermissions(user.permissions, user.role),
+                            });
                             setShowEditModal(true);
                           }}
                           title="Edit Role & Permissions"
@@ -643,170 +685,187 @@ export default function AdminUsersPage() {
       {/* ========================================================= */}
       {/* MODAL: ADD TEAM MEMBER */}
       {/* ========================================================= */}
+      {/* ========================================================= */}
+      {/* MODAL: ADD TEAM MEMBER */}
+      {/* ========================================================= */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-slate-200 w-full max-w-md rounded-2xl p-6 shadow-2xl relative space-y-4 text-slate-800">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] rounded-2xl shadow-2xl relative flex flex-col text-slate-800 overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 shrink-0 bg-white">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <UserPlus className="w-4 h-4 text-emerald-600" />
                 <span>Invite New Staff Member</span>
               </h3>
               <button
+                type="button"
                 onClick={() => setShowAddModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateUser} className="space-y-3 text-xs">
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Vikram Negi"
-                  value={newUser.name}
-                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                  Staff Work Email *
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="vikram@kradind.com"
-                  value={newUser.email}
-                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                  Temporary Password *
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••••••"
-                  value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            {/* Scrollable Form Body */}
+            <form onSubmit={handleCreateUser} className="flex flex-col flex-1 min-h-0">
+              <div className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Assigned Role</label>
-                  <select
-                    value={newUser.role}
-                    onChange={(e) => {
-                      const newRole = e.target.value as AdminRole;
-                      setNewUser({
-                        ...newUser,
-                        role: newRole,
-                        permissions: DEFAULT_PERMISSIONS_BY_ROLE[newRole] || [],
-                      });
-                    }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
-                  >
-                    <option value="Sales / CRM Agent">Sales / CRM Agent</option>
-                    <option value="Operations Manager">Operations Manager</option>
-                    <option value="Expedition Leader">Expedition Leader</option>
-                    <option value="Super Admin">Super Admin</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Department</label>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Full Name *</label>
                   <input
                     type="text"
-                    value={newUser.department}
-                    onChange={(e) => setNewUser({ ...newUser, department: e.target.value })}
+                    required
+                    placeholder="e.g. Vikram Negi"
+                    value={newUser.name}
+                    onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
                   />
                 </div>
-              </div>
 
-              {/* Authority Enable / Disable Section */}
-              <div className="pt-3 border-t border-slate-200">
-                <div className="flex items-center justify-between mb-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <span className="text-[11px] font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                      <span>Authority &amp; Permissions (Enable / Disable)</span>
-                    </span>
-                    <p className="text-[10px] text-slate-500">
-                      Enable or disable individual system capabilities for this staff member.
-                    </p>
+                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                      Staff Work Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="vikram@kradind.com"
+                      value={newUser.email}
+                      onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    />
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    {newUser.permissions.length} of {SYSTEM_AUTHORITIES.length} Enabled
-                  </span>
+
+                  <div>
+                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                      Temporary Password *
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••••••"
+                      value={newUser.password}
+                      onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    />
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1 bg-slate-50 rounded-xl border border-slate-200">
-                  {SYSTEM_AUTHORITIES.map((auth) => {
-                    const isEnabled = newUser.permissions.includes(auth.key);
-                    return (
-                      <button
-                        key={auth.key}
-                        type="button"
-                        onClick={() => {
-                          setNewUser((prev) => ({
-                            ...prev,
-                            permissions: isEnabled
-                              ? prev.permissions.filter((p) => p !== auth.key)
-                              : [...prev.permissions, auth.key],
-                          }));
-                        }}
-                        className={`p-2.5 rounded-xl border text-left transition flex items-start gap-2.5 cursor-pointer ${
-                          isEnabled
-                            ? "bg-white border-emerald-400 shadow-2xs ring-1 ring-emerald-500/20"
-                            : "bg-slate-100/70 border-slate-200 hover:bg-white opacity-60"
-                        }`}
-                      >
-                        <div
-                          className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
-                            isEnabled ? "bg-emerald-600 text-white" : "border border-slate-300 bg-white"
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Assigned Role</label>
+                    <select
+                      value={newUser.role}
+                      onChange={(e) => {
+                        const newRole = e.target.value as AdminRole;
+                        setNewUser({
+                          ...newUser,
+                          role: newRole,
+                          permissions: DEFAULT_PERMISSIONS_BY_ROLE[newRole] || [],
+                        });
+                      }}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    >
+                      <option value="Sales / CRM Agent">Sales / CRM Agent</option>
+                      <option value="Operations Manager">Operations Manager</option>
+                      <option value="Expedition Leader">Expedition Leader</option>
+                      <option value="Super Admin">Super Admin</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Department</label>
+                    <input
+                      type="text"
+                      value={newUser.department}
+                      onChange={(e) => setNewUser({ ...newUser, department: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Authority Enable / Disable Section */}
+                <div className="pt-3 border-t border-slate-200">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div>
+                      <span className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span>Authority &amp; Permissions (Enable / Disable)</span>
+                      </span>
+                      <p className="text-[11px] text-slate-500">
+                        Enable or disable individual system capabilities for this staff member.
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
+                      {SYSTEM_AUTHORITIES.filter((a) => newUser.permissions.includes(a.key)).length} of {SYSTEM_AUTHORITIES.length} Enabled
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1.5 bg-slate-50/80 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
+                    {SYSTEM_AUTHORITIES.map((auth) => {
+                      const isEnabled = newUser.permissions.includes(auth.key);
+                      return (
+                        <button
+                          key={auth.key}
+                          type="button"
+                          onClick={() => {
+                            setNewUser((prev) => ({
+                              ...prev,
+                              permissions: isEnabled
+                                ? prev.permissions.filter((p) => p !== auth.key)
+                                : [...prev.permissions, auth.key],
+                            }));
+                          }}
+                          className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                            isEnabled
+                              ? "bg-emerald-50/80 border-emerald-500 shadow-2xs ring-1 ring-emerald-500/30"
+                              : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80"
                           }`}
                         >
-                          {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
-                        </div>
-                        <div className="min-w-0">
-                          <span
-                            className={`text-xs font-bold leading-tight block ${
-                              isEnabled ? "text-emerald-950" : "text-slate-600"
+                          <div
+                            className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
+                              isEnabled
+                                ? "bg-emerald-600 text-white border border-emerald-600"
+                                : "border-2 border-slate-300 bg-white"
                             }`}
                           >
-                            {auth.label}
-                          </span>
-                          <span className="text-[10px] text-slate-400 block line-clamp-1 mt-0.5">
-                            {auth.desc}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
+                            {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <span
+                              className={`text-xs block leading-tight ${
+                                isEnabled ? "font-bold text-emerald-950" : "font-semibold text-slate-700"
+                              }`}
+                            >
+                              {auth.label}
+                            </span>
+                            <span
+                              className={`text-[10px] block line-clamp-2 mt-0.5 leading-normal ${
+                                isEnabled ? "text-emerald-800/80" : "text-slate-400"
+                              }`}
+                            >
+                              {auth.desc}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              {/* Sticky / Pinned Footer */}
+              <div className="p-3.5 px-5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs"
+                  className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition-colors shadow-2xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors"
                 >
                   Create Staff Account
                 </button>
@@ -820,62 +879,72 @@ export default function AdminUsersPage() {
       {/* MODAL: EDIT TEAM MEMBER */}
       {/* ========================================================= */}
       {showEditModal && editingUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-slate-200 w-full max-w-md rounded-2xl p-6 shadow-2xl relative space-y-4 text-slate-800">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] rounded-2xl shadow-2xl relative flex flex-col text-slate-800 overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 shrink-0 bg-white">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <Edit2 className="w-4 h-4 text-emerald-600" />
                 <span>Edit Staff Permissions: {editingUser.name}</span>
               </h3>
               <button
+                type="button"
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingUser(null);
                 }}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleUpdateUser} className="space-y-3 text-xs">
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Full Name</label>
-                <input
-                  type="text"
-                  value={editingUser.name}
-                  onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            {/* Scrollable Form Body */}
+            <form onSubmit={handleUpdateUser} className="flex flex-col flex-1 min-h-0">
+              <div className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Role</label>
-                  <select
-                    value={editingUser.role}
-                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value as AdminRole })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
-                  >
-                    <option value="Super Admin">Super Admin</option>
-                    <option value="Operations Manager">Operations Manager</option>
-                    <option value="Sales / CRM Agent">Sales / CRM Agent</option>
-                    <option value="Expedition Leader">Expedition Leader</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Department</label>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Full Name</label>
                   <input
                     type="text"
-                    value={editingUser.department || ""}
-                    onChange={(e) => setEditingUser({ ...editingUser, department: e.target.value })}
+                    value={editingUser.name}
+                    onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Role</label>
+                    <select
+                      value={editingUser.role}
+                      onChange={(e) => {
+                        const newRole = e.target.value as AdminRole;
+                        setEditingUser({
+                          ...editingUser,
+                          role: newRole,
+                          permissions: DEFAULT_PERMISSIONS_BY_ROLE[newRole] || editingUser.permissions,
+                        });
+                      }}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    >
+                      <option value="Super Admin">Super Admin</option>
+                      <option value="Operations Manager">Operations Manager</option>
+                      <option value="Sales / CRM Agent">Sales / CRM Agent</option>
+                      <option value="Expedition Leader">Expedition Leader</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Department</label>
+                    <input
+                      type="text"
+                      value={editingUser.department || ""}
+                      onChange={(e) => setEditingUser({ ...editingUser, department: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                     Account Status
@@ -885,89 +954,95 @@ export default function AdminUsersPage() {
                     onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value as any })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Suspended">Suspended</option>
+                    <option value="Active">Active (Login Allowed)</option>
+                    <option value="Suspended">Suspended (Login Blocked)</option>
                   </select>
                 </div>
 
-              </div>
-
-              {/* Authority Enable / Disable Section in Edit Modal */}
-              <div className="pt-3 border-t border-slate-200">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <span className="text-[11px] font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                      <span>Authority &amp; Permissions (Enable / Disable)</span>
+                {/* Authority Enable / Disable Section in Edit Modal */}
+                <div className="pt-3 border-t border-slate-200">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div>
+                      <span className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span>Authority &amp; Permissions (Enable / Disable)</span>
+                      </span>
+                      <p className="text-[11px] text-slate-500">
+                        Configure granular module access for {editingUser.name}.
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
+                      {SYSTEM_AUTHORITIES.filter((a) => (editingUser.permissions || []).includes(a.key)).length} of {SYSTEM_AUTHORITIES.length} Enabled
                     </span>
-                    <p className="text-[10px] text-slate-500">
-                      Configure granular module access for {editingUser.name}.
-                    </p>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    {(editingUser.permissions || []).length} of {SYSTEM_AUTHORITIES.length} Enabled
-                  </span>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1 bg-slate-50 rounded-xl border border-slate-200">
-                  {SYSTEM_AUTHORITIES.map((auth) => {
-                    const currentPerms = editingUser.permissions || [];
-                    const isEnabled = currentPerms.includes(auth.key);
-                    return (
-                      <button
-                        key={auth.key}
-                        type="button"
-                        onClick={() => {
-                          const updatedPerms = isEnabled
-                            ? currentPerms.filter((p) => p !== auth.key)
-                            : [...currentPerms, auth.key];
-                          setEditingUser({ ...editingUser, permissions: updatedPerms });
-                        }}
-                        className={`p-2.5 rounded-xl border text-left transition flex items-start gap-2.5 cursor-pointer ${
-                          isEnabled
-                            ? "bg-white border-emerald-400 shadow-2xs ring-1 ring-emerald-500/20"
-                            : "bg-slate-100/70 border-slate-200 hover:bg-white opacity-60"
-                        }`}
-                      >
-                        <div
-                          className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
-                            isEnabled ? "bg-emerald-600 text-white" : "border border-slate-300 bg-white"
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1.5 bg-slate-50/80 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
+                    {SYSTEM_AUTHORITIES.map((auth) => {
+                      const currentPerms = editingUser.permissions || [];
+                      const isEnabled = currentPerms.includes(auth.key);
+                      return (
+                        <button
+                          key={auth.key}
+                          type="button"
+                          onClick={() => {
+                            const updatedPerms = isEnabled
+                              ? currentPerms.filter((p) => p !== auth.key)
+                              : [...currentPerms, auth.key];
+                            setEditingUser({ ...editingUser, permissions: updatedPerms });
+                          }}
+                          className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                            isEnabled
+                              ? "bg-emerald-50/80 border-emerald-500 shadow-2xs ring-1 ring-emerald-500/30"
+                              : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80"
                           }`}
                         >
-                          {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
-                        </div>
-                        <div className="min-w-0">
-                          <span
-                            className={`text-xs font-bold leading-tight block ${
-                              isEnabled ? "text-emerald-950" : "text-slate-600"
+                          <div
+                            className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
+                              isEnabled
+                                ? "bg-emerald-600 text-white border border-emerald-600"
+                                : "border-2 border-slate-300 bg-white"
                             }`}
                           >
-                            {auth.label}
-                          </span>
-                          <span className="text-[10px] text-slate-400 block line-clamp-1 mt-0.5">
-                            {auth.desc}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
+                            {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <span
+                              className={`text-xs block leading-tight ${
+                                isEnabled ? "font-bold text-emerald-950" : "font-semibold text-slate-700"
+                              }`}
+                            >
+                              {auth.label}
+                            </span>
+                            <span
+                              className={`text-[10px] block line-clamp-2 mt-0.5 leading-normal ${
+                                isEnabled ? "text-emerald-800/80" : "text-slate-400"
+                              }`}
+                            >
+                              {auth.desc}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              {/* Sticky / Pinned Footer */}
+              <div className="p-3.5 px-5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingUser(null);
                   }}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs"
+                  className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition-colors shadow-2xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors"
                 >
                   Save Member Changes
                 </button>

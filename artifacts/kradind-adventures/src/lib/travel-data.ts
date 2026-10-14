@@ -56,6 +56,8 @@ export interface TrekData {
   originalPrice: number;
   badge: string;
   status: "Published" | "Draft";
+  version?: number;
+  versionHistory?: any[];
   batches?: TrekBatch[];
   itinerary: TrekItineraryDay[];
   inclusions?: string[];

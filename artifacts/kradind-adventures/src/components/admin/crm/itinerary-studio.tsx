@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Sparkles,
   Plus,
@@ -44,6 +44,7 @@ import type {
   ItineraryProposalDay,
   CustomerRecord,
   TrekData,
+  ProposalVersionSnapshot,
 } from "@/lib/cms-store";
 import { getPackageSection } from "@/lib/package-sections";
 import { CustomEditableField } from "@/components/admin/custom-editable-field";
@@ -327,7 +328,7 @@ export function ItineraryStudio({
 
   // Auto-save & draft restoration state
   const [lastSavedTime, setLastSavedTime] = useState<string>("");
-  const [autoSaveStatus, setAutoSaveStatus] = useState<"Saved" | "Saving..." | "Ready">("Ready");
+  const [autoSaveStatus, setAutoSaveStatus] = useState<string>("Ready");
   const [draftRecoveredNotice, setDraftRecoveredNotice] = useState<boolean>(false);
 
   // De-duplicate packages and classify cleanly
@@ -375,39 +376,120 @@ export function ItineraryStudio({
     }
   }, [initialProposal]);
 
-  // Debounced auto-save to localStorage whenever formData changes
+  const lastSnapshotHashRef = useRef<string>("");
+  const isRestoringRef = useRef<boolean>(false);
+
+  // Debounced auto-save to localStorage & server DB as Draft, with automated version snapshots
   useEffect(() => {
-    if (typeof window === "undefined" || initialProposal) return;
+    if (typeof window === "undefined") return;
 
     const hasContent = Boolean(
       formData.customerName?.trim() ||
       formData.packageTitle?.trim() ||
-      formData.customerPhone?.trim() ||
       formData.destination?.trim() ||
       (formData.itinerary && formData.itinerary.length > 0)
     );
 
     if (!hasContent) return;
 
-    setAutoSaveStatus("Saving...");
+    if (isRestoringRef.current) {
+      isRestoringRef.current = false;
+      return;
+    }
+
+    setAutoSaveStatus("Saving Draft...");
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
-        const now = new Date().toLocaleTimeString("en-IN", {
+        const contentHash = JSON.stringify({
+          title: (formData.packageTitle || "").trim(),
+          cust: (formData.customerName || "").trim(),
+          phone: (formData.customerPhone || "").trim(),
+          dest: (formData.destination || "").trim(),
+          price: formData.totalQuotedPrice || 0,
+          days: (formData.itinerary || []).map((d) => ({ t: d.title, d: d.description, s: d.stay, m: d.meal })),
+          inclusions: formData.inclusions || [],
+          exclusions: formData.exclusions || [],
+        });
+
+        const nowFormatted = new Date().toLocaleTimeString("en-IN", {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
         });
-        localStorage.setItem(DRAFT_TIMESTAMP_KEY, now);
-        setLastSavedTime(now);
-        setAutoSaveStatus("Saved");
+
+        let updatedHistory = Array.isArray(formData.versionHistory) ? [...formData.versionHistory] : [];
+        let newVersion = formData.version || 1;
+
+        // Automatically log a revision snapshot whenever meaningful changes occur
+        if (contentHash !== lastSnapshotHashRef.current) {
+          newVersion = updatedHistory.length + 1;
+          const snapTime = new Date().toISOString();
+          const autoSnap: ProposalVersionSnapshot = {
+            version: newVersion,
+            timestamp: snapTime,
+            author: formData.author || "Admin Agent",
+            note: `Auto-saved Draft v${newVersion} (${formData.itinerary.length} Days • ₹${(formData.totalQuotedPrice || 0).toLocaleString("en-IN")})`,
+            proposalSnapshot: {
+              packageTitle: formData.packageTitle,
+              customerName: formData.customerName,
+              customerPhone: formData.customerPhone,
+              customerEmail: formData.customerEmail,
+              customerCity: formData.customerCity,
+              destination: formData.destination,
+              duration: formData.duration,
+              totalQuotedPrice: formData.totalQuotedPrice,
+              basePricePerPerson: formData.basePricePerPerson,
+              itinerary: JSON.parse(JSON.stringify(formData.itinerary)),
+              hotelDetails: formData.hotelDetails ? JSON.parse(JSON.stringify(formData.hotelDetails)) : [],
+              hotelCategory: formData.hotelCategory,
+              roomCategory: formData.roomCategory,
+              inclusions: [...(formData.inclusions || [])],
+              exclusions: [...(formData.exclusions || [])],
+              vehicleType: formData.vehicleType,
+              specialNotes: formData.specialNotes,
+            },
+          };
+          updatedHistory = [autoSnap, ...updatedHistory].slice(0, 25);
+          lastSnapshotHashRef.current = contentHash;
+
+          setFormData((prev) => ({
+            ...prev,
+            status: "Draft",
+            version: newVersion,
+            versionHistory: updatedHistory,
+          }));
+        }
+
+        const draftPayload = {
+          ...formData,
+          status: "Draft",
+          version: newVersion,
+          versionHistory: updatedHistory,
+        };
+
+        // 1. Save to local storage
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draftPayload));
+        localStorage.setItem(DRAFT_TIMESTAMP_KEY, nowFormatted);
+        setLastSavedTime(nowFormatted);
+
+        // 2. Auto-save to Database API as Draft
+        if (formData.packageTitle?.trim() && formData.customerName?.trim() && formData.itinerary.length > 0) {
+          fetch("/api/admin/crm/proposals", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(draftPayload),
+          }).catch(() => {});
+        }
+
+        setAutoSaveStatus(`Auto-saved (Draft v${newVersion})`);
       } catch (err) {
-        console.warn("Failed to auto-save itinerary studio draft:", err);
+        console.warn("Auto-save failed:", err);
+        setAutoSaveStatus("Save error");
       }
-    }, 400);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [formData, initialProposal]);
+  }, [formData]);
 
   // Warn user before leaving or reloading page if dirty unsaved proposal data exists
   useEffect(() => {
@@ -784,12 +866,64 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
     }
   };
 
+  // Manual snapshot capture
+  const handleManualSnapshot = (customNote?: string) => {
+    const currentVer = formData.version || 1;
+    const nextVer = (formData.versionHistory?.length || 0) + 1;
+    const now = new Date().toISOString();
+    const newSnapshot: ProposalVersionSnapshot = {
+      version: nextVer,
+      timestamp: now,
+      author: formData.author || "Admin Agent",
+      note: customNote || `Manual Snapshot v${nextVer} (${formData.itinerary.length} Days • ₹${(formData.totalQuotedPrice || 0).toLocaleString("en-IN")})`,
+      proposalSnapshot: {
+        packageTitle: formData.packageTitle,
+        customerName: formData.customerName,
+        customerPhone: formData.customerPhone,
+        customerEmail: formData.customerEmail,
+        customerCity: formData.customerCity,
+        destination: formData.destination,
+        duration: formData.duration,
+        totalQuotedPrice: formData.totalQuotedPrice,
+        basePricePerPerson: formData.basePricePerPerson,
+        itinerary: JSON.parse(JSON.stringify(formData.itinerary)),
+        hotelDetails: formData.hotelDetails ? JSON.parse(JSON.stringify(formData.hotelDetails)) : [],
+        hotelCategory: formData.hotelCategory,
+        roomCategory: formData.roomCategory,
+        inclusions: [...(formData.inclusions || [])],
+        exclusions: [...(formData.exclusions || [])],
+        vehicleType: formData.vehicleType,
+        specialNotes: formData.specialNotes,
+      },
+    };
+    const updatedHistory = [newSnapshot, ...(formData.versionHistory || [])].slice(0, 25);
+    setFormData((prev) => ({
+      ...prev,
+      status: "Draft",
+      version: nextVer,
+      versionHistory: updatedHistory,
+      updatedAt: now,
+    }));
+    try {
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({
+        ...formData,
+        status: "Draft",
+        version: nextVer,
+        versionHistory: updatedHistory,
+      }));
+    } catch {}
+    setCopiedToast(`📸 Revision snapshot v${nextVer} captured!`);
+    setTimeout(() => setCopiedToast(""), 3000);
+  };
+
   // Restore snapshot from version history
   const handleRestoreVersion = (snapshot: any, versionNum: number) => {
     if (confirm(`Restore revision v${versionNum}? Current unsaved edits will be replaced.`)) {
+      isRestoringRef.current = true;
       setFormData((prev) => ({
         ...prev,
         ...snapshot.proposalSnapshot,
+        status: "Draft",
         updatedAt: new Date().toISOString(),
       }));
       setShowHistoryModal(false);
@@ -2235,27 +2369,57 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
                     Itinerary Revision History
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Current Version: <strong className="text-purple-700">v{formData.version || 1}</strong> • Roll back to any past snapshot
+                    Current Version: <strong className="text-purple-700">v{formData.version || 1}</strong> • Auto-saved snapshots & version rollback
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowHistoryModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleManualSnapshot()}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  title="Capture an instant snapshot of current edits"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Save Snapshot Now</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowHistoryModal(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Quick banner */}
+            <div className="p-3 rounded-2xl bg-purple-50/80 border border-purple-200/70 text-xs text-purple-900 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span>Auto-saves continuously into <strong>Draft</strong>. Every update creates a recoverable version checkpoint.</span>
+              </div>
+              <span className="text-[11px] font-black text-purple-700 bg-purple-200/60 px-2 py-0.5 rounded-full shrink-0">
+                {formData.versionHistory?.length || 0} Snapshots
+              </span>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
               {(!formData.versionHistory || formData.versionHistory.length === 0) ? (
-                <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs space-y-2">
+                <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs space-y-3">
                   <History className="w-8 h-8 mx-auto text-slate-300" />
                   <p className="font-semibold text-slate-600">No previous revisions recorded yet.</p>
-                  <p className="text-slate-400">
-                    Every time you update and save this proposal, an automated version snapshot will be logged here.
+                  <p className="text-slate-400 max-w-sm mx-auto">
+                    Data auto-saves continuously in the background into Draft. Click below to capture an immediate snapshot now.
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => handleManualSnapshot("Initial Workspace Snapshot")}
+                    className="px-4 py-2 rounded-xl bg-[#0F3A2E] hover:bg-[#0A261E] text-white font-bold text-xs shadow-xs inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Create First Snapshot (v1)</span>
+                  </button>
                 </div>
               ) : (
                 formData.versionHistory.map((snap, idx) => (

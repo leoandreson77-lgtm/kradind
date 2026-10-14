@@ -62,6 +62,8 @@ export interface TrekData {
   originalPrice: number;
   badge: string;
   status: "Published" | "Draft";
+  version?: number;
+  versionHistory?: TrekVersionSnapshot[];
   batches: TrekBatch[];
   itinerary: TrekItineraryDay[];
   inclusions?: string[];
@@ -76,6 +78,22 @@ export interface TrekData {
   metaDescription?: string;
   metaKeywords?: string;
   primaryKeyword?: string;
+}
+
+export interface TrekVersionSnapshot {
+  version: number;
+  timestamp: string;
+  author: string;
+  note?: string;
+  trekSnapshot: Partial<TrekData>;
+}
+
+export interface DestinationVersionSnapshot {
+  version: number;
+  timestamp: string;
+  author: string;
+  note?: string;
+  destinationSnapshot: Partial<DestinationData>;
 }
 
 export interface TrailRadarReport {
@@ -304,6 +322,8 @@ export interface DestinationData {
   color?: string;
   icon?: string;
   status: "Published" | "Draft";
+  version?: number;
+  versionHistory?: DestinationVersionSnapshot[];
   createdAt?: string;
   updatedAt?: string;
   duration?: string;
@@ -4383,14 +4403,40 @@ export async function saveProposalAsync(
   if (isNew) {
     proposal.createdAt = proposal.createdAt || now;
     proposal.updatedAt = now;
-    proposal.version = 1;
-    proposal.versionHistory = [];
+    proposal.status = proposal.status || "Draft";
+    proposal.version = proposal.version || 1;
+    if (!proposal.versionHistory || proposal.versionHistory.length === 0) {
+      proposal.versionHistory = [
+        {
+          version: proposal.version || 1,
+          timestamp: now,
+          author: proposal.author || actorName,
+          note: `Initial ${proposal.status} Snapshot`,
+          proposalSnapshot: {
+            packageTitle: proposal.packageTitle,
+            customerName: proposal.customerName,
+            customerPhone: proposal.customerPhone,
+            destination: proposal.destination,
+            duration: proposal.duration,
+            totalQuotedPrice: proposal.totalQuotedPrice,
+            basePricePerPerson: proposal.basePricePerPerson,
+            itinerary: proposal.itinerary,
+            hotelDetails: proposal.hotelDetails,
+            hotelCategory: proposal.hotelCategory,
+            inclusions: proposal.inclusions,
+            exclusions: proposal.exclusions,
+            vehicleType: proposal.vehicleType,
+          },
+        },
+      ];
+    }
     store.customerProposals.unshift(proposal);
   } else {
     const existing = store.customerProposals[idx];
     const currentVer = existing.version || 1;
     proposal.version = currentVer + 1;
     proposal.updatedAt = now;
+    proposal.status = proposal.status || existing.status || "Draft";
 
     // Snapshot version history
     const existingHistory = Array.isArray(existing.versionHistory) ? existing.versionHistory : [];
@@ -4399,10 +4445,15 @@ export async function saveProposalAsync(
         version: currentVer,
         timestamp: existing.updatedAt || now,
         author: existing.author || actorName,
-        note: `Revision v${currentVer} by ${existing.author || actorName}`,
+        note: `Revision v${currentVer} (${existing.status || "Draft"}) by ${existing.author || actorName}`,
         proposalSnapshot: {
           packageTitle: existing.packageTitle,
+          customerName: existing.customerName,
+          customerPhone: existing.customerPhone,
+          destination: existing.destination,
+          duration: existing.duration,
           totalQuotedPrice: existing.totalQuotedPrice,
+          basePricePerPerson: existing.basePricePerPerson,
           itinerary: existing.itinerary,
           hotelDetails: existing.hotelDetails,
           hotelCategory: existing.hotelCategory,
@@ -4412,7 +4463,7 @@ export async function saveProposalAsync(
         },
       },
       ...existingHistory,
-    ].slice(0, 20); // Keep last 20 snapshots
+    ].slice(0, 25); // Keep last 25 snapshots
 
     store.customerProposals[idx] = proposal;
   }

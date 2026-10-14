@@ -95,7 +95,28 @@ export async function POST(request: NextRequest) {
       categories: isDomestic
         ? ["Domestic", "Holiday Package", ...Array.from(new Set((body.categories || []).filter(c => !["trek", "treks", "summit", "high pass", "himalayas", "himalayan", "alpine", "expedition"].includes(c.toLowerCase().trim()))))]
         : (body.categories || ["Himalayas"]),
-      status: body.status || "Published",
+      status: body.status || "Draft",
+      version: body.version || 1,
+      versionHistory: Array.isArray(body.versionHistory) && body.versionHistory.length > 0
+        ? body.versionHistory
+        : [
+            {
+              version: 1,
+              timestamp: new Date().toISOString(),
+              author: session.user?.name || "Admin Agent",
+              note: `Initial ${body.status || "Draft"} Snapshot`,
+              trekSnapshot: {
+                name: body.name || "Draft Package",
+                price: Number(body.price) || (isDomestic ? 18999 : 8999),
+                duration: body.duration || (isDomestic ? "5 Nights / 6 Days" : "5 Days"),
+                status: body.status || "Draft",
+                itinerary: body.itinerary || [],
+                highlights: body.highlights || [],
+                inclusions: body.inclusions || [],
+                exclusions: body.exclusions || [],
+              },
+            },
+          ],
       batches: body.batches || [
         { id: Date.now() + 1, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 12, price: Number(body.price) || 8999 },
       ],
@@ -157,10 +178,40 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Trek not found" }, { status: 404 });
     }
 
+    const existing = store.treks[index];
+    const currentVer = existing.version || 1;
+    const nextVer = (body.versionHistory && body.versionHistory.length > (existing.versionHistory?.length || 0))
+      ? (body.version || currentVer + 1)
+      : currentVer + 1;
+    const now = new Date().toISOString();
+
+    const existingHistory = Array.isArray(existing.versionHistory) ? existing.versionHistory : [];
+    const newSnapshot = {
+      version: currentVer,
+      timestamp: existing.updatedAt || now,
+      author: session.user?.name || "Admin Agent",
+      note: body.status === "Draft" ? `Draft snapshot v${currentVer}` : `Published snapshot v${currentVer}`,
+      trekSnapshot: {
+        name: existing.name,
+        price: existing.price,
+        duration: existing.duration,
+        status: existing.status,
+        itinerary: existing.itinerary,
+        highlights: existing.highlights,
+        inclusions: existing.inclusions,
+        exclusions: existing.exclusions,
+      },
+    };
+
     store.treks[index] = {
-      ...store.treks[index],
+      ...existing,
       ...body,
-      updatedAt: new Date().toISOString(),
+      status: body.status || existing.status || "Draft",
+      version: nextVer,
+      versionHistory: body.versionHistory && body.versionHistory.length > existingHistory.length
+        ? body.versionHistory
+        : [newSnapshot, ...existingHistory].slice(0, 25),
+      updatedAt: now,
     };
     writeStore(store);
 

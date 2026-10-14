@@ -81,9 +81,26 @@ export async function POST(request: NextRequest) {
         ? body.highlights
         : (body.highlights || "").split(",").map((h: string) => h.trim()).filter(Boolean),
       color: body.color || "from-emerald-900/80",
-      icon: body.icon || "📍",
-      status: body.status === "Draft" ? "Draft" : "Published",
-      duration: body.duration || "",
+      status: body.status || "Draft",
+      version: body.version || 1,
+      versionHistory: Array.isArray(body.versionHistory) && body.versionHistory.length > 0
+        ? body.versionHistory
+        : [
+            {
+              version: 1,
+              timestamp: new Date().toISOString(),
+              author: session.user?.name || "Admin Agent",
+              note: `Initial ${body.status || "Draft"} Snapshot`,
+              destinationSnapshot: {
+                name: body.name.trim(),
+                price: body.price ? Number(body.price) : undefined,
+                duration: body.duration || "",
+                status: body.status || "Draft",
+                itinerary: body.itinerary || [],
+                highlights: body.highlights || [],
+              },
+            },
+          ],
       price: body.price ? Number(body.price) : undefined,
       originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
       bestSeason: body.bestSeason || "",
@@ -183,9 +200,39 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    const existing = store.destinations[index];
+    const currentVer = existing.version || 1;
+    const nextVer = (body.versionHistory && body.versionHistory.length > (existing.versionHistory?.length || 0))
+      ? (body.version || currentVer + 1)
+      : currentVer + 1;
+    const now = new Date().toISOString();
+
+    const existingHistory = Array.isArray(existing.versionHistory) ? existing.versionHistory : [];
+    const newSnapshot = {
+      version: currentVer,
+      timestamp: existing.updatedAt || now,
+      author: session.user?.name || "Admin Agent",
+      note: body.status === "Draft" ? `Draft snapshot v${currentVer}` : `Published snapshot v${currentVer}`,
+      destinationSnapshot: {
+        name: existing.name,
+        price: existing.price,
+        duration: existing.duration,
+        status: existing.status,
+        itinerary: existing.itinerary,
+        highlights: existing.highlights,
+        inclusions: existing.inclusions,
+        exclusions: existing.exclusions,
+      },
+    };
+
     const updated: DestinationData = {
-      ...store.destinations[index],
+      ...existing,
       ...body,
+      status: body.status || existing.status || "Draft",
+      version: nextVer,
+      versionHistory: body.versionHistory && body.versionHistory.length > existingHistory.length
+        ? body.versionHistory
+        : [newSnapshot, ...existingHistory].slice(0, 25),
       name: body.name.trim(),
       slug,
       tagline: body.tagline?.trim() || store.destinations[index].tagline,
@@ -233,7 +280,7 @@ export async function PUT(request: NextRequest) {
         : typeof body.highlights === "string"
         ? (body.highlights as string).split(",").map((h: string) => h.trim()).filter(Boolean)
         : store.destinations[index].highlights,
-      updatedAt: new Date().toISOString(),
+      updatedAt: now,
     };
 
     store.destinations[index] = updated;

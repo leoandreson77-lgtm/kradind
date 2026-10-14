@@ -95,7 +95,26 @@ export async function POST(request: NextRequest) {
         : (body.highlights || "").split(",").map((h: string) => h.trim()).filter(Boolean),
       color: body.color || "from-blue-900/80",
       icon: body.icon || "✈️",
-      status: body.status === "Draft" ? "Draft" : "Published",
+      status: body.status === "Published" ? "Published" : "Draft",
+      version: 1,
+      versionHistory: Array.isArray(body.versionHistory) && body.versionHistory.length > 0
+        ? body.versionHistory
+        : [
+            {
+              version: 1,
+              timestamp: new Date().toISOString(),
+              author: session.user?.name || "Admin Agent",
+              note: `Initial ${body.status === "Published" ? "Published" : "Draft"} Snapshot`,
+              destinationSnapshot: {
+                name: body.name.trim(),
+                price: body.price ? Number(body.price) : 39999,
+                duration: body.duration || "5 Nights / 6 Days",
+                status: body.status === "Published" ? "Published" : "Draft",
+                itinerary: body.itinerary || [],
+                highlights: body.highlights || [],
+              },
+            },
+          ],
       duration: body.duration || "5 Nights / 6 Days",
       price: body.price ? Number(body.price) : 39999,
       originalPrice: body.originalPrice ? Number(body.originalPrice) : 49999,
@@ -180,8 +199,37 @@ export async function PUT(request: NextRequest) {
     const rawSlug = body.slug || existing.slug;
     const slug = rawSlug.toLowerCase().trim().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-+|-+$/g, "");
 
+    const currentVer = existing.version || 1;
+    const nextVer = (body.versionHistory && body.versionHistory.length > (existing.versionHistory?.length || 0))
+      ? (body.version || currentVer + 1)
+      : currentVer + 1;
+    const now = new Date().toISOString();
+
+    const existingHistory = Array.isArray(existing.versionHistory) ? existing.versionHistory : [];
+    const newSnapshot = {
+      version: currentVer,
+      timestamp: existing.updatedAt || now,
+      author: session.user?.name || "Admin Agent",
+      note: body.status === "Draft" ? `Draft snapshot v${currentVer}` : `Published snapshot v${currentVer}`,
+      destinationSnapshot: {
+        name: existing.name,
+        price: existing.price,
+        duration: existing.duration,
+        status: existing.status,
+        itinerary: existing.itinerary,
+        highlights: existing.highlights,
+        inclusions: existing.inclusions,
+        exclusions: existing.exclusions,
+      },
+    };
+
     const updated: DestinationData = {
       ...existing,
+      status: body.status || existing.status || "Draft",
+      version: nextVer,
+      versionHistory: body.versionHistory && body.versionHistory.length > existingHistory.length
+        ? body.versionHistory
+        : [newSnapshot, ...existingHistory].slice(0, 25),
       name: body.name !== undefined ? body.name.trim() : existing.name,
       slug,
       category: "International",
@@ -202,7 +250,6 @@ export async function PUT(request: NextRequest) {
         : existing.highlights || [],
       color: body.color !== undefined ? body.color : existing.color,
       icon: body.icon !== undefined ? body.icon : existing.icon,
-      status: body.status !== undefined ? (body.status === "Draft" ? "Draft" : "Published") : existing.status,
       overview: body.overview !== undefined ? body.overview : existing.overview,
       itinerary: Array.isArray(body.itinerary)
         ? body.itinerary.map((day: any, idx: number) => ({

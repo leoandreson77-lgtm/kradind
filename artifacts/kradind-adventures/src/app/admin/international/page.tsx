@@ -41,6 +41,8 @@ import {
   ShieldCheck,
   FileCheck,
   FileDown,
+  History,
+  RotateCcw,
 } from "lucide-react";
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
@@ -168,14 +170,123 @@ export default function AdminInternationalPage() {
     } catch {}
   }, []);
 
-  // Debounced auto-save to localStorage
+  const [showIntlHistoryModal, setShowIntlHistoryModal] = useState(false);
+  const lastIntlSnapshotHashRef = useRef<string>("");
+  const isRestoringIntlRef = useRef<boolean>(false);
+
+  // Manual snapshot
+  const handleManualIntlSnapshot = (customNote?: string) => {
+    if (!editingItem) return;
+    const nextVer = (editingItem.versionHistory?.length || 0) + 1;
+    const now = new Date().toISOString();
+    const snap = {
+      version: nextVer,
+      timestamp: now,
+      author: "Admin Agent",
+      note: customNote || `Manual Snapshot v${nextVer} (${(editingItem.itinerary || []).length} Days • ₹${(editingItem.price || 0).toLocaleString("en-IN")})`,
+      destinationSnapshot: JSON.parse(JSON.stringify(editingItem)),
+    };
+    const updatedHistory = [snap, ...(editingItem.versionHistory || [])].slice(0, 25);
+    const updatedItem: DestinationData = {
+      ...editingItem,
+      status: "Draft",
+      version: nextVer,
+      versionHistory: updatedHistory,
+      updatedAt: now,
+    };
+    setEditingItem(updatedItem);
+    try {
+      localStorage.setItem("kradind_admin_intl_draft", JSON.stringify(updatedItem));
+      fetch("/api/admin/international", {
+        method: editingItem.id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedItem),
+      }).catch(() => {});
+    } catch {}
+    showToast(`📸 International tour snapshot v${nextVer} captured!`);
+  };
+
+  // Restore snapshot from international revision history
+  const handleRestoreIntlVersion = (snap: any, versionNum: number) => {
+    if (!editingItem) return;
+    if (confirm(`Restore tour revision v${versionNum}? Current unsaved edits in modal will be replaced.`)) {
+      isRestoringIntlRef.current = true;
+      setEditingItem({
+        ...editingItem,
+        ...snap.destinationSnapshot,
+        status: "Draft",
+        updatedAt: new Date().toISOString(),
+      });
+      setShowIntlHistoryModal(false);
+      showToast(`🕒 Restored tour revision v${versionNum}!`);
+    }
+  };
+
+  // Continuous debounced auto-save to Database & localStorage with automated revision snapshots
   useEffect(() => {
     if (!isModalOpen || !editingItem) return;
+
+    if (isRestoringIntlRef.current) {
+      isRestoringIntlRef.current = false;
+      return;
+    }
+
+    const name = (editingItem.name || "").trim();
+    if (!name) return;
+
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem("kradind_admin_intl_draft", JSON.stringify(editingItem));
-      } catch {}
-    }, 600);
+        const contentHash = JSON.stringify({
+          name: editingItem.name,
+          price: editingItem.price,
+          duration: editingItem.duration,
+          days: (editingItem.itinerary || []).map((d) => ({ t: d.title, d: d.description, s: d.stay })),
+          highlights: editingItem.highlights || [],
+          overview: editingItem.overview,
+        });
+
+        let updatedHistory = Array.isArray(editingItem.versionHistory) ? [...editingItem.versionHistory] : [];
+        let newVersion = editingItem.version || 1;
+
+        if (contentHash !== lastIntlSnapshotHashRef.current) {
+          newVersion = updatedHistory.length + 1;
+          const autoSnap = {
+            version: newVersion,
+            timestamp: new Date().toISOString(),
+            author: "Admin Agent",
+            note: `Auto-saved Draft v${newVersion} (${(editingItem.itinerary || []).length} Days • ₹${(editingItem.price || 0).toLocaleString("en-IN")})`,
+            destinationSnapshot: JSON.parse(JSON.stringify(editingItem)),
+          };
+          updatedHistory = [autoSnap, ...updatedHistory].slice(0, 25);
+          lastIntlSnapshotHashRef.current = contentHash;
+
+          setEditingItem((prev) => prev ? {
+            ...prev,
+            status: "Draft",
+            version: newVersion,
+            versionHistory: updatedHistory,
+          } : null);
+        }
+
+        const draftPayload = {
+          ...editingItem,
+          status: "Draft",
+          version: newVersion,
+          versionHistory: updatedHistory,
+        };
+
+        localStorage.setItem("kradind_admin_intl_draft", JSON.stringify(draftPayload));
+
+        fetch("/api/admin/international", {
+          method: editingItem.id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(draftPayload),
+        }).catch(() => {});
+      } catch (err) {
+        console.warn("International tour auto-save error:", err);
+      }
+    }, 1200);
+
     return () => clearTimeout(timer);
   }, [editingItem, isModalOpen]);
 
@@ -266,7 +377,9 @@ export default function AdminInternationalPage() {
       exclusions: [...STANDARD_INTL_EXCLUSIONS],
       faqs: [...STANDARD_INTL_FAQS],
       travelTips: [...STANDARD_INTL_TIPS],
-      status: "Published",
+      status: "Draft",
+      version: 1,
+      versionHistory: [],
       color: "from-blue-900/80",
       icon: "✈️",
     };
@@ -999,6 +1112,17 @@ export default function AdminInternationalPage() {
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span>Auto-saved as Draft</span>
                 </div>
+
+                {/* Revision History Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowIntlHistoryModal(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-purple-400/40 bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 text-xs font-bold transition shadow-2xs cursor-pointer"
+                  title="View revision history and restore snapshots"
+                >
+                  <History className="w-3.5 h-3.5 text-purple-300" />
+                  <span>History (v{editingItem.version || 1})</span>
+                </button>
 
                 <button
                   type="button"
@@ -1767,6 +1891,133 @@ export default function AdminInternationalPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* International Tour Revision History Modal */}
+      {showIntlHistoryModal && editingItem && (
+        <div className="fixed inset-0 z-60 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 space-y-5 shadow-2xl border border-slate-200 max-h-[85vh] flex flex-col animate-fade-in">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <History className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    International Tour Revision History
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Current Version: <strong className="text-purple-700">v{editingItem.version || 1}</strong> • Roll back to any past snapshot
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleManualIntlSnapshot()}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  title="Capture an instant snapshot of current edits"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Save Snapshot Now</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowIntlHistoryModal(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Quick banner */}
+            <div className="p-3 rounded-2xl bg-purple-50/80 border border-purple-200/70 text-xs text-purple-900 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span>Auto-saves continuously into <strong>Draft</strong>. Every update creates a recoverable version checkpoint.</span>
+              </div>
+              <span className="text-[11px] font-black text-purple-700 bg-purple-200/60 px-2 py-0.5 rounded-full shrink-0">
+                {editingItem.versionHistory?.length || 0} Snapshots
+              </span>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              {(!editingItem.versionHistory || editingItem.versionHistory.length === 0) ? (
+                <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs space-y-3">
+                  <History className="w-8 h-8 mx-auto text-slate-300" />
+                  <p className="font-semibold text-slate-600">No previous revisions recorded yet.</p>
+                  <p className="text-slate-400 max-w-sm mx-auto">
+                    Data auto-saves continuously into Draft. Click below to capture an immediate snapshot now.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleManualIntlSnapshot("Initial International Tour Snapshot")}
+                    className="px-4 py-2 rounded-xl bg-[#0F3A2E] hover:bg-[#0A261E] text-white font-bold text-xs shadow-xs inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Create First Snapshot (v1)</span>
+                  </button>
+                </div>
+              ) : (
+                editingItem.versionHistory.map((snap, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-purple-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">
+                          v{snap.version}
+                        </span>
+                        <span className="text-xs font-bold text-slate-800">
+                          {snap.author || "Admin Agent"}
+                        </span>
+                        <span className="text-slate-300 text-xs">•</span>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          {new Date(snap.timestamp).toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 font-medium">
+                        {snap.note || "Snapshot captured during update"}
+                      </p>
+                      {snap.destinationSnapshot && (
+                        <div className="flex items-center gap-2 text-[11px] text-slate-500 pt-1">
+                          <span className="font-medium text-slate-700">{snap.destinationSnapshot.name}</span>
+                          <span>•</span>
+                          <span>{snap.destinationSnapshot.duration || `${(snap.destinationSnapshot.itinerary || []).length} Days`}</span>
+                          <span>•</span>
+                          <span className="font-bold text-emerald-700">
+                            ₹{(snap.destinationSnapshot.price || 0).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRestoreIntlVersion(snap, snap.version)}
+                      className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 self-start sm:self-center shrink-0 cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Restore v{snap.version}</span>
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowIntlHistoryModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
+              >
+                Close History
+              </button>
             </div>
           </div>
         </div>

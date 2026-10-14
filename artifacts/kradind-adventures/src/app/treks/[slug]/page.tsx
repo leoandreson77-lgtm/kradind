@@ -1,5 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { treks } from "@/lib/travel-data";
 import { getTreksAsync, readStore, TrekData } from "@/lib/cms-store";
 import { TreksContent } from "@/components/treks-catalog";
@@ -61,23 +62,27 @@ const REGIONAL_TREK_CATEGORIES: Record<string, { name: string; title: string; su
   },
 };
 
+const SLUG_ALIASES: Record<string, string> = {
+  "goa-tour-package": "goa-tour-package-4-nights-5-days",
+  "goa-trip-package-4-nights-5-days": "goa-tour-package-4-nights-5-days",
+  "meghalaya-tour-package": "meghalaya-tour-package-5-nights-6-days",
+  "maharashtra-tour-package": "maharashtra-tour-package-4-nights-5-days",
+  "kerala-tour-package": "kerala-tour-package-5-nights-6-days",
+  "manali-tour-package": "manali-tour-package-4-nights-5-days",
+};
+
 export default async function TrekDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const rawSlug = slug || "chopta-tungnath-chandrashila";
+  const rawSlug = (slug || "chopta-tungnath-chandrashila").replace(/^\/+/, "");
   const normalizedSlug = rawSlug.toLowerCase();
 
   if (normalizedSlug === "rajasthan-tour-package-6-days" || normalizedSlug === "rajasthan-tour-package-5-nights-6-days") {
     const { redirect } = await import("next/navigation");
     redirect("/rajasthan-tour-package-6-days");
-  }
-
-  if (normalizedSlug === "kerala-tour-package-5-nights-6-days") {
-    const { redirect } = await import("next/navigation");
-    redirect("/kerala-tour-package-5-nights-6-days");
   }
 
   const regionalConfig = REGIONAL_TREK_CATEGORIES[normalizedSlug];
@@ -91,6 +96,8 @@ export default async function TrekDetailPage({
     );
   }
 
+  const lookupSlug = SLUG_ALIASES[normalizedSlug] || normalizedSlug;
+
   let dynamicTreks: any[] = [];
   try {
     dynamicTreks = await getTreksAsync();
@@ -100,12 +107,16 @@ export default async function TrekDetailPage({
   }
 
   const trek =
+    dynamicTreks.find((t) => t.slug === lookupSlug) ||
+    treks.find((t) => t.slug === lookupSlug) ||
     dynamicTreks.find((t) => t.slug === rawSlug) ||
     treks.find((t) => t.slug === rawSlug) ||
-    dynamicTreks.find((t) => t.slug?.includes(rawSlug)) ||
-    treks.find((t) => t.slug?.includes(rawSlug)) ||
-    dynamicTreks[0] ||
-    treks[0];
+    dynamicTreks.find((t) => t.slug?.toLowerCase() === lookupSlug.toLowerCase()) ||
+    treks.find((t) => t.slug?.toLowerCase() === lookupSlug.toLowerCase());
 
-  return <TrekDetailClient initialTrek={trek as unknown as TrekData} slug={rawSlug} />;
+  if (!trek) {
+    notFound();
+  }
+
+  return <TrekDetailClient initialTrek={trek as unknown as TrekData} slug={lookupSlug} />;
 }

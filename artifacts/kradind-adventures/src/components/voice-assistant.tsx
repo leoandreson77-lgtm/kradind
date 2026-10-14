@@ -16,6 +16,9 @@ import {
   MessageCircle,
   AlertCircle,
   CheckCircle2,
+  Lock,
+  Unlock,
+  HelpCircle,
 } from "lucide-react";
 
 // Web Speech API Types
@@ -36,15 +39,19 @@ interface CommandMatch {
 const VOICE_CHIPS = [
   { label: "🏔️ Treks", command: "treks" },
   { label: "🚗 Domestic Tours", command: "domestic tours" },
-  { label: "📍 Destinations", command: "destinations" },
+  { label: "🏖️ Goa Beach Tour", command: "goa tour" },
+  { label: "❄️ Manali & Solang", command: "manali tour" },
+  { label: "🌿 Meghalaya & Shillong", command: "meghalaya tour" },
+  { label: "🏰 Maharashtra Sahyadri", command: "maharashtra tour" },
+  { label: "🌴 Kerala Backwaters", command: "kerala tour" },
   { label: "💍 Honeymoon Packages", command: "honeymoon" },
-  { label: "⚡ Weekend Treks", command: "weekend treks" },
-  { label: "❄️ Snow Treks", command: "snow treks" },
-  { label: "🌴 Kerala", command: "kerala" },
-  { label: "🏔️ Kashmir", command: "kashmir" },
-  { label: "🏰 Rajasthan", command: "rajasthan" },
-  { label: "⛺ Kedarkantha", command: "kedarkantha trek" },
+  { label: "✈️ International Tours", command: "international tours" },
+  { label: "📍 Destinations", command: "destinations" },
+  { label: "⛺ Kedarkantha Trek", command: "kedarkantha trek" },
   { label: "🌸 Valley of Flowers", command: "valley of flowers" },
+  { label: "❄️ Kashmir Paradise", command: "kashmir" },
+  { label: "🏰 Rajasthan Heritage", command: "rajasthan" },
+  { label: "⚡ Weekend Treks", command: "weekend treks" },
   { label: "📞 Call Helpline", command: "call" },
 ];
 
@@ -59,6 +66,8 @@ export function VoiceAssistant() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [micPermissionDenied, setMicPermissionDenied] = useState(false);
+  const [isRequestingPermission, setIsRequestingPermission] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
@@ -67,6 +76,7 @@ export function VoiceAssistant() {
   const [manualText, setManualText] = useState("");
 
   const recognitionRef = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Initialize Speech Recognition
   useEffect(() => {
@@ -87,6 +97,7 @@ export function VoiceAssistant() {
 
         recognition.onstart = () => {
           setIsListening(true);
+          setMicPermissionDenied(false);
           setFeedbackMessage("Listening... Speak now");
         };
 
@@ -112,12 +123,16 @@ export function VoiceAssistant() {
         recognition.onerror = (event: any) => {
           console.warn("Speech recognition error:", event.error);
           setIsListening(false);
-          if (event.error === "not-allowed") {
-            setFeedbackMessage("Microphone permission denied. Tap a quick chip below or type.");
+          if (event.error === "not-allowed" || event.error === "permission-denied") {
+            setMicPermissionDenied(true);
+            setFeedbackMessage("Microphone permission denied. Tap 'Enable Microphone' or type below.");
+            setTimeout(() => {
+              inputRef.current?.focus();
+            }, 300);
           } else if (event.error === "no-speech") {
             setFeedbackMessage("No speech detected. Please tap the mic and try again.");
           } else {
-            setFeedbackMessage("Could not hear clearly. Please tap the mic or try again.");
+            setFeedbackMessage("Could not hear clearly. Please tap the mic or try typing.");
           }
         };
 
@@ -133,18 +148,45 @@ export function VoiceAssistant() {
     }
   }, []);
 
+  // Proactively check browser mic permission state on mount
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && navigator.permissions?.query) {
+      try {
+        navigator.permissions
+          .query({ name: "microphone" as any })
+          .then((permissionStatus) => {
+            if (permissionStatus.state === "denied") {
+              setMicPermissionDenied(true);
+            }
+            permissionStatus.onchange = () => {
+              if (permissionStatus.state === "granted") {
+                setMicPermissionDenied(false);
+              } else if (permissionStatus.state === "denied") {
+                setMicPermissionDenied(true);
+              }
+            };
+          })
+          .catch(() => {});
+      } catch {}
+    }
+  }, []);
+
   // Listen to custom event from Header voice button if fired
   useEffect(() => {
     const handleTrigger = () => {
       setIsOpen(true);
-      setTimeout(() => startListening(), 200);
+      if (micPermissionDenied) {
+        setFeedbackMessage("Microphone permission is blocked. Tap 'Enable Microphone' or type below.");
+      } else {
+        startListening();
+      }
     };
 
     window.addEventListener("open-voice-assistant", handleTrigger);
     return () => {
       window.removeEventListener("open-voice-assistant", handleTrigger);
     };
-  }, []);
+  }, [micPermissionDenied]);
 
   const speakText = (text: string) => {
     if (soundEnabled && typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -171,8 +213,12 @@ export function VoiceAssistant() {
       try {
         recognitionRef.current.start();
         setIsListening(true);
-      } catch (err) {
+      } catch (err: any) {
         console.warn("Could not start speech recognition:", err);
+        if (err?.name === "NotAllowedError" || String(err).includes("not allowed")) {
+          setMicPermissionDenied(true);
+          setFeedbackMessage("Microphone permission denied. Tap 'Enable Microphone' or type below.");
+        }
       }
     }
   };
@@ -186,13 +232,116 @@ export function VoiceAssistant() {
     setIsListening(false);
   };
 
+  // Explicitly prompt the user for microphone access via getUserMedia
+  const handleRequestMicAccess = async () => {
+    setIsRequestingPermission(true);
+    setFeedbackMessage("Requesting microphone access from your browser...");
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Immediately stop tracks to release hardware
+        stream.getTracks().forEach((track) => track.stop());
+
+        setMicPermissionDenied(false);
+        setFeedbackMessage("Microphone enabled! Starting speech recognition...");
+
+        setTimeout(() => {
+          startListening();
+        }, 200);
+        return true;
+      } else {
+        setMicPermissionDenied(true);
+        setFeedbackMessage("Microphone is not supported in this browser environment. You can type below.");
+        inputRef.current?.focus();
+        return false;
+      }
+    } catch (err: any) {
+      console.warn("User dismissed or blocked microphone permission:", err);
+      setMicPermissionDenied(true);
+      setFeedbackMessage("Microphone permission was not granted. Tap a quick chip below or type.");
+      inputRef.current?.focus();
+      return false;
+    } finally {
+      setIsRequestingPermission(false);
+    }
+  };
+
+  const handleToggleListening = () => {
+    if (isListening) {
+      stopListening();
+      return;
+    }
+
+    if (micPermissionDenied) {
+      handleRequestMicAccess();
+      return;
+    }
+
+    startListening();
+  };
+
   // Voice Command Parser & Navigation Logic
   const handleExecuteVoiceCommand = (command: string) => {
     const clean = command.toLowerCase().trim();
     let match: CommandMatch | null = null;
 
-    // 1. Honeymoon / Romantic
-    if (
+    // 1. Specific Domestic Packages added
+    if (clean.includes("goa") || clean.includes("beach")) {
+      match = {
+        intent: "Goa 4 Nights 5 Days Tour",
+        destinationUrl: "/domestic/goa-tour-package-4-nights-5-days",
+        responseSpeech: "Opening Goa 4 Nights 5 Days beach holiday package!",
+        icon: "🏖️",
+      };
+    } else if (clean.includes("manali") || clean.includes("solang") || clean.includes("atal tunnel")) {
+      match = {
+        intent: "Manali 4 Nights 5 Days Tour",
+        destinationUrl: "/domestic/manali-tour-package-4-nights-5-days",
+        responseSpeech: "Taking you to Manali Solang snow tour package!",
+        icon: "❄️",
+      };
+    } else if (clean.includes("meghalaya") || clean.includes("shillong") || clean.includes("cherrapunji") || clean.includes("dawki")) {
+      match = {
+        intent: "Meghalaya 5 Nights 6 Days Tour",
+        destinationUrl: "/domestic/meghalaya-tour-package-5-nights-6-days",
+        responseSpeech: "Opening Meghalaya waterfalls and living roots tour!",
+        icon: "🌿",
+      };
+    } else if (clean.includes("maharashtra") || clean.includes("lonavala") || clean.includes("mahabaleshwar") || clean.includes("alibaug")) {
+      match = {
+        intent: "Maharashtra 4 Nights 5 Days Tour",
+        destinationUrl: "/domestic/maharashtra-tour-package-4-nights-5-days",
+        responseSpeech: "Opening Maharashtra Sahyadri and coastal tour!",
+        icon: "🏰",
+      };
+    } else if (clean.includes("kerala") || clean.includes("munnar") || clean.includes("alleppey") || clean.includes("wayanad")) {
+      match = {
+        intent: "Kerala 5 Nights 6 Days Tour",
+        destinationUrl: "/domestic/kerala-tour-package-5-nights-6-days",
+        responseSpeech: "Taking you to Kerala backwaters and Munnar tea gardens!",
+        icon: "🌴",
+      };
+    }
+    // 2. International
+    else if (
+      clean.includes("international") ||
+      clean.includes("dubai") ||
+      clean.includes("thailand") ||
+      clean.includes("bali") ||
+      clean.includes("vietnam") ||
+      clean.includes("singapore") ||
+      clean.includes("maldives")
+    ) {
+      match = {
+        intent: "International Tour Holidays",
+        destinationUrl: "/international",
+        responseSpeech: "Opening international holiday packages and visa services!",
+        icon: "✈️",
+      };
+    }
+    // 3. Honeymoon / Romantic
+    else if (
       clean.includes("honeymoon") ||
       clean.includes("romantic") ||
       clean.includes("couple")
@@ -204,7 +353,7 @@ export function VoiceAssistant() {
         icon: "💍",
       };
     }
-    // 2. Trek / Treks / Hiking / Himalayas
+    // 4. Trek / Treks / Hiking / Himalayas
     else if (
       clean === "trek" ||
       clean === "treks" ||
@@ -219,7 +368,7 @@ export function VoiceAssistant() {
         icon: "🏔️",
       };
     }
-    // 3. Tour / Domestic / Trips / Holidays
+    // 5. Tour / Domestic / Trips / Holidays
     else if (
       clean === "tour" ||
       clean === "tours" ||
@@ -235,7 +384,7 @@ export function VoiceAssistant() {
         icon: "🚗",
       };
     }
-    // 4. Destination / Destinations
+    // 6. Destination / Destinations
     else if (
       clean.includes("destination") ||
       clean.includes("places to visit") ||
@@ -248,7 +397,7 @@ export function VoiceAssistant() {
         icon: "📍",
       };
     }
-    // 5. Weekend Trips
+    // 7. Weekend Trips
     else if (clean.includes("weekend") || clean.includes("short trip")) {
       match = {
         intent: "Weekend Getaways & Treks",
@@ -257,7 +406,7 @@ export function VoiceAssistant() {
         icon: "⚡",
       };
     }
-    // 6. Snow / Winter Treks
+    // 8. Snow / Winter Treks
     else if (clean.includes("snow") || clean.includes("winter")) {
       match = {
         intent: "Winter Snow Treks",
@@ -266,7 +415,7 @@ export function VoiceAssistant() {
         icon: "❄️",
       };
     }
-    // 7. Specific Destinations
+    // 9. Specific Destinations
     else if (clean.includes("kashmir")) {
       match = {
         intent: "Kashmir Tour & Treks",
@@ -280,20 +429,6 @@ export function VoiceAssistant() {
         destinationUrl: "/destinations/ladakh",
         responseSpeech: "Opening Ladakh high-altitude circuits and monasteries!",
         icon: "🏔️",
-      };
-    } else if (clean.includes("kerala") || clean.includes("alleppey") || clean.includes("munnar")) {
-      match = {
-        intent: "Kerala Backwaters & Hills",
-        destinationUrl: "/destinations/kerala",
-        responseSpeech: "Taking you to Kerala backwaters and Munnar packages!",
-        icon: "🌴",
-      };
-    } else if (clean.includes("goa") || clean.includes("beach")) {
-      match = {
-        intent: "Goa Beach Holidays",
-        destinationUrl: "/destinations/goa",
-        responseSpeech: "Opening Goa beach tours and coastal holidays!",
-        icon: "🌊",
       };
     } else if (clean.includes("rajasthan") || clean.includes("jaipur") || clean.includes("udaipur")) {
       match = {
@@ -309,11 +444,11 @@ export function VoiceAssistant() {
         responseSpeech: "Opening Uttarakhand holy circuits and Himalayan bugyals!",
         icon: "🏔️",
       };
-    } else if (clean.includes("himachal") || clean.includes("manali") || clean.includes("spiti")) {
+    } else if (clean.includes("himachal") || clean.includes("spiti")) {
       match = {
         intent: "Himachal Pradesh Tours",
         destinationUrl: "/destinations/himachal-pradesh",
-        responseSpeech: "Showing Himachal Pradesh valleys, Manali and Spiti tours!",
+        responseSpeech: "Showing Himachal Pradesh valleys and Spiti tours!",
         icon: "🌲",
       };
     } else if (clean.includes("nepal") || clean.includes("everest") || clean.includes("annapurna")) {
@@ -324,7 +459,7 @@ export function VoiceAssistant() {
         icon: "🇳🇵",
       };
     }
-    // 8. Specific Famous Treks
+    // 10. Specific Famous Treks
     else if (clean.includes("kedarkantha")) {
       match = {
         intent: "Kedarkantha Winter Summit",
@@ -361,7 +496,7 @@ export function VoiceAssistant() {
         icon: "💎",
       };
     }
-    // 9. Call / Contact / Help
+    // 11. Call / Contact / Help
     else if (
       clean.includes("call") ||
       clean.includes("phone") ||
@@ -375,7 +510,7 @@ export function VoiceAssistant() {
         icon: "📞",
       };
     }
-    // 10. WhatsApp
+    // 12. WhatsApp
     else if (clean.includes("whatsapp") || clean.includes("chat")) {
       match = {
         intent: "WhatsApp Instant Chat",
@@ -384,7 +519,7 @@ export function VoiceAssistant() {
         icon: "💬",
       };
     }
-    // 11. Plan / Book
+    // 13. Plan / Book
     else if (clean.includes("book") || clean.includes("plan")) {
       match = {
         intent: "Plan Your Custom Trip",
@@ -393,7 +528,7 @@ export function VoiceAssistant() {
         icon: "📝",
       };
     }
-    // 12. General Search Fallback
+    // 14. General Search Fallback
     else {
       match = {
         intent: `Search for "${clean}"`,
@@ -431,7 +566,11 @@ export function VoiceAssistant() {
         <button
           onClick={() => {
             setIsOpen(true);
-            setTimeout(() => startListening(), 250);
+            if (micPermissionDenied) {
+              setFeedbackMessage("Microphone permission is blocked. Tap 'Enable Microphone' or type below.");
+            } else {
+              startListening();
+            }
           }}
           className="group relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-[#0F3A2E] to-[#164e3f] hover:from-[#164e3f] hover:to-[#0F3A2E] text-white shadow-2xl hover:shadow-[0_8px_30px_rgba(15,58,46,0.45)] border-2 border-emerald-400/40 transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer"
           aria-label="Activate Voice Search"
@@ -452,7 +591,7 @@ export function VoiceAssistant() {
       {/* Voice Assistant Modal Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-end sm:items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
             
             {/* Header */}
             <div className="bg-[#0F3A2E] text-white px-5 sm:px-6 py-4 flex items-center justify-between gap-3">
@@ -465,7 +604,7 @@ export function VoiceAssistant() {
                     KRADIND Voice Command Assistant
                   </h3>
                   <span className="text-[11px] text-emerald-200/80 font-normal">
-                    Try &ldquo;Trek&rdquo;, &ldquo;Honeymoon&rdquo;, &ldquo;Kerala&rdquo;, or &ldquo;Kedarkantha&rdquo;
+                    Try &ldquo;Goa&rdquo;, &ldquo;Manali&rdquo;, &ldquo;Meghalaya&rdquo;, &ldquo;Trek&rdquo;, or &ldquo;Honeymoon&rdquo;
                   </span>
                 </div>
               </div>
@@ -494,10 +633,10 @@ export function VoiceAssistant() {
             </div>
 
             {/* Listening Section with Animated Wave */}
-            <div className="p-6 text-center space-y-4 bg-gradient-to-b from-slate-50 to-white flex flex-col items-center">
+            <div className="p-5 sm:p-6 text-center space-y-4 bg-gradient-to-b from-slate-50 to-white flex flex-col items-center">
               
               {/* Mic Circle with Audio Wave Rings */}
-              <div className="relative flex items-center justify-center my-2">
+              <div className="relative flex items-center justify-center my-1">
                 {isListening && (
                   <>
                     <div className="absolute w-24 h-24 rounded-full bg-emerald-500/20 animate-ping" />
@@ -507,47 +646,123 @@ export function VoiceAssistant() {
 
                 <button
                   type="button"
-                  onClick={isListening ? stopListening : startListening}
-                  className={`relative z-10 w-18 h-18 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform active:scale-95 cursor-pointer ${
+                  onClick={handleToggleListening}
+                  disabled={isRequestingPermission}
+                  className={`relative z-10 w-18 h-18 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform active:scale-95 cursor-pointer disabled:opacity-75 ${
                     isListening
                       ? "bg-rose-500 hover:bg-rose-600 text-white ring-4 ring-rose-300"
-                      : "bg-[#0F3A2E] hover:bg-[#164e3f] text-emerald-300"
+                      : micPermissionDenied
+                      ? "bg-amber-500 hover:bg-amber-600 text-white ring-4 ring-amber-200"
+                      : "bg-[#0F3A2E] hover:bg-[#164e3f] text-emerald-300 ring-4 ring-emerald-500/10"
                   }`}
+                  title={
+                    isListening
+                      ? "Stop listening"
+                      : micPermissionDenied
+                      ? "Microphone blocked - tap to request permission"
+                      : "Tap to speak"
+                  }
                 >
                   {isListening ? (
                     <Mic className="w-8 h-8 animate-bounce" />
+                  ) : micPermissionDenied ? (
+                    <MicOff className="w-8 h-8 text-white" />
                   ) : (
-                    <MicOff className="w-8 h-8 text-slate-300" />
+                    <Mic className="w-8 h-8 text-emerald-300" />
                   )}
                 </button>
               </div>
 
               {/* Status Message */}
-              <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
-                  {isListening ? "Listening actively..." : "Tap mic to start speaking"}
+              <div className="space-y-1 w-full max-w-sm">
+                <span className={`text-xs font-bold uppercase tracking-wider ${
+                  isListening
+                    ? "text-rose-600"
+                    : micPermissionDenied
+                    ? "text-amber-700"
+                    : "text-emerald-800"
+                }`}>
+                  {isListening
+                    ? "Listening actively..."
+                    : micPermissionDenied
+                    ? "Microphone Access Required"
+                    : "Tap mic to start speaking"}
                 </span>
 
                 {/* Live Transcript Display */}
-                <div className="min-h-[44px] flex items-center justify-center px-4">
+                <div className="min-h-[38px] flex items-center justify-center px-4">
                   {transcript || interimTranscript ? (
                     <p className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
                       &ldquo;{transcript || interimTranscript}&rdquo;
                     </p>
                   ) : (
                     <p className="text-xs text-slate-400 italic">
-                      Say &ldquo;Trek&rdquo;, &ldquo;Tour&rdquo;, &ldquo;Destination&rdquo;, &ldquo;Honeymoon&rdquo;, or &ldquo;Rajasthan&rdquo;
+                      Say &ldquo;Goa&rdquo;, &ldquo;Manali&rdquo;, &ldquo;Trek&rdquo;, &ldquo;Honeymoon&rdquo;, or &ldquo;Kerala&rdquo;
                     </p>
                   )}
                 </div>
 
                 {/* Assistant Feedback */}
                 {feedbackMessage && (
-                  <p className="text-xs font-semibold text-[#FF6B35] animate-pulse">
+                  <p className={`text-xs font-semibold leading-relaxed ${
+                    micPermissionDenied ? "text-amber-700 font-medium" : "text-[#FF6B35] animate-pulse"
+                  }`}>
                     {feedbackMessage}
                   </p>
                 )}
               </div>
+
+              {/* Explicit Microphone Permission Card (Shown when Denied or Blocked) */}
+              {micPermissionDenied && (
+                <div className="w-full max-w-md p-3.5 bg-gradient-to-br from-amber-50 to-orange-50/50 border border-amber-200/90 rounded-2xl text-left space-y-2.5 shadow-xs animate-in fade-in duration-200">
+                  <div className="flex items-start gap-2.5">
+                    <div className="p-2 rounded-xl bg-amber-100 text-amber-900 shrink-0 mt-0.5">
+                      <AlertCircle className="w-4 h-4 text-amber-700" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                        <span>Microphone Access Blocked</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
+                          One-Tap Fix
+                        </span>
+                      </h4>
+                      <p className="text-[11px] text-amber-800 leading-relaxed mt-0.5">
+                        Tap <b>&ldquo;Enable Microphone&rdquo;</b> to grant access. If your browser blocked it permanently, tap the 🔒 lock icon near the address bar to allow Microphone, then refresh.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={handleRequestMicAccess}
+                      disabled={isRequestingPermission}
+                      className="flex-1 py-2 px-3 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
+                    >
+                      {isRequestingPermission ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Requesting Access...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Mic className="w-3.5 h-3.5 text-emerald-300" />
+                          <span>Enable Microphone</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        inputRef.current?.focus();
+                      }}
+                      className="py-2 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer"
+                    >
+                      Type Instead
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Sound Waveform Visualizer Bars (when active) */}
               {isListening && (
@@ -567,7 +782,7 @@ export function VoiceAssistant() {
                 Quick Commands & Popular Searches:
               </span>
 
-              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
+              <div className="flex flex-wrap gap-1.5 max-h-32 sm:max-h-36 overflow-y-auto pr-1">
                 {VOICE_CHIPS.map((chip, idx) => (
                   <button
                     key={idx}
@@ -588,10 +803,11 @@ export function VoiceAssistant() {
                 <div className="relative flex-1">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
+                    ref={inputRef}
                     type="text"
                     value={manualText}
                     onChange={(e) => setManualText(e.target.value)}
-                    placeholder="Or type a command: 'honeymoon', 'kedarkantha'..."
+                    placeholder="Or type a command: 'goa', 'manali', 'honeymoon'..."
                     className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                   />
                 </div>

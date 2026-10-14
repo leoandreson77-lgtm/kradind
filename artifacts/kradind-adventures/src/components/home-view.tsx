@@ -91,7 +91,7 @@ export function HomeView({
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       {/* Fixed Sticky Top Navigation Header */}
-      <div className="sticky top-0 z-50 w-full shadow-xs">
+      <div id="top-bar" className="sticky top-0 z-50 w-full shadow-xs scroll-mt-20">
         <TopBar config={sections?.topBar} />
         <Header onBookClick={() => handleOpenBooking("Kedarkantha Summit Trek")} />
       </div>
@@ -99,10 +99,12 @@ export function HomeView({
       {/* Main content */}
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* 1. Hero Banner with Modern Clean Search Widget */}
-        <HeroSearch config={sections?.hero} />
+        <div id="hero" className="scroll-mt-24">
+          <HeroSearch config={sections?.hero} />
+        </div>
 
         {/* 2. Trust & Excellence Highlights Strip */}
-        <section className="relative -mt-8 z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="trust-highlights" className="relative -mt-8 z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
           <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 p-4 sm:p-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
             <div className="flex items-center gap-3.5 pt-2 sm:pt-0">
               <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center shrink-0">
@@ -147,7 +149,7 @@ export function HomeView({
         </section>
 
         {/* 3. Four Core Travel Categories (Clear Visual Portals) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-4">
+        <section id="travel-portals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-4 scroll-mt-24">
           <div className="flex items-end justify-between mb-6">
             <div>
               <span className="text-xs font-extrabold text-[#0F3A2E] uppercase tracking-wider block">
@@ -282,39 +284,53 @@ export function HomeView({
         </section>
 
         {/* 4. Seasonal Handpicked Expeditions Carousel (Indiahikes-style) */}
-        <SeasonalTreksCarousel
-          treks={treks}
-          config={sections?.seasonalCollection}
-          onBookTrek={(trekName, batchDate) => handleOpenBooking(trekName, batchDate)}
-        />
+        <section id="seasonal-collection" className="scroll-mt-24">
+          <SeasonalTreksCarousel
+            treks={treks}
+            config={sections?.seasonalCollection}
+            onBookTrek={(trekName, batchDate) => handleOpenBooking(trekName, batchDate)}
+          />
+        </section>
 
         {/* 5. Top Trending Expeditions & Flagship Packages */}
-        <BestTreks
-          treks={treks}
-          onSelectTrek={(slug) => handleOpenBooking(slug)}
-          config={sections?.bestTreks}
-        />
+        <section id="best-treks" className="scroll-mt-24">
+          <BestTreks
+            treks={treks}
+            onSelectTrek={(slug) => handleOpenBooking(slug)}
+            config={sections?.bestTreks}
+          />
+        </section>
 
         {/* 5. Monsoon Specials & Promotional Offer */}
-        <MonsoonSpecials
-          config={sections?.monsoon}
-          onClaimCoupon={(code) => handleOpenBooking("Valley of Flowers & Hemkund")}
-        />
+        <section id="monsoon-offers" className="scroll-mt-24">
+          <MonsoonSpecials
+            config={sections?.monsoon}
+            onClaimCoupon={(code) => handleOpenBooking("Valley of Flowers & Hemkund")}
+          />
+        </section>
 
         {/* 6. Zero Work Leave Weekend Treks */}
-        <WeekendTreks treks={treks} config={sections?.weekendTreks} />
+        <section id="weekend-treks" className="scroll-mt-24">
+          <WeekendTreks treks={treks} config={sections?.weekendTreks} />
+        </section>
 
         {/* 7. Dynamic Campaigns & Landing Pages Section */}
-        <CampaignSection initialCampaigns={initialCampaigns} />
+        <section id="campaigns" className="scroll-mt-24">
+          <CampaignSection initialCampaigns={initialCampaigns} />
+        </section>
 
         {/* 8. International Holidays & World Tours Showcase */}
-        <InternationalShowcase config={sections?.international} />
+        <section id="international-showcase" className="scroll-mt-24">
+          <InternationalShowcase config={sections?.international} />
+        </section>
 
         {/* 9. Live Ground Radar */}
-        <LiveRadar initialReports={radarReports} />
+        <section id="live-radar" className="scroll-mt-24">
+          <LiveRadar initialReports={radarReports} />
+        </section>
 
         {/* 10. Editorial Philosophy & Traveler Guide (Boosts Text-to-HTML ratio, balances Link Density) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <section id="about-kradind" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 scroll-mt-24">
           <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm space-y-8">
             <div className="max-w-3xl space-y-3">
               <span className="text-xs font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block">
@@ -363,16 +379,20 @@ export function HomeView({
         </section>
 
         {/* 11. Social Share Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-end">
+        <div id="social-share" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-end scroll-mt-24">
           <SocialShare title="KRADIND Adventures | Himalayan Treks & Expeditions" />
         </div>
 
         {/* 12. E-E-A-T Editorial Authority, Founder Credentials & FAQs */}
-        <EEATAuthoritySection config={sections?.eeat} />
+        <section id="authority-faqs" className="scroll-mt-24">
+          <EEATAuthoritySection config={sections?.eeat} />
+        </section>
       </main>
 
       {/* Footer */}
-      <Footer config={sections?.contactAndFooter} />
+      <footer id="footer" className="scroll-mt-24">
+        <Footer config={sections?.contactAndFooter} />
+      </footer>
 
       {/* Interactive Booking Modal */}
       <BookingModal

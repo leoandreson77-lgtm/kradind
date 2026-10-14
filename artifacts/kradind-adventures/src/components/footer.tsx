@@ -9,7 +9,7 @@ import {
   FaYoutube,
   FaXTwitter,
   FaPinterestP,
-  FaThreads,
+  FaWhatsapp,
   FaLinkedinIn,
 } from "react-icons/fa6";
 import {
@@ -35,9 +35,9 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
   }
   const cleanPhone = supportPhone.replace(/\s+/g, "");
 
-  let supportEmail = config?.supportEmail || "info@kradind.com";
-  if (supportEmail.includes("support@") || supportEmail.includes("hello@")) {
-    supportEmail = "info@kradind.com";
+  let supportEmail = config?.supportEmail || "Info@kradind.com";
+  if (supportEmail.includes("support@") || supportEmail.includes("hello@") || supportEmail.includes("info@")) {
+    supportEmail = "Info@kradind.com";
   }
 
   const address =
@@ -89,11 +89,11 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
       bg: "bg-slate-800 text-slate-300 border-slate-700",
     },
     {
-      name: "Threads",
-      url: config?.threadsUrl || "https://www.threads.net/@kradglobal",
-      icon: FaThreads,
-      color: "hover:bg-white hover:text-black hover:border-white",
-      bg: "bg-slate-800 text-slate-300 border-slate-700",
+      name: "WhatsApp Community",
+      url: "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34",
+      icon: FaWhatsapp,
+      color: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
+      bg: "bg-[#25D366]/10 text-[#25D366] border-[#25D366]/30",
     },
     {
       name: "Pinterest",

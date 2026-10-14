@@ -41,11 +41,13 @@ import {
   Milestone,
   Utensils,
   Bed,
+  ExternalLink,
 } from "lucide-react";
 import type {
   TrekData,
   TrekBatch,
   TrekItineraryDay,
+  AdminRole,
 } from "@/lib/cms-store";
 import {
   getPackageSection,
@@ -55,6 +57,7 @@ import { ImageUploader } from "@/components/admin/image-uploader";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { CustomEditableField } from "@/components/admin/custom-editable-field";
 
 type DateFilterType = "all" | "today" | "7days" | "30days" | "this_month" | "custom";
 type SortOptionType = "newest" | "updated" | "oldest" | "name_asc" | "name_desc" | "price_desc" | "price_asc";
@@ -330,6 +333,146 @@ const POPULAR_CATEGORIES = [
   "International",
 ];
 
+function getDefaultDomesticItinerary(daysCount: number = 6): TrekItineraryDay[] {
+  const templates: TrekItineraryDay[] = [
+    {
+      day: 1,
+      title: "Arrival & Hotel Transfer | Evening Leisure & Local Stroll",
+      description: "Arrive at the airport or railway station. Meet your warm holiday representative and enjoy a comfortable private transfer to your hotel. Settle in, freshen up, and spend a relaxing evening exploring the nearby promenade, local bazaar, or enjoying a scenic sunset shikara/boat ride.",
+      altitude: "Valley / Hill Station",
+      distance: "Airport Transfer (25-35 km)",
+      meal: "Welcome Drink & Dinner",
+      stay: "Boutique Hotel / Luxury Resort",
+    },
+    {
+      day: 2,
+      title: "Full-Day Iconic Sightseeing & Valley Exploration",
+      description: "Post a delicious breakfast, embark on an escorted full-day sightseeing tour. Visit world-famous scenic viewpoints, heritage botanical gardens, historic monuments, and panoramic valley viewpoints with plenty of time for leisure and photography.",
+      altitude: "Scenic Sightseeing",
+      distance: "Day Sightseeing Circuit (45 km)",
+      meal: "Breakfast & Gourmet Dinner",
+      stay: "Boutique Hotel / Resort",
+    },
+    {
+      day: 3,
+      title: "Excursion to Alpine Meadows & Mountain Viewpoints",
+      description: "Take a scenic morning drive through lush pine forests and winding valleys. Enjoy gondola / cable car rides, snow activity points, pony trails through meadows, or quiet riverside moments with majestic Himalayan or Western Ghat vistas.",
+      altitude: "Scenic Mountain Elevation",
+      distance: "Excursion Drive (50-60 km)",
+      meal: "Breakfast & Dinner",
+      stay: "Alpine View Resort / Luxury Stays",
+    },
+    {
+      day: 4,
+      title: "Riverside Adventure, Cultural Heritage & Local Markets",
+      description: "Spend the day enjoying optional outdoor adventures (river rafting, nature walks, or ATV rides) followed by visits to ancient temples, cultural heritage sites, and bustling local craft markets for authentic dry fruits, spices, pashminas, and souvenirs.",
+      altitude: "River Valley",
+      distance: "Local Transfers & Activities",
+      meal: "Breakfast & Dinner",
+      stay: "Comfort Deluxe Hotel",
+    },
+    {
+      day: 5,
+      title: "Scenic Hill View Excursion & Farewell Celebration",
+      description: "Journey to an offbeat scenic valley or viewpoints known for tranquil untouched landscapes. Enjoy hot lunch with local flavors at a scenic vantage point, followed by an evening celebration dinner at the resort.",
+      altitude: "High Scenic Viewpoint",
+      distance: "Scenic Day Tour (40 km)",
+      meal: "Breakfast & Special Farewell Dinner",
+      stay: "Deluxe Resort / Heritage Stay",
+    },
+    {
+      day: 6,
+      title: "Checkout, Souvenir Shopping & Departure Transfer",
+      description: "Enjoy a leisurely morning breakfast amidst panoramic views. Check out from the hotel and proceed for final souvenir shopping if time permits, followed by a timely private transfer to the airport or railway station for your journey home.",
+      altitude: "Transit Hub",
+      distance: "Departure Transfer to Airport / Station",
+      meal: "Buffet Breakfast",
+      stay: "Onward Journey / Return Flight",
+    },
+    {
+      day: 7,
+      title: "Extended Exploration / Nature Day Excursion",
+      description: "Bonus exploration day reserved for visiting pristine waterfalls, wildlife reserves, tea gardens, or relaxing by the hotel spa and infinity pool before final check-out.",
+      altitude: "Scenic Escapes",
+      distance: "Relaxed Day Trip",
+      meal: "Breakfast & Dinner",
+      stay: "Luxury Resort",
+    },
+  ];
+
+  return templates.slice(0, Math.max(1, Math.min(daysCount, 7)));
+}
+
+function getDefaultInternationalItinerary(daysCount: number = 6): TrekItineraryDay[] {
+  const templates: TrekItineraryDay[] = [
+    {
+      day: 1,
+      title: "International Arrival & VIP Airport Transfer | Resort Check-In",
+      description: "Land at the international airport, clear immigration & customs, and meet your English-speaking representative at the arrivals hall. Enjoy a private air-conditioned transfer to your luxury hotel or beachfront villa. Spend the evening relaxing by the poolside or oceanfront lounge.",
+      altitude: "Coastal / City Center",
+      distance: "Private Airport Transfer",
+      meal: "Welcome Refreshments & Dinner",
+      stay: "4-Star / 5-Star Luxury Resort",
+    },
+    {
+      day: 2,
+      title: "City Highlights Orientation & Sunset Marina / Harbor Cruise",
+      description: "After an international buffet breakfast, embark on a curated city orientation tour covering iconic architecture, cultural landmarks, sacred shrines, and panoramic observation decks. Conclude the day with a luxury catamaran sunset cruise along the harbor.",
+      altitude: "Metropolitan Sightseeing",
+      distance: "Private AC Sightseeing Circuit",
+      meal: "Breakfast & Cruise Dinner",
+      stay: "Luxury City / Beach Resort",
+    },
+    {
+      day: 3,
+      title: "Full-Day Tropical Island / Adventure Theme Park Excursion",
+      description: "Board a high-speed catamaran or transfer to world-class adventure parks / pristine coral islands. Enjoy water sports (snorkeling, parasailing, sea-walking), private beach club access, and a sumptuous beachside buffet lunch.",
+      altitude: "Tropical Ocean Coast",
+      distance: "Speedboat & Island Transfers",
+      meal: "Breakfast, Beach Lunch & Dinner",
+      stay: "Luxury Resort / Private Pool Villa",
+    },
+    {
+      day: 4,
+      title: "Lush Highland Terraces, Waterfalls & Cultural Villages",
+      description: "Venture into the picturesque highlands, visiting volcanic vantage points, cascading emerald waterfalls, world heritage rice terraces, and artisan handicraft villages renowned for silver, woodcarving, and art.",
+      altitude: "Scenic Highlands (2,500 Ft)",
+      distance: "Highland Day Tour",
+      meal: "Breakfast & Local Speciality Dinner",
+      stay: "Highland Forest Villa / Luxury Resort",
+    },
+    {
+      day: 5,
+      title: "Leisure, Duty-Free Shopping & Fine Dining Evening",
+      description: "A leisure-filled day to indulge in rejuvenating spa treatments, high-end shopping malls, and vibrant beach clubs. In the evening, savor a curated multi-course celebration dinner with sunset views.",
+      altitude: "Coastal Resort",
+      distance: "Local City Exploration",
+      meal: "Breakfast & Fine Dining Dinner",
+      stay: "Luxury Hotel / Villa",
+    },
+    {
+      day: 6,
+      title: "Resort Checkout & Onward Airport Departure Transfer",
+      description: "Savor a leisurely international breakfast. Enjoy the resort amenities until check-out time. Transfer in a private AC vehicle to the international airport for your flight back home with unforgettable memories.",
+      altitude: "Airport Transit",
+      distance: "Private Airport Transfer",
+      meal: "Buffet Breakfast",
+      stay: "Onward Flight",
+    },
+    {
+      day: 7,
+      title: "Extended Overseas Stay / Optional Helicopter & Safari Tour",
+      description: "Optional safari tour, helicopter panoramic flight over the archipelago, or private yacht charter before your late-night international flight.",
+      altitude: "Scenic Archipelago",
+      distance: "Exclusive Transfers",
+      meal: "Breakfast & Farewell Lunch",
+      stay: "Onward International Flight",
+    },
+  ];
+
+  return templates.slice(0, Math.max(1, Math.min(daysCount, 7)));
+}
+
 function getDefaultItinerary(daysCount: number = 5): TrekItineraryDay[] {
   const templates: TrekItineraryDay[] = [
     {
@@ -400,6 +543,19 @@ function getDefaultItinerary(daysCount: number = 5): TrekItineraryDay[] {
   return templates.slice(0, Math.max(1, Math.min(daysCount, 7)));
 }
 
+function getTemplateItinerary(
+  type: "Domestic" | "International" | "Fixed" | "Trek",
+  daysCount: number = 6
+): TrekItineraryDay[] {
+  if (type === "International") {
+    return getDefaultInternationalItinerary(daysCount);
+  }
+  if (type === "Domestic" || type === "Fixed") {
+    return getDefaultDomesticItinerary(daysCount);
+  }
+  return getDefaultItinerary(daysCount);
+}
+
 export default function AdminTreksPage() {
   const [treks, setTreks] = useState<TrekData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -430,9 +586,17 @@ export default function AdminTreksPage() {
   const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
   const [tagDropdownSearch, setTagDropdownSearch] = useState("");
   
+  // Enterprise Role Permissions & Import JSON state
+  const [activeRole, setActiveRole] = useState<AdminRole>("Super Admin");
+  const [showImportJsonModal, setShowImportJsonModal] = useState(false);
+  const [importJsonText, setImportJsonText] = useState("");
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTrek, setEditingTrek] = useState<TrekData | null>(null);
+  const [recoveredDraft, setRecoveredDraft] = useState<TrekData | null>(null);
+  const editingTrekRef = useRef<TrekData | null>(editingTrek);
+  const isModalOpenRef = useRef<boolean>(isModalOpen);
   const [modalTab, setModalTab] = useState<
     "basic" | "media" | "batches" | "categories" | "overview" | "itinerary" | "inclusions" | "faqs" | "seo"
   >("basic");
@@ -542,6 +706,85 @@ export default function AdminTreksPage() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Sync refs for beforeunload / visibilitychange auto-save
+  useEffect(() => {
+    editingTrekRef.current = editingTrek;
+    isModalOpenRef.current = isModalOpen;
+  }, [editingTrek, isModalOpen]);
+
+  // Load any unsaved draft from localStorage on initial render
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("kradind_admin_trek_draft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.name || parsed.slug)) {
+          setRecoveredDraft(parsed);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Continuous debounced auto-save to localStorage whenever editing
+  useEffect(() => {
+    if (!isModalOpen || !editingTrek) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem("kradind_admin_trek_draft", JSON.stringify(editingTrek));
+      } catch {}
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [editingTrek, isModalOpen]);
+
+  // Tab off / Abandon auto-save to Database & localStorage
+  useEffect(() => {
+    const autoSaveOnExit = () => {
+      const trek = editingTrekRef.current;
+      const open = isModalOpenRef.current;
+      if (!open || !trek) return;
+
+      const name = (trek.name || "").trim();
+      if (!name) return;
+
+      const draftPayload = {
+        ...trek,
+        status: "Draft",
+      };
+
+      try {
+        localStorage.setItem("kradind_admin_trek_draft", JSON.stringify(draftPayload));
+      } catch {}
+
+      // Keepalive save to DB as Draft
+      try {
+        fetch("/api/admin/treks", {
+          method: trek.id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(draftPayload),
+          keepalive: true,
+        }).catch(() => {});
+      } catch {}
+    };
+
+    const handleBeforeUnload = () => {
+      autoSaveOnExit();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        autoSaveOnExit();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   const showToast = (msg: string) => {
@@ -914,7 +1157,7 @@ export default function AdminTreksPage() {
       batches: [
         { id: 1, startDate: "Jun 14", endDate: "Jun 18, 2026", slotsLeft: 12, price: isIntl ? 34999 : isDomestic ? 18999 : 8999 },
       ],
-      itinerary: getDefaultItinerary(6),
+      itinerary: getTemplateItinerary(activeType, isIntl || isDomestic ? 6 : 5),
       inclusions: isIntl
         ? ["Hotel accommodation", "Daily breakfast", "Airport transfers", "Guided city tour"]
         : isDomestic
@@ -1081,6 +1324,10 @@ export default function AdminTreksPage() {
       showToast(isNew ? `${itemType} created successfully!` : `${itemType} updated successfully!`);
       setIsModalOpen(false);
       setEditingTrek(null);
+      try {
+        localStorage.removeItem("kradind_admin_trek_draft");
+      } catch {}
+      setRecoveredDraft(null);
       fetchTreks();
     } catch {
       alert("Error saving trek");
@@ -1161,13 +1408,14 @@ export default function AdminTreksPage() {
     ) {
       return;
     }
-    const template = getDefaultItinerary(count);
+    const sec = getPackageSection(editingTrek);
+    const template = getTemplateItinerary(sec, count);
     setEditingTrek({
       ...editingTrek,
       duration: `${count} Days / ${count - 1} Nights`,
       itinerary: template,
     });
-    showToast(`Applied ${count}-Day Itinerary Template`);
+    showToast(`Applied ${count}-Day ${sec === "Trek" ? "Trek" : "Tour"} Itinerary Template`);
   };
 
   const domesticCount = treks.filter((t) => getPackageSection(t) === "Domestic").length;
@@ -1402,6 +1650,16 @@ export default function AdminTreksPage() {
             <span>Export Catalog PDF</span>
           </button>
 
+          <button
+            type="button"
+            onClick={() => setShowImportJsonModal(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
+            title="Import or paste full package JSON directly"
+          >
+            <Copy className="w-4 h-4 text-indigo-600" />
+            <span>📥 Paste / Import JSON</span>
+          </button>
+
           {classificationFilter === "Domestic" ? (
             <button
               onClick={() => handleOpenAdd("Domestic")}
@@ -1466,6 +1724,47 @@ export default function AdminTreksPage() {
               </button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Enterprise Permissions & Role Control Ribbon */}
+      <div className="bg-gradient-to-r from-slate-900 via-[#0F3A2E] to-slate-900 rounded-2xl p-3.5 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm print:hidden">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs ring-1 ring-emerald-500/30 shrink-0">
+            🛡️
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black tracking-tight text-white">
+                Admin Role &amp; Permissions:
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                Full Super Admin Privileges Active
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300 mt-0.5">
+              All package management features enabled: 1-Click Move, Duplicate, Custom Batches &amp; Inventory, Soft-Delete &amp; Live Category Slugs.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-end md:self-auto">
+          <span className="text-[11px] text-emerald-300 font-semibold hidden lg:inline">
+            Active Role:
+          </span>
+          <select
+            value={activeRole}
+            onChange={(e) => {
+              setActiveRole(e.target.value as any);
+              showToast(`Role switched to ${e.target.value}. All package features remain fully unlocked!`);
+            }}
+            className="text-xs font-bold px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 focus:outline-none cursor-pointer"
+          >
+            <option value="Super Admin" className="text-slate-900">👑 Super Admin (Full Authorizations)</option>
+            <option value="Operations Manager" className="text-slate-900">⚡ Operations Manager (Inventory &amp; Logistics)</option>
+            <option value="Sales / CRM Agent" className="text-slate-900">💼 Sales / CRM Agent (Proposals &amp; Quotes)</option>
+            <option value="Expedition Leader" className="text-slate-900">🏔️ Expedition Leader (Field Operations)</option>
+          </select>
         </div>
       </div>
 
@@ -1837,6 +2136,51 @@ export default function AdminTreksPage() {
         )}
       </div>
 
+      {/* Draft Recovery Banner */}
+        {recoveredDraft && !isModalOpen && (
+          <div className="mb-4 p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-emerald-50 border border-amber-300 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs animate-fade-in print:hidden">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+                💾
+              </div>
+              <div>
+                <p className="font-extrabold text-slate-900 text-sm">
+                  Unfinished Package Draft Auto-Recovered!
+                </p>
+                <p className="text-slate-600 mt-0.5">
+                  Package: <strong className="text-amber-900">{recoveredDraft.name || "Untitled Tour"}</strong> ({recoveredDraft.category || "Package"}). You left this during your previous session.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingTrek(recoveredDraft);
+                  setIsModalOpen(true);
+                  setRecoveredDraft(null);
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Resume Editing</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem("kradind_admin_trek_draft");
+                  } catch {}
+                  setRecoveredDraft(null);
+                  showToast("Draft discarded");
+                }}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 font-semibold transition cursor-pointer"
+              >
+                Discard
+              </button>
+            </div>
+          </div>
+        )}
+
       {/* Search & Tag Filter Bar */}
       <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3 print:hidden">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -2182,7 +2526,10 @@ export default function AdminTreksPage() {
                             )}
                           </div>
                           <div className="text-[11px] text-slate-400 flex flex-wrap items-center gap-2 mt-0.5">
-                            <span className="font-mono">/{t.slug}</span>
+                            <span className="font-mono font-bold text-emerald-800">
+                              {pkgSection === "Domestic" ? "/domestic/" : pkgSection === "International" ? "/international/" : "/treks/"}
+                              {t.slug}
+                            </span>
                             <span>•</span>
                             <span>{t.duration}</span>
                             <span>•</span>
@@ -2265,26 +2612,63 @@ export default function AdminTreksPage() {
                       </button>
                     </td>
                     <td className="px-5 py-3.5 text-right space-x-1 whitespace-nowrap print:hidden">
+                      {/* 1-Click Quick Category Switcher */}
+                      <select
+                        value={pkgSection}
+                        onChange={(e) => handleQuickMoveTrek(t, e.target.value as any)}
+                        disabled={actionLoading}
+                        className="text-[10px] font-bold px-2 py-1 rounded-lg border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 cursor-pointer focus:outline-none shadow-2xs mr-1"
+                        title="1-Click Move this package to any category immediately"
+                      >
+                        <option value="Domestic">🏖️ Domestic</option>
+                        <option value="International">🌐 Intl</option>
+                        <option value="Fixed">📅 Fixed</option>
+                        <option value="Trek">🏔️ Trek</option>
+                      </select>
+
                       {/* Move to another of the 4 sections */}
                       <button
                         onClick={() => handleOpenMoveModal(t)}
                         disabled={actionLoading}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/90 rounded-lg text-[10px] font-bold transition shadow-2xs cursor-pointer disabled:opacity-50"
-                        title="Move to another section (Domestic, International, Fixed Departure, Trek)"
+                        className="inline-flex items-center gap-1 px-2 py-1 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/90 rounded-lg text-[10px] font-bold transition shadow-2xs cursor-pointer disabled:opacity-50"
+                        title="Advanced Move (Change region & collection)"
                       >
                         <ArrowRightLeft className="w-3 h-3 text-indigo-600" />
                         <span>Move</span>
                       </button>
 
-                      <a
-                        href={`/treks/${t.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block p-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
-                        title="View live page"
+                      {/* Accurate View Page Link according to category */}
+                      {(() => {
+                        const targetUrl =
+                          pkgSection === "Domestic"
+                            ? `/domestic/${t.slug}`
+                            : pkgSection === "International"
+                            ? `/international/${t.slug}`
+                            : `/treks/${t.slug}`;
+                        return (
+                          <a
+                            href={targetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block p-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
+                            title={`View live page (${targetUrl})`}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </a>
+                        );
+                      })()}
+
+                      {/* Copy Package JSON */}
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(JSON.stringify(t, null, 2));
+                          showToast(`📋 Copied "${t.name}" JSON to clipboard!`);
+                        }}
+                        className="p-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
+                        title="Copy package JSON to clipboard"
                       >
-                        <Eye className="w-4 h-4" />
-                      </a>
+                        <Copy className="w-4 h-4 text-emerald-600" />
+                      </button>
 
                       {/* Sales Seasonal Customizer & WhatsApp Quote */}
                       <button
@@ -2350,7 +2734,15 @@ export default function AdminTreksPage() {
             <div className="p-4 sm:p-5 border-b border-slate-200/80 flex items-center justify-between shrink-0 bg-slate-50/70">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-[#0F3A2E] text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
-                  {editingTrek.name ? editingTrek.name.slice(0, 2).toUpperCase() : "TR"}
+                  {editingTrek.name
+                    ? editingTrek.name.slice(0, 2).toUpperCase()
+                    : getPackageSection(editingTrek) === "Domestic"
+                    ? "DM"
+                    : getPackageSection(editingTrek) === "International"
+                    ? "IN"
+                    : getPackageSection(editingTrek) === "Fixed"
+                    ? "FD"
+                    : "TR"}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -2402,13 +2794,40 @@ export default function AdminTreksPage() {
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-200/60 transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                {/* Live Auto-save status pill */}
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/90 text-emerald-800 text-[11px] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Auto-saved as Draft</span>
+                </div>
+
+                {editingTrek.slug && (
+                  <a
+                    href={
+                      getPackageSection(editingTrek) === "Domestic"
+                        ? `/domestic/${editingTrek.slug}`
+                        : getPackageSection(editingTrek) === "International"
+                        ? `/international/${editingTrek.slug}`
+                        : `/treks/${editingTrek.slug}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs"
+                    title="Open live package page in new tab"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="hidden sm:inline">View Live Page</span>
+                    <ExternalLink className="w-3 h-3 text-slate-400" />
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-200/60 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Form Body with Left Sidebar */}
@@ -2436,7 +2855,13 @@ export default function AdminTreksPage() {
                         <span className={`p-1.5 rounded-xl transition ${
                           modalTab === "basic" ? "bg-white/15 text-white" : "bg-slate-100 text-slate-600 group-hover:text-slate-900"
                         }`}>
-                          <Mountain className="w-4 h-4" />
+                          {(() => {
+                            const sec = getPackageSection(editingTrek);
+                            if (sec === "Domestic") return <Car className="w-4 h-4" />;
+                            if (sec === "International") return <Globe className="w-4 h-4" />;
+                            if (sec === "Fixed") return <Calendar className="w-4 h-4" />;
+                            return <Mountain className="w-4 h-4" />;
+                          })()}
                         </span>
                         <span className="truncate">Basic & Pricing</span>
                       </div>
@@ -2765,259 +3190,348 @@ export default function AdminTreksPage() {
                       );
                     })()}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          {getPackageSection(editingTrek) === "Trek" ? "Trek Name *" : "Package Name *"}
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={editingTrek.name}
-                          onChange={(e) => {
-                            const name = e.target.value;
-                            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-                            setEditingTrek({
-                              ...editingTrek,
-                              name,
-                              slug: editingTrek.id ? editingTrek.slug : slug,
-                            });
-                          }}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                          placeholder="Hampta Pass Crossover Trek"
-                        />
-                      </div>
+                    {(() => {
+                      const currentSec = getPackageSection(editingTrek);
+                      const isTrek = currentSec === "Trek";
+                      const isDomestic = currentSec === "Domestic";
+                      const isIntl = currentSec === "International";
+                      const isFixed = currentSec === "Fixed";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Slug (URL identifier) *</label>
-                        <input
-                          type="text"
-                          required
-                          value={editingTrek.slug}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, slug: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                          placeholder="hampta-pass"
-                        />
-                      </div>
+                      const prefix =
+                        isDomestic
+                          ? "domestic"
+                          : isIntl
+                          ? "international"
+                          : "treks";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Location (Start to End)</label>
-                        <input
-                          type="text"
-                          value={editingTrek.location}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, location: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="Manali to Lahaul, Himachal Pradesh"
-                        />
-                      </div>
+                      const namePlaceholder = isDomestic
+                        ? "e.g. Kashmir Paradise Holiday (5N / 6D) or Kerala Backwaters & Munnar"
+                        : isIntl
+                        ? "e.g. Bali Tropical Island Getaway (6N / 7D) or Dubai Luxury Tour"
+                        : isFixed
+                        ? "e.g. Spiti Valley Circuit Group Tour (7N / 8D)"
+                        : "e.g. Hampta Pass Crossover Trek or Kedarkantha Summit Trek";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Region / Mountain Range</label>
-                        <input
-                          type="text"
-                          value={editingTrek.region}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, region: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="Pir Panjal & Zanskar"
-                        />
-                      </div>
+                      const slugPlaceholder = isDomestic
+                        ? "kashmir-paradise-holiday"
+                        : isIntl
+                        ? "bali-tropical-getaway"
+                        : isFixed
+                        ? "spiti-valley-circuit"
+                        : "hampta-pass-crossover-trek";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          {getPackageSection(editingTrek) === "Trek" ? "Max Altitude" : "Tour Style / Altitude"}
-                        </label>
-                        <input
-                          type="text"
-                          value={editingTrek.altitude}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, altitude: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder={getPackageSection(editingTrek) === "Trek" ? "14,000 Ft" : "Scenic / Hill Station"}
-                        />
-                      </div>
+                      const locationPlaceholder = isDomestic
+                        ? "e.g. Srinagar to Gulmarg & Pahalgam, Kashmir"
+                        : isIntl
+                        ? "e.g. Denpasar to Ubud & Seminyak, Bali"
+                        : isFixed
+                        ? "e.g. Shimla to Kaza & Manali, Spiti"
+                        : "e.g. Manali to Lahaul, Himachal Pradesh";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Duration</label>
-                        <input
-                          type="text"
-                          value={editingTrek.duration}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, duration: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="5 Nights / 6 Days"
-                        />
-                      </div>
+                      const regionPlaceholder = isDomestic
+                        ? "e.g. Kashmir Valley / North India or Kerala"
+                        : isIntl
+                        ? "e.g. Southeast Asia / Indonesia or UAE"
+                        : isFixed
+                        ? "e.g. Spiti Valley / Himachal"
+                        : "e.g. Pir Panjal & Zanskar, Himalayas";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          {getPackageSection(editingTrek) === "Trek" ? "Trek Distance" : "Circuit Distance / Route"}
-                        </label>
-                        <input
-                          type="text"
-                          value={editingTrek.distance || ""}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, distance: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder={getPackageSection(editingTrek) === "Trek" ? "26 km" : "Sightseeing Circuit"}
-                        />
-                      </div>
+                      const altitudePlaceholder = isDomestic
+                        ? "e.g. Scenic Valleys & Hill Station (Leisure)"
+                        : isIntl
+                        ? "e.g. Coastal Beaches & Island Resorts"
+                        : isFixed
+                        ? "e.g. High Altitude Road Trip & Monasteries"
+                        : "14,000 Ft";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          {getPackageSection(editingTrek) === "Trek" ? "Base Camp" : "Pickup / Drop Point"}
-                        </label>
-                        <input
-                          type="text"
-                          value={editingTrek.baseCamp || ""}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, baseCamp: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder={getPackageSection(editingTrek) === "Trek" ? "Sankri / Jobra" : "Airport / Railway Station"}
-                        />
-                      </div>
+                      const distancePlaceholder = isDomestic
+                        ? "e.g. Dedicated AC Sedan / Innova Sightseeing Circuit"
+                        : isIntl
+                        ? "e.g. Private Airport & Island Sightseeing Transfers"
+                        : isFixed
+                        ? "e.g. 12-Seater Tempo Traveller / SUV Expedition"
+                        : "26 km";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          {getPackageSection(editingTrek) === "Trek" ? "Difficulty / Grade" : "Tour Pace / Style"}
-                        </label>
-                        <select
-                          value={editingTrek.difficulty}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, difficulty: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white"
-                        >
-                          <option value="Leisure / Scenic">Leisure / Scenic (Family & Couples)</option>
-                          <option value="Easy">Easy (Beginner Friendly)</option>
-                          <option value="Easy to Moderate">Easy to Moderate</option>
-                          <option value="Moderate">Moderate (Active Sightseeing)</option>
-                          <option value="Moderate to Difficult">Moderate to Difficult</option>
-                          <option value="Challenging">Challenging / Strenuous</option>
-                          <option value="Difficult">Difficult (High Altitude Pass)</option>
-                        </select>
-                      </div>
+                      const baseCampPlaceholder = isDomestic
+                        ? "e.g. Srinagar Airport (SXR) / Railway Station Hub"
+                        : isIntl
+                        ? "e.g. Ngurah Rai International Airport (DPS), Bali"
+                        : isFixed
+                        ? "e.g. Delhi / Chandigarh Pick-up Hub"
+                        : "e.g. Sankri / Jobra Basecamp";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Badge Tag</label>
-                        <input
-                          type="text"
-                          value={editingTrek.badge}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, badge: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                          placeholder="Featured / High Pass Epic"
-                        />
-                      </div>
+                      const badgePlaceholder = isDomestic
+                        ? "e.g. Domestic Holiday / Best Seller / Family Special"
+                        : isIntl
+                        ? "e.g. International Tour / Trending Island / Luxury Escape"
+                        : isFixed
+                        ? "e.g. Fixed Departure / Guaranteed Group Tour"
+                        : "Featured / High Pass Epic";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Offering Price (₹)</label>
-                        <input
-                          type="number"
-                          value={editingTrek.price}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, price: Number(e.target.value) })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-emerald-700"
-                          placeholder="9999"
-                        />
-                      </div>
+                      const taglinePlaceholder = isDomestic
+                        ? "e.g. Experience tranquil shikara rides on Dal Lake, snow valleys of Gulmarg, and lush pine trails of Pahalgam."
+                        : isIntl
+                        ? "e.g. Relax on pristine white-sand beaches, explore ancient temples, and stay in luxurious private pool villas."
+                        : isFixed
+                        ? "e.g. Join like-minded travelers across the raw, trans-Himalayan landscapes and ancient monasteries of Spiti."
+                        : "Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti.";
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Original Price (₹)</label>
-                        <input
-                          type="number"
-                          value={editingTrek.originalPrice}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, originalPrice: Number(e.target.value) })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-500"
-                          placeholder="12999"
-                        />
-                      </div>
+                      return (
+                        <>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <CustomEditableField
+                              label={isTrek ? "Trek Name *" : "Package Name *"}
+                              required
+                              value={editingTrek.name}
+                              onChange={(val) => {
+                                const name = val;
+                                const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+                                setEditingTrek({
+                                  ...editingTrek,
+                                  name,
+                                  slug: editingTrek.id ? editingTrek.slug : slug,
+                                });
+                              }}
+                              placeholder={namePlaceholder}
+                              inputClassName="font-bold text-slate-900"
+                            />
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Customer Rating (out of 5)</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          min="1"
-                          max="5"
-                          value={editingTrek.rating || 4.9}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, rating: Number(e.target.value) })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                        />
-                      </div>
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <label className="block text-xs font-semibold text-slate-700">
+                                  Slug (Live URL Route) *
+                                </label>
+                                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                  Route: /{prefix}/
+                                </span>
+                              </div>
+                              <div className="flex items-stretch rounded-xl border border-slate-200 overflow-hidden focus-within:ring-2 focus-within:ring-[#0F3A2E] focus-within:border-transparent bg-white">
+                                <span className="px-3 py-2 bg-slate-100 text-slate-700 font-mono text-xs font-bold border-r border-slate-200 flex items-center select-none">
+                                  /{prefix}/
+                                </span>
+                                <input
+                                  type="text"
+                                  required
+                                  value={editingTrek.slug}
+                                  onChange={(e) => {
+                                    const raw = e.target.value.replace(/^\/+/, "");
+                                    setEditingTrek({ ...editingTrek, slug: raw });
+                                  }}
+                                  className="flex-1 px-3 py-2 text-xs sm:text-sm font-mono focus:outline-none"
+                                  placeholder={slugPlaceholder}
+                                />
+                              </div>
+                              <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1 font-mono truncate">
+                                <span>🔗 Live URL:</span>
+                                <span className="text-emerald-700 font-bold">/{prefix}/{editingTrek.slug || "slug-here"}</span>
+                              </p>
+                            </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Review Count</label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={editingTrek.reviewCount || 1}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, reviewCount: Number(e.target.value) })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                        />
-                      </div>
+                            <CustomEditableField
+                              label={isTrek ? "Trek Route (Start to End)" : "Tour Location (Start to End)"}
+                              value={editingTrek.location}
+                              onChange={(val) => setEditingTrek({ ...editingTrek, location: val })}
+                              placeholder={locationPlaceholder}
+                            />
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Publish Status</label>
-                        <select
-                          value={editingTrek.status}
-                          onChange={(e) =>
-                            setEditingTrek({
-                              ...editingTrek,
-                              status: e.target.value as "Published" | "Draft",
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white"
-                        >
-                          <option value="Published">Published (Live on site)</option>
-                          <option value="Draft">Draft (Hidden)</option>
-                        </select>
-                      </div>
-                    </div>
+                            <CustomEditableField
+                              label={isTrek ? "Region / Mountain Range" : "Destination Region / State"}
+                              value={editingTrek.region}
+                              onChange={(val) => setEditingTrek({ ...editingTrek, region: val })}
+                              placeholder={regionPlaceholder}
+                            />
 
-                    <RichTextEditor
-                      compact
-                      label="Tagline / Short Summary"
-                      value={editingTrek.tagline || ""}
-                      onChange={(val) => setEditingTrek({ ...editingTrek, tagline: val })}
-                      rows={2}
-                      placeholder="Cross from the lush green pine valleys of Kullu into the dramatic, barren moonscape of Spiti."
-                      helperText="Supports formatting (Bold, Italic, Sizing, Colors, Badge) for hero card & header."
-                    />
+                            <CustomEditableField
+                              label={isTrek ? "Max Altitude" : "Tour Style / Altitude"}
+                              value={editingTrek.altitude}
+                              onChange={(val) => setEditingTrek({ ...editingTrek, altitude: val })}
+                              placeholder={altitudePlaceholder}
+                            />
+
+                            <CustomEditableField
+                              label="Duration"
+                              value={editingTrek.duration}
+                              onChange={(val) => setEditingTrek({ ...editingTrek, duration: val })}
+                              placeholder="5 Nights / 6 Days"
+                            />
+
+                            <CustomEditableField
+                              label={isTrek ? "Trek Distance" : "Circuit Route / Transport"}
+                              value={editingTrek.distance || ""}
+                              onChange={(val) => setEditingTrek({ ...editingTrek, distance: val })}
+                              placeholder={distancePlaceholder}
+                            />
+
+                            <CustomEditableField
+                              label={isTrek ? "Base Camp" : "Pickup & Drop Point Hub"}
+                              value={editingTrek.baseCamp || ""}
+                              onChange={(val) => setEditingTrek({ ...editingTrek, baseCamp: val })}
+                              placeholder={baseCampPlaceholder}
+                            />
+
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                                {isTrek ? "Difficulty / Grade" : "Tour Pace / Style"}
+                              </label>
+                              <select
+                                value={editingTrek.difficulty}
+                                onChange={(e) => setEditingTrek({ ...editingTrek, difficulty: e.target.value })}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white"
+                              >
+                                <option value="Leisure / Scenic">Leisure / Scenic (Family & Couples)</option>
+                                <option value="Easy">Easy (Beginner Friendly)</option>
+                                <option value="Easy to Moderate">Easy to Moderate (Relaxed Sightseeing)</option>
+                                <option value="Moderate">Moderate (Active Sightseeing / Guided)</option>
+                                <option value="Moderate to Difficult">Moderate to Difficult (Active Road Trip)</option>
+                                <option value="Challenging">Challenging / Strenuous</option>
+                                <option value="Difficult">Difficult (High Altitude Pass)</option>
+                              </select>
+                            </div>
+
+                            <CustomEditableField
+                              label="Badge Tag"
+                              value={editingTrek.badge}
+                              onChange={(val) => setEditingTrek({ ...editingTrek, badge: val })}
+                              placeholder={badgePlaceholder}
+                            />
+
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">Offering Price (₹)</label>
+                              <input
+                                type="number"
+                                value={editingTrek.price}
+                                onChange={(e) => setEditingTrek({ ...editingTrek, price: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-emerald-700"
+                                placeholder="9999"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">Original Price (₹)</label>
+                              <input
+                                type="number"
+                                value={editingTrek.originalPrice}
+                                onChange={(e) => setEditingTrek({ ...editingTrek, originalPrice: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-500"
+                                placeholder="12999"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">Customer Rating (out of 5)</label>
+                              <input
+                                type="number"
+                                step="0.1"
+                                min="1"
+                                max="5"
+                                value={editingTrek.rating || 4.9}
+                                onChange={(e) => setEditingTrek({ ...editingTrek, rating: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">Review Count</label>
+                              <input
+                                type="number"
+                                min="0"
+                                value={editingTrek.reviewCount || 1}
+                                onChange={(e) => setEditingTrek({ ...editingTrek, reviewCount: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">Publish Status</label>
+                              <select
+                                value={editingTrek.status}
+                                onChange={(e) =>
+                                  setEditingTrek({
+                                    ...editingTrek,
+                                    status: e.target.value as "Published" | "Draft",
+                                  })
+                                }
+                                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white"
+                              >
+                                <option value="Published">Published (Live on site)</option>
+                                <option value="Draft">Draft (Hidden)</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <RichTextEditor
+                            compact
+                            label={isTrek ? "Trek Tagline / Short Summary" : "Tour Tagline / Short Summary"}
+                            value={editingTrek.tagline || ""}
+                            onChange={(val) => setEditingTrek({ ...editingTrek, tagline: val })}
+                            rows={2}
+                            placeholder={taglinePlaceholder}
+                            helperText="Supports formatting (Bold, Italic, Sizing, Colors, Badge) for hero card & header."
+                          />
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 
                 {/* TAB 2: PHOTOS & MEDIA */}
                 {modalTab === "media" && (
                   <div className="space-y-6">
-                    {/* Primary Hero Cover Photo */}
-                    <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                            <span>Primary Cover Photo</span>
-                          </h3>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
-                            Main featured hero banner photo shown on public search cards and trek headers. Upload a file or paste any image URL.
-                          </p>
-                        </div>
-                      </div>
+                    {(() => {
+                      const currentSec = getPackageSection(editingTrek);
+                      const isDomestic = currentSec === "Domestic";
+                      const isIntl = currentSec === "International";
+                      const isTrek = currentSec === "Trek";
+                      const altPlaceholder = isDomestic
+                        ? "e.g. Kashmir holiday tour package by KRAD Global"
+                        : isIntl
+                        ? "e.g. Bali luxury holiday package by KRAD Global"
+                        : isTrek
+                        ? "e.g. Himalayan trekking package by KRAD Global"
+                        : "e.g. Group tour package by KRAD Global";
 
-                      <ImageUploader
-                        mode="single"
-                        value={editingTrek.image}
-                        onChange={(url) => setEditingTrek({ ...editingTrek, image: url })}
-                        alt={editingTrek.imageAlt || ""}
-                        onAltChange={(alt) => setEditingTrek({ ...editingTrek, imageAlt: alt })}
-                        altPlaceholder="e.g. Himalayan trekking package by KRAD Global"
-                        aspect="landscape"
-                      />
-                    </div>
+                      return (
+                        <>
+                          {/* Primary Hero Cover Photo */}
+                          <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                                  <span>Primary Cover Photo</span>
+                                </h3>
+                                <p className="text-[11px] text-slate-500 mt-0.5">
+                                  Main featured hero banner photo shown on public search cards and package headers. Upload a file or paste any image URL.
+                                </p>
+                              </div>
+                            </div>
 
-                    {/* Expedition Photo Gallery */}
-                    <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-3">
-                      <ImageUploader
-                        mode="gallery"
-                        images={editingTrek.gallery || []}
-                        onChange={(imgs) => setEditingTrek({ ...editingTrek, gallery: imgs })}
-                        primaryImage={editingTrek.image}
-                        onSetPrimary={(url) => setEditingTrek({ ...editingTrek, image: url })}
-                        label="Expedition Photo Gallery"
-                        description="Upload multiple pictures from your computer or paste image links. Click star to make any photo the main cover."
-                      />
-                    </div>
+                            <ImageUploader
+                              mode="single"
+                              value={editingTrek.image}
+                              onChange={(url) => setEditingTrek({ ...editingTrek, image: url })}
+                              alt={editingTrek.imageAlt || ""}
+                              onAltChange={(alt) => setEditingTrek({ ...editingTrek, imageAlt: alt })}
+                              altPlaceholder={altPlaceholder}
+                              aspect="landscape"
+                            />
+                          </div>
+
+                          {/* Expedition Photo Gallery */}
+                          <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-3">
+                            <ImageUploader
+                              mode="gallery"
+                              images={editingTrek.gallery || []}
+                              onChange={(imgs) => setEditingTrek({ ...editingTrek, gallery: imgs })}
+                              primaryImage={editingTrek.image}
+                              onSetPrimary={(url) => setEditingTrek({ ...editingTrek, image: url })}
+                              label={isTrek ? "Expedition Photo Gallery" : "Tour & Destination Photo Gallery"}
+                              description="Upload multiple pictures from your computer or paste image links. Click star to make any photo the main cover."
+                            />
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 
@@ -3047,271 +3561,316 @@ export default function AdminTreksPage() {
                           <Wand2 className="w-3 h-3 text-amber-500" />
                           <span>Quick Templates:</span>
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyPresetItinerary(3)}
-                          className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition"
-                        >
-                          + 3-Day Weekend Plan
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyPresetItinerary(5)}
-                          className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition"
-                        >
-                          + 5-Day Himalayan Plan
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyPresetItinerary(6)}
-                          className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition"
-                        >
-                          + 6-Day Circuit Plan
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyPresetItinerary(7)}
-                          className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition"
-                        >
-                          + 7-Day Expedition Plan
-                        </button>
+                        {(() => {
+                          const currentSec = getPackageSection(editingTrek);
+                          const isTrek = currentSec === "Trek";
+                          return (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleApplyPresetItinerary(3)}
+                                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition cursor-pointer"
+                              >
+                                {isTrek ? "+ 3-Day Weekend Trek" : "+ 3-Day Weekend Plan"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleApplyPresetItinerary(5)}
+                                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition cursor-pointer"
+                              >
+                                {isTrek ? "+ 5-Day Himalayan Trek" : "+ 5-Day Scenic Holiday"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleApplyPresetItinerary(6)}
+                                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition cursor-pointer"
+                              >
+                                {isTrek ? "+ 6-Day High Pass Circuit" : "+ 6-Day Leisure Circuit"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleApplyPresetItinerary(7)}
+                                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100 transition cursor-pointer"
+                              >
+                                {isTrek ? "+ 7-Day Expedition Trek" : "+ 7-Day Grand Tour"}
+                              </button>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
 
                     {/* Day-by-Day Cards */}
                     <div className="space-y-4">
-                      {(editingTrek.itinerary || []).map((day, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden"
-                        >
-                          <div className="p-5 sm:p-6 space-y-4">
-                            {/* Top Header: Day Badge & Action Controls */}
-                            <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
-                              <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
-                                  <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-                                  Day {day.day} Schedule
-                                </span>
+                      {(() => {
+                        const currentSec = getPackageSection(editingTrek);
+                        const isTrek = currentSec === "Trek";
+
+                        return (editingTrek.itinerary || []).map((day, idx) => (
+                          <div
+                            key={idx}
+                            className="bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden"
+                          >
+                            <div className="p-5 sm:p-6 space-y-4">
+                              {/* Top Header: Day Badge & Action Controls */}
+                              <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
+                                <div className="flex items-center gap-2">
+                                  <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
+                                    <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+                                    Day {day.day} Schedule
+                                  </span>
+                                </div>
+
+                                {/* Row Action Controls */}
+                                <div className="flex items-center gap-1 text-slate-500">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDuplicateDay(idx)}
+                                    className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition flex items-center gap-1 text-[11px]"
+                                    title="Duplicate this day"
+                                  >
+                                    <Copy className="w-3.5 h-3.5" />
+                                    <span className="hidden sm:inline">Duplicate</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={idx === 0}
+                                    onClick={() => handleMoveDay(idx, idx - 1)}
+                                    className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
+                                    title="Move Day Up"
+                                  >
+                                    <ArrowUp className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={idx === (editingTrek.itinerary?.length || 0) - 1}
+                                    onClick={() => handleMoveDay(idx, idx + 1)}
+                                    className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
+                                    title="Move Day Down"
+                                  >
+                                    <ArrowDown className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const days = (editingTrek.itinerary || [])
+                                        .filter((_, i) => i !== idx)
+                                        .map((d, i) => ({ ...d, day: i + 1 }));
+                                      setEditingTrek({ ...editingTrek, itinerary: days });
+                                    }}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
+                                    title="Delete this day"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
                               </div>
 
-                              {/* Row Action Controls */}
-                              <div className="flex items-center gap-1 text-slate-500">
-                                <button
-                                  type="button"
-                                  onClick={() => handleDuplicateDay(idx)}
-                                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition flex items-center gap-1 text-[11px]"
-                                  title="Duplicate this day"
-                                >
-                                  <Copy className="w-3.5 h-3.5" />
-                                  <span className="hidden sm:inline">Duplicate</span>
-                                </button>
-                                <button
-                                  type="button"
-                                  disabled={idx === 0}
-                                  onClick={() => handleMoveDay(idx, idx - 1)}
-                                  className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
-                                  title="Move Day Up"
-                                >
-                                  <ArrowUp className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  type="button"
-                                  disabled={idx === (editingTrek.itinerary?.length || 0) - 1}
-                                  onClick={() => handleMoveDay(idx, idx + 1)}
-                                  className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30 transition"
-                                  title="Move Day Down"
-                                >
-                                  <ArrowDown className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const days = (editingTrek.itinerary || [])
-                                      .filter((_, i) => i !== idx)
-                                      .map((d, i) => ({ ...d, day: i + 1 }));
+                              {/* Day Title Input */}
+                              <div>
+                                <CustomEditableField
+                                  label={`Day ${day.day} Route / Title`}
+                                  value={day.title}
+                                  onChange={(val) => {
+                                    const days = [...(editingTrek.itinerary || [])];
+                                    days[idx] = { ...days[idx], title: val };
                                     setEditingTrek({ ...editingTrek, itinerary: days });
                                   }}
-                                  className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
-                                  title="Delete this day"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
+                                  className="w-full"
+                                  inputClassName="text-base sm:text-lg font-extrabold text-slate-900 bg-slate-50/50 hover:bg-slate-50 focus:bg-white"
+                                  placeholder={
+                                    isTrek
+                                      ? `Day ${day.day} Route / Title (e.g. Scenic Hike to Alpine Meadow Basecamp)`
+                                      : `Day ${day.day} Route / Title (e.g. Arrival in Srinagar & Evening Dal Lake Shikara Ride)`
+                                  }
+                                />
                               </div>
-                            </div>
 
-                            {/* Day Title Input */}
-                            <div>
-                              <input
-                                type="text"
-                                value={day.title}
-                                onChange={(e) => {
+                              {/* 4-Item Metric Ribbon (Matches Website Exactly!) */}
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                {/* Duration */}
+                                <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                                    <Clock className="w-4 h-4" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <span className="block text-[10px] font-bold uppercase tracking-wider text-amber-600">Duration</span>
+                                    <input
+                                      type="text"
+                                      placeholder="5-6 Hours"
+                                      value={day.duration || ""}
+                                      onChange={(e) => {
+                                        const days = [...(editingTrek.itinerary || [])];
+                                        days[idx] = { ...days[idx], duration: e.target.value };
+                                        setEditingTrek({ ...editingTrek, itinerary: days });
+                                      }}
+                                      className="w-full bg-transparent text-xs font-extrabold text-amber-950 placeholder-amber-400/70 focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Distance */}
+                                <div className="bg-purple-50/80 border border-purple-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                                    <Milestone className="w-4 h-4" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <span className="block text-[10px] font-bold uppercase tracking-wider text-purple-600">
+                                      {isTrek ? "Trek Distance" : "Distance / Drive"}
+                                    </span>
+                                    <input
+                                      type="text"
+                                      placeholder={isTrek ? "6 km Trek" : "45 km Drive"}
+                                      value={day.distance || ""}
+                                      onChange={(e) => {
+                                        const days = [...(editingTrek.itinerary || [])];
+                                        days[idx] = { ...days[idx], distance: e.target.value };
+                                        setEditingTrek({ ...editingTrek, itinerary: days });
+                                      }}
+                                      className="w-full bg-transparent text-xs font-extrabold text-purple-950 placeholder-purple-400/70 focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Altitude / Elevation */}
+                                <div className="bg-sky-50/80 border border-sky-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
+                                    <Mountain className="w-4 h-4" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <span className="block text-[10px] font-bold uppercase tracking-wider text-sky-600">
+                                      {isTrek ? "Elevation" : "Location / Elevation"}
+                                    </span>
+                                    <input
+                                      type="text"
+                                      placeholder={isTrek ? "11,800 Ft" : "Scenic Valley (5,200 Ft)"}
+                                      value={day.altitude || ""}
+                                      onChange={(e) => {
+                                        const days = [...(editingTrek.itinerary || [])];
+                                        days[idx] = { ...days[idx], altitude: e.target.value };
+                                        setEditingTrek({ ...editingTrek, itinerary: days });
+                                      }}
+                                      className="w-full bg-transparent text-xs font-extrabold text-sky-950 placeholder-sky-400/70 focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Meals */}
+                                <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <Utensils className="w-4 h-4" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-600">Meals</span>
+                                    <input
+                                      type="text"
+                                      placeholder="Breakfast, Lunch, Dinner"
+                                      value={day.meal || ""}
+                                      onChange={(e) => {
+                                        const days = [...(editingTrek.itinerary || [])];
+                                        days[idx] = { ...days[idx], meal: e.target.value };
+                                        setEditingTrek({ ...editingTrek, itinerary: days });
+                                      }}
+                                      className="w-full bg-transparent text-xs font-extrabold text-emerald-950 placeholder-emerald-400/70 focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Day Description */}
+                              <RichTextEditor
+                                compact
+                                label="Day Narrative & Activities"
+                                value={day.description || ""}
+                                onChange={(val) => {
                                   const days = [...(editingTrek.itinerary || [])];
-                                  days[idx] = { ...days[idx], title: e.target.value };
+                                  days[idx] = { ...days[idx], description: val };
                                   setEditingTrek({ ...editingTrek, itinerary: days });
                                 }}
-                                className="w-full text-base sm:text-lg font-extrabold text-slate-900 placeholder:text-slate-400 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                                placeholder={`Day ${day.day} Route / Title (e.g. Scenic Drive to Sankri Basecamp)`}
+                                rows={3}
+                                placeholder={
+                                  isTrek
+                                    ? "Describe the trail terrain, river crossings, views, and resting points..."
+                                    : "Describe today's sightseeing stops, vehicle transfers, meals, and evening leisure activities..."
+                                }
                               />
                             </div>
 
-                            {/* 4-Item Metric Ribbon (Matches Website Exactly!) */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                              {/* Duration */}
-                              <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-                                  <Clock className="w-4 h-4" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-amber-600">Duration</span>
-                                  <input
-                                    type="text"
-                                    placeholder="5-6 Hours"
-                                    value={day.duration || ""}
-                                    onChange={(e) => {
+                            {/* Bottom Hospitality Bar */}
+                            <div className="bg-slate-50/90 px-5 sm:px-6 py-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+                              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                                <Bed className="w-4 h-4 text-emerald-700 shrink-0" />
+                                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Overnight Stay:</span>
+                                <div className="flex-1">
+                                  <CustomEditableField
+                                    compact
+                                    value={day.stay || ""}
+                                    onChange={(val) => {
                                       const days = [...(editingTrek.itinerary || [])];
-                                      days[idx] = { ...days[idx], duration: e.target.value };
+                                      days[idx] = { ...days[idx], stay: val };
                                       setEditingTrek({ ...editingTrek, itinerary: days });
                                     }}
-                                    className="w-full bg-transparent text-xs font-extrabold text-amber-950 placeholder-amber-400/70 focus:outline-none"
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Distance */}
-                              <div className="bg-purple-50/80 border border-purple-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
-                                  <Milestone className="w-4 h-4" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-purple-600">Distance</span>
-                                  <input
-                                    type="text"
-                                    placeholder="6 km Trek"
-                                    value={day.distance || ""}
-                                    onChange={(e) => {
-                                      const days = [...(editingTrek.itinerary || [])];
-                                      days[idx] = { ...days[idx], distance: e.target.value };
-                                      setEditingTrek({ ...editingTrek, itinerary: days });
-                                    }}
-                                    className="w-full bg-transparent text-xs font-extrabold text-purple-950 placeholder-purple-400/70 focus:outline-none"
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Altitude / Elevation */}
-                              <div className="bg-sky-50/80 border border-sky-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
-                                  <Mountain className="w-4 h-4" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-sky-600">Elevation</span>
-                                  <input
-                                    type="text"
-                                    placeholder="11,800 Ft"
-                                    value={day.altitude || ""}
-                                    onChange={(e) => {
-                                      const days = [...(editingTrek.itinerary || [])];
-                                      days[idx] = { ...days[idx], altitude: e.target.value };
-                                      setEditingTrek({ ...editingTrek, itinerary: days });
-                                    }}
-                                    className="w-full bg-transparent text-xs font-extrabold text-sky-950 placeholder-sky-400/70 focus:outline-none"
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Meals */}
-                              <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                  <Utensils className="w-4 h-4" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-600">Meals</span>
-                                  <input
-                                    type="text"
-                                    placeholder="Breakfast, Lunch, Dinner"
-                                    value={day.meal || ""}
-                                    onChange={(e) => {
-                                      const days = [...(editingTrek.itinerary || [])];
-                                      days[idx] = { ...days[idx], meal: e.target.value };
-                                      setEditingTrek({ ...editingTrek, itinerary: days });
-                                    }}
-                                    className="w-full bg-transparent text-xs font-extrabold text-emerald-950 placeholder-emerald-400/70 focus:outline-none"
+                                    placeholder={isTrek ? "Alpine Tents / Homestay" : "Deluxe Hotel / Boutique Resort"}
                                   />
                                 </div>
                               </div>
                             </div>
-
-                            {/* Day Description */}
-                            <RichTextEditor
-                              compact
-                              label="Day Narrative & Activities"
-                              value={day.description || ""}
-                              onChange={(val) => {
-                                const days = [...(editingTrek.itinerary || [])];
-                                days[idx] = { ...days[idx], description: val };
-                                setEditingTrek({ ...editingTrek, itinerary: days });
-                              }}
-                              rows={3}
-                              placeholder="Describe the trail terrain, river crossings, views, and resting points..."
-                            />
                           </div>
-
-                          {/* Bottom Hospitality Bar */}
-                          <div className="bg-slate-50/90 px-5 sm:px-6 py-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
-                            <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                              <Bed className="w-4 h-4 text-emerald-700 shrink-0" />
-                              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Overnight Stay:</span>
-                              <input
-                                type="text"
-                                value={day.stay || ""}
-                                onChange={(e) => {
-                                  const days = [...(editingTrek.itinerary || [])];
-                                  days[idx] = { ...days[idx], stay: e.target.value };
-                                  setEditingTrek({ ...editingTrek, itinerary: days });
-                                }}
-                                className="flex-1 bg-transparent text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none"
-                                placeholder="Alpine Tents / Homestay / Resort"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                        ));
+                      })()}
 
                       {(!editingTrek.itinerary || editingTrek.itinerary.length === 0) && (
                         <div className="text-center py-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 space-y-2">
                           <Clock className="w-8 h-8 text-slate-300 mx-auto" />
                           <p className="text-xs text-slate-500 font-semibold">No itinerary days scheduled yet.</p>
                           <p className="text-[11px] text-slate-400">
-                            Click &ldquo;+ 5-Day Himalayan Plan&rdquo; above or &ldquo;Add Day&rdquo; below to populate the day-by-day plan.
+                            Click quick templates above or &ldquo;+ Add Day&rdquo; below to populate the day-by-day plan.
                           </p>
                         </div>
                       )}
 
-                      {/* Add Day Button - Positioned at Bottom Right */}
-                      <div className="flex justify-end pt-3 border-t border-slate-100">
+                      {/* Add Day / Activity Button - Positioned at Bottom */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-100 mt-2">
+                        <span className="text-xs text-slate-500 font-semibold">
+                          Total {(editingTrek.itinerary?.length || 0)} Days / Activities configured
+                        </span>
                         <button
                           type="button"
                           onClick={() => {
+                            const currentSec = getPackageSection(editingTrek);
+                            const isTrek = currentSec === "Trek";
                             const days = [...(editingTrek.itinerary || [])];
                             const nextDayNum = days.length + 1;
-                            days.push({
-                              day: nextDayNum,
-                              title: `Day ${nextDayNum}: Scenic Trail & Mountain Camp`,
-                              description: "Ascend along the alpine trail with scenic panoramic views. Arrive at campsite for warm dinner and overnight stay.",
-                              distance: "5 km",
-                              duration: "5-6 Hours",
-                              altitude: "10,500 Ft",
-                              meal: "Breakfast, Lunch & Dinner",
-                              stay: "Alpine Tents",
-                            });
+                            days.push(
+                              isTrek
+                                ? {
+                                    day: nextDayNum,
+                                    title: `Day ${nextDayNum}: Scenic Trail & Camp`,
+                                    description: "Ascend along the alpine trail with scenic panoramic views. Arrive at campsite for warm dinner and overnight stay.",
+                                    distance: "5 km",
+                                    duration: "5-6 Hours",
+                                    altitude: "10,500 Ft",
+                                    meal: "Breakfast, Lunch & Dinner",
+                                    stay: "Alpine Tents",
+                                  }
+                                : {
+                                    day: nextDayNum,
+                                    title: `Day ${nextDayNum}: Sightseeing Excursion & Leisure`,
+                                    description: "Breakfast at hotel. Embark on a full-day guided sightseeing excursion, visiting top viewpoints, valleys, and local landmarks. Return in the evening for dinner.",
+                                    distance: "30-50 km Drive",
+                                    duration: "6-7 Hours",
+                                    altitude: "Scenic Valleys",
+                                    meal: "Breakfast & Dinner",
+                                    stay: "Deluxe Resort / Boutique Hotel",
+                                  }
+                            );
                             setEditingTrek({ ...editingTrek, itinerary: days });
                             showToast(`Added Day ${nextDayNum}`);
                           }}
-                          className="px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#14483a] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow active:scale-95"
+                          className="px-5 py-2.5 bg-[#0F3A2E] hover:bg-[#14483a] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer self-end"
                         >
                           <Plus className="w-4 h-4" />
-                          <span>Add Day {(editingTrek.itinerary?.length || 0) + 1}</span>
+                          <span>+ Add Day / Activity {(editingTrek.itinerary?.length || 0) + 1}</span>
                         </button>
                       </div>
                     </div>
@@ -3364,28 +3923,6 @@ export default function AdminTreksPage() {
                           title="Quickly set all batches to Available status"
                         >
                           <span>Mark All AVBL</span>
-                        </button>
-
-                        {/* Add Single Batch */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const batches = [...(editingTrek.batches || [])];
-                            batches.push({
-                              id: Date.now(),
-                              startDate: "23rd Oct",
-                              endDate: "28th Oct",
-                              slotsLeft: 14,
-                              price: editingTrek.price || 8999,
-                              status: "AVBL",
-                              monthGroup: "October 2026",
-                              seasonTheme: "Vibrant Colours",
-                            });
-                            setEditingTrek({ ...editingTrek, batches });
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0F3A2E] text-white text-xs font-bold rounded-lg hover:bg-[#164e3f] transition cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" /> Add Batch
                         </button>
                       </div>
                     </div>
@@ -3786,6 +4323,64 @@ export default function AdminTreksPage() {
                               </div>
                             </div>
 
+                            {/* Inventory & Logistics Row (Rooms & Transport) */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-slate-100 text-xs bg-slate-50/70 p-2.5 rounded-xl">
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-700 mb-0.5 flex items-center gap-1">
+                                  <Bed className="w-3 h-3 text-purple-600" />
+                                  <span>Hotel Rooms Allotted</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  value={batch.roomsAllotted || ""}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], roomsAllotted: e.target.value };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2 py-1 border border-slate-200 rounded-lg text-xs bg-white"
+                                  placeholder="e.g. 4 Deluxe Twin Sharing"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-700 mb-0.5 flex items-center gap-1">
+                                  <Car className="w-3 h-3 text-blue-600" />
+                                  <span>Vehicle Allocation</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  value={batch.vehicleAllotted || ""}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], vehicleAllotted: e.target.value };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2 py-1 border border-slate-200 rounded-lg text-xs bg-white"
+                                  placeholder="e.g. 12-Seater Tempo Traveller"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-700 mb-0.5 flex items-center gap-1">
+                                  <Users className="w-3 h-3 text-emerald-600" />
+                                  <span>Total Batch Capacity</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={batch.totalCapacity || 16}
+                                  onChange={(e) => {
+                                    const next = [...(editingTrek.batches || [])];
+                                    next[idx] = { ...next[idx], totalCapacity: Number(e.target.value) };
+                                    setEditingTrek({ ...editingTrek, batches: next });
+                                  }}
+                                  className="w-full px-2 py-1 border border-slate-200 rounded-lg text-xs bg-white"
+                                  placeholder="16"
+                                />
+                              </div>
+                            </div>
+
                             {/* Preset Chips & Month Tag row */}
                             <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 flex-wrap text-[11px]">
                               <div className="flex items-center gap-1.5 flex-wrap">
@@ -3850,6 +4445,34 @@ export default function AdminTreksPage() {
                           </p>
                         </div>
                       )}
+
+                      {/* Add Batch Button - Positioned at Bottom */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-100 mt-2">
+                        <span className="text-xs text-slate-500 font-semibold">
+                          Total {(editingTrek.batches?.length || 0)} Scheduled Departure Batches
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const batches = [...(editingTrek.batches || [])];
+                            batches.push({
+                              id: Date.now(),
+                              startDate: "23rd Oct",
+                              endDate: "28th Oct",
+                              slotsLeft: 14,
+                              price: editingTrek.price || 8999,
+                              status: "AVBL",
+                              monthGroup: "October 2026",
+                              seasonTheme: "Vibrant Colours",
+                            });
+                            setEditingTrek({ ...editingTrek, batches });
+                          }}
+                          className="px-5 py-2.5 bg-[#0F3A2E] hover:bg-[#14483a] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer self-end"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>+ Add Departure Batch</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -3997,232 +4620,340 @@ export default function AdminTreksPage() {
                 {/* TAB 6: OVERVIEW & HIGHLIGHTS */}
                 {modalTab === "overview" && (
                   <div className="space-y-5">
-                    <RichTextEditor
-                      label="About the Journey (Overview Narrative)"
-                      value={editingTrek.overview || ""}
-                      onChange={(val) => setEditingTrek({ ...editingTrek, overview: val })}
-                      rows={6}
-                      placeholder="Write the detailed overview, landscape description, and trek story here. Format with Bold, Italic, Sizing, Colors..."
-                      helperText="Use toolbar buttons to format headings, bold/italic text, custom font sizes, or colors."
-                    />
+                    {(() => {
+                      const currentSec = getPackageSection(editingTrek);
+                      const isTrek = currentSec === "Trek";
+                      const isDomestic = currentSec === "Domestic";
+                      const isIntl = currentSec === "International";
 
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-xs font-semibold text-slate-700">
-                          Expedition Highlights (Key Features)
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setEditingTrek({
-                              ...editingTrek,
-                              highlights: [...(editingTrek.highlights || []), ""],
-                            })
-                          }
-                          className="text-xs font-bold text-[#0F3A2E] hover:underline flex items-center gap-1"
-                        >
-                          <Plus className="w-3.5 h-3.5" /> Add Highlight
-                        </button>
-                      </div>
+                      const overviewPlaceholder = isTrek
+                        ? "Write the detailed overview, landscape description, and trek story here. Format with Bold, Italic, Sizing, Colors..."
+                        : "Write the comprehensive holiday overview, sightseeing highlights, hotel experience, and travel story here. Format with Bold, Italic, Sizing, Colors...";
 
-                      <div className="space-y-2">
-                        {(editingTrek.highlights || []).map((highlight, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={highlight}
-                              onChange={(e) => {
-                                const next = [...(editingTrek.highlights || [])];
-                                next[idx] = e.target.value;
-                                setEditingTrek({ ...editingTrek, highlights: next });
-                              }}
-                              className="flex-1 px-3 py-1.5 border border-slate-200 rounded-lg text-xs"
-                              placeholder="e.g. Dramatic crossover from Kullu's pine forest to Spiti's cold desert"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const next = (editingTrek.highlights || []).filter((_, i) => i !== idx);
-                                setEditingTrek({ ...editingTrek, highlights: next });
-                              }}
-                              className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                      const highlightPlaceholder = isDomestic
+                        ? "e.g. Complimentary sunset Shikara cruise on Dal Lake"
+                        : isIntl
+                        ? "e.g. Private pool villa stay with floating breakfast in Bali"
+                        : isTrek
+                        ? "e.g. Dramatic crossover from Kullu's pine forest to Spiti's cold desert"
+                        : "e.g. Dedicated AC vehicle for all sightseeing & transfers";
+
+                      return (
+                        <>
+                          <RichTextEditor
+                            label={isTrek ? "About the Expedition (Overview Narrative)" : "About the Holiday (Overview Narrative)"}
+                            value={editingTrek.overview || ""}
+                            onChange={(val) => setEditingTrek({ ...editingTrek, overview: val })}
+                            rows={6}
+                            placeholder={overviewPlaceholder}
+                            helperText="Use toolbar buttons to format headings, bold/italic text, custom font sizes, or colors."
+                          />
+
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                {isTrek ? "Expedition Highlights (Key Features)" : "Tour Highlights & Inclusions"}
+                              </label>
+                              <span className="text-[11px] font-semibold text-slate-500">
+                                {(editingTrek.highlights || []).length} highlights
+                              </span>
+                            </div>
+
+                            <div className="space-y-2">
+                              {(editingTrek.highlights || []).map((highlight, idx) => (
+                                <div key={idx} className="flex items-center gap-2">
+                                  <div className="flex-1">
+                                    <CustomEditableField
+                                      compact
+                                      value={highlight}
+                                      onChange={(val) => {
+                                        const next = [...(editingTrek.highlights || [])];
+                                        next[idx] = val;
+                                        setEditingTrek({ ...editingTrek, highlights: next });
+                                      }}
+                                      placeholder={highlightPlaceholder}
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const next = (editingTrek.highlights || []).filter((_, i) => i !== idx);
+                                      setEditingTrek({ ...editingTrek, highlights: next });
+                                    }}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition shrink-0 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ))}
+                              {(!editingTrek.highlights || editingTrek.highlights.length === 0) && (
+                                <p className="text-xs text-slate-400 italic py-2">No highlights added yet.</p>
+                              )}
+
+                              {/* Add Highlight Button - Positioned at Bottom */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setEditingTrek({
+                                    ...editingTrek,
+                                    highlights: [...(editingTrek.highlights || []), ""],
+                                  })
+                                }
+                                className="w-full py-2.5 mt-2 bg-amber-50 hover:bg-amber-100/80 text-amber-900 text-xs font-bold rounded-xl border border-dashed border-amber-300 flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-[0.99]"
+                              >
+                                <Plus className="w-3.5 h-3.5 text-amber-700" />
+                                <span>+ Add Highlight</span>
+                              </button>
+                            </div>
                           </div>
-                        ))}
-                        {(!editingTrek.highlights || editingTrek.highlights.length === 0) && (
-                          <p className="text-xs text-slate-400 italic py-2">No highlights added yet.</p>
-                        )}
-                      </div>
-                    </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 
                 {/* TAB 7: INCLUSIONS & EXCLUSIONS */}
                 {modalTab === "inclusions" && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Inclusions */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Inclusions
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setEditingTrek({
-                              ...editingTrek,
-                              inclusions: [...(editingTrek.inclusions || []), ""],
-                            })
-                          }
-                          className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
-                        >
-                          <Plus className="w-3 h-3" /> Add Item
-                        </button>
-                      </div>
+                    {(() => {
+                      const currentSec = getPackageSection(editingTrek);
+                      const isTrek = currentSec === "Trek";
 
-                      <div className="space-y-2">
-                        {(editingTrek.inclusions || []).map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={item}
-                              onChange={(e) => {
-                                const next = [...(editingTrek.inclusions || [])];
-                                next[idx] = e.target.value;
-                                setEditingTrek({ ...editingTrek, inclusions: next });
-                              }}
-                              className="flex-1 px-3 py-1.5 border border-slate-200 rounded-lg text-xs"
-                              placeholder="e.g. All vegetarian meals on trek"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const next = (editingTrek.inclusions || []).filter((_, i) => i !== idx);
-                                setEditingTrek({ ...editingTrek, inclusions: next });
-                              }}
-                              className="p-1.5 text-rose-500 hover:text-rose-700 rounded-lg"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                      return (
+                        <>
+                          {/* Inclusions */}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <label className="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Inclusions
+                              </label>
+                              <span className="text-[11px] font-semibold text-emerald-700/80">
+                                {(editingTrek.inclusions || []).length} items
+                              </span>
+                            </div>
+
+                            <div className="space-y-2">
+                              {(editingTrek.inclusions || []).map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-2">
+                                  <div className="flex-1">
+                                    <CustomEditableField
+                                      compact
+                                      value={item}
+                                      onChange={(val) => {
+                                        const next = [...(editingTrek.inclusions || [])];
+                                        next[idx] = val;
+                                        setEditingTrek({ ...editingTrek, inclusions: next });
+                                      }}
+                                      placeholder={
+                                        isTrek
+                                          ? "e.g. All nutritious vegetarian meals on trek"
+                                          : "e.g. Handpicked hotel stay with daily breakfast and dinner included"
+                                      }
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const next = (editingTrek.inclusions || []).filter((_, i) => i !== idx);
+                                      setEditingTrek({ ...editingTrek, inclusions: next });
+                                    }}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition shrink-0 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ))}
+                              {(!editingTrek.inclusions || editingTrek.inclusions.length === 0) && (
+                                <p className="text-xs text-slate-400 italic py-2">No inclusion items added yet.</p>
+                              )}
+
+                              {/* Add Inclusion Button - Positioned at Bottom */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setEditingTrek({
+                                    ...editingTrek,
+                                    inclusions: [...(editingTrek.inclusions || []), ""],
+                                  })
+                                }
+                                className="w-full py-2.5 mt-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold rounded-xl border border-dashed border-emerald-300 flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-[0.99]"
+                              >
+                                <Plus className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>+ Add Item</span>
+                              </button>
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    </div>
 
-                    {/* Exclusions */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-bold text-rose-800 flex items-center gap-1.5">
-                          <X className="w-4 h-4 text-rose-600" /> Exclusions
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setEditingTrek({
-                              ...editingTrek,
-                              exclusions: [...(editingTrek.exclusions || []), ""],
-                            })
-                          }
-                          className="text-xs font-bold text-rose-700 hover:underline flex items-center gap-1"
-                        >
-                          <Plus className="w-3 h-3" /> Add Item
-                        </button>
-                      </div>
+                          {/* Exclusions */}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <label className="text-xs font-bold text-rose-800 flex items-center gap-1.5">
+                                <X className="w-4 h-4 text-rose-600" /> Exclusions
+                              </label>
+                              <span className="text-[11px] font-semibold text-rose-700/80">
+                                {(editingTrek.exclusions || []).length} items
+                              </span>
+                            </div>
 
-                      <div className="space-y-2">
-                        {(editingTrek.exclusions || []).map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={item}
-                              onChange={(e) => {
-                                const next = [...(editingTrek.exclusions || [])];
-                                next[idx] = e.target.value;
-                                setEditingTrek({ ...editingTrek, exclusions: next });
-                              }}
-                              className="flex-1 px-3 py-1.5 border border-slate-200 rounded-lg text-xs"
-                              placeholder="e.g. Personal gear and backpacks"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const next = (editingTrek.exclusions || []).filter((_, i) => i !== idx);
-                                setEditingTrek({ ...editingTrek, exclusions: next });
-                              }}
-                              className="p-1.5 text-rose-500 hover:text-rose-700 rounded-lg"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="space-y-2">
+                              {(editingTrek.exclusions || []).map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-2">
+                                  <div className="flex-1">
+                                    <CustomEditableField
+                                      compact
+                                      value={item}
+                                      onChange={(val) => {
+                                        const next = [...(editingTrek.exclusions || [])];
+                                        next[idx] = val;
+                                        setEditingTrek({ ...editingTrek, exclusions: next });
+                                      }}
+                                      placeholder={
+                                        isTrek
+                                          ? "e.g. Personal gear, backpack offloading & personal insurance"
+                                          : "e.g. Airfare, train tickets, monument entry passes & personal expenses"
+                                      }
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const next = (editingTrek.exclusions || []).filter((_, i) => i !== idx);
+                                      setEditingTrek({ ...editingTrek, exclusions: next });
+                                    }}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition shrink-0 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ))}
+                              {(!editingTrek.exclusions || editingTrek.exclusions.length === 0) && (
+                                <p className="text-xs text-slate-400 italic py-2">No exclusion items added yet.</p>
+                              )}
+
+                              {/* Add Exclusion Button - Positioned at Bottom */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setEditingTrek({
+                                    ...editingTrek,
+                                    exclusions: [...(editingTrek.exclusions || []), ""],
+                                  })
+                                }
+                                className="w-full py-2.5 mt-2 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-bold rounded-xl border border-dashed border-rose-300 flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-[0.99]"
+                              >
+                                <Plus className="w-3.5 h-3.5 text-rose-600" />
+                                <span>+ Add Item</span>
+                              </button>
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 
                 {/* TAB 8: FAQS */}
                 {modalTab === "faqs" && (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                      <span className="text-xs font-bold text-slate-700">
-                        {editingTrek.faqs?.length || 0} Questions & Answers
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const faqs = [...(editingTrek.faqs || [])];
-                          faqs.push({ question: "", answer: "" });
-                          setEditingTrek({ ...editingTrek, faqs });
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0F3A2E] text-white text-xs font-bold rounded-lg hover:bg-[#164e3f] transition"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Add Question
-                      </button>
-                    </div>
+                    {(() => {
+                      const currentSec = getPackageSection(editingTrek);
+                      const isTrek = currentSec === "Trek";
 
-                    <div className="space-y-3">
-                      {(editingTrek.faqs || []).map((faq, idx) => (
-                        <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2">
-                          <div className="flex items-center justify-between gap-2">
-                            <input
-                              type="text"
-                              value={faq.question}
-                              onChange={(e) => {
-                                const faqs = [...(editingTrek.faqs || [])];
-                                faqs[idx] = { ...faqs[idx], question: e.target.value };
-                                setEditingTrek({ ...editingTrek, faqs });
-                              }}
-                              className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
-                              placeholder={`Question ${idx + 1}`}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const faqs = (editingTrek.faqs || []).filter((_, i) => i !== idx);
-                                setEditingTrek({ ...editingTrek, faqs });
-                              }}
-                              className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                      return (
+                        <>
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                            <span className="text-xs font-bold text-slate-700">
+                              Questions &amp; Answers
+                            </span>
+                            <span className="text-[11px] font-semibold text-slate-500">
+                              {(editingTrek.faqs || []).length} questions
+                            </span>
                           </div>
-                          <RichTextEditor
-                            compact
-                            label="Answer"
-                            value={faq.answer || ""}
-                            onChange={(val) => {
-                              const faqs = [...(editingTrek.faqs || [])];
-                              faqs[idx] = { ...faqs[idx], answer: val };
-                              setEditingTrek({ ...editingTrek, faqs });
-                            }}
-                            rows={2}
-                            placeholder="Provide a clear, helpful answer..."
-                          />
-                        </div>
-                      ))}
-                    </div>
+
+                          <div className="space-y-3">
+                            {(editingTrek.faqs || []).map((faq, idx) => (
+                              <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1">
+                                    <CustomEditableField
+                                      compact
+                                      label={`Question ${idx + 1}`}
+                                      value={faq.question}
+                                      onChange={(val) => {
+                                        const faqs = [...(editingTrek.faqs || [])];
+                                        faqs[idx] = { ...faqs[idx], question: val };
+                                        setEditingTrek({ ...editingTrek, faqs });
+                                      }}
+                                      inputClassName="font-bold text-slate-900 bg-white"
+                                      placeholder={
+                                        isTrek
+                                          ? `e.g. What is the fitness level required for this trek?`
+                                          : `e.g. Can this tour package be customized for our travel dates?`
+                                      }
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const faqs = (editingTrek.faqs || []).filter((_, i) => i !== idx);
+                                      setEditingTrek({ ...editingTrek, faqs });
+                                    }}
+                                    className="mt-6 p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg shrink-0 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                <RichTextEditor
+                                  compact
+                                  label="Answer"
+                                  value={faq.answer || ""}
+                                  onChange={(val) => {
+                                    const faqs = [...(editingTrek.faqs || [])];
+                                    faqs[idx] = { ...faqs[idx], answer: val };
+                                    setEditingTrek({ ...editingTrek, faqs });
+                                  }}
+                                  rows={2}
+                                  placeholder={
+                                    isTrek
+                                      ? "e.g. Moderate fitness. 3-4 km jogging daily for 2 weeks prior is recommended."
+                                      : "e.g. Yes! All tour packages can be customized based on your preferred travel dates, hotel choices, and group size."
+                                  }
+                                />
+                              </div>
+                            ))}
+
+                            {(!editingTrek.faqs || editingTrek.faqs.length === 0) && (
+                              <div className="text-center py-8 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50">
+                                <p className="text-xs text-slate-500 font-semibold">No questions &amp; answers added yet.</p>
+                                <p className="text-[11px] text-slate-400 mt-0.5">Click &ldquo;+ Add Question&rdquo; below to add one.</p>
+                              </div>
+                            )}
+
+                            {/* Add FAQ Button - Positioned at Bottom */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-100 mt-2">
+                              <span className="text-xs text-slate-500 font-semibold">
+                                Total {(editingTrek.faqs?.length || 0)} Questions &amp; Answers configured
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const faqs = [...(editingTrek.faqs || [])];
+                                  faqs.push({
+                                    question: "",
+                                    answer: "",
+                                  });
+                                  setEditingTrek({ ...editingTrek, faqs });
+                                }}
+                                className="px-5 py-2.5 bg-[#0F3A2E] hover:bg-[#14483a] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer self-end"
+                              >
+                                <Plus className="w-4 h-4" />
+                                <span>+ Add Question &amp; Answer {(editingTrek.faqs?.length || 0) + 1}</span>
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 
@@ -4260,78 +4991,40 @@ export default function AdminTreksPage() {
                     </div>
 
                     {/* Meta Title Field */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <label className="block text-xs font-bold text-slate-800">
-                          Meta Title Tag (SEO Title)
-                        </label>
-                        <span className={`text-[10px] font-mono font-semibold ${
-                          (editingTrek.metaTitle?.length || 0) > 60
-                            ? "text-amber-600 font-bold"
-                            : "text-slate-400"
-                        }`}>
-                          {editingTrek.metaTitle?.length || 0} / 60 chars recommended
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        value={editingTrek.metaTitle || ""}
-                        onChange={(e) => setEditingTrek({ ...editingTrek, metaTitle: e.target.value })}
-                        placeholder="e.g. Kerala Tour Package 5 Nights 6 Days | Hills & Backwaters"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                      />
-                    </div>
+                    <CustomEditableField
+                      label="Meta Title Tag (SEO Title)"
+                      value={editingTrek.metaTitle || ""}
+                      onChange={(val) => setEditingTrek({ ...editingTrek, metaTitle: val })}
+                      placeholder="e.g. Kerala Tour Package 5 Nights 6 Days | Hills & Backwaters"
+                      helperText={`${editingTrek.metaTitle?.length || 0} / 60 chars recommended`}
+                    />
 
                     {/* Meta Description Field */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <label className="block text-xs font-bold text-slate-800">
-                          Meta Description Tag
-                        </label>
-                        <span className={`text-[10px] font-mono font-semibold ${
-                          (editingTrek.metaDescription?.length || 0) > 160
-                            ? "text-amber-600 font-bold"
-                            : "text-slate-400"
-                        }`}>
-                          {editingTrek.metaDescription?.length || 0} / 160 chars recommended
-                        </span>
-                      </div>
-                      <textarea
-                        rows={3}
-                        value={editingTrek.metaDescription || ""}
-                        onChange={(e) => setEditingTrek({ ...editingTrek, metaDescription: e.target.value })}
-                        placeholder="e.g. Book a 5 nights 6 days Kerala tour package. Explore misty Munnar tea hills, Thekkady wildlife, and an Alleppey backwater houseboat stay. Get best deals now!"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                      />
-                    </div>
+                    <CustomEditableField
+                      label="Meta Description Tag"
+                      multiline
+                      rows={3}
+                      value={editingTrek.metaDescription || ""}
+                      onChange={(val) => setEditingTrek({ ...editingTrek, metaDescription: val })}
+                      placeholder="e.g. Book a 5 nights 6 days Kerala tour package. Explore misty Munnar tea hills, Thekkady wildlife, and an Alleppey backwater houseboat stay. Get best deals now!"
+                      helperText={`${editingTrek.metaDescription?.length || 0} / 160 chars recommended`}
+                    />
 
                     {/* Primary Keyword & Meta Keywords */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-slate-800">
-                          Primary Target Keyword
-                        </label>
-                        <input
-                          type="text"
-                          value={editingTrek.primaryKeyword || ""}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, primaryKeyword: e.target.value })}
-                          placeholder="e.g. Kerala tour package 5 nights 6 days"
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                        />
-                      </div>
+                      <CustomEditableField
+                        label="Primary Target Keyword"
+                        value={editingTrek.primaryKeyword || ""}
+                        onChange={(val) => setEditingTrek({ ...editingTrek, primaryKeyword: val })}
+                        placeholder="e.g. Kerala tour package 5 nights 6 days"
+                      />
 
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-slate-800">
-                          Meta Keywords (Comma separated)
-                        </label>
-                        <input
-                          type="text"
-                          value={editingTrek.metaKeywords || ""}
-                          onChange={(e) => setEditingTrek({ ...editingTrek, metaKeywords: e.target.value })}
-                          placeholder="kerala tour package 5 nights 6 days, munnar thekkady alleppey tour..."
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
-                        />
-                      </div>
+                      <CustomEditableField
+                        label="Meta Keywords (Comma separated)"
+                        value={editingTrek.metaKeywords || ""}
+                        onChange={(val) => setEditingTrek({ ...editingTrek, metaKeywords: val })}
+                        placeholder="kerala tour package 5 nights 6 days, munnar thekkady alleppey tour..."
+                      />
                     </div>
                   </div>
                 )}
@@ -4749,6 +5442,92 @@ export default function AdminTreksPage() {
               >
                 <Check className="w-3.5 h-3.5 text-emerald-400" />
                 <span>{actionLoading ? "Saving..." : "Save Tags"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import / Paste Package JSON Modal */}
+      {showImportJsonModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 animate-scale-up space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="p-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold">
+                  <Copy className="w-4 h-4" />
+                </span>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Paste / Import Package JSON
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Paste raw JSON from another package, proposal, or backup to load it directly.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowImportJsonModal(false);
+                  setImportJsonText("");
+                }}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Paste JSON Package Object
+              </label>
+              <textarea
+                rows={10}
+                value={importJsonText}
+                onChange={(e) => setImportJsonText(e.target.value)}
+                placeholder={'{\n  "name": "Goa Beach & Heritage Tour",\n  "slug": "goa-beach-tour",\n  "category": "Domestic",\n  "price": 18999,\n  "duration": "4 Nights / 5 Days",\n  "itinerary": [...]\n}'}
+                className="w-full p-3 font-mono text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E] bg-slate-50 focus:bg-white"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowImportJsonModal(false);
+                  setImportJsonText("");
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    const parsed = JSON.parse(importJsonText);
+                    if (!parsed || typeof parsed !== "object") throw new Error("Invalid object format");
+                    const name = parsed.name || parsed.packageTitle || "Imported Package";
+                    const slug = parsed.slug || parsed.basePackageSlug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+                    setEditingTrek({
+                      ...parsed,
+                      id: "",
+                      name,
+                      slug,
+                      itinerary: Array.isArray(parsed.itinerary) && parsed.itinerary.length > 0 ? parsed.itinerary : getDefaultItinerary(5),
+                    });
+                    setShowImportJsonModal(false);
+                    setImportJsonText("");
+                    setIsModalOpen(true);
+                    showToast(`✨ Successfully imported "${name}"! Review details and click Save.`);
+                  } catch (err: any) {
+                    alert(`Failed to parse JSON: ${err.message}`);
+                  }
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0F3A2E] hover:bg-[#154d3e] text-white flex items-center gap-1.5 shadow-sm cursor-pointer"
+              >
+                <span>Parse &amp; Load into Editor</span>
               </button>
             </div>
           </div>

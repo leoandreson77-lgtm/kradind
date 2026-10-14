@@ -3,26 +3,45 @@ import { treks } from "@/lib/travel-data";
 import { getTreksAsync } from "@/lib/cms-store";
 import { isDomesticPackage } from "@/lib/package-sections";
 
+const SLUG_ALIASES: Record<string, string> = {
+  "goa-tour-package": "goa-tour-package-4-nights-5-days",
+  "goa-trip-package-4-nights-5-days": "goa-tour-package-4-nights-5-days",
+  "meghalaya-tour-package": "meghalaya-tour-package-5-nights-6-days",
+  "maharashtra-tour-package": "maharashtra-tour-package-4-nights-5-days",
+  "kerala-tour-package": "kerala-tour-package-5-nights-6-days",
+  "manali-tour-package": "manali-tour-package-4-nights-5-days",
+};
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const rawSlug = (slug || "").replace(/^\/+/, "");
+  const lookupSlug = SLUG_ALIASES[rawSlug.toLowerCase()] || rawSlug;
+
   let dynamicTreks: any[] = [];
   try {
     dynamicTreks = await getTreksAsync();
   } catch {}
 
   const trek =
-    dynamicTreks.find((t) => t.slug === slug) ||
-    treks.find((t) => t.slug === slug) ||
-    dynamicTreks.find((t) => t.slug?.includes(slug)) ||
-    treks.find((t) => t.slug?.includes(slug)) ||
-    dynamicTreks[0] ||
-    treks[0];
+    dynamicTreks.find((t) => t.slug === lookupSlug) ||
+    treks.find((t) => t.slug === lookupSlug) ||
+    dynamicTreks.find((t) => t.slug === rawSlug) ||
+    treks.find((t) => t.slug === rawSlug) ||
+    dynamicTreks.find((t) => t.slug?.toLowerCase() === lookupSlug.toLowerCase()) ||
+    treks.find((t) => t.slug?.toLowerCase() === lookupSlug.toLowerCase());
 
-  const pageUrl = `https://kradind.com/treks/${slug}`;
+  if (!trek) {
+    return {
+      title: "Package Not Found | KRADIND",
+      description: "The tour package or expedition you are looking for is no longer active.",
+    };
+  }
+
+  const pageUrl = `https://kradind.com/treks/${lookupSlug}`;
   const title = trek.metaTitle || `${trek.name} (${trek.duration}) | KRADIND Adventures`;
   const description =
     trek.metaDescription ||
@@ -77,18 +96,25 @@ export default async function TrekDetailLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const rawSlug = (slug || "").replace(/^\/+/, "");
+  const lookupSlug = SLUG_ALIASES[rawSlug.toLowerCase()] || rawSlug;
+
   let dynamicTreks: any[] = [];
   try {
     dynamicTreks = await getTreksAsync();
   } catch {}
 
   const trek =
-    dynamicTreks.find((t) => t.slug === slug) ||
-    treks.find((t) => t.slug === slug) ||
-    dynamicTreks.find((t) => t.slug?.includes(slug)) ||
-    treks.find((t) => t.slug?.includes(slug)) ||
-    dynamicTreks[0] ||
-    treks[0];
+    dynamicTreks.find((t) => t.slug === lookupSlug) ||
+    treks.find((t) => t.slug === lookupSlug) ||
+    dynamicTreks.find((t) => t.slug === rawSlug) ||
+    treks.find((t) => t.slug === rawSlug) ||
+    dynamicTreks.find((t) => t.slug?.toLowerCase() === lookupSlug.toLowerCase()) ||
+    treks.find((t) => t.slug?.toLowerCase() === lookupSlug.toLowerCase());
+
+  if (!trek) {
+    return <>{children}</>;
+  }
 
   const trekSchema = {
     "@context": "https://schema.org",

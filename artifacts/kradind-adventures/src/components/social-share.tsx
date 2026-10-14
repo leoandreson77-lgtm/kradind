@@ -30,7 +30,7 @@ export function SocialShare({
         </div>
 
         <div className="flex items-center flex-wrap gap-2">
-          {/* WhatsApp */}
+          {/* WhatsApp Share */}
           <a
             href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
               `${shareTitle} - ${shareUrl}`
@@ -42,6 +42,18 @@ export function SocialShare({
           >
             <FaWhatsapp className="w-3.5 h-3.5" />
             <span>WhatsApp</span>
+          </a>
+
+          {/* WhatsApp Community Channel */}
+          <a
+            href="https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Join WhatsApp Community"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-sm"
+          >
+            <FaWhatsapp className="w-3.5 h-3.5" />
+            <span>Join Community</span>
           </a>
 
           {/* X / Twitter */}
@@ -86,25 +98,35 @@ export function SocialShare({
             <span>LinkedIn</span>
           </a>
 
-          {/* Copy Link */}
-          <button
-            onClick={handleCopy}
-            type="button"
-            aria-label="Copy page link to clipboard"
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white hover:bg-slate-200 text-slate-700 border border-slate-300 font-semibold transition cursor-pointer"
-          >
-            {copied ? (
-              <>
-                <Check className="w-3 h-3 text-emerald-600" />
-                <span className="text-emerald-700 font-bold">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-3 h-3 text-slate-500" />
-                <span>Copy Link</span>
-              </>
-            )}
-          </button>
+          {/* Individual Link Display & Copy Button */}
+          <div className="flex items-center gap-1 bg-white border border-slate-300 rounded-full pl-3 pr-1 py-1 max-w-[280px] sm:max-w-[320px]">
+            <input
+              type="text"
+              readOnly
+              value={shareUrl}
+              onClick={(e) => (e.target as HTMLInputElement).select()}
+              className="bg-transparent text-[11px] font-mono text-slate-600 focus:outline-none w-full select-all truncate"
+              title="Individual link"
+            />
+            <button
+              onClick={handleCopy}
+              type="button"
+              aria-label="Copy page link to clipboard"
+              className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900 hover:bg-emerald-700 text-white text-[11px] font-semibold transition cursor-pointer"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-300" />
+                  <span>Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3 h-3 text-slate-300" />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

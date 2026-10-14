@@ -42,6 +42,7 @@ import {
   Minimize2,
   MapPin,
   User,
+  RotateCcw,
 } from "lucide-react";
 import type {
   CustomerRecord,
@@ -68,12 +69,13 @@ export default function AdminCRMPage() {
   const [auditLogs, setAuditLogs] = useState<AuditLogRecord[]>([]);
   const [packages, setPackages] = useState<TrekData[]>([]);
   const [proposals, setProposals] = useState<CustomerItineraryProposal[]>([]);
+  const [recycledProposals, setRecycledProposals] = useState<CustomerItineraryProposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState("");
 
   // Views & Filters
   const [activeTab, setActiveTab] = useState<
-    "directory" | "itinerary-builder" | "proposals" | "kanban" | "tasks" | "audit"
+    "directory" | "itinerary-builder" | "proposals" | "recycle-bin" | "kanban" | "tasks" | "audit"
   >("directory");
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("All");
@@ -181,7 +183,7 @@ export default function AdminCRMPage() {
   };
 
   // URL query synchronizer
-  const changeTab = (tab: "directory" | "itinerary-builder" | "proposals" | "kanban" | "tasks" | "audit") => {
+  const changeTab = (tab: "directory" | "itinerary-builder" | "proposals" | "recycle-bin" | "kanban" | "tasks" | "audit") => {
     setActiveTab(tab);
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
@@ -196,7 +198,7 @@ export default function AdminCRMPage() {
       const tabParam = params.get("tab");
       if (
         tabParam &&
-        ["directory", "itinerary-builder", "proposals", "kanban", "tasks", "audit"].includes(tabParam)
+        ["directory", "itinerary-builder", "proposals", "recycle-bin", "kanban", "tasks", "audit"].includes(tabParam)
       ) {
         setActiveTab(tabParam as any);
       }
@@ -207,12 +209,13 @@ export default function AdminCRMPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [custRes, taskRes, auditRes, pkgRes, propRes] = await Promise.all([
+      const [custRes, taskRes, auditRes, pkgRes, propRes, recRes] = await Promise.all([
         fetch("/api/admin/crm/customers"),
         fetch("/api/admin/crm/tasks"),
         fetch("/api/admin/crm/audit"),
         fetch("/api/admin/treks"),
         fetch("/api/admin/crm/proposals"),
+        fetch("/api/admin/crm/proposals?status=Recycled"),
       ]);
 
       if (custRes.ok) setCustomers(await custRes.json());
@@ -225,6 +228,10 @@ export default function AdminCRMPage() {
       if (propRes.ok) {
         const props = await propRes.json();
         setProposals(Array.isArray(props) ? props : []);
+      }
+      if (recRes.ok) {
+        const recs = await recRes.json();
+        setRecycledProposals(Array.isArray(recs) ? recs : []);
       }
     } catch (err) {
       console.error("Failed to load CRM data:", err);
@@ -376,19 +383,81 @@ export default function AdminCRMPage() {
   };
 
   const handleDeleteProposal = async (id: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete proposal "${title}" (${id})?`)) return;
+    if (!confirm(`Move itinerary proposal "${title}" (${id}) to the Recycle Bin?`)) return;
     try {
       const res = await fetch(`/api/admin/crm/proposals?id=${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
-        showToast(`Proposal ${id} deleted.`);
+        showToast(`Proposal "${title}" moved to Recycle Bin.`);
         setProposals((prev) => prev.filter((p) => p.id !== id));
+        const recRes = await fetch("/api/admin/crm/proposals?status=Recycled");
+        if (recRes.ok) {
+          const recs = await recRes.json();
+          setRecycledProposals(Array.isArray(recs) ? recs : []);
+        }
       } else {
-        alert("Failed to delete proposal");
+        alert("Failed to move proposal to recycle bin");
       }
     } catch {
-      alert("Error deleting proposal");
+      alert("Error recycling proposal");
+    }
+  };
+
+  const handleRestoreProposal = async (id: string, title: string) => {
+    try {
+      const res = await fetch("/api/admin/crm/proposals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "restore", id }),
+      });
+      if (res.ok) {
+        const restored = await res.json();
+        showToast(`Restored "${title}" to Active Proposals!`);
+        setRecycledProposals((prev) => prev.filter((p) => p.id !== id));
+        setProposals((prev) => [restored, ...prev]);
+      } else {
+        alert("Failed to restore proposal");
+      }
+    } catch {
+      alert("Error restoring proposal");
+    }
+  };
+
+  const handlePermanentDeleteProposal = async (id: string, title: string) => {
+    if (!confirm(`Permanently destroy proposal "${title}" (${id})? This CANNOT be undone.`)) return;
+    try {
+      const res = await fetch(`/api/admin/crm/proposals?id=${id}&permanent=true`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        showToast(`Proposal ${id} permanently deleted.`);
+        setRecycledProposals((prev) => prev.filter((p) => p.id !== id));
+      } else {
+        alert("Failed to permanently delete proposal");
+      }
+    } catch {
+      alert("Error deleting proposal permanently");
+    }
+  };
+
+  const handleEmptyRecycleBin = async () => {
+    if (recycledProposals.length === 0) return;
+    if (!confirm(`Permanently empty recycle bin (${recycledProposals.length} item${recycledProposals.length !== 1 ? "s" : ""})? This cannot be undone.`)) return;
+    try {
+      const res = await fetch("/api/admin/crm/proposals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "empty_recycle" }),
+      });
+      if (res.ok) {
+        showToast("Recycle bin emptied.");
+        setRecycledProposals([]);
+      } else {
+        alert("Failed to empty recycle bin");
+      }
+    } catch {
+      alert("Error emptying recycle bin");
     }
   };
 
@@ -1125,6 +1194,25 @@ export default function AdminCRMPage() {
           </button>
 
           <button
+            onClick={() => changeTab("recycle-bin")}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+              activeTab === "recycle-bin"
+                ? "bg-rose-700 text-white shadow-xs"
+                : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+            <span>♻️ Recycle Bin</span>
+            <span
+              className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                activeTab === "recycle-bin" ? "bg-white/20 text-white" : "bg-rose-100 text-rose-700"
+              }`}
+            >
+              {recycledProposals.length}
+            </span>
+          </button>
+
+          <button
             onClick={() => changeTab("kanban")}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
               activeTab === "kanban"
@@ -1485,6 +1573,153 @@ export default function AdminCRMPage() {
             changeTab("itinerary-builder");
           }}
         />
+      )}
+
+      {/* TAB: RECYCLE BIN FOR PROPOSALS & ITINERARIES */}
+      {activeTab === "recycle-bin" && (
+        <div className="space-y-4">
+          {/* Header & Controls Toolbar */}
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-rose-100 text-rose-700">
+                  <Trash2 className="w-4 h-4" />
+                </span>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  Proposal &amp; Itinerary Recycle Bin
+                </h3>
+                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                  {recycledProposals.length} Items
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Drafts and proposals deleted from your pipeline are archived here safely. You can restore them anytime or purge permanently.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleEmptyRecycleBin}
+                disabled={recycledProposals.length === 0}
+                className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer disabled:cursor-not-allowed"
+                title="Permanently remove all items in recycle bin"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Empty Recycle Bin</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Recycled List */}
+          {recycledProposals.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-800">Recycle Bin is Empty</h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                No draft proposals or customer itineraries are currently in the recycle bin. Active proposals are safe in your main archive.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recycledProposals.map((prop) => (
+                <div
+                  key={prop.id}
+                  className="bg-white rounded-2xl border border-rose-200 hover:border-rose-300 hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4 group"
+                >
+                  <div>
+                    {/* Header: ID & Status */}
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="font-mono text-[11px] font-bold text-slate-500">{prop.id}</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+                        Recycled
+                      </span>
+                    </div>
+
+                    <h3 className="font-extrabold text-sm text-slate-900 line-clamp-1">
+                      {prop.packageTitle}
+                    </h3>
+                    <div className="text-xs font-semibold text-slate-700 mt-1 flex items-center gap-1.5">
+                      <span>Traveler:</span>
+                      <span className="text-slate-800 font-bold">{prop.customerName}</span>
+                    </div>
+
+                    {/* Meta details */}
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500 font-medium mt-3 pt-3 border-t border-slate-100">
+                      <div className="flex items-center gap-1 truncate">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate">{prop.destination || "Destination TBD"}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>{prop.duration || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>{prop.adultsCount} Pax</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>{prop.packageType || "Package"}</span>
+                      </div>
+                    </div>
+
+                    {/* Commercials Box */}
+                    <div className="bg-slate-50 rounded-xl p-3 mt-3 flex items-center justify-between border border-slate-100">
+                      <div>
+                        <span className="text-[10px] text-slate-400 uppercase font-bold block">Quoted Price</span>
+                        <span className="text-sm font-black text-slate-900">{formatCurrency(prop.totalQuotedPrice)}</span>
+                      </div>
+                      {prop.recycledAt && (
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Recycled On</span>
+                          <span className="text-[11px] font-semibold text-slate-600">
+                            {new Date(prop.recycledAt).toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                            })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-1.5 text-xs">
+                    <button
+                      onClick={() => handleRestoreProposal(prop.id, prop.packageTitle)}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+                      title="Restore proposal back to active drafts"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Restore</span>
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handlePreviewProposal(prop)}
+                        className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                        title="Preview Proposal Voucher"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        onClick={() => handlePermanentDeleteProposal(prop.id, prop.packageTitle)}
+                        className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-900 font-bold border border-rose-200 flex items-center gap-1 transition-colors cursor-pointer"
+                        title="Permanently Delete (Cannot be undone)"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Destroy</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       )}
 
       {/* TAB: PIPELINE KANBAN BOARD */}

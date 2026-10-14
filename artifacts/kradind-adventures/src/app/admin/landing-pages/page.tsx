@@ -29,6 +29,7 @@ import {
 import { LandingPageData, TrekData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { CustomEditableField } from "@/components/admin/custom-editable-field";
 
 const DEFAULT_NEW_PAGE: LandingPageData = {
   id: "",
@@ -603,16 +604,12 @@ export default function AdminLandingPagesPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Campaign Title <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={editingPage.title}
-                        onChange={(e) => setEditingPage({ ...editingPage, title: e.target.value })}
-                        placeholder="e.g. Kedarkantha Winter Summit Expedition"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
+                      <CustomEditableField
+                        label="Campaign Title *"
                         required
+                        value={editingPage.title}
+                        onChange={(val) => setEditingPage({ ...editingPage, title: val })}
+                        placeholder="e.g. Kedarkantha Winter Summit Expedition"
                       />
                     </div>
 
@@ -642,13 +639,11 @@ export default function AdminLandingPagesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Badge Tagline</label>
-                    <input
-                      type="text"
+                    <CustomEditableField
+                      label="Badge Tagline"
                       value={editingPage.badge || ""}
-                      onChange={(e) => setEditingPage({ ...editingPage, badge: e.target.value })}
+                      onChange={(val) => setEditingPage({ ...editingPage, badge: val })}
                       placeholder="e.g. EXCLUSIVE EXPEDITION 2026"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
                     />
                   </div>
 
@@ -703,40 +698,36 @@ export default function AdminLandingPagesPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Promo Tag</label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Promo Tag"
                         value={editingPage.promoOffer?.tag || ""}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           setEditingPage({
                             ...editingPage,
                             promoOffer: {
                               ...editingPage.promoOffer!,
-                              tag: e.target.value,
+                              tag: val,
                             },
                           })
                         }
                         placeholder="e.g. LIMITED TIME OFFER"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Discount Headline</label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Discount Headline"
                         value={editingPage.promoOffer?.discountText || ""}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           setEditingPage({
                             ...editingPage,
                             promoOffer: {
                               ...editingPage.promoOffer!,
-                              discountText: e.target.value,
+                              discountText: val,
                             },
                           })
                         }
                         placeholder="e.g. Save Flat ₹2,500 on Next 10 Bookings"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -887,16 +878,16 @@ export default function AdminLandingPagesPage() {
                       {(editingPage.highlights || []).map((hl, idx) => (
                         <div key={idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                           <div className="flex items-center justify-between gap-2">
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               value={hl.title}
-                              onChange={(e) => {
+                              onChange={(val) => {
                                 const copy = [...editingPage.highlights];
-                                copy[idx].title = e.target.value;
+                                copy[idx].title = val;
                                 setEditingPage({ ...editingPage, highlights: copy });
                               }}
                               placeholder="Highlight Title"
-                              className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 font-semibold text-xs"
+                              className="w-full"
                             />
                             <button
                               type="button"
@@ -951,15 +942,15 @@ export default function AdminLandingPagesPage() {
                     <div className="space-y-2">
                       {(editingPage.inclusions || []).map((inc, idx) => (
                         <div key={idx} className="flex items-center gap-2">
-                          <input
-                            type="text"
+                          <CustomEditableField
+                            compact
                             value={inc}
-                            onChange={(e) => {
+                            onChange={(val) => {
                               const copy = [...editingPage.inclusions];
-                              copy[idx] = e.target.value;
+                              copy[idx] = val;
                               setEditingPage({ ...editingPage, inclusions: copy });
                             }}
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs"
+                            className="flex-1"
                           />
                           <button
                             type="button"
@@ -997,15 +988,15 @@ export default function AdminLandingPagesPage() {
                     <div className="space-y-2">
                       {(editingPage.exclusions || []).map((exc, idx) => (
                         <div key={idx} className="flex items-center gap-2">
-                          <input
-                            type="text"
+                          <CustomEditableField
+                            compact
                             value={exc}
-                            onChange={(e) => {
+                            onChange={(val) => {
                               const copy = [...editingPage.exclusions!];
-                              copy[idx] = e.target.value;
+                              copy[idx] = val;
                               setEditingPage({ ...editingPage, exclusions: copy });
                             }}
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs"
+                            className="flex-1"
                           />
                           <button
                             type="button"
@@ -1029,32 +1020,28 @@ export default function AdminLandingPagesPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Form Heading</label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Form Heading"
                         value={editingPage.leadFormConfig.title}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           setEditingPage({
                             ...editingPage,
-                            leadFormConfig: { ...editingPage.leadFormConfig, title: e.target.value },
+                            leadFormConfig: { ...editingPage.leadFormConfig, title: val },
                           })
                         }
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Submit Button CTA Text</label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Submit Button CTA Text"
                         value={editingPage.leadFormConfig.ctaText}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           setEditingPage({
                             ...editingPage,
-                            leadFormConfig: { ...editingPage.leadFormConfig, ctaText: e.target.value },
+                            leadFormConfig: { ...editingPage.leadFormConfig, ctaText: val },
                           })
                         }
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -1085,13 +1072,11 @@ export default function AdminLandingPagesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">WhatsApp Default Message</label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="WhatsApp Default Message"
                         value={editingPage.whatsappMessage || ""}
-                        onChange={(e) => setEditingPage({ ...editingPage, whatsappMessage: e.target.value })}
+                        onChange={(val) => setEditingPage({ ...editingPage, whatsappMessage: val })}
                         placeholder="Hi KRADIND! I want to book..."
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -1126,16 +1111,16 @@ export default function AdminLandingPagesPage() {
                       {(editingPage.faqs || []).map((faq, idx) => (
                         <div key={idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                           <div className="flex items-center justify-between gap-2">
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               value={faq.question}
-                              onChange={(e) => {
+                              onChange={(val) => {
                                 const copy = [...editingPage.faqs!];
-                                copy[idx].question = e.target.value;
+                                copy[idx].question = val;
                                 setEditingPage({ ...editingPage, faqs: copy });
                               }}
                               placeholder="Question"
-                              className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 font-semibold text-xs"
+                              className="w-full"
                             />
                             <button
                               type="button"

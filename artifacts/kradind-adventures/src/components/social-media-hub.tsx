@@ -24,6 +24,7 @@ import {
   MessageCircle,
   Clock,
   UserCheck,
+  Link2,
 } from "lucide-react";
 import {
   FaLinkedinIn,
@@ -32,7 +33,6 @@ import {
   FaYoutube,
   FaFacebookF,
   FaXTwitter,
-  FaThreads,
   FaPinterestP,
 } from "react-icons/fa6";
 
@@ -40,10 +40,10 @@ export interface SocialLinksConfig {
   linkedinUrl?: string;
   instagramUrl?: string;
   whatsappLink?: string;
+  whatsappChannelUrl?: string;
   youtubeUrl?: string;
   facebookUrl?: string;
   twitterUrl?: string;
-  threadsUrl?: string;
   pinterestUrl?: string;
   websiteUrl?: string;
   supportPhone?: string;
@@ -66,13 +66,13 @@ export function SocialMediaHub({ initialConfig }: SocialMediaHubProps) {
   const linkedinUrl = initialConfig?.linkedinUrl || "https://www.linkedin.com/company/krad-india/";
   const instagramUrl = initialConfig?.instagramUrl || "https://www.instagram.com/kradglobal/";
   const whatsappUrl = initialConfig?.whatsappLink || "https://wa.me/919797941414";
+  const whatsappChannelUrl = initialConfig?.whatsappChannelUrl || "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34";
   const youtubeUrl = initialConfig?.youtubeUrl || "https://www.youtube.com/@kradglobaltravels";
   const facebookUrl = initialConfig?.facebookUrl || "https://www.facebook.com/share/189E2RUcH4/";
   const twitterUrl = initialConfig?.twitterUrl || "https://x.com/KradGlobalTour";
-  const threadsUrl = initialConfig?.threadsUrl || "https://www.threads.net/@kradglobal";
   const pinterestUrl = initialConfig?.pinterestUrl || "https://in.pinterest.com/KradGlobalTravels/";
   const phone = initialConfig?.supportPhone || "+91 9797941414";
-  const email = initialConfig?.supportEmail || "support@kradind.com";
+  const email = initialConfig?.supportEmail || "Info@kradind.com";
   const address = initialConfig?.address || "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001";
 
   useEffect(() => {
@@ -166,10 +166,11 @@ ORG:KRAD Global Travels & KRADIND Adventures Private Limited
 TITLE:High-Altitude Expeditions & Customized Tours
 TEL;TYPE=WORK,VOICE:+919797941414
 TEL;TYPE=CELL,WHATSAPP:+919797941414
-EMAIL;TYPE=WORK:support@kradind.com
+EMAIL;TYPE=WORK:Info@kradind.com
 URL;TYPE=WORK:https://www.kradind.com
 URL;TYPE=LINKEDIN:${linkedinUrl}
 URL;TYPE=INSTAGRAM:${instagramUrl}
+URL;TYPE=WHATSAPP_CHANNEL:${whatsappChannelUrl}
 ADR;TYPE=WORK:;;Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony;Dehradun;Uttarakhand;248001;India
 NOTE:Official KRADIND Adventures Contact Card • Himalayan Treks, Domestic Holiday Circuits & International Tours.
 END:VCARD`;
@@ -278,19 +279,19 @@ END:VCARD`;
       ctaText: "Follow on X",
     },
     {
-      id: "threads",
-      title: "Threads",
-      handle: "@kradglobal",
-      subHandle: "Discussions",
-      description: "Raw Campfire Thoughts, Mountain Musings, Behind-The-Scenes Logistics & Trekker Stories.",
-      url: threadsUrl,
-      icon: FaThreads,
-      badge: "Conversations",
-      brandColor: "#E2E8F0",
-      badgeColor: "bg-slate-700/50 text-slate-200 border-slate-600",
-      borderHover: "hover:border-slate-300",
-      glowColor: "rgba(255, 255, 255, 0.25)",
-      ctaText: "Follow on Threads",
+      id: "whatsapp-community",
+      title: "WhatsApp Community & Channel",
+      handle: "KRADIND Official Channel",
+      subHandle: "Broadcasts & Flash Deals",
+      description: "Join official WhatsApp Channel for instant Himalayan trail bulletins, flash departure discounts & trekker community updates.",
+      url: whatsappChannelUrl,
+      icon: FaWhatsapp,
+      badge: "Official Channel",
+      brandColor: "#25D366",
+      badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+      borderHover: "hover:border-[#25D366]",
+      glowColor: "rgba(37, 211, 102, 0.35)",
+      ctaText: "Join WhatsApp Channel",
     },
     {
       id: "pinterest",
@@ -527,6 +528,49 @@ END:VCARD`;
               </button>
             </div>
 
+            {/* Individual Link Display & One-Click Copy Box */}
+            <div className="mt-4 p-3 rounded-xl bg-black/40 border border-emerald-500/30 space-y-2">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-slate-300 font-semibold flex items-center gap-1">
+                  <Link2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Individual Link:</span>
+                </span>
+                <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  Direct URL
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="text"
+                  readOnly
+                  value={currentUrl}
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                  className="flex-1 bg-black/60 border border-white/15 rounded-lg px-2.5 py-1.5 text-[11px] font-mono text-emerald-300 select-all focus:outline-none focus:border-emerald-400 truncate"
+                  title="Click to select individual link"
+                />
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shrink-0 cursor-pointer shadow"
+                  title="Copy individual link"
+                >
+                  {copied ? <Check className="w-3 h-3 text-white" /> : <Copy className="w-3 h-3 text-white" />}
+                  <span>{copied ? "Copied" : "Copy"}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Direct WhatsApp Community Link Button */}
+            <a
+              href={whatsappChannelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-emerald-300 hover:text-slate-950 border border-[#25D366]/40 text-xs font-bold transition shadow-sm"
+            >
+              <FaWhatsapp className="w-4 h-4" />
+              <span>Join WhatsApp Community Channel</span>
+            </a>
+
             {/* One-Click Save Contact Card */}
             <div className="mt-3.5 pt-3.5 border-t border-emerald-500/20 flex items-center justify-between text-xs">
               <span className="text-[11px] text-slate-300 font-medium">Save to phone contacts:</span>
@@ -650,6 +694,41 @@ END:VCARD`;
                   </div>
                 </div>
                 <div className="shrink-0 p-2 rounded-xl bg-white/5 group-hover:bg-[#E1306C] text-slate-300 group-hover:text-white transition">
+                  <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+            </a>
+
+            {/* Featured Channel 4: WhatsApp Official Community & Channel */}
+            <a
+              href={whatsappChannelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#25D366]/20 via-[#25D366]/10 to-white/[0.02] border border-[#25D366]/50 hover:border-[#25D366] transition-all duration-300 shadow-lg hover:shadow-[#25D366]/25 hover:-translate-y-0.5"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-12 h-12 rounded-xl bg-[#25D366] text-slate-950 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition font-black">
+                    <FaWhatsapp className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="font-bold text-white text-base group-hover:text-emerald-300 transition">
+                        WhatsApp Official Channel & Community
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/25 text-emerald-200 border border-emerald-500/50">
+                        Channel Updates
+                      </span>
+                    </div>
+                    <p className="text-xs text-emerald-200/90 font-mono mt-0.5 truncate max-w-sm">
+                      whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34
+                    </p>
+                    <p className="text-xs text-slate-300 mt-1.5 leading-relaxed font-medium">
+                      Follow official broadcasts for high-altitude weather bulletins, trek pass conditions, flash departure deals & community announcements.
+                    </p>
+                  </div>
+                </div>
+                <div className="shrink-0 p-2 rounded-xl bg-white/5 group-hover:bg-[#25D366] text-slate-300 group-hover:text-slate-950 transition">
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </div>

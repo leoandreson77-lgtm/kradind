@@ -38,17 +38,26 @@ export async function POST(request: NextRequest) {
 
   try {
     const body: Partial<TrekData> = await request.json();
-    if (!body.name || !body.slug) {
-      return NextResponse.json({ error: "Trek name and slug are required" }, { status: 400 });
+    if (!body.name && !body.slug) {
+      return NextResponse.json({ error: "Package name is required" }, { status: 400 });
     }
 
     const currentTreks = await getTreksAsync();
     const store = readStore();
     store.treks = currentTreks;
 
-    // Check slug uniqueness
-    if (store.treks.some((t) => t.slug === body.slug)) {
-      return NextResponse.json({ error: "A trek with this slug already exists" }, { status: 400 });
+    const rawName = (body.name || "Draft Package").trim();
+    let slug = (body.slug || "").trim().toLowerCase().replace(/^\/+/, "");
+    if (!slug) {
+      slug = rawName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `draft-${Date.now()}`;
+    }
+
+    // Ensure slug uniqueness (auto-suffix if exists so draft saves smoothly)
+    let finalSlug = slug;
+    let counter = 1;
+    while (store.treks.some((t) => t.slug === finalSlug)) {
+      finalSlug = `${slug}-${Date.now().toString().slice(-4)}${counter > 1 ? `-${counter}` : ""}`;
+      counter++;
     }
 
     const isDomestic =
@@ -57,8 +66,8 @@ export async function POST(request: NextRequest) {
 
     const newTrek: TrekData = {
       id: Date.now(),
-      slug: body.slug,
-      name: body.name,
+      slug: finalSlug,
+      name: body.name || "Draft Package",
       location: body.location || (isDomestic ? "India" : "Uttarakhand"),
       region: body.region || (isDomestic ? "Domestic Circuit" : "Himalayas"),
       image: body.image || (isDomestic
@@ -196,12 +205,12 @@ export async function DELETE(request: NextRequest) {
     const store = readStore();
     store.treks = currentTreks;
 
-    const initialLength = store.treks.length;
-    store.treks = store.treks.filter((t) => String(t.id) !== String(id));
-
-    if (store.treks.length === initialLength) {
+    const trekToDelete = store.treks.find((t) => String(t.id) === String(id));
+    if (!trekToDelete) {
       return NextResponse.json({ error: "Trek not found" }, { status: 404 });
     }
+
+    store.treks = store.treks.filter((t) => String(t.id) !== String(id));
 
     writeStore(store);
 
@@ -210,6 +219,11 @@ export async function DELETE(request: NextRequest) {
 
     // Instant Cache Invalidation
     try {
+      if (trekToDelete.slug) {
+        revalidatePath(`/treks/${trekToDelete.slug}`);
+        revalidatePath(`/domestic/${trekToDelete.slug}`);
+        revalidatePath(`/international/${trekToDelete.slug}`);
+      }
       revalidatePath("/");
       revalidatePath("/treks");
       revalidatePath("/domestic-trips");

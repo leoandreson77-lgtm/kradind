@@ -50,6 +50,7 @@ import QRCode from "qrcode";
 import { HomeSectionsConfig, SectionFaqItem, TrustSignalItem, TrekData, DestinationData } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { CustomEditableField } from "@/components/admin/custom-editable-field";
 
 type SectionTab = "hero" | "seasonal" | "topBar" | "monsoon" | "treks" | "international" | "eeat" | "socials" | "footer";
 
@@ -93,18 +94,84 @@ export default function AdminSectionsPage() {
     }
   };
 
+  const handleTabClick = (tabId: SectionTab) => {
+    setActiveTab(tabId);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", tabId);
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
+  const getSectionLiveUrl = (tab: SectionTab) => {
+    switch (tab) {
+      case "hero":
+        return "/#hero";
+      case "seasonal":
+        return "/#seasonal-collection";
+      case "topBar":
+        return "/#top-bar";
+      case "monsoon":
+        return "/#monsoon-offers";
+      case "treks":
+        return "/#best-treks";
+      case "international":
+        return "/#international-showcase";
+      case "eeat":
+        return "/#authority-faqs";
+      case "socials":
+        return "/connect";
+      case "footer":
+        return "/#footer";
+      default:
+        return "/";
+    }
+  };
+
+  const getSectionName = (tab: SectionTab) => {
+    switch (tab) {
+      case "hero":
+        return "Hero & Banner";
+      case "seasonal":
+        return "Seasonal Carousel";
+      case "topBar":
+        return "Top Bar";
+      case "monsoon":
+        return "Monsoon Offers";
+      case "treks":
+        return "Best Treks";
+      case "international":
+        return "International Tours";
+      case "eeat":
+        return "Authority & FAQs";
+      case "socials":
+        return "Socials Hub";
+      case "footer":
+        return "Footer";
+      default:
+        return "Homepage";
+    }
+  };
+
   useEffect(() => {
     fetchData();
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const tabParam = params.get("tab") as SectionTab;
-      if (
-        tabParam &&
-        ["hero", "seasonal", "topBar", "monsoon", "treks", "international", "eeat", "socials", "footer"].includes(tabParam)
-      ) {
-        setActiveTab(tabParam);
+    const syncTabFromUrl = () => {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get("tab") as SectionTab;
+        if (
+          tabParam &&
+          ["hero", "seasonal", "topBar", "monsoon", "treks", "international", "eeat", "socials", "footer"].includes(tabParam)
+        ) {
+          setActiveTab(tabParam);
+        }
       }
+    };
 
+    syncTabFromUrl();
+    window.addEventListener("popstate", syncTabFromUrl);
+
+    if (typeof window !== "undefined") {
       const hubUrl = `${window.location.origin}/connect`;
       QRCode.toDataURL(hubUrl, {
         width: 320,
@@ -114,6 +181,10 @@ export default function AdminSectionsPage() {
         .then(setAdminQrUrl)
         .catch(() => {});
     }
+
+    return () => {
+      window.removeEventListener("popstate", syncTabFromUrl);
+    };
   }, []);
 
   const handleCopyAdminHub = async () => {
@@ -308,13 +379,25 @@ export default function AdminSectionsPage() {
             <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
           </a>
           <a
+            href={getSectionLiveUrl(activeTab)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-emerald-400 bg-emerald-50 hover:bg-emerald-100 text-[#0F3A2E] text-xs font-black rounded-xl transition shadow-xs group"
+            title={`Redirect to ${getSectionName(activeTab)} on the live website`}
+          >
+            <Eye className="w-3.5 h-3.5 text-emerald-700 group-hover:scale-110 transition-transform" />
+            <span>View {getSectionName(activeTab)}</span>
+            <ExternalLink className="w-3.5 h-3.5 text-emerald-600" />
+          </a>
+          <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl transition shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-2.5 border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl transition shadow-xs"
+            title="Open top of public website"
           >
-            <span>View Live Site</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Full Site</span>
+            <ExternalLink className="w-3 h-3 text-slate-400" />
           </a>
           <button
             onClick={() => handleSave()}
@@ -335,8 +418,8 @@ export default function AdminSectionsPage() {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center p-3 rounded-xl text-center transition-all ${
+              onClick={() => handleTabClick(tab.id)}
+              className={`flex flex-col items-center justify-center p-3 rounded-xl text-center transition-all cursor-pointer ${
                 isActive
                   ? "bg-white text-slate-900 shadow-md font-bold scale-[1.02]"
                   : "text-slate-600 hover:text-slate-900 hover:bg-white/50 font-medium"
@@ -375,38 +458,32 @@ export default function AdminSectionsPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-5 text-xs">
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Top Badge Pill Tagline</label>
-              <input
-                type="text"
-                value={sections.hero.badge || ""}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    hero: { ...sections.hero, badge: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-                placeholder="Certified Himalayan Guides • Small Safe Batches"
-              />
-              <span className="text-[11px] text-slate-400 mt-1 block">Displays inside the small glowing pill above the main heading</span>
-            </div>
+            <CustomEditableField
+              label="Top Badge Pill Tagline"
+              value={sections.hero.badge || ""}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  hero: { ...sections.hero, badge: val },
+                })
+              }
+              placeholder="Certified Himalayan Guides • Small Safe Batches"
+              helperText="Displays inside the small glowing pill above the main heading"
+            />
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Hero Title (H1 Heading)</label>
-              <input
-                type="text"
-                value={sections.hero.title || ""}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    hero: { ...sections.hero, title: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-                placeholder="Experience the Himalayas"
-              />
-            </div>
+            <CustomEditableField
+              label="Hero Title (H1 Heading)"
+              value={sections.hero.title || ""}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  hero: { ...sections.hero, title: val },
+                })
+              }
+              placeholder="Experience the Himalayas"
+              inputClassName="font-bold text-slate-900"
+              helperText="Supports **bold**, *italic*, <u>underline</u>, [color=...], [highlight] tags"
+            />
 
             <RichTextEditor
               compact
@@ -423,32 +500,25 @@ export default function AdminSectionsPage() {
               helperText="Format key phrases with bold, colors, or highlights for hero title emphasis."
             />
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Search Placeholder Text</label>
-              <input
-                type="text"
-                value={sections.hero.searchPlaceholder || "Search by trek name, state, pass or elevation..."}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    hero: { ...sections.hero, searchPlaceholder: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-              />
-            </div>
+            <CustomEditableField
+              label="Search Placeholder Text"
+              value={sections.hero.searchPlaceholder || "Search by trek name, state, pass or elevation..."}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  hero: { ...sections.hero, searchPlaceholder: val },
+                })
+              }
+              placeholder="Search by trek name, state, pass or elevation..."
+            />
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Quick Search Popular Tags (Comma-separated)</label>
-              <input
-                type="text"
-                value={(sections.hero.popularTags || []).join(", ")}
-                onChange={(e) => handlePopularTagsChange(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none font-medium"
-                placeholder="Kedarkantha, Chopta Tungnath, Hampta Pass, Spiti, Leh Ladakh"
-              />
-              <span className="text-[11px] text-slate-400 mt-1 block">Trekkers can click these tags in the search widget for 1-tap filtering</span>
-            </div>
+            <CustomEditableField
+              label="Quick Search Popular Tags (Comma-separated)"
+              value={(sections.hero.popularTags || []).join(", ")}
+              onChange={(val) => handlePopularTagsChange(val)}
+              placeholder="Kedarkantha, Chopta Tungnath, Hampta Pass, Spiti, Leh Ladakh"
+              helperText="Trekkers can click these tags in the search widget for 1-tap filtering"
+            />
 
             <div className="pt-2">
               <ImageUploader
@@ -509,6 +579,7 @@ export default function AdminSectionsPage() {
                     setSections({
                       ...sections,
                       seasonalCollection: {
+                        ...sections.seasonalCollection,
                         enabled: e.target.checked,
                         badge: sections.seasonalCollection?.badge || "High Altitude Autumn Window",
                         title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
@@ -517,11 +588,11 @@ export default function AdminSectionsPage() {
                           "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
                         seasonTag: sections.seasonalCollection?.seasonTag || "October - November",
                         featuredSlugs: sections.seasonalCollection?.featuredSlugs || [
+                          "chopta-tungnath-chandrashila",
+                          "hampta-pass",
+                          "kheerganga-trek",
                           "kuari-pass-trek",
                           "dayara-bugyal-trek",
-                          "chopta-tungnath-chandrashila",
-                          "pench-tiger-trail",
-                          "hampta-pass",
                         ],
                       },
                     })
@@ -543,95 +614,229 @@ export default function AdminSectionsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Section Pill Tag / Badge</label>
-              <input
-                type="text"
-                value={sections.seasonalCollection?.badge || ""}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    seasonalCollection: {
-                      enabled: sections.seasonalCollection?.enabled ?? true,
-                      badge: e.target.value,
-                      title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
-                      subtitle: sections.seasonalCollection?.subtitle || "",
-                      seasonTag: sections.seasonalCollection?.seasonTag || "October - November",
-                      featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
-                    },
-                  })
-                }
-                placeholder="High Altitude Autumn Window"
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
-              />
+            {/* Season Presets, Status & Auto-Expiry Controls */}
+            <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                  Default Active Season
+                </label>
+                <select
+                  value={sections.seasonalCollection?.activeSeason || "oct-nov"}
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      seasonalCollection: {
+                        ...sections.seasonalCollection,
+                        enabled: sections.seasonalCollection?.enabled ?? true,
+                        title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                        subtitle: sections.seasonalCollection?.subtitle || "",
+                        featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                        activeSeason: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full text-xs font-semibold px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                >
+                  <option value="oct-nov">🍂 October–November (Autumn High Altitude)</option>
+                  <option value="winter">❄️ Winter (Dec–Feb) (Snow Treks)</option>
+                  <option value="spring">🌸 Spring (Mar–Apr) (Rhododendron Trails)</option>
+                  <option value="summer">☀️ Summer (May–Jun) (High Pass & Alpine)</option>
+                  <option value="monsoon">🌧️ Monsoon (Jul–Sep) (Valley of Flowers)</option>
+                  <option value="all">🌍 All Seasons (Full Calendar)</option>
+                </select>
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Default season tab opened when visitors land on the homepage.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                  Session Status (Active vs. Coming Soon)
+                </label>
+                <select
+                  value={sections.seasonalCollection?.sessionStatus || "active"}
+                  onChange={(e) =>
+                    setSections({
+                      ...sections,
+                      seasonalCollection: {
+                        ...sections.seasonalCollection,
+                        enabled: sections.seasonalCollection?.enabled ?? true,
+                        title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                        subtitle: sections.seasonalCollection?.subtitle || "",
+                        featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                        sessionStatus: e.target.value as "active" | "coming_soon" | "ended",
+                      },
+                    })
+                  }
+                  className="w-full text-xs font-semibold px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                >
+                  <option value="active">🟢 Active (Fixed Departure Bookings Open)</option>
+                  <option value="coming_soon">🟡 Coming Soon (Register for Next Session)</option>
+                  <option value="ended">🔴 Session Ended (Waitlist for Next Season)</option>
+                </select>
+                <p className="text-[10px] text-slate-500 mt-1">
+                  When "Coming Soon" or "Ended", card buttons show &ldquo;Register Next Session&rdquo;.
+                </p>
+              </div>
+
+              {/* Fixed Departure Duration */}
+              <div>
+                <CustomEditableField
+                  label="Fixed Departure Duration Window"
+                  value={sections.seasonalCollection?.departureDuration || "15 Oct 2026 – 30 Nov 2026"}
+                  onChange={(val) =>
+                    setSections({
+                      ...sections,
+                      seasonalCollection: {
+                        ...sections.seasonalCollection,
+                        enabled: sections.seasonalCollection?.enabled ?? true,
+                        title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                        subtitle: sections.seasonalCollection?.subtitle || "",
+                        featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                        departureDuration: val,
+                      },
+                    })
+                  }
+                  placeholder="15 Oct 2026 – 30 Nov 2026"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Displays on each card as &ldquo;Fixed Departure: [Window]&rdquo;.
+                </p>
+              </div>
+
+              {/* Package Time Duration */}
+              <div>
+                <CustomEditableField
+                  label="Packages Time Duration Range"
+                  value={sections.seasonalCollection?.packageDuration || "2 to 6 Days"}
+                  onChange={(val) =>
+                    setSections({
+                      ...sections,
+                      seasonalCollection: {
+                        ...sections.seasonalCollection,
+                        enabled: sections.seasonalCollection?.enabled ?? true,
+                        title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                        subtitle: sections.seasonalCollection?.subtitle || "",
+                        featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                        packageDuration: val,
+                      },
+                    })
+                  }
+                  placeholder="2 to 6 Days (or 3 Days / 2 Nights)"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Default package time duration displayed on seasonal cards.
+                </p>
+              </div>
+
+              {/* Auto Expiry Date */}
+              <div className="sm:col-span-2">
+                <CustomEditableField
+                  label="Season Validity End Date (Auto-Expiry Trigger)"
+                  type="date"
+                  value={sections.seasonalCollection?.seasonEndDate || "2026-11-30"}
+                  onChange={(val) =>
+                    setSections({
+                      ...sections,
+                      seasonalCollection: {
+                        ...sections.seasonalCollection,
+                        enabled: sections.seasonalCollection?.enabled ?? true,
+                        title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                        subtitle: sections.seasonalCollection?.subtitle || "",
+                        featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                        seasonEndDate: val,
+                      },
+                    })
+                  }
+                  placeholder="YYYY-MM-DD"
+                />
+                <p className="text-[11px] text-amber-900 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mt-1.5 flex items-start gap-2">
+                  <span className="text-base shrink-0">⏱️</span>
+                  <span>
+                    <strong>Auto-Expiry Trigger:</strong> Whenever the current date passes this date (e.g. after {sections.seasonalCollection?.seasonEndDate || "2026-11-30"}), the system automatically sets status to <strong>&ldquo;Coming Soon&rdquo;</strong>, displays the 🟡 Coming Soon badge, and switches the card button to <strong>&ldquo;Register for Next Session&rdquo;</strong>.
+                  </span>
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Season / Window Label</label>
-              <input
-                type="text"
-                value={sections.seasonalCollection?.seasonTag || ""}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    seasonalCollection: {
-                      enabled: sections.seasonalCollection?.enabled ?? true,
-                      badge: sections.seasonalCollection?.badge || "",
-                      title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
-                      subtitle: sections.seasonalCollection?.subtitle || "",
-                      seasonTag: e.target.value,
-                      featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
-                    },
-                  })
-                }
-                placeholder="October - November"
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
-              />
-            </div>
+            <CustomEditableField
+              label="Section Pill Tag / Badge"
+              value={sections.seasonalCollection?.badge || ""}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  seasonalCollection: {
+                    ...sections.seasonalCollection,
+                    enabled: sections.seasonalCollection?.enabled ?? true,
+                    title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                    subtitle: sections.seasonalCollection?.subtitle || "",
+                    featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                    badge: val,
+                  },
+                })
+              }
+              placeholder="High Altitude Autumn Window"
+            />
+
+            <CustomEditableField
+              label="Season / Window Label"
+              value={sections.seasonalCollection?.seasonTag || ""}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  seasonalCollection: {
+                    ...sections.seasonalCollection,
+                    enabled: sections.seasonalCollection?.enabled ?? true,
+                    title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
+                    subtitle: sections.seasonalCollection?.subtitle || "",
+                    featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                    seasonTag: val,
+                  },
+                })
+              }
+              placeholder="October - November"
+            />
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Main Section Heading (Displayed prominently)</label>
-              <input
-                type="text"
+              <CustomEditableField
+                label="Main Section Heading (Displayed prominently)"
                 value={sections.seasonalCollection?.title || ""}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
                     seasonalCollection: {
+                      ...sections.seasonalCollection,
                       enabled: sections.seasonalCollection?.enabled ?? true,
-                      badge: sections.seasonalCollection?.badge || "",
-                      title: e.target.value,
                       subtitle: sections.seasonalCollection?.subtitle || "",
-                      seasonTag: sections.seasonalCollection?.seasonTag || "",
                       featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                      title: val,
                     },
                   })
                 }
                 placeholder="Top 5 Treks for October-November"
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900"
+                inputClassName="font-bold text-slate-900"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Subtitle / Description</label>
-              <textarea
+              <CustomEditableField
+                label="Subtitle / Description"
+                multiline
                 rows={2}
                 value={sections.seasonalCollection?.subtitle || ""}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
                     seasonalCollection: {
+                      ...sections.seasonalCollection,
                       enabled: sections.seasonalCollection?.enabled ?? true,
-                      badge: sections.seasonalCollection?.badge || "",
                       title: sections.seasonalCollection?.title || "",
-                      subtitle: e.target.value,
-                      seasonTag: sections.seasonalCollection?.seasonTag || "",
                       featuredSlugs: sections.seasonalCollection?.featuredSlugs || [],
+                      subtitle: val,
                     },
                   })
                 }
                 placeholder="Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5."
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
               />
             </div>
 
@@ -758,11 +963,10 @@ export default function AdminSectionsPage() {
                           setSections({
                             ...sections,
                             seasonalCollection: {
+                              ...sections.seasonalCollection,
                               enabled: sections.seasonalCollection?.enabled ?? true,
-                              badge: sections.seasonalCollection?.badge || "High Altitude Autumn Window",
                               title: sections.seasonalCollection?.title || "Top 5 Treks for October-November",
                               subtitle: sections.seasonalCollection?.subtitle || "",
-                              seasonTag: sections.seasonalCollection?.seasonTag || "",
                               featuredSlugs: updated,
                             },
                           });
@@ -843,33 +1047,29 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Eco Operator Badge Text</label>
-              <input
-                type="text"
+              <CustomEditableField
+                label="Eco Operator Badge Text"
                 value={sections.topBar.leaveNoTrace || ""}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
-                    topBar: { ...sections.topBar, leaveNoTrace: e.target.value },
+                    topBar: { ...sections.topBar, leaveNoTrace: val },
                   })
                 }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium"
                 placeholder="🌱 Leave No Trace Certified Operator"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Announcement Ticker Text (Optional)</label>
-              <input
-                type="text"
+              <CustomEditableField
+                label="Announcement Ticker Text (Optional)"
                 value={sections.topBar.announcementText || ""}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
-                    topBar: { ...sections.topBar, announcementText: e.target.value },
+                    topBar: { ...sections.topBar, announcementText: val },
                   })
                 }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium"
                 placeholder="🔥 2026 Himalayan Batches Now Live with Early-Bird Discounts"
               />
             </div>
@@ -938,37 +1138,31 @@ export default function AdminSectionsPage() {
               </label>
             </div>
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Banner Heading</label>
-              <input
-                type="text"
-                value={sections.monsoon.title || ""}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    monsoon: { ...sections.monsoon, title: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900"
-                placeholder="Monsoon Specials & Valley Blooms"
-              />
-            </div>
+            <CustomEditableField
+              label="Banner Heading"
+              value={sections.monsoon.title || ""}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  monsoon: { ...sections.monsoon, title: val },
+                })
+              }
+              placeholder="Monsoon Specials & Valley Blooms"
+              inputClassName="font-bold text-slate-900"
+            />
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Coupon Promo Code</label>
-              <input
-                type="text"
-                value={sections.monsoon.promoCode || ""}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    monsoon: { ...sections.monsoon, promoCode: e.target.value.toUpperCase() },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono font-bold text-[#FF6B35]"
-                placeholder="MONSOON2026"
-              />
-            </div>
+            <CustomEditableField
+              label="Coupon Promo Code"
+              value={sections.monsoon.promoCode || ""}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  monsoon: { ...sections.monsoon, promoCode: val.toUpperCase() },
+                })
+              }
+              placeholder="MONSOON2026"
+              inputClassName="font-mono font-bold text-[#FF6B35]"
+            />
 
             <div>
               <label className="block font-bold text-slate-700 mb-1.5">Discount Percentage (%)</label>
@@ -986,21 +1180,17 @@ export default function AdminSectionsPage() {
               />
             </div>
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Badge Tagline</label>
-              <input
-                type="text"
-                value={sections.monsoon.badge || "Limited Season Offer"}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    monsoon: { ...sections.monsoon, badge: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium"
-                placeholder="Limited Season Offer"
-              />
-            </div>
+            <CustomEditableField
+              label="Badge Tagline"
+              value={sections.monsoon.badge || "Limited Season Offer"}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  monsoon: { ...sections.monsoon, badge: val },
+                })
+              }
+              placeholder="Limited Season Offer"
+            />
 
             <div className="sm:col-span-2">
               <RichTextEditor
@@ -1047,63 +1237,54 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Section Pill Badge</label>
-                <input
-                  type="text"
-                  value={sections.bestTreks?.badge || "4.9+ Rated Flagship Expeditions"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      bestTreks: {
-                        badge: e.target.value,
-                        title: sections.bestTreks?.title || "Top Himalayan Treks & High Passes",
-                        subtitle: sections.bestTreks?.subtitle || "",
-                        featuredSlugs: sections.bestTreks?.featuredSlugs || [],
-                      },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                />
-              </div>
+              <CustomEditableField
+                label="Section Pill Badge"
+                value={sections.bestTreks?.badge || "4.9+ Rated Flagship Expeditions"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    bestTreks: {
+                      badge: val,
+                      title: sections.bestTreks?.title || "Top Himalayan Treks & High Passes",
+                      subtitle: sections.bestTreks?.subtitle || "",
+                      featuredSlugs: sections.bestTreks?.featuredSlugs || [],
+                    },
+                  })
+                }
+              />
 
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Section Main Heading</label>
-                <input
-                  type="text"
-                  value={sections.bestTreks?.title || "Top Himalayan Treks & High Passes"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      bestTreks: {
-                        badge: sections.bestTreks?.badge || "",
-                        title: e.target.value,
-                        subtitle: sections.bestTreks?.subtitle || "",
-                        featuredSlugs: sections.bestTreks?.featuredSlugs || [],
-                      },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900"
-                />
-              </div>
+              <CustomEditableField
+                label="Section Main Heading"
+                value={sections.bestTreks?.title || "Top Himalayan Treks & High Passes"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    bestTreks: {
+                      badge: sections.bestTreks?.badge || "",
+                      title: val,
+                      subtitle: sections.bestTreks?.subtitle || "",
+                      featuredSlugs: sections.bestTreks?.featuredSlugs || [],
+                    },
+                  })
+                }
+                inputClassName="font-bold text-slate-900"
+              />
 
               <div className="sm:col-span-2">
-                <label className="block font-bold text-slate-700 mb-1.5">Section Subtitle / Description</label>
-                <input
-                  type="text"
+                <CustomEditableField
+                  label="Section Subtitle / Description"
                   value={sections.bestTreks?.subtitle || ""}
-                  onChange={(e) =>
+                  onChange={(val) =>
                     setSections({
                       ...sections,
                       bestTreks: {
                         badge: sections.bestTreks?.badge || "",
                         title: sections.bestTreks?.title || "",
-                        subtitle: e.target.value,
+                        subtitle: val,
                         featuredSlugs: sections.bestTreks?.featuredSlugs || [],
                       },
                     })
                   }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
                   placeholder="Highest rated high-altitude alpine routes led by NIM-certified leaders."
                 />
               </div>
@@ -1175,45 +1356,38 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Section Pill Badge</label>
-                <input
-                  type="text"
-                  value={sections.weekendTreks?.badge || "Zero Work Leave Needed"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      weekendTreks: {
-                        badge: e.target.value,
-                        title: sections.weekendTreks?.title || "Weekend Escapes & Short Breaks",
-                        subtitle: sections.weekendTreks?.subtitle || "",
-                        featuredSlugs: sections.weekendTreks?.featuredSlugs || [],
-                      },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                />
-              </div>
+              <CustomEditableField
+                label="Section Pill Badge"
+                value={sections.weekendTreks?.badge || "Zero Work Leave Needed"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    weekendTreks: {
+                      badge: val,
+                      title: sections.weekendTreks?.title || "Weekend Escapes & Short Breaks",
+                      subtitle: sections.weekendTreks?.subtitle || "",
+                      featuredSlugs: sections.weekendTreks?.featuredSlugs || [],
+                    },
+                  })
+                }
+              />
 
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Section Main Heading</label>
-                <input
-                  type="text"
-                  value={sections.weekendTreks?.title || "Weekend Escapes & Short Breaks"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      weekendTreks: {
-                        badge: sections.weekendTreks?.badge || "",
-                        title: e.target.value,
-                        subtitle: sections.weekendTreks?.subtitle || "",
-                        featuredSlugs: sections.weekendTreks?.featuredSlugs || [],
-                      },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900"
-                />
-              </div>
+              <CustomEditableField
+                label="Section Main Heading"
+                value={sections.weekendTreks?.title || "Weekend Escapes & Short Breaks"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    weekendTreks: {
+                      badge: sections.weekendTreks?.badge || "",
+                      title: val,
+                      subtitle: sections.weekendTreks?.subtitle || "",
+                      featuredSlugs: sections.weekendTreks?.featuredSlugs || [],
+                    },
+                  })
+                }
+                inputClassName="font-bold text-slate-900"
+              />
 
               {/* Slugs selector */}
               <div className="sm:col-span-2">
@@ -1319,49 +1493,42 @@ export default function AdminSectionsPage() {
               </label>
             </div>
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Section Pill Badge</label>
-              <input
-                type="text"
-                value={sections.international?.badge || "Explore Beyond Borders"}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    international: {
-                      enabled: sections.international?.enabled ?? true,
-                      badge: e.target.value,
-                      title: sections.international?.title || "International Tours & Island Escapes",
-                      subtitle: sections.international?.subtitle || "",
-                      featuredSlugs: sections.international?.featuredSlugs || [],
-                    },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-                placeholder="Explore Beyond Borders"
-              />
-            </div>
+            <CustomEditableField
+              label="Section Pill Badge"
+              value={sections.international?.badge || "Explore Beyond Borders"}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  international: {
+                    enabled: sections.international?.enabled ?? true,
+                    badge: val,
+                    title: sections.international?.title || "International Tours & Island Escapes",
+                    subtitle: sections.international?.subtitle || "",
+                    featuredSlugs: sections.international?.featuredSlugs || [],
+                  },
+                })
+              }
+              placeholder="Explore Beyond Borders"
+            />
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Section Main Heading</label>
-              <input
-                type="text"
-                value={sections.international?.title || "International Tours & Island Escapes"}
-                onChange={(e) =>
-                  setSections({
-                    ...sections,
-                    international: {
-                      enabled: sections.international?.enabled ?? true,
-                      badge: sections.international?.badge || "",
-                      title: e.target.value,
-                      subtitle: sections.international?.subtitle || "",
-                      featuredSlugs: sections.international?.featuredSlugs || [],
-                    },
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-                placeholder="International Tours & Island Escapes"
-              />
-            </div>
+            <CustomEditableField
+              label="Section Main Heading"
+              value={sections.international?.title || "International Tours & Island Escapes"}
+              onChange={(val) =>
+                setSections({
+                  ...sections,
+                  international: {
+                    enabled: sections.international?.enabled ?? true,
+                    badge: sections.international?.badge || "",
+                    title: val,
+                    subtitle: sections.international?.subtitle || "",
+                    featuredSlugs: sections.international?.featuredSlugs || [],
+                  },
+                })
+              }
+              placeholder="International Tours & Island Escapes"
+              inputClassName="font-bold text-slate-900"
+            />
 
             <div className="sm:col-span-2">
               <RichTextEditor
@@ -1477,98 +1644,82 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Curation Title Byline</label>
-                <input
-                  type="text"
-                  value={sections.eeat?.title || "Curated by KRADIND Expedition Team"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      eeat: { ...(sections.eeat as any), title: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900"
-                  placeholder="Curated by KRADIND Expedition Team"
-                />
-              </div>
+              <CustomEditableField
+                label="Curation Title Byline"
+                value={sections.eeat?.title || "Curated by KRADIND Expedition Team"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    eeat: { ...(sections.eeat as any), title: val },
+                  })
+                }
+                placeholder="Curated by KRADIND Expedition Team"
+                inputClassName="font-bold text-slate-900"
+              />
 
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Last Reviewed Date</label>
-                <input
-                  type="text"
-                  value={sections.eeat?.lastReviewed || "14 September 2026"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      eeat: { ...(sections.eeat as any), lastReviewed: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold"
-                  placeholder="14 September 2026"
-                />
-              </div>
+              <CustomEditableField
+                label="Last Reviewed Date"
+                value={sections.eeat?.lastReviewed || "14 September 2026"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    eeat: { ...(sections.eeat as any), lastReviewed: val },
+                  })
+                }
+                placeholder="14 September 2026"
+                inputClassName="font-semibold"
+              />
 
               <div className="sm:col-span-2">
-                <label className="block font-bold text-slate-700 mb-1.5">Directorate Qualifications &amp; Credentials</label>
-                <input
-                  type="text"
+                <CustomEditableField
+                  label="Directorate Qualifications & Credentials"
                   value={sections.eeat?.role || "Chief Expedition Directorate • Nehru Institute of Mountaineering (NIM) Certified Leaders • WFA Certified"}
-                  onChange={(e) =>
+                  onChange={(val) =>
                     setSections({
                       ...sections,
-                      eeat: { ...(sections.eeat as any), role: e.target.value },
+                      eeat: { ...(sections.eeat as any), role: val },
                     })
                   }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block font-bold text-slate-700 mb-1.5">Authority Narrative Paragraph</label>
-                <textarea
+                <CustomEditableField
+                  label="Authority Narrative Paragraph"
+                  multiline
                   rows={3}
                   value={sections.eeat?.description || ""}
-                  onChange={(e) =>
+                  onChange={(val) =>
                     setSections({
                       ...sections,
-                      eeat: { ...(sections.eeat as any), description: e.target.value },
+                      eeat: { ...(sections.eeat as any), description: val },
                     })
                   }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm leading-relaxed"
                   placeholder="Leading certified high-altitude alpine expeditions across Garhwal, Himachal, and Ladakh with over a decade of technical mountain terrain leadership and comprehensive mountain weather monitoring."
                 />
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Policy Button Text</label>
-                <input
-                  type="text"
-                  value={sections.eeat?.policyLinkText || "Read Our Editorial & Safety Policy"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      eeat: { ...(sections.eeat as any), policyLinkText: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                />
-              </div>
+              <CustomEditableField
+                label="Policy Button Text"
+                value={sections.eeat?.policyLinkText || "Read Our Editorial & Safety Policy"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    eeat: { ...(sections.eeat as any), policyLinkText: val },
+                  })
+                }
+              />
 
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Audit Badge Text</label>
-                <input
-                  type="text"
-                  value={sections.eeat?.auditBadgeText || "Fact-Checked & NIM/HMI Audited"}
-                  onChange={(e) =>
-                    setSections({
-                      ...sections,
-                      eeat: { ...(sections.eeat as any), auditBadgeText: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
-                />
-              </div>
+              <CustomEditableField
+                label="Audit Badge Text"
+                value={sections.eeat?.auditBadgeText || "Fact-Checked & NIM/HMI Audited"}
+                onChange={(val) =>
+                  setSections({
+                    ...sections,
+                    eeat: { ...(sections.eeat as any), auditBadgeText: val },
+                  })
+                }
+              />
             </div>
           </div>
 
@@ -1585,31 +1736,32 @@ export default function AdminSectionsPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-extrabold uppercase text-slate-400">Card #{idx + 1}</span>
                   </div>
-                  <input
-                    type="text"
+                  <CustomEditableField
+                    label="Card Title"
                     value={card.title}
-                    onChange={(e) => {
+                    onChange={(val) => {
                       const updatedCards = [...(sections.eeat?.trustCards || [])];
-                      updatedCards[idx] = { ...card, title: e.target.value };
+                      updatedCards[idx] = { ...card, title: val };
                       setSections({
                         ...sections,
                         eeat: { ...(sections.eeat as any), trustCards: updatedCards },
                       });
                     }}
-                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                    inputClassName="font-bold text-slate-900"
                   />
-                  <textarea
+                  <CustomEditableField
+                    label="Description"
+                    multiline
                     rows={3}
                     value={card.desc}
-                    onChange={(e) => {
+                    onChange={(val) => {
                       const updatedCards = [...(sections.eeat?.trustCards || [])];
-                      updatedCards[idx] = { ...card, desc: e.target.value };
+                      updatedCards[idx] = { ...card, desc: val };
                       setSections({
                         ...sections,
                         eeat: { ...(sections.eeat as any), trustCards: updatedCards },
                       });
                     }}
-                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-600 leading-relaxed"
                   />
                 </div>
               ))}
@@ -1683,12 +1835,12 @@ export default function AdminSectionsPage() {
                   </div>
 
                   <div>
-                    <input
-                      type="text"
+                    <CustomEditableField
+                      label="Question Text"
                       value={faq.q}
-                      onChange={(e) => handleUpdateFaq(idx, "q", e.target.value)}
-                      className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:ring-1 focus:ring-emerald-500 outline-none"
+                      onChange={(val) => handleUpdateFaq(idx, "q", val)}
                       placeholder="Enter question..."
+                      inputClassName="font-bold text-slate-900"
                     />
                   </div>
 
@@ -2190,21 +2342,21 @@ export default function AdminSectionsPage() {
                 />
               </div>
 
-              {/* Threads */}
+              {/* WhatsApp Community Channel */}
               <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-black text-white flex items-center justify-center">
-                      <FaThreads className="w-4 h-4" />
+                    <div className="w-7 h-7 rounded-lg bg-[#25D366] text-white flex items-center justify-center">
+                      <FaWhatsapp className="w-4 h-4" />
                     </div>
-                    <label className="font-bold text-slate-800">Threads URL</label>
+                    <label className="font-bold text-slate-800">WhatsApp Channel URL</label>
                   </div>
-                  {sections.contactAndFooter?.threadsUrl && (
+                  {sections.contactAndFooter?.whatsappChannelUrl && (
                     <a
-                      href={sections.contactAndFooter.threadsUrl}
+                      href={sections.contactAndFooter.whatsappChannelUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-slate-800 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
+                      className="text-emerald-700 hover:underline text-[11px] font-semibold flex items-center gap-0.5"
                     >
                       <span>Test</span>
                       <ExternalLink className="w-3 h-3" />
@@ -2213,14 +2365,14 @@ export default function AdminSectionsPage() {
                 </div>
                 <input
                   type="text"
-                  value={sections.contactAndFooter?.threadsUrl || ""}
-                  placeholder="https://www.threads.net/@kradglobal"
+                  value={sections.contactAndFooter?.whatsappChannelUrl || ""}
+                  placeholder="https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34"
                   onChange={(e) =>
                     setSections({
                       ...sections,
                       contactAndFooter: {
                         ...(sections.contactAndFooter as any),
-                        threadsUrl: e.target.value,
+                        whatsappChannelUrl: e.target.value,
                       },
                     })
                   }
@@ -2351,20 +2503,20 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Registered Office Address</label>
-              <textarea
+              <CustomEditableField
+                label="Registered Office Address"
+                multiline
                 rows={2}
                 value={sections.contactAndFooter?.address || "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001"}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
                     contactAndFooter: {
                       ...(sections.contactAndFooter as any),
-                      address: e.target.value,
+                      address: val,
                     },
                   })
                 }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
               />
             </div>
 
@@ -2450,16 +2602,17 @@ export default function AdminSectionsPage() {
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1.5">Threads URL</label>
+              <label className="block font-bold text-slate-700 mb-1.5">WhatsApp Community Channel URL</label>
               <input
                 type="text"
-                value={sections.contactAndFooter?.threadsUrl || ""}
+                value={sections.contactAndFooter?.whatsappChannelUrl || ""}
+                placeholder="https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34"
                 onChange={(e) =>
                   setSections({
                     ...sections,
                     contactAndFooter: {
                       ...(sections.contactAndFooter as any),
-                      threadsUrl: e.target.value,
+                      whatsappChannelUrl: e.target.value,
                     },
                   })
                 }
@@ -2521,20 +2674,18 @@ export default function AdminSectionsPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1.5">Copyright Notice</label>
-              <input
-                type="text"
+              <CustomEditableField
+                label="Copyright Notice"
                 value={sections.contactAndFooter?.copyrightText || "© 2026 KRADIND Adventures Private Limited. All rights reserved."}
-                onChange={(e) =>
+                onChange={(val) =>
                   setSections({
                     ...sections,
                     contactAndFooter: {
                       ...(sections.contactAndFooter as any),
-                      copyrightText: e.target.value,
+                      copyrightText: val,
                     },
                   })
                 }
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm"
               />
             </div>
           </div>

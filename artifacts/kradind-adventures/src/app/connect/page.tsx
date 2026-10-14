@@ -35,11 +35,10 @@ export default async function ConnectPage() {
     whatsappLink: contact?.whatsappLink || "https://wa.me/919797941414",
     youtubeUrl: contact?.youtubeUrl || "https://www.youtube.com/@kradglobaltravels",
     facebookUrl: contact?.facebookUrl || "https://www.facebook.com/share/189E2RUcH4/",
-    twitterUrl: contact?.twitterUrl || "https://x.com/KradGlobalTour",
-    threadsUrl: contact?.threadsUrl || "https://www.threads.net/@kradglobal",
+    whatsappChannelUrl: "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34",
     pinterestUrl: contact?.pinterestUrl || "https://in.pinterest.com/KradGlobalTravels/",
     supportPhone: contact?.supportPhone || "+91 9797941414",
-    supportEmail: contact?.supportEmail || "support@kradind.com",
+    supportEmail: "Info@kradind.com",
     address: contact?.address || "Hall No. H -04, 410, Pratap Palace, Vasant Vihar, Indra Nagar Colony, Dehradun, Uttarakhand 248001",
   };
 

@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
-import { FormattedText } from "@/components/formatted-text";
+import { FormattedText, parseInlineFormatting } from "@/components/formatted-text";
 
 interface ParsedItineraryDay {
   cleanTitle: string;
@@ -153,6 +153,8 @@ function parseItineraryDay(dayItem: any): ParsedItineraryDay {
   let paragraphs: string[] = [];
   if (rawDesc.includes("\n\n")) {
     paragraphs = rawDesc.split(/\n\n+/).map((p: string) => p.trim()).filter(Boolean);
+  } else if (rawDesc.includes("\n") || rawDesc.includes("•")) {
+    paragraphs = [rawDesc];
   } else {
     const sentences = rawDesc.match(/[^.!?]+[.!?]+(?:\s+|$)/g) || [rawDesc];
     if (sentences.length <= 3) {
@@ -346,13 +348,13 @@ function FormattedTextBlock({ text }: { text: string }) {
                   return (
                     <div key={lIdx} className="flex items-start gap-2.5 text-slate-700 text-xs sm:text-sm">
                       <span className="text-[#FF6B35] font-bold text-base leading-none select-none shrink-0 mt-0.5">•</span>
-                      <span className="flex-1 leading-relaxed">{cleanLine}</span>
+                      <span className="flex-1 leading-relaxed">{parseInlineFormatting(cleanLine)}</span>
                     </div>
                   );
                 }
                 return (
                   <p key={lIdx} className="font-semibold text-slate-900 mt-2 mb-1 text-xs sm:text-sm">
-                    {line}
+                    {parseInlineFormatting(line)}
                   </p>
                 );
               })}
@@ -362,7 +364,7 @@ function FormattedTextBlock({ text }: { text: string }) {
 
         return (
           <p key={pIdx} className="leading-relaxed text-xs sm:text-sm text-slate-600">
-            {para.trim()}
+            {parseInlineFormatting(para.trim())}
           </p>
         );
       })}
@@ -738,7 +740,7 @@ export function TrekDetailClient({
                     className="flex items-start gap-2.5 bg-emerald-50/60 border border-emerald-100 p-3.5 rounded-xl text-xs sm:text-sm text-slate-800"
                   >
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>{highlight}</span>
+                    <span className="flex-1 leading-relaxed">{parseInlineFormatting(highlight)}</span>
                   </div>
                 ))}
               </div>
@@ -785,7 +787,7 @@ export function TrekDetailClient({
                   {trek.inclusions?.filter((inc) => typeof inc === "string" && inc.trim().length > 0).map((inc: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-emerald-600 font-bold">✓</span>
-                      <span>{inc}</span>
+                      <span className="flex-1 leading-relaxed">{parseInlineFormatting(inc)}</span>
                     </li>
                   ))}
                 </ul>
@@ -801,7 +803,7 @@ export function TrekDetailClient({
                   {trek.exclusions?.filter((exc) => typeof exc === "string" && exc.trim().length > 0).map((exc: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-rose-500 font-bold">✗</span>
-                      <span>{exc}</span>
+                      <span className="flex-1 leading-relaxed">{parseInlineFormatting(exc)}</span>
                     </li>
                   ))}
                 </ul>
@@ -841,9 +843,9 @@ export function TrekDetailClient({
                       <h4 className="text-sm font-bold text-slate-900 leading-snug">
                         {tip.title}
                       </h4>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        {tip.desc}
-                      </p>
+                      <div className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        {parseInlineFormatting(tip.desc)}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -885,7 +887,7 @@ export function TrekDetailClient({
                         {trek.bookingPolicy.map((pol: string, pIdx: number) => (
                           <li key={pIdx} className="flex items-start gap-2">
                             <span className="text-emerald-700 font-bold shrink-0 mt-0.5">•</span>
-                            <span>{pol}</span>
+                            <span className="flex-1 leading-relaxed">{parseInlineFormatting(pol)}</span>
                           </li>
                         ))}
                       </ul>

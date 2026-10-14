@@ -30,6 +30,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
+import { parseInlineFormatting } from "@/components/formatted-text";
 
 export interface ItineraryPdfProps {
   isOpen: boolean;
@@ -383,7 +384,7 @@ export function ItineraryPdfModal({
                 key={i}
                 className="transform -rotate-25 whitespace-nowrap text-center text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-widest text-[#0F3A2E]"
               >
-                KRADIND ADVENTURES • CERTIFIED TOUR OPERATOR • OFFICIAL ITINERARY
+                KRADIND • CERTIFIED TOUR OPERATOR • OFFICIAL ITINERARY
               </div>
             ))}
           </div>
@@ -395,7 +396,7 @@ export function ItineraryPdfModal({
               <div className="flex items-center gap-3">
                 <Image
                   src="/logo.png"
-                  alt="KRADIND Adventures - Official Logo"
+                  alt="KRADIND - Official Logo"
                   width={200}
                   height={65}
                   priority
@@ -405,18 +406,18 @@ export function ItineraryPdfModal({
 
               {/* Operator Details */}
               <div className="text-left sm:text-right space-y-0.5 text-xs text-slate-600">
-                <div className="font-extrabold text-[#0F3A2E] text-sm tracking-tight">
-                  KRAD Global Travels / KRADIND Adventures
+                <div className="font-extrabold text-[#0F3A2E] text-base tracking-tight">
+                  KRADIND
                 </div>
                 <div className="text-[11px] text-slate-500 font-medium">
-                  Govt. Registered Adventure Tour Operator • Uttarakhand, India
+                  Certified Tour &amp; Travel Operator • Dehradun, Uttarakhand, India
                 </div>
                 <div className="flex flex-wrap sm:justify-end gap-x-3 gap-y-0.5 text-[11px] pt-1 text-slate-700">
                   <span className="flex items-center gap-1 font-semibold">
                     <Phone className="w-3 h-3 text-emerald-700" /> +91 9797941414
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Mail className="w-3 h-3 text-emerald-700" /> {['contact', 'kradind.com'].join('@')}
+                  <span className="flex items-center gap-1 font-semibold">
+                    <Mail className="w-3 h-3 text-emerald-700" /> Info@kradind.com
                   </span>
                   <span className="flex items-center gap-1">
                     <Globe className="w-3 h-3 text-emerald-700" /> www.kradind.com
@@ -609,9 +610,9 @@ export function ItineraryPdfModal({
                       </div>
                     </div>
 
-                    <p className="text-slate-600 leading-relaxed text-xs">
-                      {dayItem.description}
-                    </p>
+                    <div className="text-slate-600 leading-relaxed text-xs">
+                      {parseInlineFormatting(dayItem.description)}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -630,7 +631,7 @@ export function ItineraryPdfModal({
                     tour.inclusions.map((inc: string, i: number) => (
                       <li key={i} className="flex items-start gap-1.5">
                         <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                        <span>{inc}</span>
+                        <span className="flex-1 leading-relaxed">{parseInlineFormatting(inc)}</span>
                       </li>
                     ))
                   ) : (
@@ -671,7 +672,7 @@ export function ItineraryPdfModal({
                     tour.exclusions.map((exc: string, i: number) => (
                       <li key={i} className="flex items-start gap-1.5">
                         <span className="text-rose-600 font-bold shrink-0">✕</span>
-                        <span>{exc}</span>
+                        <span className="flex-1 leading-relaxed">{parseInlineFormatting(exc)}</span>
                       </li>
                     ))
                   ) : (
@@ -715,17 +716,19 @@ export function ItineraryPdfModal({
             {/* 8. FOOTER WITH AUTHORIZED SIGNATORY STAMP & CONTACT */}
             <div className="pt-6 border-t-2 border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs page-break-inside-avoid">
               <div className="space-y-1">
-                <span className="font-extrabold text-[#0F3A2E] text-xs block">
-                  KRADIND ADVENTURES (A Unit of KRAD Global Travels)
+                <span className="font-extrabold text-[#0F3A2E] text-sm block">
+                  KRADIND
                 </span>
                 <p className="text-[10px] text-slate-500 max-w-md">
-                  Official itinerary document generated on {issueDate}. For booking confirmations,
-                  slot reservations, or group queries, contact your dedicated trip coordinator.
+                  Official client itinerary generated on {issueDate}. For booking confirmations,
+                  slot reservations, or customized inquiries, contact your dedicated coordinator.
                 </p>
-                <div className="flex items-center gap-3 text-[11px] font-semibold text-emerald-800 pt-0.5">
+                <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold text-emerald-800 pt-0.5">
                   <span>Helpline: +91 9797941414</span>
                   <span>•</span>
                   <span>WhatsApp: +91 9797941414</span>
+                  <span>•</span>
+                  <span>Email: Info@kradind.com</span>
                 </div>
               </div>
 
@@ -735,7 +738,7 @@ export function ItineraryPdfModal({
                   Official Verification
                 </div>
                 <div className="font-extrabold text-xs text-[#0F3A2E] mt-0.5">
-                  KRADIND ADVENTURES
+                  KRADIND
                 </div>
                 <div className="text-[9px] text-emerald-700 font-semibold">
                   Certified Operator • Dehradun

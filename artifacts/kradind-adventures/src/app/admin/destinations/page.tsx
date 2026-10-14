@@ -49,6 +49,7 @@ import {
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { CustomEditableField } from "@/components/admin/custom-editable-field";
 import { SalesItineraryCustomizer } from "@/components/sales-itinerary-customizer";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 
@@ -254,6 +255,9 @@ export default function AdminDestinationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<ModalTab>("basic");
   const [editingDestination, setEditingDestination] = useState<DestinationData | null>(null);
+  const [recoveredDraft, setRecoveredDraft] = useState<DestinationData | null>(null);
+  const editingDestinationRef = useRef<DestinationData | null>(editingDestination);
+  const isModalOpenRef = useRef<boolean>(isModalOpen);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | number | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -306,6 +310,79 @@ export default function AdminDestinationsPage() {
 
   useEffect(() => {
     fetchDestinations();
+  }, []);
+
+  // Sync refs for exit handlers
+  useEffect(() => {
+    editingDestinationRef.current = editingDestination;
+    isModalOpenRef.current = isModalOpen;
+  }, [editingDestination, isModalOpen]);
+
+  // Load unsaved draft from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("kradind_admin_dest_draft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.name || parsed.slug)) {
+          setRecoveredDraft(parsed);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Debounced auto-save to localStorage
+  useEffect(() => {
+    if (!isModalOpen || !editingDestination) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem("kradind_admin_dest_draft", JSON.stringify(editingDestination));
+      } catch {}
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [editingDestination, isModalOpen]);
+
+  // Tab close & background exit auto-save to Database & localStorage
+  useEffect(() => {
+    const autoSaveOnExit = () => {
+      const dest = editingDestinationRef.current;
+      const open = isModalOpenRef.current;
+      if (!open || !dest) return;
+
+      const name = (dest.name || "").trim();
+      if (!name) return;
+
+      const draftPayload = {
+        ...dest,
+        status: "Draft",
+      };
+
+      try {
+        localStorage.setItem("kradind_admin_dest_draft", JSON.stringify(draftPayload));
+      } catch {}
+
+      try {
+        fetch("/api/admin/destinations", {
+          method: dest.id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(draftPayload),
+          keepalive: true,
+        }).catch(() => {});
+      } catch {}
+    };
+
+    const handleBeforeUnload = () => autoSaveOnExit();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") autoSaveOnExit();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   const handleToggleCategory = async (dest: DestinationData) => {
@@ -715,6 +792,10 @@ export default function AdminDestinationsPage() {
       showToast(isNew ? "✅ Destination created successfully!" : "✅ Destination updated successfully!");
       setIsModalOpen(false);
       setEditingDestination(null);
+      try {
+        localStorage.removeItem("kradind_admin_dest_draft");
+      } catch {}
+      setRecoveredDraft(null);
       fetchDestinations();
     } catch {
       alert("Network error. Please try again.");
@@ -933,6 +1014,52 @@ export default function AdminDestinationsPage() {
           </Link>
         </div>
       </div>
+
+      {/* Draft Recovery Banner */}
+      {recoveredDraft && !isModalOpen && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-emerald-50 border border-amber-300 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs animate-fade-in print:hidden">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+              💾
+            </div>
+            <div>
+              <p className="font-extrabold text-slate-900 text-sm">
+                Unfinished Destination Circuit Draft Auto-Recovered!
+              </p>
+              <p className="text-slate-600 mt-0.5">
+                Circuit: <strong className="text-amber-900">{recoveredDraft.name || "Untitled Circuit"}</strong> ({recoveredDraft.category || "Domestic"}). You left this during your previous session.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setEditingDestination(recoveredDraft);
+                setHighlightsInput((recoveredDraft.highlights || []).join(", "));
+                setIsModalOpen(true);
+                setRecoveredDraft(null);
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Resume Editing</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.removeItem("kradind_admin_dest_draft");
+                } catch {}
+                setRecoveredDraft(null);
+                showToast("Draft discarded");
+              }}
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 font-semibold transition cursor-pointer"
+            >
+              Discard
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Search & Filter Toolbar */}
       <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-3.5 print:hidden">
@@ -1473,13 +1600,20 @@ export default function AdminDestinationsPage() {
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-3">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Auto-saved as Draft</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Form Body with Left Sidebar */}
@@ -1626,14 +1760,12 @@ export default function AdminDestinationsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Destination Name */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700">Destination Name *</label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Destination Name *"
                         required
                         placeholder="e.g. Rajasthan, Kerala, Spiti Valley, Meghalaya"
                         value={editingDestination.name}
-                        onChange={(e) => handleNameChange(e.target.value)}
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] focus:ring-2 focus:ring-[#FF6B35]/15 transition font-semibold"
+                        onChange={(val) => handleNameChange(val)}
                       />
                     </div>
 
@@ -1708,15 +1840,13 @@ export default function AdminDestinationsPage() {
 
                     {/* Badge */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700">Badge</label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Badge"
                         placeholder="e.g. Most Popular, Trending Circuit"
                         value={editingDestination.badge || ""}
-                        onChange={(e) =>
-                          setEditingDestination({ ...editingDestination, badge: e.target.value })
+                        onChange={(val) =>
+                          setEditingDestination({ ...editingDestination, badge: val })
                         }
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] font-medium"
                       />
                     </div>
                   </div>
@@ -1724,17 +1854,13 @@ export default function AdminDestinationsPage() {
                   {/* Duration & Starting Price & Original Price */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-emerald-600" /> Suggested Duration
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Suggested Duration"
                         placeholder="e.g. 5 Nights / 6 Days"
                         value={editingDestination.duration || ""}
-                        onChange={(e) =>
-                          setEditingDestination({ ...editingDestination, duration: e.target.value })
+                        onChange={(val) =>
+                          setEditingDestination({ ...editingDestination, duration: val })
                         }
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] transition font-semibold"
                       />
                     </div>
 
@@ -1774,47 +1900,35 @@ export default function AdminDestinationsPage() {
                   {/* Logistics: Best Season, Pickup & Drop, Suitable For */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                        <Sun className="w-3.5 h-3.5 text-amber-500" /> Best Time to Visit
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Best Time to Visit"
                         placeholder="e.g. September to May"
                         value={editingDestination.bestSeason || ""}
-                        onChange={(e) =>
-                          setEditingDestination({ ...editingDestination, bestSeason: e.target.value })
+                        onChange={(val) =>
+                          setEditingDestination({ ...editingDestination, bestSeason: val })
                         }
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35]"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                        <Navigation className="w-3.5 h-3.5 text-emerald-600" /> Pick-up & Drop Point
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Pick-up & Drop Point"
                         placeholder="e.g. Kathgodam / Dehradun Airport"
                         value={editingDestination.pickupDrop || ""}
-                        onChange={(e) =>
-                          setEditingDestination({ ...editingDestination, pickupDrop: e.target.value })
+                        onChange={(val) =>
+                          setEditingDestination({ ...editingDestination, pickupDrop: val })
                         }
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35]"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                        <Users className="w-3.5 h-3.5 text-blue-500" /> Suitable For
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Suitable For"
                         placeholder="e.g. Families, Couples & Groups"
                         value={editingDestination.suitableFor || ""}
-                        onChange={(e) =>
-                          setEditingDestination({ ...editingDestination, suitableFor: e.target.value })
+                        onChange={(val) =>
+                          setEditingDestination({ ...editingDestination, suitableFor: val })
                         }
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35]"
                       />
                     </div>
                   </div>
@@ -1932,15 +2046,6 @@ export default function AdminDestinationsPage() {
                           {count} Days
                         </button>
                       ))}
-
-                      <button
-                        type="button"
-                        onClick={handleAddDay}
-                        className="px-3.5 py-1 text-xs font-black bg-[#0F3A2E] hover:bg-[#154d3d] text-white rounded-lg shadow-xs transition flex items-center gap-1 ml-1"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Add Day</span>
-                      </button>
                     </div>
                   </div>
 
@@ -1974,12 +2079,12 @@ export default function AdminDestinationsPage() {
                                 <span className="text-[8px] font-bold uppercase leading-none">Day</span>
                                 <span className="text-xs font-black leading-none mt-0.5">{idx + 1}</span>
                               </div>
-                              <input
-                                type="text"
+                              <CustomEditableField
+                                compact
                                 placeholder={`Day ${idx + 1} Title (e.g. Arrival & Munnar Tea Garden Sunset)`}
                                 value={day.title}
-                                onChange={(e) => handleUpdateDay(idx, "title", e.target.value)}
-                                className="px-3 py-1.5 text-xs font-bold bg-white rounded-lg border border-slate-200 flex-1 focus:outline-hidden focus:border-[#FF6B35]"
+                                onChange={(val) => handleUpdateDay(idx, "title", val)}
+                                className="flex-1"
                               />
                             </div>
 
@@ -2023,15 +2128,11 @@ export default function AdminDestinationsPage() {
 
                           {/* Key Highlights / Activities */}
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                              <Sparkles className="w-3 h-3 text-[#FF6B35]" /> Key Sightseeing & Activities
-                            </label>
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              label="Key Sightseeing & Activities"
                               placeholder="e.g. Fort Palace tour, Shikara ride on Dal Lake, Sunset photography"
                               value={day.activities || ""}
-                              onChange={(e) => handleUpdateDay(idx, "activities", e.target.value)}
-                              className="w-full px-3 py-1.5 text-xs bg-white rounded-lg border border-slate-200 focus:outline-hidden focus:border-[#FF6B35]"
+                              onChange={(val) => handleUpdateDay(idx, "activities", val)}
                             />
                           </div>
 
@@ -2086,15 +2187,12 @@ export default function AdminDestinationsPage() {
 
                             {/* Accommodation / Stay */}
                             <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                                <Building className="w-3 h-3 text-emerald-600" /> Accommodation / Stay
-                              </label>
-                              <input
-                                type="text"
+                              <CustomEditableField
+                                compact
+                                label="Accommodation / Stay"
                                 placeholder="e.g. 3-Star Deluxe Hotel"
                                 value={day.stay || ""}
-                                onChange={(e) => handleUpdateDay(idx, "stay", e.target.value)}
-                                className="w-full px-2.5 py-1.5 text-xs bg-white rounded-lg border border-slate-200"
+                                onChange={(val) => handleUpdateDay(idx, "stay", val)}
                               />
                               <div className="flex gap-1 pt-0.5">
                                 <button
@@ -2152,14 +2250,18 @@ export default function AdminDestinationsPage() {
                         </div>
                       ))}
 
-                      <div className="pt-2 text-center">
+                      {/* Add Day / Activity Button - Always at the Bottom */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-200 mt-2">
+                        <span className="text-xs text-slate-500 font-semibold">
+                          Total {(editingDestination.itinerary?.length || 0)} Days / Activities configured
+                        </span>
                         <button
                           type="button"
                           onClick={handleAddDay}
-                          className="px-5 py-2.5 text-xs font-extrabold bg-[#0F3A2E] hover:bg-[#154d3d] text-white rounded-xl shadow-xs transition inline-flex items-center gap-2"
+                          className="px-5 py-2.5 text-xs font-extrabold bg-[#0F3A2E] hover:bg-[#154d3d] text-white rounded-xl shadow-xs transition inline-flex items-center gap-2 cursor-pointer active:scale-95 self-end"
                         >
                           <Plus className="w-4 h-4" />
-                          <span>Add Another Day</span>
+                          <span>+ Add Day / Activity {(editingDestination.itinerary?.length || 0) + 1}</span>
                         </button>
                       </div>
                     </div>
@@ -2191,17 +2293,17 @@ export default function AdminDestinationsPage() {
                         {(editingDestination.inclusions || []).map((item, idx) => (
                           <div key={idx} className="flex items-center gap-2">
                             <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               value={item}
-                              onChange={(e) => handleUpdateInclusion(idx, e.target.value)}
+                              onChange={(val) => handleUpdateInclusion(idx, val)}
                               placeholder="e.g. Verified 3-Star Hotel Stay..."
-                              className="flex-1 px-3 py-1.5 text-xs bg-white rounded-lg border border-slate-200 focus:outline-hidden focus:border-emerald-600"
+                              className="flex-1"
                             />
                             <button
                               type="button"
                               onClick={() => handleRemoveInclusion(idx)}
-                              className="p-1 text-slate-400 hover:text-rose-600 rounded"
+                              className="p-1 text-slate-400 hover:text-rose-600 rounded shrink-0"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -2239,17 +2341,17 @@ export default function AdminDestinationsPage() {
                         {(editingDestination.exclusions || []).map((item, idx) => (
                           <div key={idx} className="flex items-center gap-2">
                             <X className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               value={item}
-                              onChange={(e) => handleUpdateExclusion(idx, e.target.value)}
+                              onChange={(val) => handleUpdateExclusion(idx, val)}
                               placeholder="e.g. Airfare / Train tickets..."
-                              className="flex-1 px-3 py-1.5 text-xs bg-white rounded-lg border border-slate-200 focus:outline-hidden focus:border-rose-600"
+                              className="flex-1"
                             />
                             <button
                               type="button"
                               onClick={() => handleRemoveExclusion(idx)}
-                              className="p-1 text-slate-400 hover:text-rose-600 rounded"
+                              className="p-1 text-slate-400 hover:text-rose-600 rounded shrink-0"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -2287,15 +2389,11 @@ export default function AdminDestinationsPage() {
 
                   {/* Highlights */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700">
-                      Key Highlights & Top Attractions (Comma separated)
-                    </label>
-                    <input
-                      type="text"
+                    <CustomEditableField
+                      label="Key Highlights & Top Attractions (Comma separated)"
                       placeholder="e.g. Amber Fort, Hawa Mahal, City Palace, Jal Mahal, Chokhi Dhani"
                       value={highlightsInput}
-                      onChange={(e) => setHighlightsInput(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:border-[#FF6B35] transition font-medium"
+                      onChange={(val) => setHighlightsInput(val)}
                     />
                   </div>
 
@@ -2320,17 +2418,17 @@ export default function AdminDestinationsPage() {
                           <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold flex items-center justify-center shrink-0">
                             {idx + 1}
                           </span>
-                          <input
-                            type="text"
+                          <CustomEditableField
+                            compact
                             value={tip}
-                            onChange={(e) => handleUpdateTip(idx, e.target.value)}
+                            onChange={(val) => handleUpdateTip(idx, val)}
                             placeholder="e.g. Carry valid Government photo ID..."
-                            className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-hidden focus:border-[#FF6B35]"
+                            className="flex-1"
                           />
                           <button
                             type="button"
                             onClick={() => handleRemoveTip(idx)}
-                            className="p-1 text-slate-400 hover:text-rose-600 rounded"
+                            className="p-1 text-slate-400 hover:text-rose-600 rounded shrink-0"
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -2399,17 +2497,17 @@ export default function AdminDestinationsPage() {
                       {editingDestination.faqs.map((faq, idx) => (
                         <div key={idx} className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
                           <div className="flex items-center justify-between gap-2">
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               placeholder={`Question ${idx + 1}`}
                               value={faq.question}
-                              onChange={(e) => handleUpdateFaq(idx, "question", e.target.value)}
-                              className="flex-1 px-3 py-1.5 text-xs font-bold bg-white rounded-lg border border-slate-200 focus:outline-hidden focus:border-[#FF6B35]"
+                              onChange={(val) => handleUpdateFaq(idx, "question", val)}
+                              className="flex-1"
                             />
                             <button
                               type="button"
                               onClick={() => handleRemoveFaq(idx)}
-                              className="p-1 text-slate-400 hover:text-rose-600 rounded"
+                              className="p-1 text-slate-400 hover:text-rose-600 rounded shrink-0"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>

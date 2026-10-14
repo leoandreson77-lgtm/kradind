@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -45,6 +45,7 @@ import {
 import { DestinationData, TrekItineraryDay } from "@/lib/cms-store";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { CustomEditableField } from "@/components/admin/custom-editable-field";
 
 const POPULAR_COUNTRY_EMOJIS = ["🇳🇵", "🇮🇩", "🇹🇭", "🇦🇪", "🇻🇳", "🇸🇬", "🇲🇻", "🇱🇰", "🇲🇾", "🇲🇺", "🇪🇺", "🇬🇧", "✈️", "🏝️", "🏔️"];
 const COUNTRY_PRESETS = [
@@ -117,6 +118,9 @@ export default function AdminInternationalPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<ModalTab>("basic");
   const [editingItem, setEditingItem] = useState<DestinationData | null>(null);
+  const [recoveredDraft, setRecoveredDraft] = useState<DestinationData | null>(null);
+  const editingItemRef = useRef<DestinationData | null>(editingItem);
+  const isModalOpenRef = useRef<boolean>(isModalOpen);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | number | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -143,6 +147,79 @@ export default function AdminInternationalPage() {
 
   useEffect(() => {
     fetchDestinations();
+  }, []);
+
+  // Sync refs for exit handlers
+  useEffect(() => {
+    editingItemRef.current = editingItem;
+    isModalOpenRef.current = isModalOpen;
+  }, [editingItem, isModalOpen]);
+
+  // Load unsaved draft from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("kradind_admin_intl_draft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.name || parsed.slug)) {
+          setRecoveredDraft(parsed);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Debounced auto-save to localStorage
+  useEffect(() => {
+    if (!isModalOpen || !editingItem) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem("kradind_admin_intl_draft", JSON.stringify(editingItem));
+      } catch {}
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [editingItem, isModalOpen]);
+
+  // Tab close & background exit auto-save to Database & localStorage
+  useEffect(() => {
+    const autoSaveOnExit = () => {
+      const item = editingItemRef.current;
+      const open = isModalOpenRef.current;
+      if (!open || !item) return;
+
+      const name = (item.name || "").trim();
+      if (!name) return;
+
+      const draftPayload = {
+        ...item,
+        status: "Draft",
+      };
+
+      try {
+        localStorage.setItem("kradind_admin_intl_draft", JSON.stringify(draftPayload));
+      } catch {}
+
+      try {
+        fetch("/api/admin/international", {
+          method: item.id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(draftPayload),
+          keepalive: true,
+        }).catch(() => {});
+      } catch {}
+    };
+
+    const handleBeforeUnload = () => autoSaveOnExit();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") autoSaveOnExit();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   const handleOpenAdd = () => {
@@ -281,6 +358,10 @@ export default function AdminInternationalPage() {
       if (res.ok) {
         setIsModalOpen(false);
         setEditingItem(null);
+        try {
+          localStorage.removeItem("kradind_admin_intl_draft");
+        } catch {}
+        setRecoveredDraft(null);
         showToast(
           isNew
             ? "🎉 New International Tour Package created and live!"
@@ -561,6 +642,52 @@ export default function AdminInternationalPage() {
           </div>
         </div>
       </div>
+
+      {/* Draft Recovery Banner */}
+      {recoveredDraft && !isModalOpen && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-blue-50 border border-amber-300 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs animate-fade-in print:hidden">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+              💾
+            </div>
+            <div>
+              <p className="font-extrabold text-slate-900 text-sm">
+                Unfinished International Tour Draft Auto-Recovered!
+              </p>
+              <p className="text-slate-600 mt-0.5">
+                Tour: <strong className="text-amber-900">{recoveredDraft.name || "Untitled International Tour"}</strong> ({recoveredDraft.duration || "Custom Days"}). You left this during your previous session.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setEditingItem(recoveredDraft);
+                setHighlightsInput((recoveredDraft.highlights || []).join(", "));
+                setIsModalOpen(true);
+                setRecoveredDraft(null);
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Resume Editing</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.removeItem("kradind_admin_intl_draft");
+                } catch {}
+                setRecoveredDraft(null);
+                showToast("Draft discarded");
+              }}
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 font-semibold transition cursor-pointer"
+            >
+              Discard
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3 print:hidden">
@@ -867,13 +994,20 @@ export default function AdminInternationalPage() {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-3">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Auto-saved as Draft</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Body with Left Sidebar */}
@@ -937,14 +1071,11 @@ export default function AdminInternationalPage() {
                 <div className="space-y-5 animate-in fade-in">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Tour / Country Name <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Tour / Country Name *"
+                        required
                         value={editingItem.name}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                        onChange={(val) => {
                           const autoSlug = val
                             .toLowerCase()
                             .replace(/[^a-z0-9]/g, "-")
@@ -956,7 +1087,6 @@ export default function AdminInternationalPage() {
                           });
                         }}
                         placeholder="e.g. Bali Island & Nusa Penida Escape"
-                        className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                       />
                     </div>
 
@@ -1014,15 +1144,11 @@ export default function AdminInternationalPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Promo Badge
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Promo Badge"
                         value={editingItem.badge || ""}
-                        onChange={(e) => setEditingItem({ ...editingItem, badge: e.target.value })}
+                        onChange={(val) => setEditingItem({ ...editingItem, badge: val })}
                         placeholder="e.g. Visa On Arrival / Best Seller"
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                       />
                     </div>
 
@@ -1049,15 +1175,11 @@ export default function AdminInternationalPage() {
                   {/* Pricing & Duration */}
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Duration
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Duration"
                         value={editingItem.duration || ""}
-                        onChange={(e) => setEditingItem({ ...editingItem, duration: e.target.value })}
+                        onChange={(val) => setEditingItem({ ...editingItem, duration: val })}
                         placeholder="e.g. 6 Nights / 7 Days"
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                       />
                     </div>
 
@@ -1092,15 +1214,11 @@ export default function AdminInternationalPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Best Season
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Best Season"
                         value={editingItem.bestSeason || ""}
-                        onChange={(e) => setEditingItem({ ...editingItem, bestSeason: e.target.value })}
+                        onChange={(val) => setEditingItem({ ...editingItem, bestSeason: val })}
                         placeholder="e.g. April to October"
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                       />
                     </div>
                   </div>
@@ -1108,28 +1226,20 @@ export default function AdminInternationalPage() {
                   {/* Airport Pickup & Drop and Suitable For */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Airport Pickup &amp; Drop Terminal
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Airport Pickup & Drop Terminal"
                         value={editingItem.pickupDrop || ""}
-                        onChange={(e) => setEditingItem({ ...editingItem, pickupDrop: e.target.value })}
+                        onChange={(val) => setEditingItem({ ...editingItem, pickupDrop: val })}
                         placeholder="e.g. Ngurah Rai International Airport (DPS), Denpasar"
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
-                        Suitable For
-                      </label>
-                      <input
-                        type="text"
+                      <CustomEditableField
+                        label="Suitable For"
                         value={editingItem.suitableFor || ""}
-                        onChange={(e) => setEditingItem({ ...editingItem, suitableFor: e.target.value })}
+                        onChange={(val) => setEditingItem({ ...editingItem, suitableFor: val })}
                         placeholder="e.g. Couples, Honeymooners, Families & Friends"
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                       />
                     </div>
                   </div>
@@ -1172,19 +1282,15 @@ export default function AdminInternationalPage() {
 
                   {/* Key Highlights */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">
-                      Tour Highlights (Comma-separated)
-                    </label>
-                    <textarea
+                    <CustomEditableField
+                      multiline
                       rows={2}
+                      label="Tour Highlights (Comma-separated)"
                       value={highlightsInput}
-                      onChange={(e) => setHighlightsInput(e.target.value)}
+                      onChange={(val) => setHighlightsInput(val)}
                       placeholder="Ubud Monkey Forest, Nusa Penida Kelingking Beach, Uluwatu Sunset Kecak Dance, Seminyak Beach Clubs"
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                      helperText="These appear as highlight tags on tour cards and in search results."
                     />
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      These appear as highlight tags on tour cards and in search results.
-                    </p>
                   </div>
                 </div>
               )}
@@ -1201,15 +1307,6 @@ export default function AdminInternationalPage() {
                         Detail activities, stays, and included meals for each day. Trekkers love comprehensive itineraries!
                       </p>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={handleAddItineraryDay}
-                      className="px-3.5 py-1.5 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-1.5 shadow-xs"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>+ Add Next Day</span>
-                    </button>
                   </div>
 
                   {editingItem.itinerary && editingItem.itinerary.length > 0 ? (
@@ -1226,12 +1323,12 @@ export default function AdminInternationalPage() {
                                 <span className="text-[8px] font-bold uppercase leading-none">Day</span>
                                 <span className="text-xs font-black leading-none mt-0.5">{day.day}</span>
                               </div>
-                              <input
-                                type="text"
+                              <CustomEditableField
+                                compact
                                 value={day.title}
-                                onChange={(e) => handleUpdateDay(idx, "title", e.target.value)}
+                                onChange={(val) => handleUpdateDay(idx, "title", val)}
                                 placeholder="Day Title e.g. Arrival in Bali & Transfer to Ubud"
-                                className="flex-1 px-3 py-1.5 text-xs font-bold bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                                className="flex-1"
                               />
                             </div>
 
@@ -1316,6 +1413,21 @@ export default function AdminInternationalPage() {
                           </div>
                         </div>
                       ))}
+
+                      {/* Add Day / Activity Button - Always at the Bottom */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-200 mt-2">
+                        <span className="text-xs text-slate-500 font-semibold">
+                          Total {editingItem.itinerary.length} Days / Activities configured
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleAddItineraryDay}
+                          className="px-5 py-2.5 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-2 shadow-xs cursor-pointer active:scale-95 self-end"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>+ Add Day / Activity {editingItem.itinerary.length + 1}</span>
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
@@ -1356,15 +1468,15 @@ export default function AdminInternationalPage() {
                         {(editingItem.inclusions || []).map((inc, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <span className="text-emerald-600 font-bold text-xs">✓</span>
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               value={inc}
-                              onChange={(e) => {
+                              onChange={(val) => {
                                 const next = [...(editingItem.inclusions || [])];
-                                next[i] = e.target.value;
+                                next[i] = val;
                                 setEditingItem({ ...editingItem, inclusions: next });
                               }}
-                              className="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg outline-none focus:bg-white"
+                              className="flex-1"
                             />
                             <button
                               type="button"
@@ -1372,7 +1484,7 @@ export default function AdminInternationalPage() {
                                 const next = (editingItem.inclusions || []).filter((_, idx) => idx !== i);
                                 setEditingItem({ ...editingItem, inclusions: next });
                               }}
-                              className="text-slate-400 hover:text-rose-600 p-1"
+                              className="text-slate-400 hover:text-rose-600 p-1 shrink-0"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -1415,15 +1527,15 @@ export default function AdminInternationalPage() {
                         {(editingItem.exclusions || []).map((exc, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <span className="text-rose-500 font-bold text-xs">✗</span>
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               value={exc}
-                              onChange={(e) => {
+                              onChange={(val) => {
                                 const next = [...(editingItem.exclusions || [])];
-                                next[i] = e.target.value;
+                                next[i] = val;
                                 setEditingItem({ ...editingItem, exclusions: next });
                               }}
-                              className="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg outline-none focus:bg-white"
+                              className="flex-1"
                             />
                             <button
                               type="button"
@@ -1431,7 +1543,7 @@ export default function AdminInternationalPage() {
                                 const next = (editingItem.exclusions || []).filter((_, idx) => idx !== i);
                                 setEditingItem({ ...editingItem, exclusions: next });
                               }}
-                              className="text-slate-400 hover:text-rose-600 p-1"
+                              className="text-slate-400 hover:text-rose-600 p-1 shrink-0"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -1489,15 +1601,15 @@ export default function AdminInternationalPage() {
                       {(editingItem.travelTips || []).map((tip, i) => (
                         <div key={i} className="flex items-center gap-2">
                           <span className="text-blue-500 font-bold text-xs">ℹ</span>
-                          <input
-                            type="text"
+                          <CustomEditableField
+                            compact
                             value={tip}
-                            onChange={(e) => {
+                            onChange={(val) => {
                               const next = [...(editingItem.travelTips || [])];
-                              next[i] = e.target.value;
+                              next[i] = val;
                               setEditingItem({ ...editingItem, travelTips: next });
                             }}
-                            className="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg outline-none focus:bg-white"
+                            className="flex-1"
                           />
                           <button
                             type="button"
@@ -1505,7 +1617,7 @@ export default function AdminInternationalPage() {
                               const next = (editingItem.travelTips || []).filter((_, idx) => idx !== i);
                               setEditingItem({ ...editingItem, travelTips: next });
                             }}
-                            className="text-slate-400 hover:text-rose-600 p-1"
+                            className="text-slate-400 hover:text-rose-600 p-1 shrink-0"
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -1551,14 +1663,6 @@ export default function AdminInternationalPage() {
                       >
                         Load Standard FAQs
                       </button>
-                      <button
-                        type="button"
-                        onClick={handleAddFaq}
-                        className="px-3 py-1 bg-[#0F3A2E] text-white rounded-lg text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-1 shadow-2xs"
-                      >
-                        <Plus className="w-3 h-3" />
-                        <span>Add FAQ</span>
-                      </button>
                     </div>
                   </div>
 
@@ -1567,17 +1671,17 @@ export default function AdminInternationalPage() {
                       {editingItem.faqs.map((faq, idx) => (
                         <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
                           <div className="flex items-center justify-between gap-2">
-                            <input
-                              type="text"
+                            <CustomEditableField
+                              compact
                               value={faq.question}
-                              onChange={(e) => handleUpdateFaq(idx, "question", e.target.value)}
+                              onChange={(val) => handleUpdateFaq(idx, "question", val)}
                               placeholder="Question e.g. Do Indian passport holders get Visa on Arrival?"
-                              className="flex-1 px-3 py-1.5 text-xs font-bold bg-white border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                              className="flex-1"
                             />
                             <button
                               type="button"
                               onClick={() => handleRemoveFaq(idx)}
-                              className="text-slate-400 hover:text-rose-600 p-1"
+                              className="text-slate-400 hover:text-rose-600 p-1 shrink-0"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -1592,10 +1696,33 @@ export default function AdminInternationalPage() {
                           />
                         </div>
                       ))}
+
+                      {/* Add FAQ Button - Positioned at Bottom */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-200 mt-2">
+                        <span className="text-xs text-slate-500 font-semibold">
+                          Total {(editingItem.faqs?.length || 0)} FAQs configured
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleAddFaq}
+                          className="px-5 py-2.5 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-2 shadow-xs cursor-pointer active:scale-95 self-end"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>+ Add FAQ {(editingItem.faqs?.length || 0) + 1}</span>
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                       <p className="text-xs text-slate-400 font-semibold">No FAQs yet.</p>
+                      <button
+                        type="button"
+                        onClick={handleAddFaq}
+                        className="mt-3 px-4 py-2 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] inline-flex items-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>+ Add First FAQ</span>
+                      </button>
                     </div>
                   )}
                 </div>

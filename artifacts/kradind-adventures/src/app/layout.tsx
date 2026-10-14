@@ -3,7 +3,7 @@ import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { FloatingWhatsApp } from "@/components/floating-whatsapp";
-import { VoiceAssistant } from "@/components/voice-assistant";
+import { VoiceAssistantWrapper } from "@/components/voice-assistant-wrapper";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -142,11 +142,11 @@ const globalStructuredData = {
       },
       sameAs: [
         "https://wa.me/919797941414",
+        "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34",
         "https://www.instagram.com/kradglobal/",
         "https://www.facebook.com/share/189E2RUcH4/",
         "https://www.youtube.com/@kradglobaltravels",
         "https://x.com/KradGlobalTour",
-        "https://www.threads.net/@kradglobal",
         "https://in.pinterest.com/KradGlobalTravels/",
         "https://www.linkedin.com/company/krad-india/",
       ],
@@ -281,11 +281,11 @@ const globalStructuredData = {
       ],
       sameAs: [
         "https://wa.me/919797941414",
+        "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34",
         "https://www.instagram.com/kradglobal/",
         "https://www.facebook.com/share/189E2RUcH4/",
         "https://www.youtube.com/@kradglobaltravels",
         "https://x.com/KradGlobalTour",
-        "https://www.threads.net/@kradglobal",
         "https://in.pinterest.com/KradGlobalTravels/",
         "https://www.linkedin.com/company/krad-india/",
       ],
@@ -370,7 +370,7 @@ export default function RootLayout({
         </Script>
 
         {/* Meta Pixel Code (KRAD Global Meta Account: 2151584355707802) */}
-        <Script id="meta-pixel" strategy="afterInteractive">
+        <Script id="meta-pixel" strategy="lazyOnload">
           {`
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -396,7 +396,7 @@ export default function RootLayout({
 
         {children}
         <FloatingWhatsApp />
-        <VoiceAssistant />
+        <VoiceAssistantWrapper />
       </body>
     </html>
   );

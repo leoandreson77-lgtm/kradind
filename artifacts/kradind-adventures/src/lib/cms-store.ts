@@ -16,6 +16,9 @@ export interface TrekBatch {
   monthGroup?: string;
   seasonTheme?: string;
   note?: string;
+  roomsAllotted?: string;
+  vehicleAllotted?: string;
+  totalCapacity?: number;
 }
 
 export interface TrekItineraryDay {
@@ -149,6 +152,24 @@ export interface HomeSectionsConfig {
     subtitle: string;
     seasonTag?: string;
     featuredSlugs: string[];
+    activeSeason?: string;
+    departureDuration?: string;
+    packageDuration?: string;
+    seasonEndDate?: string;
+    sessionStatus?: "active" | "coming_soon" | "ended";
+    nextSessionLabel?: string;
+    seasons?: Array<{
+      id: string;
+      label: string;
+      emoji: string;
+      title: string;
+      subtitle: string;
+      dateRange: string;
+      endDate?: string;
+      packageDuration?: string;
+      status?: "active" | "coming_soon" | "ended";
+      featuredSlugs: string[];
+    }>;
   };
   eeat: {
     badge: string;
@@ -172,7 +193,8 @@ export interface HomeSectionsConfig {
     facebookUrl: string;
     youtubeUrl: string;
     twitterUrl: string;
-    threadsUrl: string;
+    threadsUrl?: string;
+    whatsappChannelUrl?: string;
     pinterestUrl: string;
     linkedinUrl?: string;
     copyrightText: string;
@@ -449,11 +471,43 @@ export interface InternalChatChannel {
   icon: string;
 }
 
+export interface ProposalVersionSnapshot {
+  version: number;
+  timestamp: string;
+  author: string;
+  note?: string;
+  proposalSnapshot: Partial<CustomerItineraryProposal>;
+}
+
+export interface ProposalHotelDetail {
+  day: number;
+  city: string;
+  hotelName: string;
+  rating: string;
+  roomType: string;
+  mealPlan: string;
+  checkIn?: string;
+  checkOut?: string;
+  nightCount?: number;
+}
+
+export interface ProposalInventoryAlloc {
+  batchDate?: string;
+  slotsBlocked?: number;
+  hotelRoomsBlocked?: number;
+  vehicleAssigned?: string;
+  status?: "Reserved" | "Confirmed" | "Waitlist" | "Released";
+}
+
 export interface ItineraryProposalDay {
   day: number;
   title: string;
   description: string;
   stay?: string;
+  hotelName?: string;
+  hotelRating?: string;
+  roomType?: string;
+  mealPlan?: string;
   meal?: string;
   activities?: string;
   distance?: string;
@@ -470,6 +524,7 @@ export interface CustomerItineraryProposal {
   customerCity?: string;
   packageTitle: string;
   basePackageSlug?: string;
+  packageType?: "Trek" | "Domestic" | "International" | "Weekend" | "Fixed";
   destination: string;
   duration: string;
   startDate?: string;
@@ -479,6 +534,8 @@ export interface CustomerItineraryProposal {
   pickupLocation?: string;
   dropLocation?: string;
   hotelCategory: string;
+  roomCategory?: string;
+  hotelDetails?: ProposalHotelDetail[];
   vehicleType: string;
   itinerary: ItineraryProposalDay[];
   inclusions: string[];
@@ -488,10 +545,14 @@ export interface CustomerItineraryProposal {
   advanceDepositRequired?: number;
   validUntil?: string;
   specialNotes?: string;
-  status: "Draft" | "Sent" | "Accepted" | "Under Review" | "Expired";
+  status: "Draft" | "Sent" | "Accepted" | "Under Review" | "Expired" | "Recycled";
   author: string;
+  version?: number;
+  versionHistory?: ProposalVersionSnapshot[];
+  inventory?: ProposalInventoryAlloc;
   createdAt: string;
   updatedAt: string;
+  recycledAt?: string;
 }
 
 export interface CMSStoreData {
@@ -507,9 +568,25 @@ export interface CMSStoreData {
   customerTimeline?: CustomerTimelineEvent[];
   customerTasks?: CustomerTask[];
   customerProposals?: CustomerItineraryProposal[];
+  recycledProposals?: CustomerItineraryProposal[];
+  recycledTreks?: TrekData[];
   auditLogs?: AuditLogRecord[];
   chatMessages?: InternalChatMessage[];
   chatChannels?: InternalChatChannel[];
+  studioOptions?: {
+    accommodationCategories?: string[];
+    roomCategories?: string[];
+    vehicleTypes?: string[];
+    customHotels?: Array<{
+      name: string;
+      city: string;
+      rating: string;
+      roomType: string;
+      mealPlan: string;
+    }>;
+    customInclusions?: string[];
+    customExclusions?: string[];
+  };
 }
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
@@ -2711,12 +2788,18 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       title: "Top 5 Treks for October-November",
       subtitle: "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
       seasonTag: "October - November",
+      activeSeason: "oct-nov",
+      departureDuration: "15 Oct 2026 – 30 Nov 2026",
+      packageDuration: "2 to 6 Days",
+      seasonEndDate: "2026-11-30",
+      sessionStatus: "active",
+      nextSessionLabel: "Register for Next Session",
       featuredSlugs: [
+        "chopta-tungnath-chandrashila",
+        "hampta-pass",
+        "kheerganga-trek",
         "kuari-pass-trek",
         "dayara-bugyal-trek",
-        "chopta-tungnath-chandrashila",
-        "pench-tiger-trail",
-        "hampta-pass",
       ],
     },
     eeat: {
@@ -2787,7 +2870,8 @@ export function getDefaultHomeSections(): HomeSectionsConfig {
       facebookUrl: "https://www.facebook.com/share/189E2RUcH4/",
       youtubeUrl: "https://www.youtube.com/@kradglobaltravels",
       twitterUrl: "https://x.com/KradGlobalTour",
-      threadsUrl: "https://www.threads.net/@kradglobal",
+      threadsUrl: "",
+      whatsappChannelUrl: "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34",
       pinterestUrl: "https://in.pinterest.com/KradGlobalTravels/",
       linkedinUrl: "https://www.linkedin.com/company/krad-india/",
       copyrightText: "© 2026 KRADIND Adventures Private Limited. All rights reserved. Registered under Ministry of Tourism.",
@@ -3324,15 +3408,22 @@ export function readStore(): CMSStoreData {
         title: rawHome?.seasonalCollection?.title || defaultSections.seasonalCollection?.title || "Top 5 Treks for October-November",
         subtitle: rawHome?.seasonalCollection?.subtitle || defaultSections.seasonalCollection?.subtitle || "Oct-Nov is the best window for doing the high-altitude treks in our country with the clearest views. Here are the Top 5.",
         seasonTag: rawHome?.seasonalCollection?.seasonTag || defaultSections.seasonalCollection?.seasonTag || "October - November",
+        activeSeason: rawHome?.seasonalCollection?.activeSeason || defaultSections.seasonalCollection?.activeSeason || "oct-nov",
+        departureDuration: rawHome?.seasonalCollection?.departureDuration || defaultSections.seasonalCollection?.departureDuration || "15 Oct 2026 – 30 Nov 2026",
+        packageDuration: rawHome?.seasonalCollection?.packageDuration || defaultSections.seasonalCollection?.packageDuration || "2 to 6 Days",
+        seasonEndDate: rawHome?.seasonalCollection?.seasonEndDate || defaultSections.seasonalCollection?.seasonEndDate || "2026-11-30",
+        sessionStatus: rawHome?.seasonalCollection?.sessionStatus || defaultSections.seasonalCollection?.sessionStatus || "active",
+        nextSessionLabel: rawHome?.seasonalCollection?.nextSessionLabel || defaultSections.seasonalCollection?.nextSessionLabel || "Register for Next Session",
+        seasons: rawHome?.seasonalCollection?.seasons || defaultSections.seasonalCollection?.seasons,
         featuredSlugs:
           rawHome?.seasonalCollection?.featuredSlugs && rawHome.seasonalCollection.featuredSlugs.length > 0
             ? rawHome.seasonalCollection.featuredSlugs
             : defaultSections.seasonalCollection?.featuredSlugs || [
+                "chopta-tungnath-chandrashila",
+                "hampta-pass",
+                "kheerganga-trek",
                 "kuari-pass-trek",
                 "dayara-bugyal-trek",
-                "chopta-tungnath-chandrashila",
-                "pench-tiger-trail",
-                "hampta-pass",
               ],
       },
       eeat: {
@@ -3659,9 +3750,14 @@ function sanitizeSectionsConfig(sections: HomeSectionsConfig): { sanitized: Home
     if (
       sections.contactAndFooter.supportEmail &&
       (sections.contactAndFooter.supportEmail.includes("support@") ||
-        sections.contactAndFooter.supportEmail.includes("hello@"))
+        sections.contactAndFooter.supportEmail.includes("hello@") ||
+        sections.contactAndFooter.supportEmail.includes("info@"))
     ) {
-      sections.contactAndFooter.supportEmail = "info@kradind.com";
+      sections.contactAndFooter.supportEmail = "Info@kradind.com";
+      hasChanges = true;
+    }
+    if (!sections.contactAndFooter.whatsappChannelUrl) {
+      sections.contactAndFooter.whatsappChannelUrl = "https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34";
       hasChanges = true;
     }
   }
@@ -3732,7 +3828,20 @@ export {
 };
 
 
+let cachedTreksList: TrekData[] | null = null;
+let cachedTreksTimestamp = 0;
+const TREKS_CACHE_TTL_MS = 45000; // 45 seconds in-memory cache
+
+export function invalidateTreksCache(): void {
+  cachedTreksList = null;
+  cachedTreksTimestamp = 0;
+}
+
 export async function getTreksAsync(): Promise<TrekData[]> {
+  if (cachedTreksList && Date.now() - cachedTreksTimestamp < TREKS_CACHE_TTL_MS) {
+    return cachedTreksList;
+  }
+
   try {
     const db = await getDb();
     const docs = await db.collection("kradind_treks").find({}).toArray();
@@ -3837,9 +3946,8 @@ export async function getTreksAsync(): Promise<TrekData[]> {
 
       const store = readStore();
       store.treks = cleanTreks;
-      try {
-        writeStore(store);
-      } catch {}
+      cachedTreksList = cleanTreks;
+      cachedTreksTimestamp = Date.now();
       return cleanTreks;
     }
   } catch (err) {
@@ -3850,10 +3958,13 @@ export async function getTreksAsync(): Promise<TrekData[]> {
   const filteredLocal = (localStore.treks || []).filter(
     (t) => !OBSOLETE_TREK_SLUGS.has((t.slug || "").replace(/^\/+/, ""))
   );
+  cachedTreksList = filteredLocal;
+  cachedTreksTimestamp = Date.now();
   return filteredLocal;
 }
 
 export async function syncTreksToMongo(treks: TrekData[]): Promise<void> {
+  invalidateTreksCache();
   try {
     const db = await getDb();
     const col = db.collection("kradind_treks");
@@ -4272,9 +4383,37 @@ export async function saveProposalAsync(
   if (isNew) {
     proposal.createdAt = proposal.createdAt || now;
     proposal.updatedAt = now;
+    proposal.version = 1;
+    proposal.versionHistory = [];
     store.customerProposals.unshift(proposal);
   } else {
+    const existing = store.customerProposals[idx];
+    const currentVer = existing.version || 1;
+    proposal.version = currentVer + 1;
     proposal.updatedAt = now;
+
+    // Snapshot version history
+    const existingHistory = Array.isArray(existing.versionHistory) ? existing.versionHistory : [];
+    proposal.versionHistory = [
+      {
+        version: currentVer,
+        timestamp: existing.updatedAt || now,
+        author: existing.author || actorName,
+        note: `Revision v${currentVer} by ${existing.author || actorName}`,
+        proposalSnapshot: {
+          packageTitle: existing.packageTitle,
+          totalQuotedPrice: existing.totalQuotedPrice,
+          itinerary: existing.itinerary,
+          hotelDetails: existing.hotelDetails,
+          hotelCategory: existing.hotelCategory,
+          inclusions: existing.inclusions,
+          exclusions: existing.exclusions,
+          vehicleType: existing.vehicleType,
+        },
+      },
+      ...existingHistory,
+    ].slice(0, 20); // Keep last 20 snapshots
+
     store.customerProposals[idx] = proposal;
   }
 
@@ -4318,23 +4457,135 @@ export async function saveProposalAsync(
   return proposal;
 }
 
-export async function deleteProposalAsync(id: string, actorName = "Admin Agent"): Promise<boolean> {
+export async function recycleProposalAsync(id: string, actorName = "Admin Agent"): Promise<boolean> {
   const store = readStore();
   if (!store.customerProposals) return false;
   const idx = store.customerProposals.findIndex((p) => p.id === id);
   if (idx === -1) return false;
 
-  const removed = store.customerProposals.splice(idx, 1)[0];
+  const proposal = store.customerProposals.splice(idx, 1)[0];
+  proposal.status = "Recycled";
+  proposal.recycledAt = new Date().toISOString();
+
+  if (!store.recycledProposals) store.recycledProposals = [];
+  store.recycledProposals.unshift(proposal);
 
   if (!store.auditLogs) store.auditLogs = [];
   store.auditLogs.unshift({
     id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     actorName,
     actorEmail: "admin@kradind.com",
-    action: "Deleted Proposal",
+    action: "Moved Proposal to Recycle Bin",
     targetEntity: "Customer",
     targetId: id,
-    details: `Proposal "${removed.packageTitle}" for ${removed.customerName} deleted.`,
+    details: `Itinerary proposal "${proposal.packageTitle}" moved to recycle bin.`,
+    timestamp: new Date().toISOString(),
+  });
+
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    await db.collection("kradind_proposals").updateOne(
+      { id },
+      { $set: { status: "Recycled", recycledAt: proposal.recycledAt } },
+      { upsert: true }
+    );
+  } catch {}
+
+  return true;
+}
+
+export async function restoreProposalAsync(id: string, actorName = "Admin Agent"): Promise<CustomerItineraryProposal | null> {
+  const store = readStore();
+  let proposal: CustomerItineraryProposal | undefined;
+
+  if (store.recycledProposals) {
+    const rIdx = store.recycledProposals.findIndex((p) => p.id === id);
+    if (rIdx > -1) {
+      proposal = store.recycledProposals.splice(rIdx, 1)[0];
+    }
+  }
+
+  if (!proposal && store.customerProposals) {
+    const cIdx = store.customerProposals.findIndex((p) => p.id === id && p.status === "Recycled");
+    if (cIdx > -1) {
+      proposal = store.customerProposals[cIdx];
+    }
+  }
+
+  if (!proposal) return null;
+
+  proposal.status = "Draft";
+  proposal.updatedAt = new Date().toISOString();
+  delete proposal.recycledAt;
+
+  if (!store.customerProposals) store.customerProposals = [];
+  store.customerProposals.unshift(proposal);
+
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    await db.collection("kradind_proposals").updateOne(
+      { id },
+      { $set: { status: "Draft", updatedAt: proposal.updatedAt }, $unset: { recycledAt: "" } },
+      { upsert: true }
+    );
+  } catch {}
+
+  return proposal;
+}
+
+export async function getRecycledProposalsAsync(): Promise<CustomerItineraryProposal[]> {
+  const store = readStore();
+  const fromRecycled = store.recycledProposals || [];
+  const fromProposals = (store.customerProposals || []).filter((p) => p.status === "Recycled");
+  const uniqueMap = new Map<string, CustomerItineraryProposal>();
+  for (const p of [...fromRecycled, ...fromProposals]) {
+    uniqueMap.set(p.id, p);
+  }
+  return Array.from(uniqueMap.values());
+}
+
+export async function emptyRecycleBinAsync(): Promise<boolean> {
+  const store = readStore();
+  const recycledIds = (store.recycledProposals || []).map((p) => p.id);
+  store.recycledProposals = [];
+  if (store.customerProposals) {
+    store.customerProposals = store.customerProposals.filter((p) => p.status !== "Recycled");
+  }
+  writeStore(store);
+
+  try {
+    const db = await getDb();
+    if (recycledIds.length > 0) {
+      await db.collection("kradind_proposals").deleteMany({ id: { $in: recycledIds } });
+    }
+  } catch {}
+
+  return true;
+}
+
+export async function deleteProposalAsync(id: string, actorName = "Admin Agent"): Promise<boolean> {
+  // Hard delete
+  const store = readStore();
+  if (store.recycledProposals) {
+    store.recycledProposals = store.recycledProposals.filter((p) => p.id !== id);
+  }
+  if (store.customerProposals) {
+    store.customerProposals = store.customerProposals.filter((p) => p.id !== id);
+  }
+
+  if (!store.auditLogs) store.auditLogs = [];
+  store.auditLogs.unshift({
+    id: `AUD-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    actorName,
+    actorEmail: "admin@kradind.com",
+    action: "Permanently Deleted Proposal",
+    targetEntity: "Customer",
+    targetId: id,
+    details: `Proposal ${id} permanently removed.`,
     timestamp: new Date().toISOString(),
   });
 
@@ -4347,6 +4598,7 @@ export async function deleteProposalAsync(id: string, actorName = "Admin Agent")
 
   return true;
 }
+
 
 export async function getAuditLogsAsync(): Promise<AuditLogRecord[]> {
   const store = readStore();

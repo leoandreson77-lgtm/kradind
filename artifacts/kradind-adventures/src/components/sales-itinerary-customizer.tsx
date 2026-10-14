@@ -509,14 +509,6 @@ export function SalesItineraryCustomizer({
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Reset</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={handleAddDay}
-                      className="px-3.5 py-1.5 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-1 cursor-pointer shadow-xs"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Add Extra Day</span>
-                    </button>
                   </div>
                 </div>
 
@@ -591,6 +583,21 @@ export function SalesItineraryCustomizer({
                       />
                     </div>
                   ))}
+                </div>
+
+                {/* Add Day / Activity Button - At the Bottom */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-200 mt-2">
+                  <span className="text-xs text-slate-500 font-semibold">
+                    Total {days.length} Days / Activities configured
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleAddDay}
+                    className="px-5 py-2.5 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 self-end"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>+ Add Day / Activity {days.length + 1}</span>
+                  </button>
                 </div>
               </div>
             )}

@@ -23,6 +23,7 @@ import {
   XCircle,
   FileText,
   Sparkles,
+  DoorClosed,
 } from "lucide-react";
 import { CustomerItineraryProposal } from "@/lib/cms-store";
 
@@ -89,7 +90,7 @@ export function ProposalVoucherModal({
 ⏱️ Duration: ${proposal.duration}
 👥 Pax: ${proposal.adultsCount} Adult(s)${proposal.childrenCount ? ` + ${proposal.childrenCount} Child(ren)` : ""}
 📅 Dates: ${proposal.startDate || "TBD"} to ${proposal.endDate || "TBD"}
-🏨 Stay: ${proposal.hotelCategory}
+🏨 Stay: ${proposal.hotelCategory}${proposal.roomCategory ? ` (${proposal.roomCategory})` : ""}
 🚗 Transit: ${proposal.vehicleType}
 
 💰 Total Quoted Price: ${formatCurrency(proposal.totalQuotedPrice)}
@@ -397,12 +398,19 @@ KRADIND Adventures | Himalayas & Beyond
           </div>
 
           {/* Hospitality & Transit Logistics Strip */}
-          <div className="bg-slate-100/70 border border-slate-200 rounded-2xl p-3.5 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs page-break-avoid print:bg-slate-100">
+          <div className="bg-slate-100/70 border border-slate-200 rounded-2xl p-3.5 mb-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs page-break-avoid print:bg-slate-100">
             <div className="flex items-center gap-2.5">
               <Bed className="w-4 h-4 text-emerald-700 shrink-0" />
               <div>
                 <span className="text-[10px] text-slate-400 block font-semibold uppercase">Accommodation</span>
                 <span className="font-bold text-slate-800">{proposal.hotelCategory || "Standard 3-Star / Camp"}</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <DoorClosed className="w-4 h-4 text-teal-700 shrink-0" />
+              <div>
+                <span className="text-[10px] text-slate-400 block font-semibold uppercase">Room Category</span>
+                <span className="font-bold text-slate-800">{proposal.roomCategory || "Standard Room"}</span>
               </div>
             </div>
             <div className="flex items-center gap-2.5">

@@ -27,6 +27,17 @@ import {
   Copy,
   ArrowUp,
   ArrowDown,
+  Building2,
+  History,
+  ClipboardCopy,
+  ClipboardPaste,
+  Boxes,
+  Layers,
+  Eye,
+  Check,
+  X,
+  Shield,
+  Download,
 } from "lucide-react";
 import type {
   CustomerItineraryProposal,
@@ -35,6 +46,75 @@ import type {
   TrekData,
 } from "@/lib/cms-store";
 import { getPackageSection } from "@/lib/package-sections";
+import { CustomEditableField } from "@/components/admin/custom-editable-field";
+
+/**
+ * Utility to strip raw markdown asterisks (**, *) from package text
+ * so clean, readable content is loaded in Itinerary Studio and proposals
+ */
+export function cleanAsterisks(text?: string): string {
+  if (!text) return "";
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/\*\*/g, "")
+    .replace(/(^|\n)\s*\*\s+/g, "$1• ")
+    .replace(/\*/g, "")
+    .trim();
+}
+
+export const POPULAR_HOTEL_DIRECTORY = [
+  // Goa
+  { name: "The Leela Goa", city: "Cavelossim, Goa", rating: "5-Star Luxury", roomType: "Lagoon Deluxe Suite", mealPlan: "CP" },
+  { name: "Taj Exotica Resort & Spa", city: "Benaulim, Goa", rating: "5-Star Luxury", roomType: "Premium Villa Room", mealPlan: "CP" },
+  { name: "Heritage Village Resort & Spa", city: "Arossim, Goa", rating: "4-Star Deluxe", roomType: "Superior Heritage Room", mealPlan: "MAP" },
+  { name: "Resort Rio Arpora", city: "Baga/Arpora, Goa", rating: "4-Star Deluxe", roomType: "Luxury Deluxe Room", mealPlan: "MAP" },
+  { name: "ibis Styles Calangute", city: "Calangute, Goa", rating: "3-Star Standard", roomType: "Standard AC Room", mealPlan: "CP" },
+  { name: "Whispering Palms Beach Resort", city: "Candolim, Goa", rating: "4-Star Deluxe", roomType: "Balcony Room", mealPlan: "MAP" },
+  // Manali / Himachal
+  { name: "The Himalayan Resort & Spa", city: "Old Manali, HP", rating: "5-Star Luxury", roomType: "Castle Premier Room", mealPlan: "MAP" },
+  { name: "Apple Country Resort", city: "Log Huts, Manali", rating: "4-Star Deluxe", roomType: "Mountain Valley Deluxe", mealPlan: "MAP" },
+  { name: "Snow Valley Resorts", city: "Log Huts, Manali", rating: "3-Star Standard", roomType: "Luxury Pine View Room", mealPlan: "MAP" },
+  { name: "Solang Valley Alpine Cottages", city: "Solang, Manali", rating: "Alpine Camp", roomType: "Wooden Alpine Cottage", mealPlan: "MAP" },
+  { name: "Wildflower Hall, An Oberoi Resort", city: "Shimla, HP", rating: "5-Star Luxury", roomType: "Premier Mountain View Room", mealPlan: "CP" },
+  // Kerala
+  { name: "Blanket Hotel & Spa", city: "Munnar, Kerala", rating: "5-Star Luxury", roomType: "Valley View Luxury Room", mealPlan: "MAP" },
+  { name: "Fragrant Nature Resort", city: "Munnar, Kerala", rating: "4-Star Deluxe", roomType: "Tropic Green Room", mealPlan: "MAP" },
+  { name: "Lake Palace Houseboat", city: "Alleppey, Kerala", rating: "Luxury Houseboat", roomType: "AC Deluxe Bedroom", mealPlan: "AP" },
+  { name: "Spice Village - CGH Earth", city: "Thekkady, Kerala", rating: "4-Star Heritage", roomType: "Standard Spice Cottage", mealPlan: "MAP" },
+  { name: "Poovar Island Resort", city: "Poovar/Kovalam, Kerala", rating: "4-Star Deluxe", roomType: "Floating Luxury Cottage", mealPlan: "CP" },
+  // Meghalaya / Northeast
+  { name: "Polo Orchid Resort", city: "Cherrapunji, Meghalaya", rating: "4-Star Deluxe", roomType: "Seven Sisters Falls View Suite", mealPlan: "MAP" },
+  { name: "Ri Kynjai - Serenity by the Lake", city: "Umiam Lake, Meghalaya", rating: "5-Star Luxury", roomType: "Superior Lake View Cottage", mealPlan: "CP" },
+  { name: "Hotel Polo Towers", city: "Shillong, Meghalaya", rating: "4-Star Deluxe", roomType: "Executive Deluxe Room", mealPlan: "CP" },
+  { name: "Jiva Resort", city: "Cherrapunji, Meghalaya", rating: "4-Star Deluxe", roomType: "Luxury Suite", mealPlan: "MAP" },
+  // Maharashtra
+  { name: "Fariyas Resort", city: "Lonavala, Maharashtra", rating: "5-Star Luxury", roomType: "Deluxe Valley Room", mealPlan: "MAP" },
+  { name: "Le Méridien Resort & Spa", city: "Mahabaleshwar, Maharashtra", rating: "5-Star Luxury", roomType: "Classic Forest View Room", mealPlan: "CP" },
+  { name: "Evershine Resort & Spa", city: "Mahabaleshwar, Maharashtra", rating: "4-Star Deluxe", roomType: "Executive Garden Room", mealPlan: "MAP" },
+  { name: "Della Resorts", city: "Lonavala, Maharashtra", rating: "5-Star Luxury", roomType: "Luxury Resort Room", mealPlan: "CP" },
+  // Rajasthan
+  { name: "ITC Rajputana, Luxury Collection", city: "Jaipur, Rajasthan", rating: "5-Star Luxury", roomType: "Rajputana Chamber", mealPlan: "CP" },
+  { name: "Alsisar Haveli", city: "Jaipur, Rajasthan", rating: "Heritage 4-Star", roomType: "Heritage Standard Haveli", mealPlan: "MAP" },
+  { name: "Ajit Bhawan Palace", city: "Jodhpur, Rajasthan", rating: "Heritage Palace", roomType: "Luxury Heritage Room", mealPlan: "MAP" },
+  { name: "Fateh Garh Heritage Resort", city: "Udaipur, Rajasthan", rating: "Heritage 4-Star", roomType: "Renaissance Suite", mealPlan: "MAP" },
+  { name: "Sam Sand Dunes Royal Camp", city: "Jaisalmer, Rajasthan", rating: "Desert Camp", roomType: "Swiss AC Luxury Tent", mealPlan: "MAP" },
+  // Kashmir
+  { name: "The Khyber Himalayan Resort & Spa", city: "Gulmarg, Kashmir", rating: "5-Star Luxury", roomType: "Premier Pine View Room", mealPlan: "MAP" },
+  { name: "Radisson Collection Hotel & Spa", city: "Srinagar, Kashmir", rating: "5-Star Luxury", roomType: "Deluxe Mountain View", mealPlan: "CP" },
+  { name: "Kolahoi Green Resort", city: "Pahalgam, Kashmir", rating: "4-Star Deluxe", roomType: "Deluxe Pine Cottage", mealPlan: "MAP" },
+  { name: "WelcomHeritage Gurkha Houseboat", city: "Nigeen/Dal Lake, Kashmir", rating: "Heritage Houseboat", roomType: "Royal Cedar Suite", mealPlan: "MAP" },
+  // Uttarakhand & Himalayan Treks
+  { name: "Alpine Swiss Tents Chopta", city: "Chopta, Uttarakhand", rating: "Alpine Camp", roomType: "Swiss Tent with Attached Bath", mealPlan: "MAP" },
+  { name: "Himalayan Eco Lodge", city: "Sankri/Kedarkantha", rating: "Mountain Lodge", roomType: "Standard Wooden Room", mealPlan: "MAP" },
+  { name: "Monal Resort", city: "Rudraprayag, Uttarakhand", rating: "3-Star Standard", roomType: "Alaknanda River View Room", mealPlan: "MAP" },
+  { name: "Camp AquaForest", city: "Rishikesh, Uttarakhand", rating: "Luxury Camp", roomType: "Riverbank AC Dome Tent", mealPlan: "MAP" },
+  // International
+  { name: "Ayana Resort and Spa", city: "Jimbaran, Bali", rating: "5-Star Luxury", roomType: "Resort View Room", mealPlan: "CP" },
+  { name: "Atlantis, The Palm", city: "Dubai, UAE", rating: "5-Star Luxury", roomType: "Ocean King Room", mealPlan: "CP" },
+  { name: "Amari Phuket", city: "Patong, Thailand", rating: "4-Star Deluxe", roomType: "Superior Ocean Facing", mealPlan: "CP" },
+  { name: "Vinpearl Resort & Spa", city: "Nha Trang, Vietnam", rating: "5-Star Luxury", roomType: "Deluxe King Room", mealPlan: "CP" },
+];
 
 interface ItineraryStudioProps {
   packages: TrekData[];
@@ -80,8 +160,9 @@ export function ItineraryStudio({
       childrenCount: 0,
       pickupLocation: "",
       dropLocation: "",
-      hotelCategory: "Standard 3-Star / Alpine Camp",
-      vehicleType: "Private AC Sedan / Ertiga",
+      hotelCategory: "3 star hotel",
+      roomCategory: "Standard Room",
+      vehicleType: "Private AC Sedan (Dzire / Etios)",
       itinerary: [],
       inclusions: [],
       exclusions: [],
@@ -101,6 +182,148 @@ export function ItineraryStudio({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
   const [newInclusion, setNewInclusion] = useState("");
   const [newExclusion, setNewExclusion] = useState("");
+
+  // Accommodation, Room Category & Vehicle Type dynamic lists
+  const [accommodationCategories, setAccommodationCategories] = useState<string[]>([
+    "Guest house",
+    "2 star hotel",
+    "3 star hotel",
+    "4 star hotel",
+    "5 star hotel",
+    "Alpine Dome Tents + Standard Homestay",
+    "Standard (3-Star)",
+    "4-Star Heritage Haveli & Palace Stay",
+    "5-Star Luxury Resort",
+    "Glamping Luxury Geodesic Domes",
+  ]);
+
+  const [roomCategories, setRoomCategories] = useState<string[]>([
+    "Standard Room",
+    "Deluxe Room",
+    "Superior Room",
+    "Premium Room",
+    "Executive Room",
+    "Suite Room",
+  ]);
+
+  const [vehicleTypes, setVehicleTypes] = useState<string[]>([
+    "Private AC Sedan (Dzire / Etios)",
+    "Private AC Ertiga / XL6",
+    "Private AC Innova Crysta",
+    "Private 12-Seater Tempo Traveller",
+    "Shared Mountain Bolero / Sumo",
+    "Self-Drive / Not Included",
+  ]);
+
+  const [isEditingAccommodation, setIsEditingAccommodation] = useState(false);
+  const [isEditingRoom, setIsEditingRoom] = useState(false);
+  const [isEditingVehicle, setIsEditingVehicle] = useState(false);
+
+  // Modal / prompt for adding custom item to backend
+  const [showAddOptionModal, setShowAddOptionModal] = useState<
+    "accommodation" | "room" | "vehicle" | "inclusion" | "exclusion" | null
+  >(null);
+  const [customOptionInput, setCustomOptionInput] = useState("");
+  const [savingCustomOption, setSavingCustomOption] = useState(false);
+
+  // Hotel directory state (with backend persistence)
+  const [popularHotels, setPopularHotels] = useState<typeof POPULAR_HOTEL_DIRECTORY>(POPULAR_HOTEL_DIRECTORY);
+  const [customInclusions, setCustomInclusions] = useState<string[]>([]);
+  const [customExclusions, setCustomExclusions] = useState<string[]>([]);
+  const [showAddHotelModal, setShowAddHotelModal] = useState(false);
+  const [newHotelForm, setNewHotelForm] = useState({
+    name: "",
+    city: "",
+    rating: "3-Star Standard",
+    roomType: "Deluxe Room",
+    mealPlan: "MAP",
+  });
+
+  // Fetch saved studio options from backend on mount
+  useEffect(() => {
+    fetch("/api/admin/crm/studio-options")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.accommodationCategories && Array.isArray(data.accommodationCategories)) {
+          setAccommodationCategories(data.accommodationCategories);
+        }
+        if (data.roomCategories && Array.isArray(data.roomCategories)) {
+          setRoomCategories(data.roomCategories);
+        }
+        if (data.vehicleTypes && Array.isArray(data.vehicleTypes)) {
+          setVehicleTypes(data.vehicleTypes);
+        }
+        if (data.customHotels && Array.isArray(data.customHotels) && data.customHotels.length > 0) {
+          setPopularHotels((prev) => {
+            const seen = new Set(prev.map((h) => `${h.name.toLowerCase()}:::${h.city.toLowerCase()}`));
+            const uniqueCustom = data.customHotels.filter(
+              (h: any) => !seen.has(`${h.name.toLowerCase()}:::${h.city.toLowerCase()}`)
+            );
+            return [...uniqueCustom, ...prev];
+          });
+        }
+        if (data.customInclusions && Array.isArray(data.customInclusions)) {
+          setCustomInclusions(data.customInclusions);
+        }
+        if (data.customExclusions && Array.isArray(data.customExclusions)) {
+          setCustomExclusions(data.customExclusions);
+        }
+      })
+      .catch((err) => console.warn("Could not load studio options:", err));
+  }, []);
+
+  // Save new custom option to backend
+  const handleSaveNewOption = async (
+    type: "accommodation" | "room" | "vehicle" | "inclusion" | "exclusion",
+    name: string
+  ) => {
+    if (!name.trim()) return;
+    const cleanName = cleanAsterisks(name.trim());
+    setSavingCustomOption(true);
+
+    try {
+      const res = await fetch("/api/admin/crm/studio-options", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, name: cleanName }),
+      });
+
+      if (res.ok) {
+        if (type === "accommodation") {
+          setAccommodationCategories((prev) => Array.from(new Set([...prev, cleanName])));
+          setFormData((prev) => ({ ...prev, hotelCategory: cleanName }));
+        } else if (type === "room") {
+          setRoomCategories((prev) => Array.from(new Set([...prev, cleanName])));
+          setFormData((prev) => ({ ...prev, roomCategory: cleanName }));
+        } else if (type === "vehicle") {
+          setVehicleTypes((prev) => Array.from(new Set([...prev, cleanName])));
+          setFormData((prev) => ({ ...prev, vehicleType: cleanName }));
+        } else if (type === "inclusion") {
+          setCustomInclusions((prev) => Array.from(new Set([...prev, cleanName])));
+          setFormData((prev) => ({ ...prev, inclusions: [...prev.inclusions, cleanName] }));
+        } else if (type === "exclusion") {
+          setCustomExclusions((prev) => Array.from(new Set([...prev, cleanName])));
+          setFormData((prev) => ({ ...prev, exclusions: [...prev.exclusions, cleanName] }));
+        }
+        setCopiedToast(`Added "${cleanName}" to ${type} options & saved to backend!`);
+        setTimeout(() => setCopiedToast(""), 3000);
+      }
+    } catch (err) {
+      console.error("Error saving option to backend:", err);
+    } finally {
+      setSavingCustomOption(false);
+      setShowAddOptionModal(null);
+      setCustomOptionInput("");
+    }
+  };
+
+  // Copy / Paste / History / Hotel Picker / Inventory State
+  const [showHistoryModal, setShowHistoryModal] = useState<boolean>(false);
+  const [showPasteModal, setShowPasteModal] = useState<boolean>(false);
+  const [pasteJsonInput, setPasteJsonInput] = useState<string>("");
+  const [hotelPickerDayIdx, setHotelPickerDayIdx] = useState<number | null>(null);
+  const [hotelSearchQuery, setHotelSearchQuery] = useState<string>("");
+  const [copiedToast, setCopiedToast] = useState<string>("");
 
   // Auto-save & draft restoration state
   const [lastSavedTime, setLastSavedTime] = useState<string>("");
@@ -236,8 +459,9 @@ export function ItineraryStudio({
         childrenCount: 0,
         pickupLocation: "",
         dropLocation: "",
-        hotelCategory: "Standard 3-Star / Alpine Camp",
-        vehicleType: "Private AC Sedan / Ertiga",
+        hotelCategory: "3 star hotel",
+        roomCategory: "Standard Room",
+        vehicleType: "Private AC Sedan (Dzire / Etios)",
         itinerary: [],
         inclusions: [],
         exclusions: [],
@@ -258,7 +482,12 @@ export function ItineraryStudio({
   // Sync if initialProposal changes from outside
   useEffect(() => {
     if (initialProposal) {
-      setFormData({ ...initialProposal });
+      setFormData({
+        ...initialProposal,
+        hotelCategory: initialProposal.hotelCategory || "3 star hotel",
+        roomCategory: initialProposal.roomCategory || "Standard Room",
+        vehicleType: initialProposal.vehicleType || "Private AC Sedan (Dzire / Etios)",
+      });
       if (initialProposal.basePackageSlug) setSelectedPackageSlug(initialProposal.basePackageSlug);
       if (initialProposal.customerId) setSelectedCustomerId(initialProposal.customerId);
     }
@@ -277,7 +506,7 @@ export function ItineraryStudio({
     }));
   };
 
-  // Load existing package template
+  // Load existing package template (stripping any raw asterisks)
   const handleSelectPackageTemplate = (slug: string) => {
     setSelectedPackageSlug(slug);
     if (!slug) return;
@@ -287,13 +516,37 @@ export function ItineraryStudio({
 
     const mappedItinerary: ItineraryProposalDay[] = (pkg.itinerary || []).map((day: any, idx: number) => ({
       day: day.day || idx + 1,
-      title: day.title || `Day ${idx + 1}`,
-      description: day.description || day.desc || "",
-      stay: day.stay || "Standard Accommodation",
-      meal: day.meal || "Breakfast Included",
-      activities: day.activities || "",
-      distance: day.distance || "",
+      title: cleanAsterisks(day.title || `Day ${idx + 1}`),
+      description: cleanAsterisks(day.description || day.desc || ""),
+      stay: cleanAsterisks(day.stay || "Standard Accommodation"),
+      hotelName: cleanAsterisks(day.hotelName || day.stay || "Standard Hotel"),
+      hotelRating: cleanAsterisks(day.hotelRating || "3-Star Standard"),
+      roomType: cleanAsterisks(day.roomType || "Standard Room"),
+      mealPlan: cleanAsterisks(day.mealPlan || "MAP"),
+      meal: cleanAsterisks(day.meal || "Breakfast Included"),
+      activities: cleanAsterisks(day.activities || ""),
+      distance: cleanAsterisks(day.distance || ""),
+      altitude: cleanAsterisks(day.altitude || ""),
     }));
+
+    const inclusions = Array.isArray(pkg.inclusions) && pkg.inclusions.length > 0
+      ? pkg.inclusions.map((item) => cleanAsterisks(item))
+      : [
+        "All verified accommodation as per selected plan",
+        "Dedicated private transport with experienced mountain chauffeur",
+        "Daily breakfast and dinner (MAP plan)",
+        "Certified trek leader and local safety guides",
+        "All forest permits, entry passes, and state tolls",
+      ];
+
+    const exclusions = Array.isArray(pkg.exclusions) && pkg.exclusions.length > 0
+      ? pkg.exclusions.map((item) => cleanAsterisks(item))
+      : [
+        "Personal travel and medical insurance",
+        "Airfare or train journey to starting point",
+        "Any personal expenses, tips, and optional activities",
+        "Applicable 5% GST",
+      ];
 
     const basePrice = pkg.price || 9999;
     const adults = formData.adultsCount || 2;
@@ -302,31 +555,21 @@ export function ItineraryStudio({
 
     setFormData((prev) => ({
       ...prev,
-      packageTitle: pkg.name,
+      packageTitle: cleanAsterisks(pkg.name),
       basePackageSlug: pkg.slug,
-      destination: pkg.location || pkg.region || "Uttarakhand, Himalayas",
-      duration: pkg.duration || `${mappedItinerary.length || 5} Days`,
+      destination: cleanAsterisks(pkg.location || pkg.region || "Uttarakhand, Himalayas"),
+      duration: cleanAsterisks(pkg.duration || `${mappedItinerary.length || 5} Days`),
       basePricePerPerson: basePrice,
       totalQuotedPrice: total,
       advanceDepositRequired: deposit,
       itinerary: mappedItinerary,
-      inclusions: Array.isArray(pkg.inclusions) && pkg.inclusions.length > 0 ? [...pkg.inclusions] : [
-        "All verified accommodation as per selected plan",
-        "Dedicated private transport with experienced mountain chauffeur",
-        "Daily breakfast and dinner (MAP plan)",
-        "Certified trek leader and local safety guides",
-        "All forest permits, entry passes, and state tolls",
-      ],
-      exclusions: Array.isArray(pkg.exclusions) && pkg.exclusions.length > 0 ? [...pkg.exclusions] : [
-        "Personal travel and medical insurance",
-        "Airfare or train journey to starting point",
-        "Any personal expenses, tips, and optional activities",
-        "Applicable 5% GST",
-      ],
-      hotelCategory: pkg.region === "Himalayas" ? "Alpine Dome Tents + Standard Homestay" : "Deluxe 3-Star / Heritage Hotel",
-      vehicleType: adults > 4 ? "Private AC Tempo Traveller" : "Private AC Sedan / Ertiga",
-      pickupLocation: pkg.pickupDrop || pkg.baseCamp || pkg.location || "Dehradun / Base Hub",
-      dropLocation: pkg.pickupDrop || pkg.baseCamp || pkg.location || "Dehradun / Base Hub",
+      inclusions: inclusions,
+      exclusions: exclusions,
+      hotelCategory: pkg.region === "Himalayas" ? "Alpine Dome Tents + Standard Homestay" : "3 star hotel",
+      roomCategory: "Standard Room",
+      vehicleType: adults > 4 ? "Private 12-Seater Tempo Traveller" : "Private AC Sedan (Dzire / Etios)",
+      pickupLocation: cleanAsterisks(pkg.pickupDrop || pkg.baseCamp || pkg.location || "Dehradun / Base Hub"),
+      dropLocation: cleanAsterisks(pkg.pickupDrop || pkg.baseCamp || pkg.location || "Dehradun / Base Hub"),
     }));
   };
 
@@ -453,6 +696,120 @@ export function ItineraryStudio({
     }));
   };
 
+  // Copy full package JSON
+  const handleCopyPackage = () => {
+    try {
+      const jsonExport = JSON.stringify(formData, null, 2);
+      navigator.clipboard.writeText(jsonExport);
+      setCopiedToast("📋 Full Package JSON copied to clipboard!");
+      setTimeout(() => setCopiedToast(""), 3000);
+    } catch {
+      alert("Failed to copy to clipboard");
+    }
+  };
+
+  // Copy readable text for WhatsApp / Client
+  const handleCopyTextSummary = () => {
+    try {
+      const summary = `*${formData.packageTitle}* (${formData.duration})
+Destination: ${formData.destination}
+Price: ₹${formData.totalQuotedPrice.toLocaleString("en-IN")} for ${formData.adultsCount} Pax
+Accommodation: ${formData.hotelCategory || "3 star hotel"}
+Room Category: ${formData.roomCategory || "Standard Room"}
+Vehicle: ${formData.vehicleType || "Private AC Sedan"}
+${formData.validUntil ? `Quotation Validity: ${formData.validUntil}\n` : ""}
+DAY-BY-DAY ITINERARY:
+${formData.itinerary
+  .map(
+    (d) =>
+      `• *Day ${d.day}: ${d.title}*\n  ${d.description}\n  Stay: ${d.hotelName || d.stay || "Included"} | Meals: ${d.meal || "Included"}`
+  )
+  .join("\n\n")}
+
+INCLUSIONS:
+${formData.inclusions.map((inc) => `✓ ${inc}`).join("\n")}
+
+EXCLUSIONS:
+${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
+`;
+      navigator.clipboard.writeText(summary);
+      setCopiedToast("📄 Client Itinerary Text copied to clipboard!");
+      setTimeout(() => setCopiedToast(""), 3000);
+    } catch {
+      alert("Failed to copy to clipboard");
+    }
+  };
+
+  // Paste / Import package from JSON
+  const handlePastePackage = () => {
+    try {
+      if (!pasteJsonInput.trim()) return;
+      const parsed = JSON.parse(pasteJsonInput.trim());
+      if (!parsed.itinerary || !Array.isArray(parsed.itinerary)) {
+        alert("Invalid format: Must contain an 'itinerary' array.");
+        return;
+      }
+      setFormData((prev) => ({
+        ...prev,
+        packageTitle: parsed.packageTitle || parsed.name || prev.packageTitle,
+        destination: parsed.destination || parsed.region || prev.destination,
+        duration: parsed.duration || prev.duration,
+        basePricePerPerson: Number(parsed.basePricePerPerson || parsed.price) || prev.basePricePerPerson,
+        totalQuotedPrice: Number(parsed.totalQuotedPrice || parsed.price) || prev.totalQuotedPrice,
+        hotelCategory: parsed.hotelCategory || prev.hotelCategory,
+        vehicleType: parsed.vehicleType || prev.vehicleType,
+        itinerary: (parsed.itinerary || []).map((d: any, idx: number) => ({
+          day: idx + 1,
+          title: d.title || `Day ${idx + 1}`,
+          description: d.description || "",
+          stay: d.stay || d.hotelName || "Verified Stay",
+          hotelName: d.hotelName || d.stay || "",
+          hotelRating: d.hotelRating || "4-Star Deluxe",
+          roomType: d.roomType || "Deluxe Room",
+          mealPlan: d.mealPlan || "MAP",
+          meal: d.meal || "Breakfast & Dinner",
+          distance: d.distance || "",
+          duration: d.duration || "",
+          altitude: d.altitude || "",
+        })),
+        inclusions: Array.isArray(parsed.inclusions) ? parsed.inclusions : prev.inclusions,
+        exclusions: Array.isArray(parsed.exclusions) ? parsed.exclusions : prev.exclusions,
+      }));
+      setShowPasteModal(false);
+      setPasteJsonInput("");
+      setCopiedToast("✨ Package successfully imported & loaded into Studio!");
+      setTimeout(() => setCopiedToast(""), 3000);
+    } catch (err: any) {
+      alert(`Invalid JSON: ${err?.message || "Failed to parse JSON"}`);
+    }
+  };
+
+  // Restore snapshot from version history
+  const handleRestoreVersion = (snapshot: any, versionNum: number) => {
+    if (confirm(`Restore revision v${versionNum}? Current unsaved edits will be replaced.`)) {
+      setFormData((prev) => ({
+        ...prev,
+        ...snapshot.proposalSnapshot,
+        updatedAt: new Date().toISOString(),
+      }));
+      setShowHistoryModal(false);
+      setCopiedToast(`🕒 Restored revision v${versionNum}!`);
+      setTimeout(() => setCopiedToast(""), 3000);
+    }
+  };
+
+  // Hotel Directory Selection
+  const handleSelectHotelForDay = (dayIdx: number, hotel: typeof POPULAR_HOTEL_DIRECTORY[0]) => {
+    handleUpdateDay(dayIdx, "hotelName", hotel.name);
+    handleUpdateDay(dayIdx, "stay", `${hotel.name} (${hotel.city})`);
+    handleUpdateDay(dayIdx, "hotelRating", hotel.rating);
+    handleUpdateDay(dayIdx, "roomType", hotel.roomType);
+    handleUpdateDay(dayIdx, "mealPlan", hotel.mealPlan);
+    setHotelPickerDayIdx(null);
+    setCopiedToast(`🏨 Hotel "${hotel.name}" assigned to Day ${dayIdx + 1}`);
+    setTimeout(() => setCopiedToast(""), 3000);
+  };
+
   // Submission validation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -550,34 +907,78 @@ export function ItineraryStudio({
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={handleCopyPackage}
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/10"
+              title="Copy entire package JSON to clipboard"
+            >
+              <ClipboardCopy className="w-3.5 h-3.5 text-sky-300" />
+              <span>Copy JSON</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyTextSummary}
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/10"
+              title="Copy clean formatted itinerary text for WhatsApp or client email"
+            >
+              <FileText className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Copy Text</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowPasteModal(true)}
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/10"
+              title="Paste / Import package from clipboard JSON"
+            >
+              <ClipboardPaste className="w-3.5 h-3.5 text-amber-300" />
+              <span>Paste Package</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowHistoryModal(true)}
+              className="px-3 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-purple-400/30"
+              title="View revision history and past snapshots"
+            >
+              <History className="w-3.5 h-3.5 text-purple-300" />
+              <span>History (v{formData.version || 1})</span>
+            </button>
             <button
               type="button"
               onClick={handleClearDraft}
-              className="px-3.5 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-rose-500/30"
+              className="px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-rose-500/30"
               title="Clear draft and start with a blank proposal"
             >
-              <Trash2 className="w-4 h-4 text-rose-300" />
-              <span>Clear Draft</span>
+              <Trash2 className="w-3.5 h-3.5 text-rose-300" />
+              <span>Clear</span>
             </button>
             <button
               type="button"
               onClick={onReset}
-              className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/10"
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/10"
             >
-              <RotateCcw className="w-4 h-4 text-slate-300" />
-              <span>Reset Studio</span>
+              <RotateCcw className="w-3.5 h-3.5 text-slate-300" />
+              <span>Reset</span>
             </button>
             <button
               type="button"
               onClick={() => onPreview(formData)}
-              className="px-4 py-2.5 rounded-xl bg-white text-slate-900 hover:bg-slate-100 text-xs font-extrabold flex items-center gap-1.5 transition-colors shadow-md"
+              className="px-3.5 py-2 rounded-xl bg-white text-slate-900 hover:bg-slate-100 text-xs font-extrabold flex items-center gap-1.5 transition-colors shadow-md"
             >
-              <Printer className="w-4 h-4 text-[#FF6B35]" />
-              <span>Preview Voucher</span>
+              <Printer className="w-3.5 h-3.5 text-[#FF6B35]" />
+              <span>Preview</span>
             </button>
           </div>
         </div>
+
+        {/* Action / Toast Banner */}
+        {copiedToast && (
+          <div className="mt-3 py-2 px-3.5 bg-emerald-500/20 border border-emerald-400/40 rounded-xl text-emerald-200 text-xs font-bold flex items-center gap-2 animate-fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+            <span>{copiedToast}</span>
+          </div>
+        )}
       </div>
 
       {/* Blueprint Selector Bar */}
@@ -763,38 +1164,30 @@ export function ItineraryStudio({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
               <div className="sm:col-span-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  Package Proposal Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Kedarkantha Winter Snow Summit Expedition"
+                <CustomEditableField
+                  label="Package Proposal Title *"
                   value={formData.packageTitle}
-                  onChange={(e) => setFormData({ ...formData, packageTitle: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                  onChange={(val) => setFormData({ ...formData, packageTitle: val })}
+                  placeholder="e.g. Kedarkantha Winter Snow Summit Expedition"
+                  required
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Destination</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Uttarakhand / Rajasthan"
+                <CustomEditableField
+                  label="Destination"
                   value={formData.destination}
-                  onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold text-slate-800 mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                  onChange={(val) => setFormData({ ...formData, destination: val })}
+                  placeholder="e.g. Uttarakhand / Rajasthan"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Duration</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 5 Days / 4 Nights"
+                <CustomEditableField
+                  label="Duration"
                   value={formData.duration}
-                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold text-slate-800 mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                  onChange={(val) => setFormData({ ...formData, duration: val })}
+                  placeholder="e.g. 5 Days / 4 Nights"
                 />
               </div>
 
@@ -849,49 +1242,284 @@ export function ItineraryStudio({
 
         {/* Section 2: Hospitality & Transportation Specs */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 pb-2 border-b border-slate-100 flex items-center gap-2">
-            <Bed className="w-4 h-4 text-purple-600" />
-            <span>Accommodation, Vehicle & Special Notes</span>
-          </h3>
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100 flex-wrap gap-2">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <Bed className="w-4 h-4 text-purple-600" />
+              <span>Accommodation, Vehicle & Room Category Specifications</span>
+            </h3>
+            <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              Live Backend-Linked Options
+            </span>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+            {/* 1. ACCOMMODATION CATEGORY */}
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                Accommodation Category
-              </label>
-              <select
-                value={formData.hotelCategory}
-                onChange={(e) => setFormData({ ...formData, hotelCategory: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white cursor-pointer"
-              >
-                <option value="Alpine Dome Tents + Standard Homestay">Alpine Dome Tents + Standard Homestay</option>
-                <option value="Standard (3-Star)">Standard (3-Star)</option>
-                <option value="4-Star Heritage Haveli & Palace Stay">4-Star Heritage Haveli & Palace Stay</option>
-                <option value="5-Star Luxury Resort">5-Star Luxury Resort</option>
-                <option value="Glamping Luxury Geodesic Domes">Glamping Luxury Geodesic Domes</option>
-              </select>
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Accommodation Category
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddOptionModal("accommodation");
+                    setCustomOptionInput("");
+                  }}
+                  className="text-[10px] font-black text-purple-700 hover:text-purple-900 flex items-center gap-0.5 cursor-pointer"
+                  title="Add new category and save to backend"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>+ Add New</span>
+                </button>
+              </div>
+
+              {isEditingAccommodation ? (
+                <div className="flex items-center gap-1 mt-1">
+                  <input
+                    type="text"
+                    value={formData.hotelCategory}
+                    onChange={(e) => setFormData({ ...formData, hotelCategory: cleanAsterisks(e.target.value) })}
+                    className="w-full bg-white border border-purple-400 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    placeholder="e.g. 3 star hotel / Guest house"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEditingAccommodation(false);
+                      if (formData.hotelCategory) handleSaveNewOption("accommodation", formData.hotelCategory);
+                    }}
+                    className="px-2.5 py-2 bg-purple-600 text-white rounded-xl text-xs font-bold hover:bg-purple-700 cursor-pointer shrink-0"
+                    title="Save to backend"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 mt-1">
+                  <select
+                    value={formData.hotelCategory}
+                    onChange={(e) => {
+                      if (e.target.value === "__ADD_NEW__") {
+                        setShowAddOptionModal("accommodation");
+                        setCustomOptionInput("");
+                      } else {
+                        setFormData({ ...formData, hotelCategory: e.target.value });
+                      }
+                    }}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-purple-600 focus:bg-white cursor-pointer"
+                  >
+                    {accommodationCategories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                    <option value="__ADD_NEW__">✨ + Add New Category (Save to Backend)...</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingAccommodation(true)}
+                    className="p-2 text-slate-500 hover:text-purple-700 hover:bg-purple-50 rounded-xl border border-slate-200 cursor-pointer shrink-0"
+                    title="Edit custom category text directly"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
 
+            {/* 2. ROOM CATEGORY */}
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Vehicle Type</label>
-              <select
-                value={formData.vehicleType}
-                onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white cursor-pointer"
-              >
-                <option value="Private AC Sedan (Dzire / Etios)">Private AC Sedan (Dzire / Etios)</option>
-                <option value="Private AC Ertiga / XL6">Private AC Ertiga / XL6</option>
-                <option value="Private AC Innova Crysta">Private AC Innova Crysta</option>
-                <option value="Private 12-Seater Tempo Traveller">Private 12-Seater Tempo Traveller</option>
-                <option value="Shared Mountain Bolero / Sumo">Shared Mountain Bolero / Sumo</option>
-                <option value="Self-Drive / Not Included">Self-Drive / Not Included</option>
-              </select>
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Room Category
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddOptionModal("room");
+                    setCustomOptionInput("");
+                  }}
+                  className="text-[10px] font-black text-indigo-700 hover:text-indigo-900 flex items-center gap-0.5 cursor-pointer"
+                  title="Add new room category and save to backend"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>+ Add New</span>
+                </button>
+              </div>
+
+              {isEditingRoom ? (
+                <div className="flex items-center gap-1 mt-1">
+                  <input
+                    type="text"
+                    value={formData.roomCategory || "Standard Room"}
+                    onChange={(e) => setFormData({ ...formData, roomCategory: cleanAsterisks(e.target.value) })}
+                    className="w-full bg-white border border-indigo-400 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    placeholder="e.g. Deluxe Room / Suite Room"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEditingRoom(false);
+                      if (formData.roomCategory) handleSaveNewOption("room", formData.roomCategory);
+                    }}
+                    className="px-2.5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 cursor-pointer shrink-0"
+                    title="Save to backend"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 mt-1">
+                  <select
+                    value={formData.roomCategory || "Standard Room"}
+                    onChange={(e) => {
+                      if (e.target.value === "__ADD_NEW__") {
+                        setShowAddOptionModal("room");
+                        setCustomOptionInput("");
+                      } else {
+                        setFormData({ ...formData, roomCategory: e.target.value });
+                      }
+                    }}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-600 focus:bg-white cursor-pointer"
+                  >
+                    {roomCategories.map((rc) => (
+                      <option key={rc} value={rc}>
+                        {rc}
+                      </option>
+                    ))}
+                    <option value="__ADD_NEW__">✨ + Add New Room Category (Save to Backend)...</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingRoom(true)}
+                    className="p-2 text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-xl border border-slate-200 cursor-pointer shrink-0"
+                    title="Edit custom room text directly"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
 
+            {/* 3. VEHICLE TYPE */}
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                Quotation Validity
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Vehicle Type
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddOptionModal("vehicle");
+                    setCustomOptionInput("");
+                  }}
+                  className="text-[10px] font-black text-blue-700 hover:text-blue-900 flex items-center gap-0.5 cursor-pointer"
+                  title="Add new vehicle and save to backend"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>+ Add New</span>
+                </button>
+              </div>
+
+              {isEditingVehicle ? (
+                <div className="flex items-center gap-1 mt-1">
+                  <input
+                    type="text"
+                    value={formData.vehicleType}
+                    onChange={(e) => setFormData({ ...formData, vehicleType: cleanAsterisks(e.target.value) })}
+                    className="w-full bg-white border border-blue-400 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    placeholder="e.g. Private AC Sedan (Dzire / Etios)"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEditingVehicle(false);
+                      if (formData.vehicleType) handleSaveNewOption("vehicle", formData.vehicleType);
+                    }}
+                    className="px-2.5 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 cursor-pointer shrink-0"
+                    title="Save to backend"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 mt-1">
+                  <select
+                    value={formData.vehicleType}
+                    onChange={(e) => {
+                      if (e.target.value === "__ADD_NEW__") {
+                        setShowAddOptionModal("vehicle");
+                        setCustomOptionInput("");
+                      } else {
+                        setFormData({ ...formData, vehicleType: e.target.value });
+                      }
+                    }}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white cursor-pointer"
+                  >
+                    {vehicleTypes.map((vt) => (
+                      <option key={vt} value={vt}>
+                        {vt}
+                      </option>
+                    ))}
+                    <option value="__ADD_NEW__">✨ + Add New Vehicle Type (Save to Backend)...</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingVehicle(true)}
+                    className="p-2 text-slate-500 hover:text-blue-700 hover:bg-blue-50 rounded-xl border border-slate-200 cursor-pointer shrink-0"
+                    title="Edit custom vehicle text directly"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 4. QUOTATION VALIDITY */}
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Quotation Validity
+                </label>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 7);
+                      setFormData({ ...formData, validUntil: d.toISOString().split("T")[0] });
+                    }}
+                    className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 transition cursor-pointer"
+                    title="Add 7 Days validity"
+                  >
+                    +7d
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 15);
+                      setFormData({ ...formData, validUntil: d.toISOString().split("T")[0] });
+                    }}
+                    className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 transition cursor-pointer"
+                    title="Add 15 Days validity"
+                  >
+                    +15d
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 30);
+                      setFormData({ ...formData, validUntil: d.toISOString().split("T")[0] });
+                    }}
+                    className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 transition cursor-pointer"
+                    title="Add 30 Days validity"
+                  >
+                    +30d
+                  </button>
+                </div>
+              </div>
               <input
                 type="date"
                 value={formData.validUntil}
@@ -900,17 +1528,102 @@ export function ItineraryStudio({
               />
             </div>
 
-            <div className="sm:col-span-3">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                Special Dietary & Expedition Instructions
+            <div className="sm:col-span-2 lg:col-span-4">
+              <CustomEditableField
+                label="Special Dietary & Expedition Instructions"
+                value={formData.specialNotes}
+                onChange={(val) => setFormData({ ...formData, specialNotes: cleanAsterisks(val) })}
+                placeholder="e.g. Pure Vegetarian/Jain meal requirement, Anniversary welcome flowers, microspikes included"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Itinerary Inventory & Room/Vehicle Capacity Block */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100 flex-wrap gap-2">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <Boxes className="w-4 h-4 text-teal-600" />
+              <span>Itinerary Inventory & Capacity Allocation</span>
+            </h3>
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200 font-bold">
+              Real-Time Stock
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                Batch Departure Date
               </label>
               <input
-                type="text"
-                placeholder="e.g. Pure Vegetarian/Jain meal requirement, Anniversary welcome flowers, microspikes included"
-                value={formData.specialNotes}
-                onChange={(e) => setFormData({ ...formData, specialNotes: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium text-slate-800 mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                type="date"
+                value={formData.inventory?.batchDate || formData.startDate || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    inventory: { ...(formData.inventory || {}), batchDate: e.target.value },
+                  })
+                }
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold text-slate-800 focus:outline-none focus:bg-white"
               />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                Slots / Travelers Blocked
+              </label>
+              <input
+                type="number"
+                min={1}
+                value={formData.inventory?.slotsBlocked || formData.adultsCount || 2}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    inventory: { ...(formData.inventory || {}), slotsBlocked: Number(e.target.value) },
+                  })
+                }
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:bg-white"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                Hotel Rooms Blocked
+              </label>
+              <input
+                type="number"
+                min={1}
+                value={formData.inventory?.hotelRoomsBlocked || Math.ceil((formData.adultsCount || 2) / 2)}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    inventory: { ...(formData.inventory || {}), hotelRoomsBlocked: Number(e.target.value) },
+                  })
+                }
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:bg-white"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                Inventory Status
+              </label>
+              <select
+                value={formData.inventory?.status || "Reserved"}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    inventory: { ...(formData.inventory || {}), status: e.target.value as any },
+                  })
+                }
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:bg-white cursor-pointer"
+              >
+                <option value="Reserved">🟡 Reserved (Tentative)</option>
+                <option value="Confirmed">🟢 Confirmed (Allotted)</option>
+                <option value="Waitlist">🟠 Waitlist</option>
+                <option value="Released">⚪ Released / Cancelled</option>
+              </select>
             </div>
           </div>
         </div>
@@ -997,12 +1710,12 @@ export function ItineraryStudio({
 
                     {/* Day Title Input */}
                     <div>
-                      <input
-                        type="text"
-                        placeholder="Day Title (e.g. Scenic Drive from Dehradun to Sankri Basecamp)"
+                      <CustomEditableField
+                        label="Day Title"
                         value={day.title}
-                        onChange={(e) => handleUpdateDay(idx, "title", e.target.value)}
-                        className="w-full text-base sm:text-lg font-extrabold text-slate-900 placeholder:text-slate-400 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                        onChange={(val) => handleUpdateDay(idx, "title", val)}
+                        placeholder="Day Title (e.g. Scenic Drive from Dehradun to Sankri Basecamp)"
+                        inputClassName="text-base sm:text-lg font-extrabold text-slate-900"
                       />
                     </div>
 
@@ -1079,31 +1792,84 @@ export function ItineraryStudio({
 
                     {/* Narrative Description */}
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                        Day Narrative & Activities
-                      </label>
-                      <textarea
+                      <CustomEditableField
+                        multiline
                         rows={3}
-                        placeholder="Detailed activities, viewpoints, mountain trail terrain, resting points, and highlights..."
+                        label="Day Narrative & Activities"
                         value={day.description}
-                        onChange={(e) => handleUpdateDay(idx, "description", e.target.value)}
-                        className="w-full bg-slate-50/60 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-slate-700 font-medium leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#0F3A2E] resize-y"
+                        onChange={(val) => handleUpdateDay(idx, "description", val)}
+                        placeholder="Detailed activities, viewpoints, mountain trail terrain, resting points, and highlights..."
                       />
                     </div>
                   </div>
 
-                  {/* Bottom Hospitality Bar */}
-                  <div className="bg-slate-50/90 px-5 sm:px-6 py-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
-                    <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                      <Bed className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Overnight Stay:</span>
-                      <input
-                        type="text"
-                        placeholder="e.g. 4-Star Resort / Alpine Tents"
-                        value={day.stay || ""}
-                        onChange={(e) => handleUpdateDay(idx, "stay", e.target.value)}
-                        className="flex-1 bg-transparent text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none"
-                      />
+                  {/* Bottom Hospitality Bar with Hotel, Room & Meal Plan Selector */}
+                  <div className="bg-slate-50/95 px-5 sm:px-6 py-3.5 border-t border-slate-200/80 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                        <span className="text-xs font-black uppercase tracking-wider text-slate-800">
+                          Day {day.day} Hotel & Accommodation:
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setHotelPickerDayIdx(idx);
+                          setHotelSearchQuery("");
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"
+                      >
+                        <Building2 className="w-3 h-3" />
+                        <span>🏨 Pick from Hotel Library</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 text-xs">
+                      <div className="sm:col-span-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          Hotel / Resort Name & City
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. The Leela Goa (Cavelossim) / Apple Country Resort (Manali)"
+                          value={day.hotelName || day.stay || ""}
+                          onChange={(e) => {
+                            handleUpdateDay(idx, "hotelName", e.target.value);
+                            handleUpdateDay(idx, "stay", e.target.value);
+                          }}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          Room Type / Category
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Deluxe Room / Valley Suite"
+                          value={day.roomType || ""}
+                          onChange={(e) => handleUpdateDay(idx, "roomType", e.target.value)}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-emerald-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          Meal Plan
+                        </label>
+                        <select
+                          value={day.mealPlan || "MAP"}
+                          onChange={(e) => handleUpdateDay(idx, "mealPlan", e.target.value)}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600 cursor-pointer"
+                        >
+                          <option value="EP">EP (Room Only)</option>
+                          <option value="CP">CP (Breakfast)</option>
+                          <option value="MAP">MAP (Breakfast + Dinner)</option>
+                          <option value="AP">AP (All Meals: B, L, D)</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1111,15 +1877,18 @@ export function ItineraryStudio({
             </div>
           )}
 
-          {/* Add Day Button - Positioned at Bottom Right */}
-          <div className="flex justify-end pt-3 border-t border-slate-100">
+          {/* Add Day / Activity Button - Positioned at Bottom */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-100 mt-2">
+            <span className="text-xs text-slate-500 font-semibold">
+              Total {formData.itinerary.length} Days / Activities configured
+            </span>
             <button
               type="button"
               onClick={handleAddDay}
-              className="px-4 py-2.5 bg-[#0F3A2E] hover:bg-[#14483a] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow active:scale-95"
+              className="px-5 py-2.5 bg-[#0F3A2E] hover:bg-[#14483a] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer self-end"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Day {formData.itinerary.length + 1}</span>
+              <span>+ Add Day / Activity {formData.itinerary.length + 1}</span>
             </button>
           </div>
         </div>
@@ -1128,42 +1897,107 @@ export function ItineraryStudio({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Inclusions */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Inclusions List ({formData.inclusions.length})</span>
-            </h3>
-
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Add inclusion item..."
-                value={newInclusion}
-                onChange={(e) => setNewInclusion(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAddInclusion(e);
+            <div className="flex items-center justify-between pb-1">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Inclusions List ({formData.inclusions.length})</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomOptionInput("");
+                  setShowAddOptionModal("inclusion");
                 }}
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
-              />
+                className="text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer"
+                title="Add new inclusion and save to backend database presets"
+              >
+                <Plus className="w-3 h-3" />
+                <span>+ Add New to Backend</span>
+              </button>
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <div className="flex-1">
+                <CustomEditableField
+                  compact
+                  value={newInclusion}
+                  onChange={(val) => setNewInclusion(cleanAsterisks(val))}
+                  placeholder="Add inclusion item..."
+                />
+              </div>
               <button
                 type="button"
                 onClick={handleAddInclusion}
-                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors"
+                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shrink-0"
               >
                 Add
               </button>
+              {newInclusion.trim() && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSaveNewOption("inclusion", newInclusion.trim());
+                    setNewInclusion("");
+                  }}
+                  className="px-2.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-[11px] font-bold transition-colors shrink-0 flex items-center gap-1"
+                  title="Save this inclusion to backend presets"
+                >
+                  <Save className="w-3 h-3" />
+                  <span>Save to Backend</span>
+                </button>
+              )}
             </div>
+
+            {/* Quick Inclusions Chips */}
+            {customInclusions.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                <span className="text-[10px] font-bold text-slate-400 self-center">Presets:</span>
+                {customInclusions.slice(-6).map((preset, pIdx) => {
+                  const isAdded = formData.inclusions.includes(preset);
+                  return (
+                    <button
+                      key={pIdx}
+                      type="button"
+                      onClick={() => {
+                        if (!isAdded) {
+                          setFormData((prev) => ({ ...prev, inclusions: [...prev.inclusions, preset] }));
+                        }
+                      }}
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border transition cursor-pointer ${
+                        isAdded
+                          ? "bg-slate-100 text-slate-400 border-slate-200"
+                          : "bg-emerald-50/70 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
+                      }`}
+                    >
+                      {isAdded ? "✓" : "+"} {preset.length > 32 ? preset.slice(0, 32) + "..." : preset}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
               {formData.inclusions.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between gap-2 p-2 bg-emerald-50/50 border border-emerald-100 rounded-xl text-xs text-slate-800"
+                  className="flex items-center gap-2 p-1.5 bg-emerald-50/50 border border-emerald-100 rounded-xl"
                 >
-                  <span className="leading-tight">{item}</span>
+                  <CustomEditableField
+                    compact
+                    value={item}
+                    onChange={(val) => {
+                      const updated = [...formData.inclusions];
+                      updated[idx] = cleanAsterisks(val);
+                      setFormData({ ...formData, inclusions: updated });
+                    }}
+                    placeholder="Inclusion item..."
+                    className="flex-1"
+                  />
                   <button
                     type="button"
                     onClick={() => handleRemoveInclusion(idx)}
-                    className="text-slate-400 hover:text-rose-600 p-0.5"
+                    className="text-slate-400 hover:text-rose-600 p-1 shrink-0"
+                    title="Remove inclusion"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -1174,42 +2008,107 @@ export function ItineraryStudio({
 
           {/* Exclusions */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-rose-800 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-600" />
-              <span>Exclusions List ({formData.exclusions.length})</span>
-            </h3>
-
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Add exclusion item..."
-                value={newExclusion}
-                onChange={(e) => setNewExclusion(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAddExclusion(e);
+            <div className="flex items-center justify-between pb-1">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-rose-800 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600" />
+                <span>Exclusions List ({formData.exclusions.length})</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomOptionInput("");
+                  setShowAddOptionModal("exclusion");
                 }}
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-rose-600 focus:bg-white"
-              />
+                className="text-[10px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer"
+                title="Add new exclusion and save to backend database presets"
+              >
+                <Plus className="w-3 h-3" />
+                <span>+ Add New to Backend</span>
+              </button>
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <div className="flex-1">
+                <CustomEditableField
+                  compact
+                  value={newExclusion}
+                  onChange={(val) => setNewExclusion(cleanAsterisks(val))}
+                  placeholder="Add exclusion item..."
+                />
+              </div>
               <button
                 type="button"
                 onClick={handleAddExclusion}
-                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors"
+                className="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors shrink-0"
               >
                 Add
               </button>
+              {newExclusion.trim() && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSaveNewOption("exclusion", newExclusion.trim());
+                    setNewExclusion("");
+                  }}
+                  className="px-2.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-[11px] font-bold transition-colors shrink-0 flex items-center gap-1"
+                  title="Save this exclusion to backend presets"
+                >
+                  <Save className="w-3 h-3" />
+                  <span>Save to Backend</span>
+                </button>
+              )}
             </div>
+
+            {/* Quick Exclusions Chips */}
+            {customExclusions.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                <span className="text-[10px] font-bold text-slate-400 self-center">Presets:</span>
+                {customExclusions.slice(-6).map((preset, pIdx) => {
+                  const isAdded = formData.exclusions.includes(preset);
+                  return (
+                    <button
+                      key={pIdx}
+                      type="button"
+                      onClick={() => {
+                        if (!isAdded) {
+                          setFormData((prev) => ({ ...prev, exclusions: [...prev.exclusions, preset] }));
+                        }
+                      }}
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border transition cursor-pointer ${
+                        isAdded
+                          ? "bg-slate-100 text-slate-400 border-slate-200"
+                          : "bg-rose-50/70 text-rose-800 border-rose-200 hover:bg-rose-100"
+                      }`}
+                    >
+                      {isAdded ? "✓" : "+"} {preset.length > 32 ? preset.slice(0, 32) + "..." : preset}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
               {formData.exclusions.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between gap-2 p-2 bg-rose-50/50 border border-rose-100 rounded-xl text-xs text-slate-800"
+                  className="flex items-center gap-2 p-1.5 bg-rose-50/50 border border-rose-100 rounded-xl"
                 >
-                  <span className="leading-tight">{item}</span>
+                  <CustomEditableField
+                    compact
+                    value={item}
+                    onChange={(val) => {
+                      const updated = [...formData.exclusions];
+                      updated[idx] = cleanAsterisks(val);
+                      setFormData({ ...formData, exclusions: updated });
+                    }}
+                    placeholder="Exclusion item..."
+                    className="flex-1"
+                  />
                   <button
                     type="button"
                     onClick={() => handleRemoveExclusion(idx)}
-                    className="text-slate-400 hover:text-rose-600 p-0.5"
+                    className="text-slate-400 hover:text-rose-600 p-1 shrink-0"
+                    title="Remove exclusion"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -1321,6 +2220,506 @@ export function ItineraryStudio({
           </div>
         </div>
       </form>
+
+      {/* 1. REVISION HISTORY & VERSION RESTORE MODAL */}
+      {showHistoryModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 space-y-5 shadow-2xl border border-slate-200 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <History className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Itinerary Revision History
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Current Version: <strong className="text-purple-700">v{formData.version || 1}</strong> • Roll back to any past snapshot
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowHistoryModal(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              {(!formData.versionHistory || formData.versionHistory.length === 0) ? (
+                <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs space-y-2">
+                  <History className="w-8 h-8 mx-auto text-slate-300" />
+                  <p className="font-semibold text-slate-600">No previous revisions recorded yet.</p>
+                  <p className="text-slate-400">
+                    Every time you update and save this proposal, an automated version snapshot will be logged here.
+                  </p>
+                </div>
+              ) : (
+                formData.versionHistory.map((snap, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-purple-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">
+                          v{snap.version}
+                        </span>
+                        <span className="text-xs font-bold text-slate-800">
+                          {snap.author || "Admin Agent"}
+                        </span>
+                        <span className="text-slate-300 text-xs">•</span>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          {new Date(snap.timestamp).toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 font-medium">
+                        {snap.note || "Snapshot captured during update"}
+                      </p>
+                      {snap.proposalSnapshot && (
+                        <div className="flex items-center gap-2 text-[11px] text-slate-500 pt-1">
+                          <span>{snap.proposalSnapshot.packageTitle}</span>
+                          <span>•</span>
+                          <span>{snap.proposalSnapshot.itinerary?.length || 0} Days</span>
+                          <span>•</span>
+                          <span className="font-bold text-emerald-700">
+                            ₹{(snap.proposalSnapshot.totalQuotedPrice || 0).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRestoreVersion(snap, snap.version)}
+                      className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 self-start sm:self-center shrink-0 cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Restore v{snap.version}</span>
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowHistoryModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition"
+              >
+                Close History
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. PASTE & IMPORT PACKAGE MODAL */}
+      {showPasteModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 space-y-4 shadow-2xl border border-slate-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                  <ClipboardPaste className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Paste / Import Package & Itinerary
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Paste copied package JSON from clipboard to instantly populate all fields
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPasteModal(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">
+                Paste JSON Payload:
+              </label>
+              <textarea
+                rows={9}
+                value={pasteJsonInput}
+                onChange={(e) => setPasteJsonInput(e.target.value)}
+                placeholder={'{\n  "packageTitle": "Goa Beach & Heritage Tour",\n  "destination": "Goa",\n  "itinerary": [\n    {"day": 1, "title": "North Goa Beaches", "description": "..."}\n  ]\n}'}
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-mono text-slate-800 focus:outline-none focus:border-amber-600 focus:bg-white resize-y"
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const text = await navigator.clipboard.readText();
+                    setPasteJsonInput(text);
+                  } catch {
+                    alert("Unable to read from clipboard automatically. Please paste with Ctrl+V.");
+                  }
+                }}
+                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5"
+              >
+                <ClipboardPaste className="w-3.5 h-3.5" />
+                <span>Paste from Clipboard</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPasteModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePastePackage}
+                  className="px-4 py-2 bg-[#0F3A2E] hover:bg-[#154e3f] text-white rounded-xl text-xs font-extrabold transition shadow-xs"
+                >
+                  Import into Studio
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. HOTEL DIRECTORY PICKER MODAL */}
+      {hotelPickerDayIdx !== null && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 space-y-4 shadow-2xl border border-slate-200 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Select Hotel for Day {hotelPickerDayIdx + 1}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Curated hotel & resort directory across popular Indian & international destinations
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setHotelPickerDayIdx(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Top Toolbar: Search + Add Hotel to Directory */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Search hotel by name or city (e.g. Goa, Manali, Munnar, Jaipur, Cherrapunji)..."
+                  value={hotelSearchQuery}
+                  onChange={(e) => setHotelSearchQuery(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowAddHotelModal(!showAddHotelModal)}
+                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{showAddHotelModal ? "Hide Form" : "Add New Hotel to Library"}</span>
+              </button>
+            </div>
+
+            {/* Add New Hotel to Directory Inline Form */}
+            {showAddHotelModal && (
+              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3 animate-in fade-in">
+                <span className="text-xs font-extrabold text-emerald-950 block">
+                  Add New Hotel to Directory & Assign to Day {(hotelPickerDayIdx || 0) + 1}:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Hotel / Resort Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Grand Hyatt Goa / Wildflower Hall"
+                      value={newHotelForm.name}
+                      onChange={(e) => setNewHotelForm({ ...newHotelForm, name: e.target.value })}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      City / Location
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Bambolim, Goa / Shimla, HP"
+                      value={newHotelForm.city}
+                      onChange={(e) => setNewHotelForm({ ...newHotelForm, city: e.target.value })}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Rating / Class
+                    </label>
+                    <select
+                      value={newHotelForm.rating}
+                      onChange={(e) => setNewHotelForm({ ...newHotelForm, rating: e.target.value })}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-900 cursor-pointer"
+                    >
+                      <option value="5-Star Luxury">5-Star Luxury</option>
+                      <option value="4-Star Deluxe">4-Star Deluxe</option>
+                      <option value="3-Star Standard">3-Star Standard</option>
+                      <option value="2-Star Hotel">2-Star Hotel</option>
+                      <option value="Guest House">Guest House</option>
+                      <option value="Alpine Camp">Alpine Camp</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Room Type
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Deluxe Room / Sea View Suite"
+                      value={newHotelForm.roomType}
+                      onChange={(e) => setNewHotelForm({ ...newHotelForm, roomType: e.target.value })}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddHotelModal(false)}
+                    className="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!newHotelForm.name.trim() || !newHotelForm.city.trim()) {
+                        alert("Please provide Hotel Name and City.");
+                        return;
+                      }
+                      const hotelObj = {
+                        name: cleanAsterisks(newHotelForm.name.trim()),
+                        city: cleanAsterisks(newHotelForm.city.trim()),
+                        rating: newHotelForm.rating,
+                        roomType: cleanAsterisks(newHotelForm.roomType.trim() || "Standard Room"),
+                        mealPlan: newHotelForm.mealPlan,
+                      };
+                      setPopularHotels((prev) => [hotelObj, ...prev]);
+                      if (hotelPickerDayIdx !== null) {
+                        handleSelectHotelForDay(hotelPickerDayIdx, hotelObj);
+                      }
+                      setShowAddHotelModal(false);
+                      setNewHotelForm({
+                        name: "",
+                        city: "",
+                        rating: "3-Star Standard",
+                        roomType: "Deluxe Room",
+                        mealPlan: "MAP",
+                      });
+                      try {
+                        await fetch("/api/admin/crm/studio-options", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ type: "hotel", hotel: hotelObj }),
+                        });
+                        setCopiedToast(`Added "${hotelObj.name}" to directory & saved to backend!`);
+                      } catch (err) {
+                        console.error("Error saving hotel to backend:", err);
+                        setCopiedToast(`Added "${hotelObj.name}" to directory!`);
+                      }
+                      setTimeout(() => setCopiedToast(""), 3000);
+                    }}
+                    className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-xs cursor-pointer"
+                  >
+                    Save Hotel & Assign
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Hotel Cards List */}
+            <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
+              {popularHotels
+                .filter((h) => {
+                  const q = hotelSearchQuery.toLowerCase().trim();
+                  if (!q) return true;
+                  return h.name.toLowerCase().includes(q) || h.city.toLowerCase().includes(q) || h.rating.toLowerCase().includes(q);
+                })
+                .map((hotel, hIdx) => (
+                  <div
+                    key={hIdx}
+                    className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-emerald-500 transition-all flex items-center justify-between gap-3 shadow-2xs group cursor-pointer"
+                    onClick={() => handleSelectHotelForDay(hotelPickerDayIdx, hotel)}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-extrabold text-xs text-slate-900 group-hover:text-emerald-700 transition-colors">
+                          {hotel.name}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                          {hotel.rating}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-slate-400" />
+                          <span>{hotel.city}</span>
+                        </span>
+                        <span>•</span>
+                        <span>{hotel.roomType}</span>
+                        <span>•</span>
+                        <span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                          {hotel.mealPlan} Plan
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectHotelForDay(hotelPickerDayIdx, hotel);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
+                    >
+                      Choose Hotel
+                    </button>
+                  </div>
+                ))}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setHotelPickerDayIdx(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. ADD NEW STUDIO OPTION MODAL (Saves to Backend API) */}
+      {showAddOptionModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <Plus className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-slate-900">
+                    Add New{" "}
+                    {showAddOptionModal === "accommodation"
+                      ? "Accommodation Category"
+                      : showAddOptionModal === "room"
+                      ? "Room Category"
+                      : showAddOptionModal === "vehicle"
+                      ? "Vehicle Type"
+                      : showAddOptionModal === "inclusion"
+                      ? "Inclusion Preset"
+                      : "Exclusion Preset"}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Saves permanently to backend database & studio presets
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddOptionModal(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                {showAddOptionModal === "accommodation"
+                  ? "Category Name (e.g. 5 star hotel, Luxury Heritage Haveli, Eco Bamboo Cottages)"
+                  : showAddOptionModal === "room"
+                  ? "Room Type (e.g. Suite Room, Premium Mountain View Room, Executive Room)"
+                  : showAddOptionModal === "vehicle"
+                  ? "Vehicle Specification (e.g. Private AC Innova Crysta, 17-Seater Force Urbania)"
+                  : showAddOptionModal === "inclusion"
+                  ? "Inclusion Description (e.g. Candlelight Dinner with Cake, Houseboat Shikara Ride)"
+                  : "Exclusion Description (e.g. Rohtang Pass Green Permit, Personal Laundry, Heaters)"}
+              </label>
+              <input
+                type="text"
+                autoFocus
+                value={customOptionInput}
+                onChange={(e) => setCustomOptionInput(cleanAsterisks(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (customOptionInput.trim()) {
+                      handleSaveNewOption(showAddOptionModal, customOptionInput.trim());
+                    }
+                  }
+                }}
+                placeholder="Type item name..."
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-purple-600 focus:bg-white"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setShowAddOptionModal(null)}
+                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={savingCustomOption || !customOptionInput.trim()}
+                onClick={() => {
+                  if (customOptionInput.trim()) {
+                    handleSaveNewOption(showAddOptionModal, customOptionInput.trim());
+                  }
+                }}
+                className="px-4 py-2 rounded-xl bg-[#0F3A2E] hover:bg-[#164e3f] disabled:opacity-50 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{savingCustomOption ? "Saving..." : "Save to Backend"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

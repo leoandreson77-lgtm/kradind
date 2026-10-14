@@ -28,6 +28,86 @@ import {
 } from "lucide-react";
 import { AdminUser, AdminRole } from "@/lib/cms-store";
 
+export const SYSTEM_AUTHORITIES = [
+  {
+    key: "view_all_reports",
+    label: "View All Reports (Company-Wide Sabka)",
+    desc: "View company-wide sales, operations, and all agents' leads (Super Admin view). If disabled, user only sees their own assigned records.",
+    category: "Reports & Visibility",
+  },
+  {
+    key: "manage_sales",
+    label: "Sales & Bookings Management",
+    desc: "Create bookings, manage customer orders, and convert commercial proposals.",
+    category: "Sales & Commercials",
+  },
+  {
+    key: "manage_payments",
+    label: "Payment Updates & Proof Verification",
+    desc: "Update payment status (Paid, Partial, Under Verification), enter UTR, and attach/view proof documents.",
+    category: "Financials & Payments",
+  },
+  {
+    key: "manage_operations",
+    label: "Operations, Guides & Fleet",
+    desc: "Assign trek leaders, dispatch chauffeur/vehicles, inspect equipment kits, and update trail progress.",
+    category: "Ground Operations",
+  },
+  {
+    key: "manage_leads",
+    label: "Inbound Leads & Interaction Logging",
+    desc: "View leads, log interactions (Call, WhatsApp, Email, Notes), and track engagement frequency.",
+    category: "CRM & Leads",
+  },
+  {
+    key: "itinerary_studio",
+    label: "Itinerary Studio & PDF Builder",
+    desc: "Build custom day-by-day itineraries, generate branded PDF vouchers, and share WhatsApp quotes.",
+    category: "Itineraries",
+  },
+  {
+    key: "cms_editor",
+    label: "CMS & Adventure Packages",
+    desc: "Create, edit and publish trek packages, itineraries, hero banners, and seasonal specials.",
+    category: "Content Management",
+  },
+  {
+    key: "user_management",
+    label: "Staff Accounts & Login Control",
+    desc: "Create staff users, configure authority permissions, activate/suspend logins, and reset passwords.",
+    category: "System Admin",
+  },
+];
+
+export const DEFAULT_PERMISSIONS_BY_ROLE: Record<AdminRole, string[]> = {
+  "Super Admin": [
+    "view_all_reports",
+    "manage_sales",
+    "manage_payments",
+    "manage_operations",
+    "manage_leads",
+    "itinerary_studio",
+    "cms_editor",
+    "user_management",
+  ],
+  "Operations Manager": [
+    "view_all_reports",
+    "manage_operations",
+    "manage_sales",
+    "manage_leads",
+    "itinerary_studio",
+  ],
+  "Sales / CRM Agent": [
+    "manage_sales",
+    "manage_leads",
+    "manage_payments",
+    "itinerary_studio",
+  ],
+  "Expedition Leader": [
+    "manage_operations",
+  ],
+};
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,6 +129,7 @@ export default function AdminUsersPage() {
     department: "Sales & Inquiries",
     role: "Sales / CRM Agent" as AdminRole,
     status: "Active" as "Active" | "Suspended",
+    permissions: DEFAULT_PERMISSIONS_BY_ROLE["Sales / CRM Agent"],
   });
 
   const showToast = (msg: string) => {
@@ -103,6 +184,7 @@ export default function AdminUsersPage() {
           department: "Sales & Inquiries",
           role: "Sales / CRM Agent",
           status: "Active",
+          permissions: DEFAULT_PERMISSIONS_BY_ROLE["Sales / CRM Agent"],
         });
         fetchUsers();
       } else {
@@ -631,7 +713,14 @@ export default function AdminUsersPage() {
                   <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Assigned Role</label>
                   <select
                     value={newUser.role}
-                    onChange={(e) => setNewUser({ ...newUser, role: e.target.value as AdminRole })}
+                    onChange={(e) => {
+                      const newRole = e.target.value as AdminRole;
+                      setNewUser({
+                        ...newUser,
+                        role: newRole,
+                        permissions: DEFAULT_PERMISSIONS_BY_ROLE[newRole] || [],
+                      });
+                    }}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
                   >
                     <option value="Sales / CRM Agent">Sales / CRM Agent</option>
@@ -652,15 +741,67 @@ export default function AdminUsersPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Phone Number</label>
-                <input
-                  type="tel"
-                  placeholder="+91 9797941414"
-                  value={newUser.phone}
-                  onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                />
+              {/* Authority Enable / Disable Section */}
+              <div className="pt-3 border-t border-slate-200">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <span className="text-[11px] font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <span>Authority &amp; Permissions (Enable / Disable)</span>
+                    </span>
+                    <p className="text-[10px] text-slate-500">
+                      Enable or disable individual system capabilities for this staff member.
+                    </p>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    {newUser.permissions.length} of {SYSTEM_AUTHORITIES.length} Enabled
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1 bg-slate-50 rounded-xl border border-slate-200">
+                  {SYSTEM_AUTHORITIES.map((auth) => {
+                    const isEnabled = newUser.permissions.includes(auth.key);
+                    return (
+                      <button
+                        key={auth.key}
+                        type="button"
+                        onClick={() => {
+                          setNewUser((prev) => ({
+                            ...prev,
+                            permissions: isEnabled
+                              ? prev.permissions.filter((p) => p !== auth.key)
+                              : [...prev.permissions, auth.key],
+                          }));
+                        }}
+                        className={`p-2.5 rounded-xl border text-left transition flex items-start gap-2.5 cursor-pointer ${
+                          isEnabled
+                            ? "bg-white border-emerald-400 shadow-2xs ring-1 ring-emerald-500/20"
+                            : "bg-slate-100/70 border-slate-200 hover:bg-white opacity-60"
+                        }`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
+                            isEnabled ? "bg-emerald-600 text-white" : "border border-slate-300 bg-white"
+                          }`}
+                        >
+                          {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
+                        </div>
+                        <div className="min-w-0">
+                          <span
+                            className={`text-xs font-bold leading-tight block ${
+                              isEnabled ? "text-emerald-950" : "text-slate-600"
+                            }`}
+                          >
+                            {auth.label}
+                          </span>
+                          <span className="text-[10px] text-slate-400 block line-clamp-1 mt-0.5">
+                            {auth.desc}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="pt-2 flex justify-end gap-2">
@@ -757,14 +898,67 @@ export default function AdminUsersPage() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Phone</label>
-                  <input
-                    type="tel"
-                    value={editingUser.phone || ""}
-                    onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                  />
+              </div>
+
+              {/* Authority Enable / Disable Section in Edit Modal */}
+              <div className="pt-3 border-t border-slate-200">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <span className="text-[11px] font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <span>Authority &amp; Permissions (Enable / Disable)</span>
+                    </span>
+                    <p className="text-[10px] text-slate-500">
+                      Configure granular module access for {editingUser.name}.
+                    </p>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    {(editingUser.permissions || []).length} of {SYSTEM_AUTHORITIES.length} Enabled
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1 bg-slate-50 rounded-xl border border-slate-200">
+                  {SYSTEM_AUTHORITIES.map((auth) => {
+                    const currentPerms = editingUser.permissions || [];
+                    const isEnabled = currentPerms.includes(auth.key);
+                    return (
+                      <button
+                        key={auth.key}
+                        type="button"
+                        onClick={() => {
+                          const updatedPerms = isEnabled
+                            ? currentPerms.filter((p) => p !== auth.key)
+                            : [...currentPerms, auth.key];
+                          setEditingUser({ ...editingUser, permissions: updatedPerms });
+                        }}
+                        className={`p-2.5 rounded-xl border text-left transition flex items-start gap-2.5 cursor-pointer ${
+                          isEnabled
+                            ? "bg-white border-emerald-400 shadow-2xs ring-1 ring-emerald-500/20"
+                            : "bg-slate-100/70 border-slate-200 hover:bg-white opacity-60"
+                        }`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
+                            isEnabled ? "bg-emerald-600 text-white" : "border border-slate-300 bg-white"
+                          }`}
+                        >
+                          {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
+                        </div>
+                        <div className="min-w-0">
+                          <span
+                            className={`text-xs font-bold leading-tight block ${
+                              isEnabled ? "text-emerald-950" : "text-slate-600"
+                            }`}
+                          >
+                            {auth.label}
+                          </span>
+                          <span className="text-[10px] text-slate-400 block line-clamp-1 mt-0.5">
+                            {auth.desc}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

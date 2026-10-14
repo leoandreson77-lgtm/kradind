@@ -45,28 +45,61 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { id, status }: { id: string; status: LeadRecord["status"] } = await request.json();
+    const body = await request.json();
+    const { id } = body;
+    if (!id) {
+      return NextResponse.json({ error: "Lead ID is required" }, { status: 400 });
+    }
+
     const store = readStore();
     if (!store.leads) store.leads = [];
 
     const index = store.leads.findIndex((l) => l.id === id);
-    if (index !== -1) {
-      store.leads[index].status = status;
-      writeStore(store);
+    if (index === -1) {
+      return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     }
+
+    const current = store.leads[index];
+    const existingInteractions = Array.isArray(current.interactions) ? [...current.interactions] : [];
+
+    // If a new interaction is being logged
+    if (body.newInteraction) {
+      const interaction = {
+        id: `int-${Date.now().toString().slice(-6)}`,
+        type: body.newInteraction.type || "Call",
+        summary: body.newInteraction.summary || "",
+        agentName: body.newInteraction.agentName || session.user?.name || "Staff Agent",
+        agentId: body.newInteraction.agentId || session.user?.id || "",
+        outcome: body.newInteraction.outcome || "Follow-up Required",
+        timestamp: new Date().toISOString(),
+      };
+      existingInteractions.unshift(interaction);
+    }
+
+    const updated: LeadRecord = {
+      ...current,
+      ...(body.status !== undefined && { status: body.status }),
+      ...(body.assignedTo !== undefined && { assignedTo: body.assignedTo }),
+      ...(body.assignedToId !== undefined && { assignedToId: body.assignedToId }),
+      ...(body.budget !== undefined && { budget: Number(body.budget) }),
+      ...(body.pax !== undefined && { pax: Number(body.pax) }),
+      ...(body.quotedAmount !== undefined && { quotedAmount: Number(body.quotedAmount) }),
+      interactions: body.interactions || existingInteractions,
+      interactionCount: body.interactions ? body.interactions.length : existingInteractions.length,
+      lastInteractedAt: body.newInteraction ? new Date().toISOString() : (body.lastInteractedAt || current.lastInteractedAt),
+    };
+
+    store.leads[index] = updated;
+    writeStore(store);
 
     try {
       const db = await getDb();
-      await db.collection("kradind_leads").updateOne({ id }, { $set: { status } });
+      await db.collection("kradind_leads").updateOne({ id }, { $set: updated }, { upsert: true });
     } catch (mongoErr) {
       console.warn("MongoDB lead update warning:", mongoErr);
     }
 
-    if (index === -1) {
-      return NextResponse.json({ id, status });
-    }
-
-    return NextResponse.json(store.leads[index]);
+    return NextResponse.json(updated);
   } catch (error: any) {
     console.error("Failed to update lead status:", error);
     return NextResponse.json({ error: error?.message || "Failed to update lead status" }, { status: 500 });

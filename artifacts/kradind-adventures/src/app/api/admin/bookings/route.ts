@@ -45,28 +45,53 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { id, status }: { id: string; status: BookingRecord["status"] } = await request.json();
+    const body = await request.json();
+    const { id } = body;
+    if (!id) {
+      return NextResponse.json({ error: "Booking ID is required" }, { status: 400 });
+    }
+
     const store = readStore();
     if (!store.bookings) store.bookings = [];
 
     const index = store.bookings.findIndex((b) => b.id === id);
-    if (index !== -1) {
-      store.bookings[index].status = status;
-      writeStore(store);
+    if (index === -1) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
+
+    // Merge updated fields
+    const current = store.bookings[index];
+    const updated: BookingRecord = {
+      ...current,
+      ...(body.status !== undefined && { status: body.status }),
+      ...(body.paymentStatus !== undefined && { paymentStatus: body.paymentStatus }),
+      ...(body.amountPaid !== undefined && { amountPaid: Number(body.amountPaid) }),
+      ...(body.advancePaid !== undefined && { advancePaid: Number(body.advancePaid) }),
+      ...(body.balanceDue !== undefined && { balanceDue: Number(body.balanceDue) }),
+      ...(body.paymentMethod !== undefined && { paymentMethod: body.paymentMethod }),
+      ...(body.transactionRef !== undefined && { transactionRef: body.transactionRef }),
+      ...(body.paymentProofDoc !== undefined && { paymentProofDoc: body.paymentProofDoc }),
+      ...(body.paymentProofName !== undefined && { paymentProofName: body.paymentProofName }),
+      ...(body.paymentNotes !== undefined && { paymentNotes: body.paymentNotes }),
+      ...(body.paymentHistory !== undefined && { paymentHistory: body.paymentHistory }),
+      ...(body.assignedAgent !== undefined && { assignedAgent: body.assignedAgent }),
+      ...(body.assignedAgentId !== undefined && { assignedAgentId: body.assignedAgentId }),
+      ...(body.operationStatus !== undefined && { operationStatus: body.operationStatus }),
+      ...(body.trekLeader !== undefined && { trekLeader: body.trekLeader }),
+      ...(body.vehicleAssigned !== undefined && { vehicleAssigned: body.vehicleAssigned }),
+    };
+
+    store.bookings[index] = updated;
+    writeStore(store);
 
     try {
       const db = await getDb();
-      await db.collection("kradind_bookings").updateOne({ id }, { $set: { status } });
+      await db.collection("kradind_bookings").updateOne({ id }, { $set: updated }, { upsert: true });
     } catch (mongoErr) {
       console.warn("MongoDB booking update warning:", mongoErr);
     }
 
-    if (index === -1) {
-      return NextResponse.json({ id, status });
-    }
-
-    return NextResponse.json(store.bookings[index]);
+    return NextResponse.json(updated);
   } catch (error: any) {
     console.error("Failed to update booking:", error);
     return NextResponse.json({ error: error?.message || "Failed to update booking" }, { status: 500 });

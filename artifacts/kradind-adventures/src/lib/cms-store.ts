@@ -221,6 +221,21 @@ export interface HomeSectionsConfig {
   };
 }
 
+export type PaymentStatus = "Pending" | "Partial (Advance Paid)" | "Paid" | "Under Verification" | "Refunded";
+
+export interface PaymentProofRecord {
+  id: string;
+  amount: number;
+  paymentType: "Advance Deposit" | "Part Payment" | "Full Settlement" | "Refund";
+  paymentMethod: string;
+  transactionRef: string;
+  proofDocUrl?: string;
+  proofDocName?: string;
+  notes?: string;
+  recordedBy?: string;
+  date: string;
+}
+
 export interface BookingRecord {
   id: string;
   customerName: string;
@@ -234,7 +249,34 @@ export interface BookingRecord {
   promoCode?: string;
   discountApplied: boolean;
   status: "Pending" | "Confirmed" | "Completed" | "Cancelled";
+  // Financials & Payment Verification
+  paymentStatus?: PaymentStatus;
+  amountPaid?: number;
+  advancePaid?: number;
+  balanceDue?: number;
+  paymentMethod?: string;
+  transactionRef?: string;
+  paymentProofDoc?: string;
+  paymentProofName?: string;
+  paymentNotes?: string;
+  paymentHistory?: PaymentProofRecord[];
+  // Role & Operations Assignment
+  assignedAgent?: string;
+  assignedAgentId?: string;
+  operationStatus?: "Not Started" | "Leader Assigned" | "Vehicle Scheduled" | "In Progress" | "Completed";
+  trekLeader?: string;
+  vehicleAssigned?: string;
   createdAt: string;
+}
+
+export interface LeadInteraction {
+  id: string;
+  type: "Call" | "WhatsApp" | "Email" | "Meeting" | "Proposal Sent" | "Note";
+  summary: string;
+  agentName: string;
+  agentId?: string;
+  outcome?: "Interested" | "Follow-up Required" | "No Response" | "Not Interested" | "Converted";
+  timestamp: string;
 }
 
 export interface LeadRecord {
@@ -246,6 +288,15 @@ export interface LeadRecord {
   message: string;
   source: string;
   status: "New" | "Contacted" | "Qualified" | "Closed";
+  // Interaction Tracking & Assignment
+  assignedTo?: string;
+  assignedToId?: string;
+  interactionCount?: number;
+  interactions?: LeadInteraction[];
+  lastInteractedAt?: string;
+  budget?: number;
+  pax?: number;
+  quotedAmount?: number;
   createdAt: string;
 }
 

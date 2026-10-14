@@ -9,66 +9,7 @@ import {
   AdminRole,
 } from "@/lib/cms-store";
 
-const VALID_AUTHORITY_KEYS = [
-  "view_all_reports",
-  "manage_sales",
-  "manage_payments",
-  "manage_operations",
-  "manage_leads",
-  "itinerary_studio",
-  "cms_editor",
-  "user_management",
-];
-
-const DEFAULT_ROLE_PERMS: Record<string, string[]> = {
-  "Super Admin": VALID_AUTHORITY_KEYS,
-  "Operations Manager": [
-    "view_all_reports",
-    "manage_operations",
-    "manage_sales",
-    "manage_leads",
-    "itinerary_studio",
-  ],
-  "Sales / CRM Agent": [
-    "manage_sales",
-    "manage_leads",
-    "manage_payments",
-    "itinerary_studio",
-  ],
-  "Expedition Leader": ["manage_operations"],
-};
-
-function normalizePermissions(perms?: string[], role?: string): string[] {
-  if (!perms || perms.length === 0) {
-    return DEFAULT_ROLE_PERMS[role || "Sales / CRM Agent"] || [];
-  }
-  if (perms.includes("all")) {
-    return [...VALID_AUTHORITY_KEYS];
-  }
-
-  const result = new Set<string>();
-  for (const p of perms) {
-    if (VALID_AUTHORITY_KEYS.includes(p)) {
-      result.add(p);
-    } else if (p.startsWith("crm") || p.startsWith("leads")) {
-      result.add("manage_leads");
-      result.add("manage_sales");
-    } else if (p.startsWith("bookings")) {
-      result.add("manage_sales");
-      result.add("manage_payments");
-    } else if (p.startsWith("radar") || p.startsWith("treks")) {
-      result.add("manage_operations");
-    } else if (p.startsWith("cms")) {
-      result.add("cms_editor");
-    }
-  }
-
-  if (result.size === 0 && role && DEFAULT_ROLE_PERMS[role]) {
-    return [...DEFAULT_ROLE_PERMS[role]];
-  }
-
-  return Array.from(result);
-}
+import { normalizeUserPermissions } from "@/lib/authorities";
 
 export async function GET(request: NextRequest) {
   try {
@@ -86,7 +27,7 @@ export async function GET(request: NextRequest) {
       role: u.role || "Super Admin",
       department: u.department || "Executive",
       status: u.status || "Active",
-      permissions: normalizePermissions(u.permissions, u.role),
+      permissions: normalizeUserPermissions(u.permissions, u.role),
       phone: u.phone || "",
       avatar: u.avatar || "",
       lastLogin: u.lastLogin || "",
@@ -139,7 +80,7 @@ export async function POST(request: NextRequest) {
     const role: AdminRole = body.role || "Sales / CRM Agent";
 
     // Set default permissions based on role if not explicitly provided
-    const defaultPerms: string[] = normalizePermissions(body.permissions, role);
+    const defaultPerms: string[] = normalizeUserPermissions(body.permissions, role);
 
     const newUser: AdminUser = {
       id: `admin-${Date.now().toString().slice(-4)}`,
@@ -207,8 +148,8 @@ export async function PUT(request: NextRequest) {
     const updatedRole = body.role !== undefined ? body.role : existing.role;
     const updatedPerms =
       body.permissions !== undefined
-        ? normalizePermissions(body.permissions, updatedRole)
-        : normalizePermissions(existing.permissions, updatedRole);
+        ? normalizeUserPermissions(body.permissions, updatedRole)
+        : normalizeUserPermissions(existing.permissions, updatedRole);
 
     const updatedUser: AdminUser = {
       ...existing,

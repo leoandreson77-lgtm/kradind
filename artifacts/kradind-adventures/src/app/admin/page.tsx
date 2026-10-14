@@ -39,7 +39,7 @@ import type {
   LeadInteraction,
   PaymentProofRecord,
 } from "@/lib/cms-store";
-import { SYSTEM_AUTHORITIES } from "./users/page";
+import { SYSTEM_AUTHORITIES } from "@/lib/authorities";
 
 export default function AdminDashboardPage() {
   // Core datasets

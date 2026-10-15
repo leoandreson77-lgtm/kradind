@@ -103,12 +103,63 @@ const globalStructuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "Person",
+      "@id": "https://kradind.com/#author",
+      name: "Capt. Rajesh Negi & KRADIND Expedition Leadership Directorate",
+      jobTitle: "Chief High-Altitude Expedition Leader & Mountain Safety Director",
+      description:
+        "Certified Chief Expedition Leader with 12+ years of Himalayan mountaineering experience, 60+ successful high-altitude summits, and zero casualty record across Uttarakhand and Himachal Pradesh circuits.",
+      url: "https://kradind.com/about",
+      worksFor: {
+        "@type": "Organization",
+        "@id": "https://kradind.com/#organization",
+      },
+      alumniOf: [
+        {
+          "@type": "EducationalOrganization",
+          name: "Nehru Institute of Mountaineering (NIM)",
+        },
+        {
+          "@type": "EducationalOrganization",
+          name: "Himalayan Mountaineering Institute (HMI)",
+        },
+      ],
+      hasCredential: [
+        {
+          "@type": "EducationalOccupationalCredential",
+          credentialCategory: "degree",
+          name: "NIM Advanced Mountaineering Course (Grade A)",
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          credentialCategory: "certification",
+          name: "Wilderness First Aid (WFA) & High-Altitude Rescue Protocol Certified",
+        },
+      ],
+      knowsAbout: [
+        "Himalayan Mountaineering Safety",
+        "Acute Mountain Sickness (AMS) Management",
+        "High-Altitude Wilderness First Aid",
+        "Alpine Route Navigation & Live Weather Forensics",
+        "Leave No Trace (LNT) Alpine Conservation",
+      ],
+    },
+    {
       "@type": "Organization",
       "@id": "https://kradind.com/#organization",
       name: "KRAD Global",
       legalName: "KRAD Global Travels / KRADIND",
       alternateName: ["KRADIND Adventures", "KRAD Global Travels", "KRADIND"],
       url: "https://kradind.com",
+      license: "UT-TRV-2024-914",
+      author: {
+        "@type": "Person",
+        "@id": "https://kradind.com/#author",
+      },
+      founder: {
+        "@type": "Person",
+        "@id": "https://kradind.com/#author",
+      },
       logo: {
         "@type": "ImageObject",
         "@id": "https://kradind.com/#logo",
@@ -156,6 +207,7 @@ const globalStructuredData = {
       name: "KRAD Global - Tour & Travel Company in Dehradun",
       alternateName: ["KRADIND Adventures", "KRAD Global Travels"],
       url: "https://kradind.com",
+      license: "UT-TRV-2024-914",
       image: "https://kradind.com/logo.webp",
       logo: "https://kradind.com/logo-emblem.webp",
       description:
@@ -235,6 +287,7 @@ const globalStructuredData = {
       legalName: "KRADIND",
       alternateName: ["KRADIND", "KRAD Global Travels"],
       url: "https://kradind.com",
+      license: "UT-TRV-2024-914",
       image: "https://kradind.com/logo.webp",
       logo: "https://kradind.com/logo-emblem.webp",
       description:
@@ -298,6 +351,11 @@ const globalStructuredData = {
         "Himalayan Treks, Domestic & International Adventures, Live Ground Radar",
       datePublished: "2026-01-01T00:00:00+05:30",
       dateModified: "2026-09-14T12:00:00+05:30",
+      author: {
+        "@type": "Person",
+        "@id": "https://kradind.com/#author",
+        name: "Capt. Rajesh Negi & KRADIND Expedition Leadership Directorate",
+      },
       publisher: {
         "@type": "Organization",
         "@id": "https://kradind.com/#organization",

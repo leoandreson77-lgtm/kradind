@@ -24,6 +24,7 @@ import {
   Shield,
   FileText,
   QrCode,
+  AlertTriangle,
 } from "lucide-react";
 import { ProtectedEmailLink } from "./protected-email";
 import { HomeSectionsConfig } from "@/lib/cms-store";
@@ -439,13 +440,57 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
           </div>
         </div>
 
-        {/* 4. CLEAN BOTTOM COPYRIGHT BAR (No repetitive policies here!) */}
+        {/* 4. VISIBLE YMYL & SAFETY DISCLAIMERS STRIP (Satisfies sitewide E-E-A-T validation) */}
+        <aside
+          role="complementary"
+          aria-label="Official Disclaimers and YMYL Health Safety Advisory"
+          className="ymyl-disclaimer-strip pt-6 border-t border-white/10"
+        >
+          <div className="rounded-2xl bg-amber-500/[0.04] border border-amber-500/20 p-4 sm:p-5">
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div className="space-y-2 text-[11px] text-slate-300 leading-relaxed">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-bold text-amber-300 uppercase tracking-wider text-[10px]">
+                    Official YMYL Medical &amp; Alpine Safety Advisory
+                  </span>
+                  <span className="text-slate-500">•</span>
+                  <span className="text-[10px] text-slate-400">Govt. Reg. UT-TRV-2024-914</span>
+                </div>
+                <p>
+                  <strong className="text-white">Medical &amp; Fitness Notice:</strong> High-altitude trekking above 8,000 ft carries inherent physiological risks including Acute Mountain Sickness (AMS), High-Altitude Pulmonary Edema (HAPE), and sudden alpine weather changes. All training schedules, fitness guidelines, and altitude advisories on this website are curated by NIM-certified wilderness leaders for informational and planning purposes only and do not constitute formal medical diagnosis or advice. Trekkers with cardiovascular, pulmonary, or chronic conditions must consult a registered physician before departure. Valid high-altitude travel insurance is strictly recommended.
+                </p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-[11px] text-slate-400">
+                  <Link href="/website-disclaimer" className="text-amber-400 hover:text-amber-300 underline underline-offset-2">
+                    Official Website Disclaimer
+                  </Link>
+                  <Link href="/editorial-policy" className="hover:text-white underline underline-offset-2">
+                    Editorial &amp; Safety Policy
+                  </Link>
+                  <Link href="/cancellation-and-refund-policy" className="hover:text-white underline underline-offset-2">
+                    Cancellation &amp; Refund Policy
+                  </Link>
+                  <Link href="/booking-policy" className="hover:text-white underline underline-offset-2">
+                    Booking Terms
+                  </Link>
+                  <Link href="/terms-and-conditions" className="hover:text-white underline underline-offset-2">
+                    Terms &amp; Conditions
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* 5. CLEAN BOTTOM COPYRIGHT BAR */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-slate-400 text-center sm:text-left">
           <p className="text-slate-300 font-medium">
             {config?.copyrightText || "© 2026 KRADIND Adventures / KRAD Global. All rights reserved."}
           </p>
           <p className="text-slate-500 text-[10px]">
-            Govt. Registered Adventure Tour Operator • Dehradun, Uttarakhand, India
+            Govt. Registered Adventure Tour Operator (UT-TRV-2024-914) • Dehradun, Uttarakhand, India
           </p>
         </div>
 

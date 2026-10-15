@@ -43,6 +43,7 @@ import {
   CreditCard,
   Quote,
   Palette,
+  DollarSign,
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { parseInlineFormatting } from "@/components/formatted-text";
@@ -68,6 +69,8 @@ export interface ItineraryPdfProps {
   customOfficeLocation?: string;
   isDraftProposal?: boolean;
   showDraftWatermark?: boolean;
+  customDiscount?: string;
+  initialPricePosition?: "top" | "middle" | "bottom";
 }
 
 export type CustomSectionStyle =
@@ -132,7 +135,8 @@ export const DEFAULT_CANCELLATION_POLICY: CancellationPolicyData = {
 };
 
 const DEFAULT_PDF_SECTIONS: PdfSectionItem[] = [
-  { id: "metadata_bar", label: "Quotation & Rates", shortTag: "Rates & Info", visible: true },
+  { id: "metadata_bar", label: "Client & Proposal Details", shortTag: "Client Info", visible: true },
+  { id: "price_section", label: "Commercial Quotation & Rates Breakdown", shortTag: "💰 Price & Rates", visible: true },
   { id: "title_summary", label: "Tour Title & Overview", shortTag: "Title & Summary", visible: true },
   { id: "stats_grid", label: "Expedition Stats Grid", shortTag: "Stats Grid", visible: true },
   { id: "custom_notes", label: "Seasonal Custom Notes", shortTag: "Advisory Note", visible: true },
@@ -195,6 +199,8 @@ export function ItineraryPdfModal({
   customOfficeLocation,
   isDraftProposal = false,
   showDraftWatermark,
+  customDiscount,
+  initialPricePosition,
 }: ItineraryPdfProps) {
   // If a custom client name was specified by sales/admin, consider it sales mode (no gate needed)
   const isSalesMode = Boolean(customClientName && customClientName !== "Valued Traveler");
@@ -363,6 +369,44 @@ export function ItineraryPdfModal({
     updated.splice(toIndex, 0, moved);
     setSections(updated);
   };
+
+  const movePriceSectionTo = (target: "top" | "middle" | "bottom") => {
+    setSections((prev) => {
+      let priceSec = prev.find((s) => s.id === "price_section");
+      if (!priceSec) {
+        priceSec = {
+          id: "price_section",
+          label: "Commercial Quotation & Rates Breakdown",
+          shortTag: "💰 Price & Rates",
+          visible: true,
+        };
+      }
+      const updated = prev.filter((s) => s.id !== "price_section");
+
+      if (target === "top") {
+        const metaIdx = updated.findIndex((s) => s.id === "metadata_bar");
+        const insertAt = metaIdx !== -1 ? metaIdx + 1 : 0;
+        updated.splice(insertAt, 0, priceSec);
+      } else if (target === "middle") {
+        const daysIdx = updated.findIndex((s) => s.id === "itinerary_days");
+        const insertAt = daysIdx !== -1 ? daysIdx + 1 : Math.floor(updated.length / 2);
+        updated.splice(insertAt, 0, priceSec);
+      } else if (target === "bottom") {
+        const botIdx = updated.findIndex(
+          (s) => s.id === "cancellation_policy" || s.id === "banking_details"
+        );
+        const insertAt = botIdx !== -1 ? botIdx : updated.length;
+        updated.splice(insertAt, 0, priceSec);
+      }
+      return updated;
+    });
+  };
+
+  useEffect(() => {
+    if (initialPricePosition) {
+      movePriceSectionTo(initialPricePosition);
+    }
+  }, [initialPricePosition]);
 
   const toggleSectionVisibility = (id: string) => {
     setSections((prev) =>
@@ -720,6 +764,31 @@ export function ItineraryPdfModal({
               />
             </div>
 
+            {/* Quick Price Placement Dropdown */}
+            <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-xl border border-slate-300 shadow-2xs">
+              <span className="text-slate-600 font-bold flex items-center gap-1">
+                <DollarSign className="w-3.5 h-3.5 text-[#FF6B35]" />
+                <span>Price:</span>
+              </span>
+              <select
+                value={
+                  (() => {
+                    const idx = sections.findIndex((s) => s.id === "price_section");
+                    if (idx <= 1) return "top";
+                    if (idx >= sections.length - 3) return "bottom";
+                    return "middle";
+                  })()
+                }
+                onChange={(e) => movePriceSectionTo(e.target.value as any)}
+                className="bg-transparent text-xs font-extrabold text-[#0F3A2E] cursor-pointer outline-none"
+                title="Reposition the Price Section to Top, Middle, or Bottom"
+              >
+                <option value="top">🔝 Sabse Uper (Top)</option>
+                <option value="middle">⬌ Beech Me (Middle)</option>
+                <option value="bottom">🔻 Neeche (Bottom)</option>
+              </select>
+            </div>
+
             <button
               type="button"
               onClick={() => setIsDraftWatermarkActive(!isDraftWatermarkActive)}
@@ -809,6 +878,43 @@ export function ItineraryPdfModal({
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Reset Layout</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Move Price Section Bar */}
+            <div className="bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center font-black text-xs">
+                  ₹
+                </span>
+                <div>
+                  <span className="font-extrabold text-amber-300 block">Quick Placement for Price Section:</span>
+                  <span className="text-[11px] text-slate-400">Position the commercial pricing table anywhere in the proposal</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => movePriceSectionTo("top")}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs text-xs"
+                >
+                  <span>🔝 Sabse Uper (Top)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => movePriceSectionTo("middle")}
+                  className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs text-xs"
+                >
+                  <span>⬌ Beech Me (Middle)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => movePriceSectionTo("bottom")}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs text-xs"
+                >
+                  <span>🔻 Neeche (Bottom)</span>
                 </button>
               </div>
             </div>
@@ -1065,7 +1171,7 @@ export function ItineraryPdfModal({
                 return (
                   <div key={sec.id} className="relative group page-break-inside-avoid">
                     <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
-                      <span className="font-bold text-slate-700">Rates</span>
+                      <span className="font-bold text-slate-700">Client Info</span>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
                     </div>
@@ -1097,9 +1203,168 @@ export function ItineraryPdfModal({
                         <span className="text-emerald-700 text-[11px] font-semibold">Valid for 15 Days</span>
                       </div>
                       <div className="text-left sm:text-right">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Commercial Quotation</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Commercial Summary</span>
                         <strong className="text-[#FF6B35] text-base sm:text-lg font-extrabold block">₹{totalPrice.toLocaleString("en-IN")}</strong>
-                        <span className="text-slate-500 text-[10px]">(₹{pricePerPerson.toLocaleString("en-IN")} / Person all-inclusive)</span>
+                        <span className="text-slate-500 text-[10px]">(₹{pricePerPerson.toLocaleString("en-IN")} / Person)</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (sec.id === "price_section") {
+                return (
+                  <div key={sec.id} className="relative group page-break-inside-avoid space-y-3">
+                    {/* Floating Controls with Move to Top, Middle, Bottom */}
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-300 shadow-md z-20 text-[10px]">
+                      <span className="font-extrabold text-[#0F3A2E] flex items-center gap-1">
+                        <DollarSign className="w-3 h-3 text-[#FF6B35]" />
+                        <span>Price Section</span>
+                      </span>
+                      <span className="text-slate-300">|</span>
+                      <button
+                        type="button"
+                        onClick={() => movePriceSectionTo("top")}
+                        className="px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold cursor-pointer"
+                        title="Move Price Section to the Very Top"
+                      >
+                        🔝 Top
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => movePriceSectionTo("middle")}
+                        className="px-1.5 py-0.5 rounded bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold cursor-pointer"
+                        title="Move Price Section to Middle (After Itinerary Schedule)"
+                      >
+                        ⬌ Middle
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => movePriceSectionTo("bottom")}
+                        className="px-1.5 py-0.5 rounded bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold cursor-pointer"
+                        title="Move Price Section to Bottom (Before Banking &amp; Terms)"
+                      >
+                        🔻 Bottom
+                      </button>
+                      <span className="text-slate-300">|</span>
+                      <button
+                        type="button"
+                        onClick={() => moveSection(secIdx, secIdx - 1)}
+                        disabled={secIdx === 0}
+                        className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"
+                        title="Move Up 1 step"
+                      >
+                        <ChevronUp className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveSection(secIdx, secIdx + 1)}
+                        disabled={secIdx === sections.length - 1}
+                        className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"
+                        title="Move Down 1 step"
+                      >
+                        <ChevronDown className="w-3 h-3" />
+                      </button>
+                    </div>
+
+                    <div
+                      className={`rounded-2xl p-4 sm:p-5 border transition-all ${
+                        isDraftWatermarkActive
+                          ? "bg-gradient-to-br from-amber-50/90 via-white to-amber-50/40 border-2 border-amber-300 shadow-sm"
+                          : "bg-gradient-to-br from-slate-50 via-white to-emerald-50/40 border border-slate-200/90 shadow-2xs"
+                      }`}
+                    >
+                      {/* Section Title Bar */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200/80">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-[#0F3A2E] text-amber-300 flex items-center justify-center shadow-xs shrink-0">
+                            <CreditCard className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <h3 className="text-xs sm:text-sm font-black text-[#0F3A2E] uppercase tracking-wider flex items-center gap-2">
+                              <span>Commercial Quotation &amp; Investment Summary</span>
+                              {isDraftWatermarkActive && (
+                                <span className="px-2 py-0.2 rounded-full bg-amber-400 text-slate-950 font-black text-[9px] uppercase tracking-wider">
+                                  DRAFT QUOTE
+                                </span>
+                              )}
+                            </h3>
+                            <p className="text-[10px] text-slate-500">
+                              All-inclusive expedition pricing • Certified transparent mountain operations.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 self-start sm:self-auto">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
+                            ✓ Permits &amp; Taxes Included
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 4 Cards Pricing Grid */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                        <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                            Rate Per Person
+                          </span>
+                          <strong className="text-base sm:text-lg font-black text-[#0F3A2E] block mt-0.5">
+                            ₹{pricePerPerson.toLocaleString("en-IN")}
+                          </strong>
+                          <span className="text-[10px] text-slate-500">All-Inclusive Base Fare</span>
+                        </div>
+
+                        <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                            Group Size (Pax)
+                          </span>
+                          <strong className="text-base sm:text-lg font-black text-slate-800 block mt-0.5">
+                            {paxCount} {paxCount === 1 ? "Traveler" : "Travelers"}
+                          </strong>
+                          <span className="text-[10px] text-slate-500">
+                            {tour.duration || `${effectiveDays.length} Days`} Expedition
+                          </span>
+                        </div>
+
+                        <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                            Token Advance (30%)
+                          </span>
+                          <strong className="text-base sm:text-lg font-black text-blue-700 block mt-0.5">
+                            ₹{Math.round(totalPrice * 0.3).toLocaleString("en-IN")}
+                          </strong>
+                          <span className="text-[10px] text-blue-600 font-semibold">Immediate Seat Lock</span>
+                        </div>
+
+                        <div className="bg-emerald-50/90 p-3 rounded-xl border border-emerald-300 text-left sm:text-right shadow-2xs">
+                          <span className="text-[10px] font-extrabold text-emerald-950 uppercase tracking-wider block">
+                            Total Commercial Quote
+                          </span>
+                          <strong className="text-lg sm:text-xl font-black text-[#FF6B35] block mt-0.5">
+                            ₹{totalPrice.toLocaleString("en-IN")}
+                          </strong>
+                          <span className="text-[10px] text-emerald-800 font-medium">Net Payable Amount</span>
+                        </div>
+                      </div>
+
+                      {/* Payment Schedule & Milestones Bar */}
+                      <div className="mt-3 pt-2.5 border-t border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-600">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="font-bold text-slate-700">Payment Milestones:</span>
+                          <span className="flex items-center gap-1 font-semibold text-emerald-800">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                            30% Advance for Confirmation
+                          </span>
+                          <span className="flex items-center gap-1 text-slate-600">
+                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                            70% Balance on Day 1 Arrival
+                          </span>
+                        </div>
+                        {customDiscount && (
+                          <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 font-bold text-[10px] border border-amber-300">
+                            🎁 {customDiscount}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

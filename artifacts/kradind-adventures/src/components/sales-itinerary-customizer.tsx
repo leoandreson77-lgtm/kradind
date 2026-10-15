@@ -57,6 +57,7 @@ export interface SalesCustomizerDraft {
   selectedSeason: string;
   days: TrekItineraryDay[];
   crmProposalId?: string;
+  pricePlacement?: "top" | "middle" | "bottom";
   createdAt: string;
   updatedAt: string;
 }
@@ -153,6 +154,7 @@ export function SalesItineraryCustomizer({
 
   // Drafts & CRM Integration State
   const [showDraftWatermark, setShowDraftWatermark] = useState<boolean>(true);
+  const [pricePlacement, setPricePlacement] = useState<"top" | "middle" | "bottom">("top");
   const [autoSaveStatus, setAutoSaveStatus] = useState<string>("");
   const [hasRecoveredDraft, setHasRecoveredDraft] = useState<boolean>(false);
   const [recoveredDraftData, setRecoveredDraftData] = useState<any>(null);
@@ -246,6 +248,7 @@ export function SalesItineraryCustomizer({
           customAdvisory,
           selectedSeason,
           days,
+          pricePlacement,
           updatedAt: new Date().toLocaleTimeString("en-IN", {
             hour: "2-digit",
             minute: "2-digit",
@@ -275,6 +278,7 @@ export function SalesItineraryCustomizer({
     customAdvisory,
     selectedSeason,
     days,
+    pricePlacement,
     isOpen,
   ]);
 
@@ -294,6 +298,7 @@ export function SalesItineraryCustomizer({
       setPaxCount(2);
       setDepartureDate("Flexible Dates / 2026");
       setSpecialDiscount("Special Group Pricing Applied");
+      setPricePlacement("top");
     }
     showToast("Auto-saved draft discarded. Reset to catalog defaults.");
   };
@@ -310,6 +315,7 @@ export function SalesItineraryCustomizer({
     if (draft.customAdvisory) setCustomAdvisory(draft.customAdvisory);
     if (draft.selectedSeason) setSelectedSeason(draft.selectedSeason);
     if (draft.days && draft.days.length > 0) setDays(draft.days);
+    if (draft.pricePlacement) setPricePlacement(draft.pricePlacement);
     setHasRecoveredDraft(false);
     showToast(`⚡ Restored draft for "${draft.clientName || "Client"}"!`);
   };
@@ -333,6 +339,7 @@ export function SalesItineraryCustomizer({
         customAdvisory,
         selectedSeason,
         days,
+        pricePlacement,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toLocaleDateString("en-IN", {
           day: "numeric",
@@ -918,6 +925,69 @@ export function SalesItineraryCustomizer({
                       placeholder="Add any client-specific notes like private vehicle pickup, hotel upgrade, or dietary preferences..."
                     />
                   </div>
+
+                  {/* PDF Price Section Placement */}
+                  <div className="pt-2 border-t border-slate-100 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span className="text-amber-500 font-extrabold text-sm">💰</span>
+                        <span>PDF Price Section Position (Rate / Quotation Placement)</span>
+                      </label>
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
+                        {pricePlacement === "top" ? "🔝 Sabse Uper / Top" : pricePlacement === "middle" ? "⬌ Beech Me / Middle" : "🔻 Sabse Neeche / Bottom"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      Choose default position in proposal PDF. (Can also be freely dragged inside PDF preview).
+                    </p>
+                    <div className="grid grid-cols-3 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPricePlacement("top");
+                          showToast("Price section placed at Top (After Header)");
+                        }}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer border ${
+                          pricePlacement === "top"
+                            ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>🔝 Top</span>
+                        <span className="hidden sm:inline text-[10px] opacity-80">(After Header)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPricePlacement("middle");
+                          showToast("Price section placed in Middle (After Schedule)");
+                        }}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer border ${
+                          pricePlacement === "middle"
+                            ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>⬌ Middle</span>
+                        <span className="hidden sm:inline text-[10px] opacity-80">(After Schedule)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPricePlacement("bottom");
+                          showToast("Price section placed at Bottom (Before Bank & QR)");
+                        }}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer border ${
+                          pricePlacement === "bottom"
+                            ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>🔻 Bottom</span>
+                        <span className="hidden sm:inline text-[10px] opacity-80">(Before Bank QR)</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 {/* 3. DRAFT & PDF SECURITY WATERMARK SETTINGS */}
@@ -1185,6 +1255,67 @@ export function SalesItineraryCustomizer({
                     >
                       <UploadCloud className="w-4 h-4" />
                       <span>{savingToCrm ? "Pushing..." : "Push to CRM Proposals (Draft)"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* PDF Commercial Price Placement Selector */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                  <div>
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800">
+                      <span className="text-amber-500 font-extrabold text-sm">💰</span>
+                      <span>PDF Commercial Price Placement:</span>
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
+                        {pricePlacement === "top" ? "🔝 Sabse Uper / Top" : pricePlacement === "middle" ? "⬌ Beech Me / Middle" : "🔻 Sabse Neeche / Bottom"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Set where the rates breakdown table appears in the generated PDF proposal:
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPricePlacement("top");
+                        showToast("PDF Price set to Top (After Header)");
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer border ${
+                        pricePlacement === "top"
+                          ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>🔝 Sabse Uper (Top)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPricePlacement("middle");
+                        showToast("PDF Price set to Middle (After Itinerary)");
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer border ${
+                        pricePlacement === "middle"
+                          ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>⬌ Beech Me (Middle)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPricePlacement("bottom");
+                        showToast("PDF Price set to Bottom (Before Bank QR)");
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer border ${
+                        pricePlacement === "bottom"
+                          ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>🔻 Neeche (Bottom)</span>
                     </button>
                   </div>
                 </div>
@@ -1554,6 +1685,8 @@ export function SalesItineraryCustomizer({
           customCoordinator={salesAgentName}
           isDraftProposal={true}
           showDraftWatermark={showDraftWatermark}
+          customDiscount={specialDiscount}
+          initialPricePosition={pricePlacement}
         />
       )}
 

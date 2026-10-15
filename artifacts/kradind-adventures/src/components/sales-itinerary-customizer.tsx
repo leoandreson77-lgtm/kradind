@@ -800,6 +800,7 @@ export function SalesItineraryCustomizer({
           customSeason={`${currentPreset.name} (${currentPreset.months})`}
           customNotes={customAdvisory}
           customDays={days}
+          customCoordinator={salesAgentName}
         />
       )}
     </>

@@ -30,6 +30,7 @@ import {
   ChevronUp,
   ChevronDown,
   RotateCcw,
+  ShieldAlert,
 } from "lucide-react";
 import { CustomerItineraryProposal } from "@/lib/cms-store";
 import { ItineraryRouteMap } from "@/components/itinerary-route-map";
@@ -714,6 +715,47 @@ KRADIND Adventures | Himalayas & Beyond
                 </div>
               ) : null}
               <div className="text-[10px] text-slate-400 mt-0.5">All applicable transport & guide taxes included</div>
+            </div>
+          </div>
+
+          {/* Cancellation & Refund Policy */}
+          <div className="mb-8 p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white space-y-3 page-break-avoid print:border-slate-300">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                <ShieldAlert className="w-4 h-4 text-rose-600" />
+                <span>Standard Cancellation &amp; Reschedule Terms</span>
+              </h3>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                Official Policy
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 text-xs">
+                <span className="text-[10px] font-bold text-emerald-800 uppercase block">30+ Days Prior</span>
+                <strong className="text-sm font-black text-emerald-900 block mt-0.5">90% Refund</strong>
+                <p className="text-[10px] text-emerald-800 mt-1">10% administrative processing fee (or 100% credit voucher).</p>
+              </div>
+              <div className="p-2.5 rounded-xl border border-blue-200 bg-blue-50 text-xs">
+                <span className="text-[10px] font-bold text-blue-800 uppercase block">15 - 29 Days Prior</span>
+                <strong className="text-sm font-black text-blue-900 block mt-0.5">50% Refund</strong>
+                <p className="text-[10px] text-blue-800 mt-1">50% cash refund or 75% credit voucher valid for 12 months.</p>
+              </div>
+              <div className="p-2.5 rounded-xl border border-amber-200 bg-amber-50 text-xs">
+                <span className="text-[10px] font-bold text-amber-800 uppercase block">7 - 14 Days Prior</span>
+                <strong className="text-sm font-black text-amber-900 block mt-0.5">25% Refund</strong>
+                <p className="text-[10px] text-amber-800 mt-1">25% cash refund or 40% credit voucher for future trip.</p>
+              </div>
+              <div className="p-2.5 rounded-xl border border-rose-200 bg-rose-50 text-xs">
+                <span className="text-[10px] font-bold text-rose-800 uppercase block">&lt; 7 Days</span>
+                <strong className="text-sm font-black text-rose-900 block mt-0.5">Non-Refundable</strong>
+                <p className="text-[10px] text-rose-800 mt-1">Strictly non-refundable due to pre-booked hotels &amp; transport.</p>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
+              <span><strong>Reschedule:</strong> Free 1-time batch rescheduling up to 15 days before travel.</span>
+              <span><strong>Safety Guarantee:</strong> Safe alternate trail / carry forward credits on severe weather.</span>
             </div>
           </div>
 

@@ -35,6 +35,14 @@ import {
   Eye,
   EyeOff,
   MoveVertical,
+  Edit3,
+  Plus,
+  Trash2,
+  Plane,
+  ShieldAlert,
+  CreditCard,
+  Quote,
+  Palette,
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { parseInlineFormatting } from "@/components/formatted-text";
@@ -53,25 +61,73 @@ export interface ItineraryPdfProps {
   customSeason?: string;
   customNotes?: string;
   customDays?: TrekItineraryDay[];
+  customHelpline?: string;
+  customWhatsApp?: string;
+  customEmail?: string;
+  customCoordinator?: string;
+  customOfficeLocation?: string;
 }
 
-export type PdfSectionKey =
-  | "metadata_bar"
-  | "title_summary"
-  | "stats_grid"
-  | "custom_notes"
-  | "route_map"
-  | "itinerary_days"
-  | "inclusions_exclusions"
-  | "gear_checklist"
-  | "banking_details";
+export type CustomSectionStyle =
+  | "emerald-card"
+  | "amber-alert"
+  | "bullet-list"
+  | "milestone-steps"
+  | "quote-box";
 
 export interface PdfSectionItem {
-  id: PdfSectionKey;
+  id: string;
   label: string;
   shortTag: string;
   visible: boolean;
+  isCustom?: boolean;
+  customStyle?: CustomSectionStyle;
+  customIcon?: string;
+  customContent?: string;
 }
+
+export interface CancellationPolicyData {
+  title: string;
+  badge: string;
+  slabs: { timeline: string; refund: string; note: string; color: string }[];
+  reschedulingNote: string;
+  weatherNote: string;
+}
+
+export const DEFAULT_CANCELLATION_POLICY: CancellationPolicyData = {
+  title: "Cancellation, Rescheduling & Refund Terms",
+  badge: "Official Booking Policy",
+  slabs: [
+    {
+      timeline: "30+ Days Prior",
+      refund: "90% Refund",
+      note: "10% deduction towards administrative & permits processing fee (or 100% credit voucher).",
+      color: "text-emerald-800 bg-emerald-50 border-emerald-200",
+    },
+    {
+      timeline: "15 to 29 Days Prior",
+      refund: "50% Refund",
+      note: "50% cash refund or 75% credit voucher valid for 12 months for any KRADIND trip.",
+      color: "text-blue-800 bg-blue-50 border-blue-200",
+    },
+    {
+      timeline: "7 to 14 Days Prior",
+      refund: "25% Refund",
+      note: "25% cash refund or 40% credit voucher towards a rescheduled future batch.",
+      color: "text-amber-800 bg-amber-50 border-amber-200",
+    },
+    {
+      timeline: "Less than 7 Days",
+      refund: "Non-Refundable",
+      note: "Strictly non-refundable due to advance camp, guide, logistics & permits booking.",
+      color: "text-rose-800 bg-rose-50 border-rose-200",
+    },
+  ],
+  reschedulingNote:
+    "Free 1-time batch rescheduling permitted up to 15 days before departure without penalty.",
+  weatherNote:
+    "Force Majeure & Mountain Safety: If routes or high passes close due to sudden blizzards, floods, or governmental restrictions, our team arranges immediate safe alternate trails or issues equivalent carry-forward trek vouchers.",
+};
 
 const DEFAULT_PDF_SECTIONS: PdfSectionItem[] = [
   { id: "metadata_bar", label: "Quotation & Rates", shortTag: "Rates & Info", visible: true },
@@ -82,8 +138,43 @@ const DEFAULT_PDF_SECTIONS: PdfSectionItem[] = [
   { id: "itinerary_days", label: "Day-by-Day Expedition Schedule", shortTag: "Daily Itinerary", visible: true },
   { id: "inclusions_exclusions", label: "Inclusions & Exclusions Table", shortTag: "Inclusions", visible: true },
   { id: "gear_checklist", label: "Safety Protocol & Packing Essentials", shortTag: "Gear Checklist", visible: true },
+  { id: "cancellation_policy", label: "Cancellation & Refund Terms", shortTag: "Cancellation Policy", visible: true },
   { id: "banking_details", label: "Official Bank Account, QR & Socials", shortTag: "Bank & QR Code", visible: true },
 ];
+
+export function parseBulletPoints(text: string): string[] {
+  if (!text) return [];
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^[\s•\-*]+/, "").replace(/^\d+[\.\)]\s*/, "").trim())
+    .filter((line) => line.length > 0);
+}
+
+export function renderCustomIcon(iconName?: string) {
+  switch (iconName) {
+    case "shield":
+      return <ShieldCheck className="w-4 h-4" />;
+    case "alert":
+      return <AlertTriangle className="w-4 h-4" />;
+    case "check":
+      return <CheckCircle2 className="w-4 h-4" />;
+    case "plane":
+      return <Plane className="w-4 h-4" />;
+    case "credit":
+      return <CreditCard className="w-4 h-4" />;
+    case "quote":
+      return <Quote className="w-4 h-4" />;
+    case "steps":
+      return <Award className="w-4 h-4" />;
+    case "map":
+      return <MapPin className="w-4 h-4" />;
+    case "calendar":
+      return <Calendar className="w-4 h-4" />;
+    case "sparkles":
+    default:
+      return <Sparkles className="w-4 h-4" />;
+  }
+}
 
 export function ItineraryPdfModal({
   isOpen,
@@ -95,6 +186,11 @@ export function ItineraryPdfModal({
   customSeason = "All Seasons",
   customNotes,
   customDays,
+  customHelpline,
+  customWhatsApp,
+  customEmail,
+  customCoordinator,
+  customOfficeLocation,
 }: ItineraryPdfProps) {
   // If a custom client name was specified by sales/admin, consider it sales mode (no gate needed)
   const isSalesMode = Boolean(customClientName && customClientName !== "Valued Traveler");
@@ -108,12 +204,145 @@ export function ItineraryPdfModal({
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const printAreaRef = useRef<HTMLDivElement>(null);
 
+  // Editable Contact Info State
+  const [contactHelpline, setContactHelpline] = useState(customHelpline || "+91 9797941414");
+  const [contactWhatsApp, setContactWhatsApp] = useState(customWhatsApp || "+91 9797941414");
+  const [contactEmail, setContactEmail] = useState(customEmail || "Info@kradind.com");
+  const [coordinatorName, setCoordinatorName] = useState(customCoordinator || "Dedicated Trip Coordinator");
+  const [officeLocation, setOfficeLocation] = useState(customOfficeLocation || "Certified Operator • Dehradun");
+  const [isEditingContact, setIsEditingContact] = useState(false);
+
+  // Editable Cancellation Policy State
+  const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicyData>(DEFAULT_CANCELLATION_POLICY);
+  const [isEditingPolicy, setIsEditingPolicy] = useState(false);
+
   // Draggable Items & Sections state
   const [sections, setSections] = useState<PdfSectionItem[]>(DEFAULT_PDF_SECTIONS);
   const [pdfDays, setPdfDays] = useState<TrekItineraryDay[]>([]);
   const [isDragTrayOpen, setIsDragTrayOpen] = useState(false);
   const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null);
   const [draggedDayIndex, setDraggedDayIndex] = useState<number | null>(null);
+
+  // Custom Sections Creator Modal State
+  const [isAddSectionModalOpen, setIsAddSectionModalOpen] = useState(false);
+  const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+  const [customSecTitle, setCustomSecTitle] = useState("");
+  const [customSecShortTag, setCustomSecShortTag] = useState("");
+  const [customSecStyle, setCustomSecStyle] = useState<CustomSectionStyle>("emerald-card");
+  const [customSecIcon, setCustomSecIcon] = useState("sparkles");
+  const [customSecContent, setCustomSecContent] = useState("");
+
+  const handleOpenAddSectionModal = () => {
+    setEditingSectionId(null);
+    setCustomSecTitle("");
+    setCustomSecShortTag("");
+    setCustomSecStyle("emerald-card");
+    setCustomSecIcon("sparkles");
+    setCustomSecContent("");
+    setIsAddSectionModalOpen(true);
+  };
+
+  const handleEditCustomSection = (sec: PdfSectionItem) => {
+    setEditingSectionId(sec.id);
+    setCustomSecTitle(sec.label);
+    setCustomSecShortTag(sec.shortTag);
+    setCustomSecStyle(sec.customStyle || "emerald-card");
+    setCustomSecIcon(sec.customIcon || "sparkles");
+    setCustomSecContent(sec.customContent || "");
+    setIsAddSectionModalOpen(true);
+  };
+
+  const handleDeleteCustomSection = (id: string) => {
+    setSections((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  const handleSaveCustomSection = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!customSecTitle.trim()) return;
+
+    if (editingSectionId) {
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === editingSectionId
+            ? {
+                ...s,
+                label: customSecTitle.trim(),
+                shortTag: customSecShortTag.trim() || customSecTitle.trim().slice(0, 16),
+                customStyle: customSecStyle,
+                customIcon: customSecIcon,
+                customContent: customSecContent.trim(),
+              }
+            : s
+        )
+      );
+    } else {
+      const newSec: PdfSectionItem = {
+        id: `custom_sec_${Date.now()}`,
+        label: customSecTitle.trim(),
+        shortTag: customSecShortTag.trim() || customSecTitle.trim().slice(0, 16),
+        visible: true,
+        isCustom: true,
+        customStyle: customSecStyle,
+        customIcon: customSecIcon,
+        customContent: customSecContent.trim(),
+      };
+      // Place new section before banking details
+      const bankIdx = sections.findIndex((s) => s.id === "banking_details");
+      if (bankIdx >= 0) {
+        const copy = [...sections];
+        copy.splice(bankIdx, 0, newSec);
+        setSections(copy);
+      } else {
+        setSections((prev) => [...prev, newSec]);
+      }
+    }
+    setIsAddSectionModalOpen(false);
+    setEditingSectionId(null);
+  };
+
+  const applySectionPresetTemplate = (preset: "flight" | "payment" | "perks" | "medical" | "message") => {
+    if (preset === "flight") {
+      setCustomSecTitle("Flight & Travel Schedule Advisory");
+      setCustomSecShortTag("Travel Advisory");
+      setCustomSecStyle("amber-alert");
+      setCustomSecIcon("plane");
+      setCustomSecContent(
+        "• Nearest Airport: Jolly Grant Airport, Dehradun (DED) with daily direct flights from Delhi, Mumbai & Bengaluru.\n• Nearest Railway Station: Dehradun Railway Station (DDN) with overnight superfast express trains.\n• Departure Timing: Official shared/private cab departs at 06:30 AM sharp from Dehradun on Day 1.\n• Return Drop: Anticipated drop back at Dehradun by 06:30 PM on the final day. Book departure flights/trains after 09:00 PM."
+      );
+    } else if (preset === "payment") {
+      setCustomSecTitle("Deposit & Payment Milestones Plan");
+      setCustomSecShortTag("Payment Plan");
+      setCustomSecStyle("milestone-steps");
+      setCustomSecIcon("credit");
+      setCustomSecContent(
+        "1. Token Advance: 20% deposit to lock departure slots, permits & local guide allocation.\n2. Pre-Trek Clearance: 50% payment cleared 15 days before departure.\n3. Basecamp Briefing: Remaining 30% balance cleared on Day 1 arrival during trip orientation."
+      );
+    } else if (preset === "perks") {
+      setCustomSecTitle("Special Group Inclusions & VIP Perks");
+      setCustomSecShortTag("Exclusive Perks");
+      setCustomSecStyle("emerald-card");
+      setCustomSecIcon("sparkles");
+      setCustomSecContent(
+        "• 4K Ultra-HD summit drone clips & complimentary candid group photography.\n• Dedicated mountain chef serving unlimited hot soups, wholesome local dishes & hydration drinks.\n• High-altitude safety kit: 2x portable oxygen cylinders, fingertip pulse oximeters & certified emergency team.\n• Upgraded 4-season alpine tents (-10°C rating) with insulated ground mattresses."
+      );
+    } else if (preset === "medical") {
+      setCustomSecTitle("Medical Fitness & Safety Self-Declaration");
+      setCustomSecShortTag("Health Check");
+      setCustomSecStyle("bullet-list");
+      setCustomSecIcon("shield");
+      setCustomSecContent(
+        "• Cardio Stamina: Able to walk briskly or jog 4 km comfortably in under 30 minutes.\n• Medical Clearance: No active heart conditions, untreated hypertension, severe asthma, or acute joint surgery.\n• Daily Health Monitor: Pulse & SpO2 oxygen levels recorded every morning and evening at camp.\n• Mandatory Documentation: Signed physical fitness self-declaration submitted at basecamp check-in."
+      );
+    } else if (preset === "message") {
+      setCustomSecTitle("A Personal Welcome from Your Trip Coordinator");
+      setCustomSecShortTag("Coordinator Note");
+      setCustomSecStyle("quote-box");
+      setCustomSecIcon("quote");
+      setCustomSecContent(
+        "Welcome to KRADIND Adventures! Our mountain leadership team is committed to delivering a safe, transformative, and memorable Himalayan journey. If you need any advice on customized packing, physical preparation, or travel logistics, our desk is always available on call or WhatsApp."
+      );
+    }
+  };
 
   useEffect(() => {
     const raw = customDays && customDays.length > 0 ? customDays : tour?.itinerary || [];
@@ -128,7 +357,7 @@ export function ItineraryPdfModal({
     setSections(updated);
   };
 
-  const toggleSectionVisibility = (id: PdfSectionKey) => {
+  const toggleSectionVisibility = (id: string) => {
     setSections((prev) =>
       prev.map((s) => (s.id === id ? { ...s, visible: !s.visible } : s))
     );
@@ -486,6 +715,26 @@ export function ItineraryPdfModal({
 
             <button
               type="button"
+              onClick={() => setIsEditingContact(true)}
+              className="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border bg-white text-slate-800 hover:bg-slate-100 border-slate-300 shadow-2xs"
+              title="Edit Helpline, WhatsApp, Email & Coordinator"
+            >
+              <Phone className="w-3.5 h-3.5 text-emerald-700" />
+              <span>📞 Contact Info</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleOpenAddSectionModal}
+              className="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border bg-emerald-700 text-white hover:bg-emerald-800 border-emerald-700 shadow-2xs"
+              title="Add any custom designed section to the itinerary"
+            >
+              <Plus className="w-3.5 h-3.5 text-amber-300" />
+              <span>+ Custom Section</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setIsDragTrayOpen(!isDragTrayOpen)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border ${
                 isDragTrayOpen
@@ -522,14 +771,25 @@ export function ItineraryPdfModal({
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleResetLayout}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700 cursor-pointer self-start sm:self-auto"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset Layout</span>
-              </button>
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={handleOpenAddSectionModal}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ New Custom Section</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResetLayout}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700 cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset Layout</span>
+                </button>
+              </div>
             </div>
 
             {/* Draggable Sections Chips List */}
@@ -559,6 +819,11 @@ export function ItineraryPdfModal({
                       #{index + 1}
                     </span>
                     <span className="text-xs font-bold truncate">{sec.shortTag}</span>
+                    {sec.isCustom && (
+                      <span className="px-1.5 py-0.2 text-[8px] font-extrabold uppercase bg-amber-400/20 text-amber-300 rounded shrink-0 border border-amber-400/30">
+                        Custom
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-0.5 shrink-0">
@@ -592,9 +857,89 @@ export function ItineraryPdfModal({
                     >
                       {sec.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                     </button>
+                    {sec.isCustom && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleEditCustomSection(sec)}
+                          className="p-1 rounded text-blue-400 hover:text-blue-300 hover:bg-slate-700 transition-colors cursor-pointer"
+                          title="Edit Custom Section"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteCustomSection(sec.id)}
+                          className="p-1 rounded text-rose-400 hover:text-rose-300 hover:bg-slate-700 transition-colors cursor-pointer"
+                          title="Delete Custom Section"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Quick Template Strip at Bottom of Tray */}
+            <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+              <span className="flex items-center gap-1 text-slate-300 font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Quick Add Templates:</span>
+              </span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    applySectionPresetTemplate("flight");
+                    handleSaveCustomSection();
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition cursor-pointer text-[10px]"
+                >
+                  + Flight Advisory
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    applySectionPresetTemplate("payment");
+                    handleSaveCustomSection();
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition cursor-pointer text-[10px]"
+                >
+                  + Payment Milestones
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    applySectionPresetTemplate("perks");
+                    handleSaveCustomSection();
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition cursor-pointer text-[10px]"
+                >
+                  + VIP Perks
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    applySectionPresetTemplate("medical");
+                    handleSaveCustomSection();
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition cursor-pointer text-[10px]"
+                >
+                  + Health Check
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    applySectionPresetTemplate("message");
+                    handleSaveCustomSection();
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition cursor-pointer text-[10px]"
+                >
+                  + Coordinator Letter
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1028,6 +1373,75 @@ export function ItineraryPdfModal({
                 );
               }
 
+              if (sec.id === "cancellation_policy") {
+                return (
+                  <div key={sec.id} className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white space-y-3.5 page-break-inside-avoid relative group shadow-2xs">
+                    {/* Screen Only: Move Controls & Quick Edit */}
+                    <div className="no-print absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                      <span className="font-bold text-slate-700">Cancellation Policy</span>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => setIsEditingPolicy(true)} className="p-0.5 text-emerald-700 hover:text-emerald-900 ml-1 cursor-pointer flex items-center gap-0.5" title="Edit Cancellation Policy Terms">
+                        <Edit3 className="w-3 h-3" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center border border-rose-200">
+                          <ShieldAlert className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-xs sm:text-sm font-extrabold text-[#0F3A2E]">
+                            {cancellationPolicy.title}
+                          </h3>
+                          <span className="text-[10px] text-slate-500 font-medium">Transparent refund slabs &amp; mountain safety reschedule guarantee</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                          {cancellationPolicy.badge}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditingPolicy(true)}
+                          className="no-print text-[10px] font-semibold text-slate-500 hover:text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                          <span>Customize Policy</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 4-Slab Timeline Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      {cancellationPolicy.slabs.map((slab, sIdx) => (
+                        <div key={sIdx} className={`p-2.5 rounded-xl border text-xs flex flex-col justify-between ${slab.color}`}>
+                          <div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider block opacity-75">{slab.timeline}</span>
+                            <strong className="text-sm font-black block mt-0.5">{slab.refund}</strong>
+                          </div>
+                          <p className="text-[10px] mt-1.5 leading-snug opacity-90">{slab.note}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Rescheduling & Force Majeure Advisory */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                      <div className="flex items-start gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                        <span><strong>Rescheduling:</strong> {cancellationPolicy.reschedulingNote}</span>
+                      </div>
+                      <div className="flex items-start gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                        <span><strong>Weather &amp; Safety:</strong> {cancellationPolicy.weatherNote}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
               if (sec.id === "banking_details") {
                 return (
                   <div key={sec.id} className="my-6 page-break-inside-avoid relative group">
@@ -1036,10 +1450,160 @@ export function ItineraryPdfModal({
                 );
               }
 
+              // =========================================================================
+              // DYNAMIC CUSTOM SECTION WITH LUXURY DESIGN PRESETS
+              // =========================================================================
+              if (sec.isCustom) {
+                return (
+                  <div key={sec.id} className="relative group page-break-inside-avoid">
+                    {/* Screen Only: Move, Edit & Delete Controls */}
+                    <div className="no-print absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2.5 py-0.5 rounded-full border border-slate-300 shadow-sm z-20 text-[10px]">
+                      <span className="font-bold text-slate-700">{sec.label}</span>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => handleEditCustomSection(sec)} className="p-0.5 text-blue-600 hover:text-blue-800 ml-1 cursor-pointer flex items-center gap-0.5" title="Edit this custom section">
+                        <Edit3 className="w-3 h-3" />
+                        <span>Edit</span>
+                      </button>
+                      <button type="button" onClick={() => handleDeleteCustomSection(sec.id)} className="p-0.5 text-rose-600 hover:text-rose-800 cursor-pointer" title="Delete section">
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+
+                    {/* Style 1: Alpine Luxury Emerald Card */}
+                    {(!sec.customStyle || sec.customStyle === "emerald-card") && (
+                      <div className="p-4 sm:p-5 rounded-2xl border border-emerald-200/90 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 shadow-2xs space-y-2.5">
+                        <div className="flex items-center justify-between gap-2 border-b border-emerald-100 pb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-[#0F3A2E] text-white flex items-center justify-center font-bold">
+                              {renderCustomIcon(sec.customIcon)}
+                            </div>
+                            <h3 className="text-xs sm:text-sm font-extrabold text-[#0F3A2E]">{sec.label}</h3>
+                          </div>
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
+                            {sec.shortTag || "Special Highlight"}
+                          </span>
+                        </div>
+                        <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line space-y-1">
+                          {parseBulletPoints(sec.customContent || "").length > 1 ? (
+                            <ul className="space-y-1.5 pt-0.5">
+                              {parseBulletPoints(sec.customContent || "").map((pt, pIdx) => (
+                                <li key={pIdx} className="flex items-start gap-2">
+                                  <span className="text-emerald-700 font-bold shrink-0 mt-0.5">✦</span>
+                                  <span className="leading-relaxed">{parseInlineFormatting(pt)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p>{parseInlineFormatting(sec.customContent || "")}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Style 2: Amber Alert Box */}
+                    {sec.customStyle === "amber-alert" && (
+                      <div className="p-4 sm:p-5 rounded-2xl border border-amber-300 bg-amber-50/70 shadow-2xs space-y-2">
+                        <div className="flex items-center justify-between gap-2 border-b border-amber-200 pb-1.5">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center">
+                              {renderCustomIcon(sec.customIcon || "alert")}
+                            </div>
+                            <h3 className="text-xs sm:text-sm font-extrabold text-amber-950">{sec.label}</h3>
+                          </div>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 border border-amber-300">
+                            {sec.shortTag || "Important Advisory"}
+                          </span>
+                        </div>
+                        <div className="text-xs text-amber-950 leading-relaxed space-y-1">
+                          {parseBulletPoints(sec.customContent || "").length > 1 ? (
+                            <ul className="space-y-1.5 pt-0.5">
+                              {parseBulletPoints(sec.customContent || "").map((pt, pIdx) => (
+                                <li key={pIdx} className="flex items-start gap-2">
+                                  <span className="text-amber-700 font-bold shrink-0 mt-0.5">⚠️</span>
+                                  <span className="leading-relaxed">{parseInlineFormatting(pt)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p>{parseInlineFormatting(sec.customContent || "")}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Style 3: 2-Column Checklist */}
+                    {sec.customStyle === "bullet-list" && (
+                      <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-50/70 shadow-2xs space-y-2.5">
+                        <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-[#0F3A2E] text-emerald-300 flex items-center justify-center">
+                              {renderCustomIcon(sec.customIcon || "check")}
+                            </div>
+                            <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">{sec.label}</h3>
+                          </div>
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{sec.shortTag || "Checklist"}</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+                          {parseBulletPoints(sec.customContent || "").map((point, pIdx) => (
+                            <div key={pIdx} className="flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-200/80">
+                              <span className="text-emerald-600 font-bold mt-0.5 shrink-0">✓</span>
+                              <span className="leading-relaxed">{parseInlineFormatting(point)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Style 4: Milestone Steps */}
+                    {sec.customStyle === "milestone-steps" && (
+                      <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-3">
+                        <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-teal-700 text-white flex items-center justify-center">
+                              {renderCustomIcon(sec.customIcon || "steps")}
+                            </div>
+                            <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">{sec.label}</h3>
+                          </div>
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{sec.shortTag || "Process Stages"}</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                          {parseBulletPoints(sec.customContent || "").map((stepText, sIdx) => (
+                            <div key={sIdx} className="p-3 rounded-xl border border-slate-200 bg-slate-50/80 flex flex-col justify-between">
+                              <span className="w-5 h-5 rounded-full bg-[#0F3A2E] text-white text-[10px] font-extrabold flex items-center justify-center mb-1.5">
+                                {sIdx + 1}
+                              </span>
+                              <p className="text-xs text-slate-800 font-semibold leading-relaxed">{parseInlineFormatting(stepText)}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Style 5: Quote Box / Personal Coordinator Note */}
+                    {sec.customStyle === "quote-box" && (
+                      <div className="p-4 sm:p-5 rounded-2xl border-2 border-dashed border-emerald-700/40 bg-emerald-50/40 shadow-2xs space-y-2 relative">
+                        <span className="text-4xl text-emerald-800/20 font-serif absolute top-1 right-3 select-none">&ldquo;</span>
+                        <h3 className="text-xs sm:text-sm font-extrabold text-[#0F3A2E] flex items-center gap-2">
+                          {renderCustomIcon(sec.customIcon || "quote")}
+                          <span>{sec.label}</span>
+                        </h3>
+                        <p className="text-xs text-slate-700 leading-relaxed italic font-serif pl-3 border-l-2 border-emerald-700">
+                          {parseInlineFormatting(sec.customContent || "")}
+                        </p>
+                        <div className="text-right text-[10px] font-bold text-emerald-900 pt-1">
+                          — {coordinatorName || "KRADIND Adventures Desk"}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return null;
             })}
 
-            {/* 9. FOOTER WITH AUTHORIZED SIGNATORY STAMP & CONTACT */}
+            {/* 9. FOOTER WITH AUTHORIZED SIGNATORY STAMP & EDITABLE CONTACT */}
             <div className="pt-6 border-t-2 border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs page-break-inside-avoid">
               <div className="space-y-1">
                 <span className="font-extrabold text-[#0F3A2E] text-sm block">
@@ -1047,19 +1611,28 @@ export function ItineraryPdfModal({
                 </span>
                 <p className="text-[10px] text-slate-500 max-w-md">
                   Official client itinerary generated on {issueDate}. For booking confirmations,
-                  slot reservations, or customized inquiries, contact your dedicated coordinator.
+                  slot reservations, or customized inquiries, contact your dedicated coordinator: <strong>{coordinatorName}</strong>.
                 </p>
-                <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold text-emerald-800 pt-0.5">
-                  <span>Helpline: +91 9797941414</span>
+                <div className="flex flex-wrap items-center gap-2.5 text-[11px] font-semibold text-emerald-800 pt-0.5">
+                  <span>Helpline: {contactHelpline}</span>
                   <span>•</span>
-                  <span>WhatsApp: +91 9797941414</span>
+                  <span>WhatsApp: {contactWhatsApp}</span>
                   <span>•</span>
-                  <span>Email: Info@kradind.com</span>
+                  <span>Email: {contactEmail}</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingContact(true)}
+                    className="no-print ml-1 text-[10px] font-bold text-emerald-700 hover:text-emerald-900 hover:underline flex items-center gap-1 cursor-pointer bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"
+                    title="Click to edit contact numbers and coordinator"
+                  >
+                    <Edit3 className="w-3 h-3" />
+                    <span>Edit Contact</span>
+                  </button>
                 </div>
               </div>
 
               {/* Authorized Seal */}
-              <div className="text-center sm:text-right border-2 border-dashed border-emerald-800/40 rounded-xl p-3 bg-emerald-50/50 min-w-[170px]">
+              <div className="text-center sm:text-right border-2 border-dashed border-emerald-800/40 rounded-xl p-3 bg-emerald-50/50 min-w-[170px] relative group">
                 <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
                   Official Verification
                 </div>
@@ -1067,7 +1640,7 @@ export function ItineraryPdfModal({
                   KRADIND
                 </div>
                 <div className="text-[9px] text-emerald-700 font-semibold">
-                  Certified Operator • Dehradun
+                  {officeLocation}
                 </div>
                 <div className="text-[8px] text-slate-400 mt-1 font-mono">
                   REF: {quoteRefId}
@@ -1076,6 +1649,439 @@ export function ItineraryPdfModal({
             </div>
           </div>
         </div>
+
+        {/* ========================================================================= */}
+        {/* MODAL 1: CONTACT INFO EDITOR (SCREEN ONLY) */}
+        {/* ========================================================================= */}
+        {isEditingContact && (
+          <div className="no-print fixed inset-0 z-[10000] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            <div className="bg-white rounded-3xl max-w-md w-full border border-slate-200 shadow-2xl overflow-hidden p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2 text-[#0F3A2E]">
+                  <Phone className="w-5 h-5 text-emerald-600" />
+                  <h3 className="text-base font-extrabold">Edit PDF Contact &amp; Coordinator</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingContact(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Helpline Number (Call Support)</label>
+                  <input
+                    type="text"
+                    value={contactHelpline}
+                    onChange={(e) => setContactHelpline(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-900 focus:ring-2 focus:ring-[#0F3A2E]"
+                    placeholder="+91 9797941414"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">WhatsApp Business Number</label>
+                  <input
+                    type="text"
+                    value={contactWhatsApp}
+                    onChange={(e) => setContactWhatsApp(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-900 focus:ring-2 focus:ring-[#0F3A2E]"
+                    placeholder="+91 9797941414"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Official Support Email</label>
+                  <input
+                    type="text"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-900 focus:ring-2 focus:ring-[#0F3A2E]"
+                    placeholder="Info@kradind.com"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Assigned Trip Coordinator Name</label>
+                  <input
+                    type="text"
+                    value={coordinatorName}
+                    onChange={(e) => setCoordinatorName(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-900 focus:ring-2 focus:ring-[#0F3A2E]"
+                    placeholder="Dedicated Trip Coordinator"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Office / Hub Verification Seal Text</label>
+                  <input
+                    type="text"
+                    value={officeLocation}
+                    onChange={(e) => setOfficeLocation(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-900 focus:ring-2 focus:ring-[#0F3A2E]"
+                    placeholder="Certified Operator • Dehradun"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setContactHelpline("+91 9797941414");
+                    setContactWhatsApp("+91 9797941414");
+                    setContactEmail("Info@kradind.com");
+                    setCoordinatorName("Dedicated Trip Coordinator");
+                    setOfficeLocation("Certified Operator • Dehradun");
+                  }}
+                  className="text-xs text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                >
+                  Reset Defaults
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingContact(false)}
+                  className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl shadow-md transition cursor-pointer"
+                >
+                  Save &amp; Update PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* MODAL 2: CANCELLATION POLICY CUSTOMIZER (SCREEN ONLY) */}
+        {/* ========================================================================= */}
+        {isEditingPolicy && (
+          <div className="no-print fixed inset-0 z-[10000] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            <div className="bg-white rounded-3xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2 text-[#0F3A2E]">
+                  <ShieldAlert className="w-5 h-5 text-rose-600" />
+                  <h3 className="text-base font-extrabold">Customize Cancellation &amp; Refund Policy</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingPolicy(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Policy Section Title</label>
+                  <input
+                    type="text"
+                    value={cancellationPolicy.title}
+                    onChange={(e) => setCancellationPolicy({ ...cancellationPolicy, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl font-bold text-slate-900"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="font-bold text-slate-700 block">4 Refund Slabs Timeline</label>
+                  {cancellationPolicy.slabs.map((slab, sIdx) => (
+                    <div key={sIdx} className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50">
+                      <input
+                        type="text"
+                        value={slab.timeline}
+                        onChange={(e) => {
+                          const updated = [...cancellationPolicy.slabs];
+                          updated[sIdx] = { ...updated[sIdx], timeline: e.target.value };
+                          setCancellationPolicy({ ...cancellationPolicy, slabs: updated });
+                        }}
+                        className="px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold"
+                        placeholder="Timeline"
+                      />
+                      <input
+                        type="text"
+                        value={slab.refund}
+                        onChange={(e) => {
+                          const updated = [...cancellationPolicy.slabs];
+                          updated[sIdx] = { ...updated[sIdx], refund: e.target.value };
+                          setCancellationPolicy({ ...cancellationPolicy, slabs: updated });
+                        }}
+                        className="px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-[#0F3A2E]"
+                        placeholder="Refund %"
+                      />
+                      <input
+                        type="text"
+                        value={slab.note}
+                        onChange={(e) => {
+                          const updated = [...cancellationPolicy.slabs];
+                          updated[sIdx] = { ...updated[sIdx], note: e.target.value };
+                          setCancellationPolicy({ ...cancellationPolicy, slabs: updated });
+                        }}
+                        className="px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                        placeholder="Details note"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Rescheduling Guarantee Note</label>
+                  <textarea
+                    rows={2}
+                    value={cancellationPolicy.reschedulingNote}
+                    onChange={(e) => setCancellationPolicy({ ...cancellationPolicy, reschedulingNote: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Force Majeure &amp; Weather Safety Policy</label>
+                  <textarea
+                    rows={2}
+                    value={cancellationPolicy.weatherNote}
+                    onChange={(e) => setCancellationPolicy({ ...cancellationPolicy, weatherNote: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs leading-relaxed"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setCancellationPolicy(DEFAULT_CANCELLATION_POLICY)}
+                  className="text-xs text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                >
+                  Reset Standard Policy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingPolicy(false)}
+                  className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] text-white text-xs font-bold rounded-xl shadow-md transition cursor-pointer"
+                >
+                  Apply to Itinerary
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* MODAL 3: ADD / EDIT CUSTOM SECTION WITH 5 DESIGN PRESETS (SCREEN ONLY) */}
+        {/* ========================================================================= */}
+        {isAddSectionModalOpen && (
+          <div className="no-print fixed inset-0 z-[10000] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 animate-in fade-in">
+            <div className="bg-white rounded-3xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+              {/* Header */}
+              <div className="bg-[#0F3A2E] text-white px-5 sm:px-6 py-4 flex items-center justify-between gap-3 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-amber-300">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-extrabold leading-tight">
+                      {editingSectionId ? "Edit Custom PDF Section" : "Add New Custom Section with Design"}
+                    </h3>
+                    <span className="text-[11px] text-emerald-200/80">
+                      Choose from 5 luxury design styles and 1-click templates
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddSectionModalOpen(false)}
+                  className="p-1.5 text-slate-300 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-5 sm:p-6 space-y-4 overflow-y-auto">
+                {/* Quick 1-Click Templates */}
+                {!editingSectionId && (
+                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-2">
+                    <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
+                      ⚡ Quick Preset Templates (1-Click Fill):
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => applySectionPresetTemplate("flight")}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-amber-400 text-[11px] font-semibold text-slate-800 hover:text-amber-900 transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                      >
+                        <Plane className="w-3 h-3 text-amber-600" />
+                        <span>Flight &amp; Train Advisory</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applySectionPresetTemplate("payment")}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-teal-400 text-[11px] font-semibold text-slate-800 hover:text-teal-900 transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                      >
+                        <CreditCard className="w-3 h-3 text-teal-600" />
+                        <span>Payment Milestone Plan</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applySectionPresetTemplate("perks")}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-emerald-400 text-[11px] font-semibold text-slate-800 hover:text-emerald-900 transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                      >
+                        <Sparkles className="w-3 h-3 text-emerald-600" />
+                        <span>VIP Perks &amp; Inclusions</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applySectionPresetTemplate("medical")}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-blue-400 text-[11px] font-semibold text-slate-800 hover:text-blue-900 transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                      >
+                        <ShieldCheck className="w-3 h-3 text-blue-600" />
+                        <span>Medical Fitness Check</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applySectionPresetTemplate("message")}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-purple-400 text-[11px] font-semibold text-slate-800 hover:text-purple-900 transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                      >
+                        <Quote className="w-3 h-3 text-purple-600" />
+                        <span>Coordinator Letter</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Section Title & Short Tag */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Section Title <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={customSecTitle}
+                      onChange={(e) => setCustomSecTitle(e.target.value)}
+                      placeholder="e.g. Special Group Inclusions & Highlights"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-[#0F3A2E]"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Badge / Short Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={customSecShortTag}
+                      onChange={(e) => setCustomSecShortTag(e.target.value)}
+                      placeholder="e.g. VIP Inclusions"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-[#0F3A2E]"
+                    />
+                  </div>
+                </div>
+
+                {/* Choose Design Style Preset */}
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                    <Palette className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>Select Design Style Preset:</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                    {[
+                      { id: "emerald-card", title: "Alpine Luxury", desc: "Emerald gradient, header icon & highlight card", color: "border-emerald-500 bg-emerald-50/50" },
+                      { id: "amber-alert", title: "Advisory Box", desc: "Warm amber alert box with notice badges", color: "border-amber-500 bg-amber-50/50" },
+                      { id: "bullet-list", title: "2-Column List", desc: "Structured dual-column checkmark list", color: "border-slate-400 bg-slate-50" },
+                      { id: "milestone-steps", title: "Stage Steps", desc: "Numbered stages (1, 2, 3...) in step cards", color: "border-teal-500 bg-teal-50/50" },
+                      { id: "quote-box", title: "Personal Letter", desc: "Italicized note with coordinator sign", color: "border-purple-400 bg-purple-50/50" },
+                    ].map((style) => (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => setCustomSecStyle(style.id as CustomSectionStyle)}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                          customSecStyle === style.id
+                            ? `${style.color} ring-2 ring-emerald-600 shadow-xs font-bold`
+                            : "border-slate-200 bg-white hover:border-slate-300 opacity-80"
+                        }`}
+                      >
+                        <div className="text-xs font-bold text-slate-900">{style.title}</div>
+                        <div className="text-[10px] text-slate-500 leading-snug mt-0.5">{style.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Icon Picker */}
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Section Header Icon:
+                  </label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {[
+                      { id: "sparkles", label: "Sparkles", icon: <Sparkles className="w-3.5 h-3.5 text-amber-500" /> },
+                      { id: "shield", label: "Safety Shield", icon: <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> },
+                      { id: "alert", label: "Notice Alert", icon: <AlertTriangle className="w-3.5 h-3.5 text-rose-500" /> },
+                      { id: "check", label: "Verified Check", icon: <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" /> },
+                      { id: "plane", label: "Flight / Travel", icon: <Plane className="w-3.5 h-3.5 text-sky-600" /> },
+                      { id: "credit", label: "Payment / Bank", icon: <CreditCard className="w-3.5 h-3.5 text-emerald-700" /> },
+                      { id: "steps", label: "Award / Steps", icon: <Award className="w-3.5 h-3.5 text-amber-600" /> },
+                      { id: "quote", label: "Personal Quote", icon: <Quote className="w-3.5 h-3.5 text-purple-600" /> },
+                    ].map((ic) => (
+                      <button
+                        key={ic.id}
+                        type="button"
+                        onClick={() => setCustomSecIcon(ic.id)}
+                        className={`px-2.5 py-1.5 rounded-lg border text-xs flex items-center gap-1.5 transition cursor-pointer ${
+                          customSecIcon === ic.id
+                            ? "border-emerald-600 bg-emerald-50 text-emerald-950 font-bold ring-1 ring-emerald-600"
+                            : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {ic.icon}
+                        <span className="text-[11px]">{ic.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Content Field */}
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Section Content (Supports **bold**, newlines &amp; bullet points):
+                  </label>
+                  <textarea
+                    rows={5}
+                    value={customSecContent}
+                    onChange={(e) => setCustomSecContent(e.target.value)}
+                    placeholder="Type your content here or use bullet points like:
+• Point 1: **Important highlight**
+• Point 2: Specific timing or details
+• Point 3: Additional coordinator instructions"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs leading-relaxed font-sans text-slate-800 focus:ring-2 focus:ring-[#0F3A2E]"
+                    required
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    💡 Tip: Lines starting with • or numbers will automatically format cleanly in bullet and step styles.
+                  </span>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="bg-slate-50 border-t border-slate-200 px-5 sm:px-6 py-3 flex items-center justify-between gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAddSectionModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-100 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  disabled={!customSecTitle.trim()}
+                  onClick={handleSaveCustomSection}
+                  className="px-5 py-2 bg-[#0F3A2E] hover:bg-[#164e3f] disabled:opacity-50 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{editingSectionId ? "Save Changes" : "Add to Itinerary PDF"}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bottom Print Action Bar (Screen Only) */}
         <div className="no-print bg-slate-50 border-t border-slate-200 px-6 py-4 flex flex-wrap items-center justify-between gap-3">

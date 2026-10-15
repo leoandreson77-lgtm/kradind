@@ -5,14 +5,19 @@ import {
   Check,
   CheckCircle2,
   Compass,
+  Copy,
   Edit2,
+  Eye,
+  EyeOff,
   Headphones,
   KeyRound,
+  Lock,
   RefreshCw,
   Search,
   Shield,
   ShieldCheck,
   Sliders,
+  Sparkles,
   Trash2,
   UserPlus,
   Users,
@@ -239,6 +244,36 @@ export default function AdminUsersPage() {
   const [showInlineAdd, setShowInlineAdd] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
 
+  // Password Reset state
+  const [resetModalUser, setResetModalUser] = useState<AdminUser | null>(null);
+  const [newPasswordValue, setNewPasswordValue] = useState("");
+  const [showPasswordText, setShowPasswordText] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [copiedNotification, setCopiedNotification] = useState(false);
+
+  // In edit modal: optional new password field
+  const [editNewPassword, setEditNewPassword] = useState("");
+  const [showEditPassword, setShowEditPassword] = useState(false);
+
+  // Helper: Generate strong temporary password
+  const generateStrongPassword = () => {
+    const chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    const specials = "@#$!";
+    let pass = "Kradind@" + Math.floor(100 + Math.random() * 900);
+    for (let i = 0; i < 2; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    pass += specials.charAt(Math.floor(Math.random() * specials.length));
+    return pass;
+  };
+
+  const handleCopyCredentials = (email: string, pass: string) => {
+    const text = `KRADIND Staff Login Credentials\nPortal: https://kradind.com/admin/login\nEmail: ${email}\nPassword: ${pass}`;
+    navigator.clipboard.writeText(text);
+    setCopiedNotification(true);
+    setTimeout(() => setCopiedNotification(false), 3000);
+  };
+
   // New user form state
   const [newUser, setNewUser] = useState({
     name: "",
@@ -326,16 +361,26 @@ export default function AdminUsersPage() {
     if (!editingUser) return;
 
     try {
+      const payload: any = { ...editingUser };
+      if (editNewPassword.trim()) {
+        if (editNewPassword.trim().length < 6) {
+          alert("New password must be at least 6 characters long.");
+          return;
+        }
+        payload.password = editNewPassword.trim();
+      }
+
       const res = await fetch("/api/admin/users", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingUser),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
-        showToast(`Updated permissions for ${editingUser.name}`);
+        showToast(`Updated profile & permissions for ${editingUser.name}`);
         setShowEditModal(false);
         setEditingUser(null);
+        setEditNewPassword("");
         fetchUsers();
       } else {
         const err = await res.json();
@@ -343,6 +388,41 @@ export default function AdminUsersPage() {
       }
     } catch {
       alert("Error updating team member");
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetModalUser) return;
+    if (!newPasswordValue || newPasswordValue.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: resetModalUser.id,
+          password: newPasswordValue.trim(),
+        }),
+      });
+
+      if (res.ok) {
+        showToast(`Password successfully reset for ${resetModalUser.name}!`);
+        setResetModalUser(null);
+        setNewPasswordValue("");
+        fetchUsers();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to reset password");
+      }
+    } catch {
+      alert("Network error resetting password");
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -846,24 +926,40 @@ export default function AdminUsersPage() {
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
+                          type="button"
+                          onClick={() => {
+                            setResetModalUser(user);
+                            setNewPasswordValue(generateStrongPassword());
+                            setShowPasswordText(true);
+                          }}
+                          title="Reset Staff Password"
+                          className="p-2 rounded-xl bg-amber-50 hover:bg-amber-500 text-amber-700 hover:text-white transition-colors border border-amber-200 cursor-pointer shadow-2xs"
+                        >
+                          <KeyRound className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                          type="button"
                           onClick={() => {
                             setEditingUser({
                               ...user,
                               permissions: normalizeUserPermissions(user.permissions, user.role),
                             });
+                            setEditNewPassword("");
                             setShowEditModal(true);
                           }}
                           title="Edit Role & Permissions"
-                          className="p-2 rounded-xl bg-slate-50 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200"
+                          className="p-2 rounded-xl bg-slate-50 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200 cursor-pointer"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
 
                         {user.email !== "admin@kradind.com" && (
                           <button
+                            type="button"
                             onClick={() => handleDeleteUser(user.id, user.name)}
                             title="Remove Member"
-                            className="p-2 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 transition-colors"
+                            className="p-2 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -1194,6 +1290,52 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
 
+                {/* Optional Password Reset section inside Edit Modal */}
+                <div className="p-3.5 bg-amber-50/70 rounded-2xl border border-amber-200/90 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <KeyRound className="w-4 h-4 text-amber-600" />
+                      <span className="text-xs font-bold text-amber-950">Change Staff Password (Optional)</span>
+                    </div>
+                    <span className="text-[10px] text-amber-700 font-semibold">
+                      Leave blank to keep existing password
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        type={showEditPassword ? "text" : "password"}
+                        placeholder="Enter new password (min. 6 chars)..."
+                        value={editNewPassword}
+                        onChange={(e) => setEditNewPassword(e.target.value)}
+                        className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 pr-10 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowEditPassword(!showEditPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                        title={showEditPassword ? "Hide password" : "Show password"}
+                      >
+                        {showEditPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const pass = generateStrongPassword();
+                        setEditNewPassword(pass);
+                        setShowEditPassword(true);
+                      }}
+                      className="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded-xl text-xs border border-amber-300 transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+                      <span>Auto-Generate</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Authority Enable / Disable Section with iOS Sliders */}
                 <AuthoritySwitchSection
                   title={`Authority & Permissions: ${editingUser.name}`}
@@ -1211,16 +1353,169 @@ export default function AdminUsersPage() {
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingUser(null);
+                    setEditNewPassword("");
                   }}
-                  className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition-colors shadow-2xs"
+                  className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition-colors shadow-2xs cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer"
                 >
                   Save Member Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL: DEDICATED PASSWORD RESET */}
+      {/* ========================================================= */}
+      {resetModalUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl relative flex flex-col text-slate-800 overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-amber-50/60 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700 shadow-2xs shrink-0">
+                  <KeyRound className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Reset Staff Password
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Direct password overwrite for {resetModalUser.name}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setResetModalUser(null);
+                  setNewPasswordValue("");
+                }}
+                className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleResetPassword} className="p-6 space-y-4">
+              {/* User badge */}
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-bold text-slate-900 text-xs truncate">
+                    {resetModalUser.name}
+                  </div>
+                  <div className="text-[11px] text-slate-500 truncate">
+                    {resetModalUser.email}
+                  </div>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200 shrink-0">
+                  {resetModalUser.role || "Staff Member"}
+                </span>
+              </div>
+
+              {/* Password input & controls */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                    New Temporary Password *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const pass = generateStrongPassword();
+                      setNewPasswordValue(pass);
+                      setShowPasswordText(true);
+                    }}
+                    className="text-[11px] font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Generate Strong Password</span>
+                  </button>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type={showPasswordText ? "text" : "password"}
+                    required
+                    value={newPasswordValue}
+                    onChange={(e) => setNewPasswordValue(e.target.value)}
+                    placeholder="Enter min. 6 characters..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 pr-10 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordText(!showPasswordText)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    title={showPasswordText ? "Hide password" : "Show password"}
+                  >
+                    {showPasswordText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Copy helper */}
+              {newPasswordValue && (
+                <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs">
+                  <span className="text-[11px] text-emerald-800 font-semibold truncate">
+                    Ready to share with {resetModalUser.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCredentials(resetModalUser.email, newPasswordValue)}
+                    className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] flex items-center gap-1 transition-colors shrink-0 cursor-pointer shadow-2xs"
+                  >
+                    {copiedNotification ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy Login Info</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              <div className="p-3 bg-amber-50/60 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed flex items-start gap-2">
+                <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>
+                  The password will be hashed with a secure cryptographic salt. The team member must use this new password on their next login at <code className="bg-amber-100 px-1 py-0.2 rounded font-mono text-amber-950">/admin/login</code>.
+                </span>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetModalUser(null);
+                    setNewPasswordValue("");
+                  }}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {resetLoading ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <KeyRound className="w-4 h-4" />
+                  )}
+                  <span>Save &amp; Reset Password</span>
                 </button>
               </div>
             </form>

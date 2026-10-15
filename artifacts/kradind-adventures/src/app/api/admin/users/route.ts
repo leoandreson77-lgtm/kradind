@@ -162,7 +162,13 @@ export async function PUT(request: NextRequest) {
     };
 
     // If new password provided, rehash
-    if (body.password && body.password.length >= 6) {
+    if (body.password !== undefined && body.password !== "") {
+      if (typeof body.password !== "string" || body.password.length < 6) {
+        return NextResponse.json(
+          { error: "New password must be at least 6 characters long." },
+          { status: 400 }
+        );
+      }
       const { hash, salt } = hashPassword(body.password);
       updatedUser.passwordHash = hash;
       updatedUser.salt = salt;

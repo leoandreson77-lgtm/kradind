@@ -13,48 +13,10 @@ import {
   Compass,
 } from "lucide-react";
 
-const DEFAULT_HEADER_DESTINATIONS = [
-  { name: "Uttarakhand", slug: "uttarakhand", tagline: "Land of the Gods & Peaks", icon: "🏔️" },
-  { name: "Himachal Pradesh", slug: "himachal-pradesh", tagline: "Valleys, Passes & Orchards", icon: "🌲" },
-  { name: "Kashmir", slug: "kashmir", tagline: "Paradise On Earth & Lakes", icon: "❄️" },
-  { name: "Ladakh", slug: "ladakh", tagline: "High Altitude Desert & Monasteries", icon: "🏔️" },
-  { name: "Rajasthan", slug: "rajasthan", tagline: "Royal Forts, Palaces & Desert Dunes", icon: "🏰" },
-  { name: "Kerala", slug: "kerala", tagline: "God's Own Country & Backwaters", icon: "🌴" },
-  { name: "Goa", slug: "goa", tagline: "Sun, Sand, Sea & Portuguese Charm", icon: "🌊" },
-  { name: "Nepal", slug: "nepal", tagline: "Himalayan Kingdom & Stupas", icon: "🇳🇵" },
-];
-
 export function Header({ onBookClick }: { onBookClick?: () => void }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({});
-  const [destinationsList, setDestinationsList] = useState<{
-    name: string;
-    slug: string;
-    tagline?: string;
-    icon?: string;
-  }[]>(DEFAULT_HEADER_DESTINATIONS);
-
-  useEffect(() => {
-    let isMounted = true;
-    async function loadDestinations() {
-      try {
-        const res = await fetch("/api/destinations");
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && Array.isArray(data) && data.length > 0) {
-            setDestinationsList(data);
-          }
-        }
-      } catch {
-        // Fallback gracefully to default destinations
-      }
-    }
-    loadDestinations();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const toggleMobile = (key: string) => {
     setMobileExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -325,7 +287,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">All Domestic Trips</span>
-                      <span className="text-[11px] text-slate-500">Explore India tour packages</span>
+                      <span className="text-[11px] text-slate-500">Explore India tour packages & destinations</span>
                     </div>
                   </Link>
 
@@ -339,7 +301,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Uttarakhand Tours</span>
-                      <span className="text-[11px] text-slate-500">Nainital, Mussoorie, Rishikesh</span>
+                      <span className="text-[11px] text-slate-500">Nainital, Mussoorie, Rishikesh, Char Dham</span>
                     </div>
                   </Link>
 
@@ -353,7 +315,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Himachal Pradesh Tours</span>
-                      <span className="text-[11px] text-slate-500">Manali, Shimla, Spiti Valley</span>
+                      <span className="text-[11px] text-slate-500">Manali, Shimla, Spiti Valley, Dharamshala</span>
                     </div>
                   </Link>
 
@@ -367,7 +329,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Kashmir Tours</span>
-                      <span className="text-[11px] text-slate-500">Srinagar, Gulmarg, Pahalgam</span>
+                      <span className="text-[11px] text-slate-500">Srinagar, Gulmarg, Pahalgam, Dal Lake</span>
                     </div>
                   </Link>
 
@@ -380,8 +342,8 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                       🏔️
                     </div>
                     <div>
-                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Ladakh Tours</span>
-                      <span className="text-[11px] text-slate-500">Leh, Pangong Tso, Nubra Valley</span>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Ladakh Tours & Road Trips</span>
+                      <span className="text-[11px] text-slate-500">Leh, Pangong Tso, Nubra Valley, Khardung La</span>
                     </div>
                   </Link>
 
@@ -395,7 +357,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Rajasthan Tours</span>
-                      <span className="text-[11px] text-slate-500">Jaipur, Udaipur, Jaisalmer dunes</span>
+                      <span className="text-[11px] text-slate-500">Jaipur, Udaipur, Jodhpur, Jaisalmer dunes</span>
                     </div>
                   </Link>
 
@@ -409,7 +371,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Kerala Tours</span>
-                      <span className="text-[11px] text-slate-500">Munnar, Alleppey Houseboats</span>
+                      <span className="text-[11px] text-slate-500">Munnar, Alleppey Houseboats, Wayanad</span>
                     </div>
                   </Link>
 
@@ -423,7 +385,35 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Goa Tours</span>
-                      <span className="text-[11px] text-slate-500">North & South Goa Beaches</span>
+                      <span className="text-[11px] text-slate-500">North & South Goa Beaches, Dudhsagar</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/andaman"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-800 flex items-center justify-center font-bold shrink-0">
+                      🏝️
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Andaman Islands</span>
+                      <span className="text-[11px] text-slate-500">Port Blair, Havelock, Neil Island</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/destinations/meghalaya"
+                    onClick={closeDropdown}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-lime-100 text-lime-800 flex items-center justify-center font-bold shrink-0">
+                      🌿
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-900 block">Northeast & Meghalaya</span>
+                      <span className="text-[11px] text-slate-500">Shillong, Cherrapunji, Kaziranga</span>
                     </div>
                   </Link>
                 </div>
@@ -717,71 +707,6 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             )}
           </div>
 
-          {/* 5. Destinations ▾ */}
-          <div
-            className="relative"
-            onMouseEnter={() => setActiveDropdown("destinations")}
-            onMouseLeave={() => setActiveDropdown(null)}
-          >
-            <button
-              onClick={() => setActiveDropdown(activeDropdown === "destinations" ? null : "destinations")}
-              className={`hover:text-[#0F3A2E] hover:bg-slate-50 flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 rounded-xl cursor-pointer transition whitespace-nowrap ${
-                activeDropdown === "destinations" ? "text-[#0F3A2E] bg-slate-50" : ""
-              }`}
-            >
-              <span>Destinations</span>
-              <ChevronDown
-                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                  activeDropdown === "destinations" ? "rotate-180 text-[#0F3A2E]" : ""
-                }`}
-              />
-            </button>
-
-            {activeDropdown === "destinations" && (
-              <div
-                className="absolute top-full right-0 w-[580px] max-w-[calc(100vw-2.5rem)] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
-              >
-                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                      📍 Explore Top Destinations ({destinationsList.length})
-                    </span>
-                  </div>
-                  <Link
-                    href="/destinations"
-                    onClick={closeDropdown}
-                    className="text-xs font-bold text-[#FF6B35] hover:text-[#e05320] flex items-center gap-1 transition"
-                  >
-                    All Destinations →
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs max-h-[380px] overflow-y-auto pr-1">
-                  {destinationsList.map((dest) => (
-                    <Link
-                      key={dest.slug}
-                      href={`/destinations/${dest.slug}`}
-                      onClick={closeDropdown}
-                      className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/80 transition group border border-transparent hover:border-emerald-200/60 min-w-0"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0 text-sm">
-                        {dest.icon || "📍"}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="font-bold text-slate-900 group-hover:text-emerald-900 block truncate">
-                          {dest.name}
-                        </span>
-                        <span className="text-[11px] text-slate-500 truncate block">
-                          {dest.tagline || "Explore packages"}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
         </nav>
 
         {/* Right CTA Actions */}
@@ -1046,37 +971,6 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
             )}
           </div>
 
-          {/* 5. Mobile Destinations Accordion */}
-          <div className="border-t border-slate-100 py-1">
-            <button
-              onClick={() => toggleMobile("destinations")}
-              className="flex items-center justify-between w-full text-sm font-semibold text-[#0F3A2E] py-2"
-            >
-              <span>📍 Destinations</span>
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  mobileExpanded["destinations"] ? "rotate-180 text-emerald-600" : ""
-                }`}
-              />
-            </button>
-            {mobileExpanded["destinations"] && (
-              <div className="pl-3 py-1 space-y-1.5 border-l-2 border-emerald-500 ml-1 text-xs max-h-60 overflow-y-auto">
-                <Link href="/destinations" onClick={() => setMobileMenuOpen(false)} className="block font-bold text-[#FF6B35] py-1">
-                  • All Destinations ({destinationsList.length}) →
-                </Link>
-                {destinationsList.map((dest) => (
-                  <Link
-                    key={dest.slug}
-                    href={`/destinations/${dest.slug}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block text-slate-600 hover:text-[#0F3A2E] py-1 truncate"
-                  >
-                    • {dest.icon ? `${dest.icon} ` : ""}{dest.name}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* Secondary links for Mobile */}
           <div className="border-t border-slate-100 pt-2 space-y-1">

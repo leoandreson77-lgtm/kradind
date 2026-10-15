@@ -30,4 +30,4 @@ Allow: /
 Sitemap: https://kradind.com/sitemap.xml
 
 # LLM Discoverability Context (Standard Reference)
-LLM-Documentation: https://kradind.com/llms.txt
+# LLM-Documentation: https://kradind.com/llms.txt

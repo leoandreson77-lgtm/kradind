@@ -31,6 +31,8 @@ interface SavedProposalsArchiveProps {
   onDelete: (id: string, title: string) => Promise<void>;
   onStatusChange: (id: string, newStatus: string) => Promise<void>;
   onCreateNew: () => void;
+  onOpenDrafts?: () => void;
+  draftCount?: number;
 }
 
 export function SavedProposalsArchive({
@@ -41,6 +43,8 @@ export function SavedProposalsArchive({
   onDelete,
   onStatusChange,
   onCreateNew,
+  onOpenDrafts,
+  draftCount = 0,
 }: SavedProposalsArchiveProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -76,16 +80,18 @@ export function SavedProposalsArchive({
 
   const getStatusBadge = (status: string) => {
     switch (status) {
+      case "Draft":
+        return "bg-amber-100 text-amber-900 border-amber-300 font-bold";
       case "Accepted":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+        return "bg-emerald-100 text-emerald-800 border-emerald-200 font-bold";
       case "Sent":
-        return "bg-blue-100 text-blue-800 border-blue-200";
+        return "bg-blue-100 text-blue-800 border-blue-200 font-bold";
       case "Under Review":
-        return "bg-amber-100 text-amber-800 border-amber-200";
+        return "bg-amber-100 text-amber-800 border-amber-200 font-bold";
       case "Expired":
-        return "bg-rose-100 text-rose-800 border-rose-200";
+        return "bg-rose-100 text-rose-800 border-rose-200 font-bold";
       default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-slate-100 text-slate-700 border-slate-200 font-bold";
     }
   };
 
@@ -120,9 +126,25 @@ export function SavedProposalsArchive({
             <option value="Expired">Expired</option>
           </select>
 
+          {onOpenDrafts && (
+            <button
+              onClick={onOpenDrafts}
+              className="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+              title="Open Proposal Drafts Hub"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>Drafts Hub</span>
+              {draftCount > 0 && (
+                <span className="px-1.5 py-0.2 bg-amber-400 text-slate-950 rounded-full text-[10px] font-black">
+                  {draftCount}
+                </span>
+              )}
+            </button>
+          )}
+
           <button
             onClick={onCreateNew}
-            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>+ New Itinerary</span>

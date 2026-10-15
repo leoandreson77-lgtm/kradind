@@ -129,6 +129,8 @@ interface ItineraryStudioProps {
   onWhatsApp: (proposal: CustomerItineraryProposal) => void;
   onReset: () => void;
   saving?: boolean;
+  onOpenDrafts?: () => void;
+  draftCount?: number;
 }
 
 const DRAFT_STORAGE_KEY = "kradind_crm_itinerary_studio_draft";
@@ -143,6 +145,8 @@ export function ItineraryStudio({
   onWhatsApp,
   onReset,
   saving = false,
+  onOpenDrafts,
+  draftCount = 0,
 }: ItineraryStudioProps) {
   // Form State
   const [formData, setFormData] = useState<CustomerItineraryProposal>(() => {
@@ -1085,11 +1089,26 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            {onOpenDrafts && (
+              <button
+                type="button"
+                onClick={onOpenDrafts}
+                className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-950 font-bold transition text-xs border border-amber-400/60 flex items-center gap-1.5 cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+                <span>All Drafts Hub</span>
+                {draftCount > 0 && (
+                  <span className="px-1.5 py-0.2 bg-amber-400 text-slate-950 rounded-full text-[10px] font-black">
+                    {draftCount}
+                  </span>
+                )}
+              </button>
+            )}
             <button
               type="button"
               onClick={handleClearDraft}
-              className="px-3 py-1.5 rounded-xl bg-amber-600/15 hover:bg-amber-600/25 text-amber-900 font-bold transition text-xs flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl bg-amber-600/15 hover:bg-amber-600/25 text-amber-900 font-bold transition text-xs flex items-center gap-1.5 cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Discard Draft</span>
@@ -1097,7 +1116,7 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
             <button
               type="button"
               onClick={() => setDraftRecoveredNotice(false)}
-              className="px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-slate-700 font-bold transition text-xs border border-amber-300/60"
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-slate-700 font-bold transition text-xs border border-amber-300/60 cursor-pointer"
             >
               Dismiss
             </button>
@@ -1161,6 +1180,22 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
               <ClipboardPaste className="w-3.5 h-3.5 text-amber-300" />
               <span>Paste Package</span>
             </button>
+            {onOpenDrafts && (
+              <button
+                type="button"
+                onClick={onOpenDrafts}
+                className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-amber-400/30 cursor-pointer"
+                title="View All Saved Itinerary Drafts"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>Drafts Hub</span>
+                {draftCount > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">
+                    {draftCount}
+                  </span>
+                )}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setShowHistoryModal(true)}

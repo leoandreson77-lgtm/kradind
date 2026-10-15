@@ -61,6 +61,7 @@ import { getPackageSection } from "@/lib/package-sections";
 import { ProposalVoucherModal } from "@/components/admin/crm/proposal-voucher-modal";
 import { ItineraryStudio } from "@/components/admin/crm/itinerary-studio";
 import { SavedProposalsArchive } from "@/components/admin/crm/saved-proposals-archive";
+import { DraftsArchive } from "@/components/admin/crm/drafts-archive";
 
 export default function AdminCRMPage() {
   // State
@@ -75,7 +76,7 @@ export default function AdminCRMPage() {
 
   // Views & Filters
   const [activeTab, setActiveTab] = useState<
-    "directory" | "itinerary-builder" | "proposals" | "recycle-bin" | "kanban" | "tasks" | "audit"
+    "directory" | "itinerary-builder" | "proposals" | "drafts" | "recycle-bin" | "kanban" | "tasks" | "audit"
   >("directory");
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("All");
@@ -182,8 +183,41 @@ export default function AdminCRMPage() {
     setTimeout(() => setToastMessage(""), 3500);
   };
 
+  // Drafts State Tracking
+  const [hasLocalDraft, setHasLocalDraft] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const checkDraft = () => {
+      try {
+        const raw = localStorage.getItem("kradind_crm_itinerary_studio_draft");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setHasLocalDraft(
+            Boolean(
+              parsed.customerName?.trim() ||
+              parsed.packageTitle?.trim() ||
+              (parsed.itinerary && parsed.itinerary.length > 0)
+            )
+          );
+        } else {
+          setHasLocalDraft(false);
+        }
+      } catch {
+        setHasLocalDraft(false);
+      }
+    };
+    checkDraft();
+    const timer = setInterval(checkDraft, 3500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const draftProposals = useMemo(() => proposals.filter((p) => p.status === "Draft"), [proposals]);
+  const totalDraftCount = draftProposals.length + (hasLocalDraft ? 1 : 0);
+
   // URL query synchronizer
-  const changeTab = (tab: "directory" | "itinerary-builder" | "proposals" | "recycle-bin" | "kanban" | "tasks" | "audit") => {
+  const changeTab = (
+    tab: "directory" | "itinerary-builder" | "proposals" | "drafts" | "recycle-bin" | "kanban" | "tasks" | "audit"
+  ) => {
     setActiveTab(tab);
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
@@ -198,7 +232,9 @@ export default function AdminCRMPage() {
       const tabParam = params.get("tab");
       if (
         tabParam &&
-        ["directory", "itinerary-builder", "proposals", "recycle-bin", "kanban", "tasks", "audit"].includes(tabParam)
+        ["directory", "itinerary-builder", "proposals", "drafts", "recycle-bin", "kanban", "tasks", "audit"].includes(
+          tabParam
+        )
       ) {
         setActiveTab(tabParam as any);
       }
@@ -1194,6 +1230,29 @@ export default function AdminCRMPage() {
           </button>
 
           <button
+            onClick={() => changeTab("drafts")}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === "drafts"
+                ? "bg-amber-500 text-slate-950 shadow-md font-extrabold"
+                : "bg-white text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-amber-50/50"
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <span>📝 Drafts Hub</span>
+            <span
+              className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                activeTab === "drafts"
+                  ? "bg-slate-950 text-amber-300"
+                  : totalDraftCount > 0
+                  ? "bg-amber-100 text-amber-900 border border-amber-300"
+                  : "bg-slate-100 text-slate-600"
+              }`}
+            >
+              {totalDraftCount}
+            </span>
+          </button>
+
+          <button
             onClick={() => changeTab("recycle-bin")}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
               activeTab === "recycle-bin"
@@ -1556,8 +1615,30 @@ export default function AdminCRMPage() {
             setBuilderProposal(null);
           }}
           saving={savingProposal}
+          onOpenDrafts={() => changeTab("drafts")}
+          draftCount={totalDraftCount}
         />
       </div>
+
+      {/* TAB: PROPOSAL DRAFTS HUB */}
+      {activeTab === "drafts" && (
+        <DraftsArchive
+          proposals={proposals}
+          onPreview={handlePreviewProposal}
+          onWhatsApp={handleWhatsAppProposal}
+          onResume={(draft) => {
+            handleEditProposal(draft);
+          }}
+          onDelete={handleDeleteProposal}
+          onPromoteToSent={async (id) => {
+            await handleProposalStatusChange(id, "Sent");
+          }}
+          onCreateNew={() => {
+            setBuilderProposal(null);
+            changeTab("itinerary-builder");
+          }}
+        />
+      )}
 
       {/* TAB: SAVED PROPOSALS ARCHIVE */}
       {activeTab === "proposals" && (
@@ -1572,6 +1653,8 @@ export default function AdminCRMPage() {
             setBuilderProposal(null);
             changeTab("itinerary-builder");
           }}
+          onOpenDrafts={() => changeTab("drafts")}
+          draftCount={totalDraftCount}
         />
       )}
 

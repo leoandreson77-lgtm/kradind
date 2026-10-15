@@ -28,7 +28,525 @@ import {
   Clock,
   ChevronDown,
 } from "lucide-react";
-import { TrekData, TrekBatch } from "@/lib/cms-store";
+import type { TrekData, TrekBatch } from "@/lib/travel-data";
+import { treks as defaultTreks } from "@/lib/travel-data";
+
+function ensureBatches(trek: any): TrekBatch[] {
+  if (Array.isArray(trek?.batches) && trek.batches.length > 0) {
+    return trek.batches;
+  }
+  const isDomestic =
+    (trek?.category || "").toLowerCase() === "domestic" ||
+    (trek?.categories || []).some((c: string) => (c || "").toLowerCase() === "domestic") ||
+    (trek?.name || "").toLowerCase().includes("tour package");
+
+  const isIntl =
+    (trek?.category || "").toLowerCase() === "international" ||
+    (trek?.categories || []).some((c: string) => (c || "").toLowerCase() === "international");
+
+  const basePrice = trek?.price || (isIntl ? 39999 : isDomestic ? 18999 : 8999);
+
+  return [
+    {
+      id: 1,
+      startDate: "Oct 24",
+      endDate: "Oct 28, 2026",
+      slotsLeft: 8,
+      price: basePrice,
+      status: "AVBL",
+    },
+    {
+      id: 2,
+      startDate: "Nov 07",
+      endDate: "Nov 11, 2026",
+      slotsLeft: 6,
+      price: basePrice,
+      status: "AVBL",
+    },
+    {
+      id: 3,
+      startDate: "Nov 21",
+      endDate: "Nov 25, 2026",
+      slotsLeft: 10,
+      price: basePrice,
+      status: "AVBL",
+    },
+    {
+      id: 4,
+      startDate: "Flexible / Custom Departure Date",
+      endDate: "On Request",
+      slotsLeft: 15,
+      price: basePrice,
+      status: "AVBL",
+    },
+  ];
+}
+
+const SEED_DESTINATIONS: TrekData[] = [
+  // 🇮🇳 Domestic Tour Packages
+  {
+    id: "dest-rajasthan",
+    name: "Rajasthan Tour Package (Jaipur, Jodhpur & Jaisalmer)",
+    slug: "rajasthan",
+    category: "Domestic",
+    categories: ["Domestic", "Holiday Package", "Heritage"],
+    location: "Rajasthan",
+    region: "North India",
+    duration: "5 Nights / 6 Days",
+    difficulty: "Leisure",
+    altitude: "Desert & Heritage",
+    price: 24999,
+    originalPrice: 29999,
+    badge: "Royal Heritage",
+    rating: 4.9,
+    reviewCount: 164,
+    image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Royal Forts, Opulent Palaces, Camel Safaris & Golden Sand Dunes",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Saturday", slotsLeft: 8, price: 24999, status: "AVBL" },
+      { id: 2, startDate: "Nov 07", endDate: "Nov 12, 2026", slotsLeft: 6, price: 24999, status: "AVBL" },
+      { id: 3, startDate: "Nov 21", endDate: "Nov 26, 2026", slotsLeft: 10, price: 24999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 24999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "dest-goa",
+    name: "Goa Tour Package (Beaches, Dudhsagar & Old Goa)",
+    slug: "goa",
+    category: "Domestic",
+    categories: ["Domestic", "Holiday Package", "Beach"],
+    location: "Goa",
+    region: "West Coast India",
+    duration: "4 Nights / 5 Days",
+    difficulty: "Leisure",
+    altitude: "Coastal Sea Level",
+    price: 17999,
+    originalPrice: 22999,
+    badge: "Top Coastal Escape",
+    rating: 4.8,
+    reviewCount: 182,
+    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Sun-Kissed Beaches, Portuguese Architecture, Waterfalls & Sunset Cruises",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Friday", slotsLeft: 10, price: 17999, status: "AVBL" },
+      { id: 2, startDate: "Nov 06", endDate: "Nov 10, 2026", slotsLeft: 8, price: 17999, status: "AVBL" },
+      { id: 3, startDate: "Nov 20", endDate: "Nov 24, 2026", slotsLeft: 12, price: 17999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 17999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "dest-kashmir",
+    name: "Kashmir Tour Package (Srinagar, Gulmarg & Pahalgam)",
+    slug: "kashmir",
+    category: "Domestic",
+    categories: ["Domestic", "Holiday Package", "Valley"],
+    location: "Kashmir",
+    region: "Kashmir Valley",
+    duration: "5 Nights / 6 Days",
+    difficulty: "Leisure",
+    altitude: "Paradise on Earth",
+    price: 26999,
+    originalPrice: 32999,
+    badge: "Paradise on Earth",
+    rating: 4.9,
+    reviewCount: 210,
+    image: "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Dal Lake Houseboats, Shikara Rides, Gulmarg Gondola & Betaab Valley",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Sunday", slotsLeft: 6, price: 26999, status: "AVBL" },
+      { id: 2, startDate: "Nov 08", endDate: "Nov 13, 2026", slotsLeft: 4, price: 26999, status: "AVBL" },
+      { id: 3, startDate: "Nov 22", endDate: "Nov 27, 2026", slotsLeft: 8, price: 26999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 26999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "dest-kerala",
+    name: "Kerala Backwaters & Munnar Tea Hills Package",
+    slug: "kerala",
+    category: "Domestic",
+    categories: ["Domestic", "Holiday Package", "Nature"],
+    location: "Kerala",
+    region: "South India",
+    duration: "5 Nights / 6 Days",
+    difficulty: "Leisure",
+    altitude: "Tea Hills & Coastal Lagoon",
+    price: 25999,
+    originalPrice: 31999,
+    badge: "God's Own Country",
+    rating: 4.9,
+    reviewCount: 195,
+    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Alleppey Luxury Houseboats, Munnar Mist & Thekkady Spice Plantations",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Saturday", slotsLeft: 8, price: 25999, status: "AVBL" },
+      { id: 2, startDate: "Nov 07", endDate: "Nov 12, 2026", slotsLeft: 6, price: 25999, status: "AVBL" },
+      { id: 3, startDate: "Nov 21", endDate: "Nov 26, 2026", slotsLeft: 10, price: 25999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 25999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "dest-ladakh",
+    name: "Leh Ladakh Road Trip (Nubra, Khardung La & Pangong)",
+    slug: "ladakh",
+    category: "Domestic",
+    categories: ["Domestic", "Holiday Package", "Road Trip"],
+    location: "Leh Ladakh",
+    region: "Trans-Himalayas",
+    duration: "6 Nights / 7 Days",
+    difficulty: "Moderate",
+    altitude: "17,582 Ft (Khardung La)",
+    price: 28999,
+    originalPrice: 35999,
+    badge: "High Altitude Road Trip",
+    rating: 4.9,
+    reviewCount: 230,
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Ancient Buddhist Monasteries, Double-Humped Camels & Azure High Lakes",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Sunday", slotsLeft: 6, price: 28999, status: "AVBL" },
+      { id: 2, startDate: "Nov 08", endDate: "Nov 14, 2026", slotsLeft: 5, price: 28999, status: "AVBL" },
+      { id: 3, startDate: "Nov 22", endDate: "Nov 28, 2026", slotsLeft: 8, price: 28999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 28999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "dest-chardham",
+    name: "Char Dham Yatra (Yamunotri, Gangotri, Kedarnath, Badrinath)",
+    slug: "char-dham-yatra-package-11-nights-12-days",
+    category: "Domestic",
+    categories: ["Domestic", "Holiday Package", "Pilgrimage"],
+    location: "Uttarakhand",
+    region: "Garhwal Himalayas",
+    duration: "11 Nights / 12 Days",
+    difficulty: "Moderate",
+    altitude: "11,755 Ft",
+    price: 36999,
+    originalPrice: 44999,
+    badge: "Sacred Pilgrimage",
+    rating: 4.9,
+    reviewCount: 310,
+    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Complete holy circuit with VIP darshan coordination, sanitized stays & private transfers",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Oct 25", endDate: "Nov 05, 2026", slotsLeft: 5, price: 36999, status: "AVBL" },
+      { id: 2, startDate: "Nov 05", endDate: "Nov 16, 2026", slotsLeft: 7, price: 36999, status: "AVBL" },
+      { id: 3, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 36999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "dest-meghalaya",
+    name: "Meghalaya Northeast Explorer (Shillong, Cherrapunji & Dawki)",
+    slug: "meghalaya-tour-package-5-nights-6-days",
+    category: "Domestic",
+    categories: ["Domestic", "Holiday Package", "Nature"],
+    location: "Meghalaya",
+    region: "Northeast India",
+    duration: "5 Nights / 6 Days",
+    difficulty: "Easy to Moderate",
+    altitude: "Abode of Clouds",
+    price: 23999,
+    originalPrice: 29999,
+    badge: "Abode of Clouds",
+    rating: 4.9,
+    reviewCount: 145,
+    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Double Decker Living Root Bridges, Crystal Clear Umngot River & Majestic Waterfalls",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Saturday", slotsLeft: 8, price: 23999, status: "AVBL" },
+      { id: 2, startDate: "Nov 07", endDate: "Nov 12, 2026", slotsLeft: 6, price: 23999, status: "AVBL" },
+      { id: 3, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 23999, status: "AVBL" },
+    ],
+  },
+  // ✈️ International Tour Packages
+  {
+    id: "intl-bali",
+    name: "Bali Island Tour Package (Ubud, Nusa Penida & Uluwatu)",
+    slug: "bali",
+    category: "International",
+    categories: ["International", "Holiday Package", "Island"],
+    location: "Bali, Indonesia",
+    region: "Southeast Asia",
+    duration: "6 Nights / 7 Days",
+    difficulty: "Leisure",
+    altitude: "Tropical Island",
+    price: 42999,
+    originalPrice: 51999,
+    badge: "Visa On Arrival",
+    rating: 4.9,
+    reviewCount: 220,
+    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Emerald Rice Terraces, Secret Waterfalls, Ocean Temples & Sunset Beach Clubs",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Sunday", slotsLeft: 8, price: 42999, status: "AVBL" },
+      { id: 2, startDate: "Nov 08", endDate: "Nov 14, 2026", slotsLeft: 6, price: 42999, status: "AVBL" },
+      { id: 3, startDate: "Nov 22", endDate: "Nov 28, 2026", slotsLeft: 10, price: 42999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 42999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "intl-thailand",
+    name: "Thailand Holiday Package (Phuket, Phi Phi & Bangkok)",
+    slug: "thailand",
+    category: "International",
+    categories: ["International", "Holiday Package", "Beach"],
+    location: "Phuket & Bangkok, Thailand",
+    region: "Southeast Asia",
+    duration: "5 Nights / 6 Days",
+    difficulty: "Leisure",
+    altitude: "Coastal Islands",
+    price: 38999,
+    originalPrice: 46999,
+    badge: "Visa Free for Indians",
+    rating: 4.9,
+    reviewCount: 198,
+    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Speedboat Tours to Maya Bay, Golden Buddha Temples & Floating Markets",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Saturday", slotsLeft: 8, price: 38999, status: "AVBL" },
+      { id: 2, startDate: "Nov 07", endDate: "Nov 12, 2026", slotsLeft: 6, price: 38999, status: "AVBL" },
+      { id: 3, startDate: "Nov 21", endDate: "Nov 26, 2026", slotsLeft: 10, price: 38999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 38999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "intl-dubai",
+    name: "Dubai City of Superlatives (Burj Khalifa & Desert Safari)",
+    slug: "dubai",
+    category: "International",
+    categories: ["International", "Holiday Package", "Luxury"],
+    location: "Dubai, UAE",
+    region: "Middle East",
+    duration: "4 Nights / 5 Days",
+    difficulty: "Leisure",
+    altitude: "Modern Metropolis",
+    price: 46999,
+    originalPrice: 55999,
+    badge: "Luxury Cityscape",
+    rating: 4.9,
+    reviewCount: 175,
+    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80"],
+    tagline: "124th Floor Burj Khalifa, 4x4 Dune Bashing, Marina Dhow Dinner Cruise",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Thursday", slotsLeft: 8, price: 46999, status: "AVBL" },
+      { id: 2, startDate: "Nov 05", endDate: "Nov 09, 2026", slotsLeft: 6, price: 46999, status: "AVBL" },
+      { id: 3, startDate: "Nov 19", endDate: "Nov 23, 2026", slotsLeft: 10, price: 46999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 46999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "intl-singapore",
+    name: "Singapore Highlights & Sentosa Island Tour",
+    slug: "singapore",
+    category: "International",
+    categories: ["International", "Holiday Package", "City & Theme Parks"],
+    location: "Singapore",
+    region: "Southeast Asia",
+    duration: "4 Nights / 5 Days",
+    difficulty: "Leisure",
+    altitude: "Island City State",
+    price: 49999,
+    originalPrice: 59999,
+    badge: "Theme Parks & City",
+    rating: 4.9,
+    reviewCount: 160,
+    image: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Universal Studios, Gardens by the Bay Avatar Experience & Marina Bay Sands",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Friday", slotsLeft: 6, price: 49999, status: "AVBL" },
+      { id: 2, startDate: "Nov 06", endDate: "Nov 10, 2026", slotsLeft: 5, price: 49999, status: "AVBL" },
+      { id: 3, startDate: "Nov 20", endDate: "Nov 24, 2026", slotsLeft: 8, price: 49999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 49999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "intl-maldives",
+    name: "Maldives Luxury Overwater Lagoon Villa Retreat",
+    slug: "maldives",
+    category: "International",
+    categories: ["International", "Holiday Package", "Luxury Villa"],
+    location: "Private Island Resort, Maldives",
+    region: "Indian Ocean",
+    duration: "3 Nights / 4 Days",
+    difficulty: "Leisure",
+    altitude: "Coral Atolls",
+    price: 59999,
+    originalPrice: 74999,
+    badge: "Luxury Overwater Stay",
+    rating: 5.0,
+    reviewCount: 142,
+    image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=80"],
+    tagline: "All-Inclusive Speedboat Transfers, Water Villa with Sun Deck & Sunset Dolphin Cruise",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Sunday", slotsLeft: 4, price: 59999, status: "AVBL" },
+      { id: 2, startDate: "Nov 08", endDate: "Nov 11, 2026", slotsLeft: 4, price: 59999, status: "AVBL" },
+      { id: 3, startDate: "Nov 22", endDate: "Nov 25, 2026", slotsLeft: 6, price: 59999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 59999, status: "AVBL" },
+    ],
+  },
+  {
+    id: "intl-nepal",
+    name: "Nepal Kathmandu & Pokhara Annapurna Horizons",
+    slug: "nepal",
+    category: "International",
+    categories: ["International", "Holiday Package", "Himalayas"],
+    location: "Kathmandu & Pokhara, Nepal",
+    region: "Himalayas",
+    duration: "5 Nights / 6 Days",
+    difficulty: "Leisure",
+    altitude: "Valley & Lake Views",
+    price: 32999,
+    originalPrice: 39999,
+    badge: "No Visa Needed for Indians",
+    rating: 4.8,
+    reviewCount: 180,
+    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
+    gallery: ["https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80"],
+    tagline: "Pashupatinath Temple, Boating in Phewa Lake, Sarangkot Sunrise over Annapurna",
+    status: "Published",
+    itinerary: [],
+    batches: [
+      { id: 1, startDate: "Weekly Departure", endDate: "Every Saturday", slotsLeft: 8, price: 32999, status: "AVBL" },
+      { id: 2, startDate: "Nov 07", endDate: "Nov 12, 2026", slotsLeft: 6, price: 32999, status: "AVBL" },
+      { id: 3, startDate: "Nov 21", endDate: "Nov 26, 2026", slotsLeft: 10, price: 32999, status: "AVBL" },
+      { id: 4, startDate: "Flexible / Custom Departure Date", endDate: "On Request", slotsLeft: 15, price: 32999, status: "AVBL" },
+    ],
+  },
+];
+
+function destinationToTrekData(d: any): TrekData {
+  const isIntl =
+    (d.category || "").toLowerCase() === "international" ||
+    ["bali", "thailand", "dubai", "singapore", "maldives", "nepal"].includes(
+      (d.slug || "").toLowerCase(),
+    );
+
+  const price = d.price || (isIntl ? 39999 : 19999);
+  return {
+    id: String(d.id),
+    slug: d.slug,
+    name:
+      d.name?.toLowerCase().includes("package") ||
+      d.name?.toLowerCase().includes("tour") ||
+      d.name?.toLowerCase().includes("trek")
+        ? d.name
+        : `${d.name} Tour Package`,
+    category: isIntl ? "International" : "Domestic",
+    categories: isIntl
+      ? ["International", "Holiday Package", "Curated Tour"]
+      : ["Domestic", "Holiday Package", "Tour Package"],
+    location: d.name || "Curated Tour",
+    region: d.category || (isIntl ? "International" : "India"),
+    image: d.image || "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80",
+    gallery: d.gallery && d.gallery.length > 0 ? d.gallery : [d.image].filter(Boolean),
+    tagline:
+      d.tagline ||
+      `${d.name} curated holiday package with verified stays & private transfers`,
+    duration: d.duration || "5 Nights / 6 Days",
+    difficulty: "Leisure",
+    altitude: "Scenic Sightseeing",
+    rating: 4.9,
+    reviewCount: 184,
+    price,
+    originalPrice: d.originalPrice || price + 5000,
+    badge: d.badge || (isIntl ? "International" : "Popular Domestic"),
+    status: "Published",
+    itinerary: (d.itinerary as any) || [],
+    batches: [
+      {
+        id: 1,
+        startDate: "Weekly Departure",
+        endDate: "Every Saturday",
+        slotsLeft: 8,
+        price,
+        status: "AVBL",
+      },
+      {
+        id: 2,
+        startDate: "Upcoming 1st – 6th",
+        endDate: "Next Month",
+        slotsLeft: 10,
+        price,
+        status: "AVBL",
+      },
+      {
+        id: 3,
+        startDate: "Upcoming 15th – 20th",
+        endDate: "Next Month",
+        slotsLeft: 6,
+        price,
+        status: "AVBL",
+      },
+      {
+        id: 4,
+        startDate: "Flexible / Custom Departure Date",
+        endDate: "On Request",
+        slotsLeft: 15,
+        price,
+        status: "AVBL",
+      },
+    ],
+  };
+}
+
+function getInitialBookingPackages(): TrekData[] {
+  const treksMap = new Map<string, TrekData>();
+
+  // 1. Add default treks (with default batches)
+  for (const t of defaultTreks) {
+    if (t.status === "Published" || !t.status) {
+      treksMap.set(t.slug, {
+        ...(t as any),
+        batches: ensureBatches(t),
+        itinerary: (t.itinerary as any) || [],
+      });
+    }
+  }
+
+  // 2. Add seed destinations
+  for (const d of SEED_DESTINATIONS) {
+    if (!treksMap.has(d.slug)) {
+      treksMap.set(d.slug, d);
+    }
+  }
+
+  return Array.from(treksMap.values());
+}
 
 function BookingContent() {
   const searchParams = useSearchParams();
@@ -45,9 +563,9 @@ function BookingContent() {
   // Mode: "direct" (Book specific trek/package) vs "custom" (Plan custom trip)
   const [activeTab, setActiveTab] = useState<"direct" | "custom">("direct");
 
-  // Data
-  const [allTreks, setAllTreks] = useState<TrekData[]>([]);
-  const [loadingTreks, setLoadingTreks] = useState(true);
+  // Data - initialized immediately with seed catalog for 0ms latency
+  const [allTreks, setAllTreks] = useState<TrekData[]>(() => getInitialBookingPackages());
+  const [loadingTreks, setLoadingTreks] = useState(false);
 
   // Direct Booking Form State
   const [selectedTrekSlug, setSelectedTrekSlug] = useState<string>("");
@@ -86,62 +604,166 @@ function BookingContent() {
     isCustomLead?: boolean;
   } | null>(null);
 
-  // Fetch treks from API
+  // Fetch latest treks & destinations from API and merge
   useEffect(() => {
-    async function loadTreks() {
+    let isMounted = true;
+    async function loadCatalog() {
       try {
-        const res = await fetch("/api/treks");
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            setAllTreks(data);
+        const [treksRes, destsRes] = await Promise.all([
+          fetch("/api/treks").catch(() => null),
+          fetch("/api/destinations").catch(() => null),
+        ]);
+
+        const mergedMap = new Map<string, TrekData>();
+        const currentSeeds = getInitialBookingPackages();
+        for (const item of currentSeeds) {
+          mergedMap.set(item.slug, item);
+        }
+
+        // 1. Process /api/treks
+        if (treksRes && treksRes.ok) {
+          const treksData = await treksRes.json();
+          const list: TrekData[] = Array.isArray(treksData?.treks)
+            ? treksData.treks
+            : Array.isArray(treksData)
+            ? treksData
+            : [];
+
+          for (const item of list) {
+            if (item.status === "Published" || !item.status) {
+              mergedMap.set(item.slug, {
+                ...item,
+                batches: ensureBatches(item),
+              });
+            }
           }
         }
+
+        // 2. Process /api/destinations
+        if (destsRes && destsRes.ok) {
+          const destsData = await destsRes.json();
+          const dList: any[] = Array.isArray(destsData) ? destsData : [];
+          for (const d of dList) {
+            if (d.status === "Published" || !d.status) {
+              if (!mergedMap.has(d.slug)) {
+                mergedMap.set(d.slug, destinationToTrekData(d));
+              }
+            }
+          }
+        }
+
+        if (isMounted && mergedMap.size > 0) {
+          setAllTreks(Array.from(mergedMap.values()));
+        }
       } catch (err) {
-        console.error("Failed to load treks list", err);
+        console.error("Failed to load catalog for booking page:", err);
       } finally {
-        setLoadingTreks(false);
+        if (isMounted) setLoadingTreks(false);
       }
     }
-    loadTreks();
+    loadCatalog();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Determine current active trek
   const selectedTrek = useMemo(() => {
-    if (!selectedTrekSlug && allTreks.length > 0) {
-      // Try finding by query param
+    if (allTreks.length === 0) return null;
+
+    if (selectedTrekSlug) {
+      const match = allTreks.find((t) => t.slug === selectedTrekSlug);
+      if (match) return match;
+    }
+
+    // Try finding by query param
+    const targetQuery = (paramTrek || paramPackage || paramDestination).trim().toLowerCase();
+    if (targetQuery) {
       const match = allTreks.find(
         (t) =>
-          t.slug.toLowerCase() === paramTrek.toLowerCase() ||
-          t.name.toLowerCase() === paramTrek.toLowerCase() ||
-          t.slug.toLowerCase() === paramPackage.toLowerCase() ||
-          t.name.toLowerCase().includes(paramDestination.toLowerCase())
+          t.slug.toLowerCase() === targetQuery ||
+          t.name.toLowerCase() === targetQuery ||
+          t.slug.toLowerCase().includes(targetQuery) ||
+          t.name.toLowerCase().includes(targetQuery)
       );
-      return match || allTreks[0];
+      if (match) return match;
     }
-    return allTreks.find((t) => t.slug === selectedTrekSlug) || allTreks[0] || null;
+
+    return allTreks[0] || null;
   }, [allTreks, selectedTrekSlug, paramTrek, paramPackage, paramDestination]);
 
   // Sync selected trek slug
   useEffect(() => {
-    if (selectedTrek && !selectedTrekSlug) {
+    if (selectedTrek && (!selectedTrekSlug || selectedTrekSlug !== selectedTrek.slug)) {
       setSelectedTrekSlug(selectedTrek.slug);
     }
   }, [selectedTrek, selectedTrekSlug]);
+
+  // Active Batches for selected trek
+  const activeBatches = useMemo(() => {
+    return selectedTrek ? ensureBatches(selectedTrek) : [];
+  }, [selectedTrek]);
 
   // Sync batch date
   useEffect(() => {
     if (paramBatchDate) {
       setSelectedBatchDate(paramBatchDate);
-    } else if (selectedTrek?.batches && selectedTrek.batches.length > 0) {
-      const firstAvailable = selectedTrek.batches.find((b) => (b.status || "").toUpperCase() !== "FULL");
-      if (firstAvailable) {
+    } else if (selectedTrek) {
+      const batches = ensureBatches(selectedTrek);
+      if (batches.length > 0) {
+        const firstAvailable = batches.find((b) => (b.status || "").toUpperCase() !== "FULL") || batches[0];
         setSelectedBatchDate(`${firstAvailable.startDate} – ${firstAvailable.endDate}`);
       } else {
-        setSelectedBatchDate(`${selectedTrek.batches[0].startDate} – ${selectedTrek.batches[0].endDate}`);
+        setSelectedBatchDate("Flexible / Custom Departure Date");
       }
     }
   }, [paramBatchDate, selectedTrek]);
+
+  // Categorize for clean grouping in dropdown
+  const { treksList, domesticList, intlList } = useMemo(() => {
+    const treksGroup: TrekData[] = [];
+    const domesticGroup: TrekData[] = [];
+    const intlGroup: TrekData[] = [];
+
+    for (const t of allTreks) {
+      const cat = (t.category || "").toLowerCase();
+      const cats = (t.categories || []).map((c) => c.toLowerCase());
+      const nameLower = (t.name || "").toLowerCase();
+      const slugLower = (t.slug || "").toLowerCase();
+
+      const isIntl =
+        cat === "international" ||
+        cats.includes("international") ||
+        ["bali", "thailand", "dubai", "singapore", "maldives", "nepal", "bhutan", "sri-lanka", "vietnam"].some(
+          (k) => slugLower.includes(k) || nameLower.includes(k)
+        );
+
+      const isDomestic =
+        cat === "domestic" ||
+        cats.includes("domestic") ||
+        cats.includes("road trip") ||
+        nameLower.includes("tour package") ||
+        nameLower.includes("itinerary") ||
+        nameLower.includes("yatra") ||
+        ["rajasthan", "kerala", "goa", "kashmir", "ladakh", "meghalaya", "spiti", "manali", "shimla", "corbett", "kainchi", "chardham", "kedarnath"].some(
+          (k) => slugLower.includes(k) || nameLower.includes(k)
+        );
+
+      if (isIntl) {
+        intlGroup.push(t);
+      } else if (isDomestic) {
+        domesticGroup.push(t);
+      } else {
+        treksGroup.push(t);
+      }
+    }
+
+    return {
+      treksList: treksGroup,
+      domesticList: domesticGroup,
+      intlList: intlGroup,
+    };
+  }, [allTreks]);
 
   // Pricing calculations
   const basePrice = selectedTrek ? selectedTrek.price : 8999;
@@ -417,9 +1039,14 @@ function BookingContent() {
                 <form onSubmit={handleDirectBookingSubmit} className="space-y-6">
                   {/* Step 1: Trek / Tour Selection */}
                   <div className="space-y-2">
-                    <label htmlFor="booking-selected-package" className="block text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5 cursor-pointer">
-                      <Mountain className="w-4 h-4 text-emerald-600" />
-                      <span>1. Select Trek or Tour Package</span>
+                    <label htmlFor="booking-selected-package" className="block text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wider flex items-center justify-between cursor-pointer">
+                      <div className="flex items-center gap-1.5">
+                        <Mountain className="w-4 h-4 text-emerald-600" />
+                        <span>1. Select Trek or Tour Package</span>
+                      </div>
+                      <span className="text-[11px] font-semibold text-slate-400 normal-case">
+                        {allTreks.length} packages available
+                      </span>
                     </label>
 
                     {loadingTreks ? (
@@ -432,19 +1059,48 @@ function BookingContent() {
                           aria-label="Select Trek or Tour Package"
                           value={selectedTrekSlug}
                           onChange={(e) => {
-                            setSelectedTrekSlug(e.target.value);
-                            const t = allTreks.find((x) => x.slug === e.target.value);
-                            if (t?.batches && t.batches.length > 0) {
-                              setSelectedBatchDate(`${t.batches[0].startDate} – ${t.batches[0].endDate}`);
+                            const newSlug = e.target.value;
+                            setSelectedTrekSlug(newSlug);
+                            const t = allTreks.find((x) => x.slug === newSlug);
+                            if (t) {
+                              const batches = ensureBatches(t);
+                              if (batches.length > 0) {
+                                const firstAvail = batches.find((b) => (b.status || "").toUpperCase() !== "FULL") || batches[0];
+                                setSelectedBatchDate(`${firstAvail.startDate} – ${firstAvail.endDate}`);
+                              } else {
+                                setSelectedBatchDate("Flexible / Custom Departure Date");
+                              }
                             }
                           }}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-800 font-bold focus:outline-none focus:border-emerald-600 appearance-none pr-10 cursor-pointer"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-800 font-bold focus:outline-none focus:border-emerald-600 appearance-none pr-10 cursor-pointer shadow-sm"
                         >
-                          {allTreks.map((t) => (
-                            <option key={t.id || t.slug} value={t.slug}>
-                              {t.name} — ₹{t.price?.toLocaleString("en-IN") || "8,999"} ({t.duration} • {t.altitude || t.location})
-                            </option>
-                          ))}
+                          {treksList.length > 0 && (
+                            <optgroup label="🏔️ Himalayan Treks">
+                              {treksList.map((t) => (
+                                <option key={t.id || t.slug} value={t.slug}>
+                                  {t.name} — ₹{t.price?.toLocaleString("en-IN") || "8,999"} ({t.duration} • {t.altitude || t.location})
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
+                          {domesticList.length > 0 && (
+                            <optgroup label="🇮🇳 Domestic Tour Packages">
+                              {domesticList.map((t) => (
+                                <option key={t.id || t.slug} value={t.slug}>
+                                  {t.name} — ₹{t.price?.toLocaleString("en-IN") || "18,999"} ({t.duration} • {t.location})
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
+                          {intlList.length > 0 && (
+                            <optgroup label="✈️ International Tour Packages">
+                              {intlList.map((t) => (
+                                <option key={t.id || t.slug} value={t.slug}>
+                                  {t.name} — ₹{t.price?.toLocaleString("en-IN") || "38,999"} ({t.duration} • {t.location})
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
                         </select>
                         <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
@@ -458,37 +1114,30 @@ function BookingContent() {
                         <Calendar className="w-3.5 h-3.5 text-emerald-600" />
                         <span>2. Departure Batch Date</span>
                       </label>
-                      {selectedTrek?.batches && selectedTrek.batches.length > 0 ? (
-                        <div className="relative">
-                          <select
-                            id="booking-selected-batch"
-                            name="selectedBatch"
-                            aria-label="Departure Batch Date"
-                            value={selectedBatchDate}
-                            onChange={(e) => setSelectedBatchDate(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-emerald-600 appearance-none pr-8 cursor-pointer"
-                          >
-                            {selectedTrek.batches.map((b) => (
-                              <option
-                                key={b.id || b.startDate}
-                                value={`${b.startDate} – ${b.endDate}`}
-                                disabled={(b.status || "").toUpperCase() === "FULL"}
-                              >
-                                {b.startDate} – {b.endDate} [{(b.status || "AVBL").toUpperCase()}]
-                              </option>
-                            ))}
-                          </select>
-                          <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        </div>
-                      ) : (
-                        <input
-                          type="text"
+                      <div className="relative">
+                        <select
+                          id="booking-selected-batch"
+                          name="selectedBatch"
+                          aria-label="Departure Batch Date"
                           value={selectedBatchDate}
                           onChange={(e) => setSelectedBatchDate(e.target.value)}
-                          placeholder="e.g. Oct 15 - Oct 20, 2026 or Flexible"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-600"
-                        />
-                      )}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-emerald-600 appearance-none pr-8 cursor-pointer"
+                        >
+                          {activeBatches.map((b) => (
+                            <option
+                              key={b.id || b.startDate}
+                              value={`${b.startDate} – ${b.endDate}`}
+                              disabled={(b.status || "").toUpperCase() === "FULL"}
+                            >
+                              {b.startDate} – {b.endDate} {b.slotsLeft ? `(${b.slotsLeft} slots left)` : ""} [{(b.status || "AVBL").toUpperCase()}]
+                            </option>
+                          ))}
+                          <option value="Flexible / Custom Dates (Mention in Notes)">
+                            Flexible / Custom Dates (Mention in Notes)
+                          </option>
+                        </select>
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
                     </div>
 
                     <div className="space-y-2">

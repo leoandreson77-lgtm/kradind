@@ -80,7 +80,7 @@ export default function AboutPage() {
               <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-emerald-400/60 shadow-lg bg-emerald-950 shrink-0">
                 <img
                   src="/logo-emblem.webp"
-                  alt="Capt. Rajesh Negi - KRADIND Expedition Leadership"
+                  alt="KRADIND Expedition Leadership Directorate"
                   width={112}
                   height={112}
                   loading="lazy"
@@ -93,7 +93,7 @@ export default function AboutPage() {
               <div className="space-y-2 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider">
-                    Verified Author &amp; Chief Expedition Leader
+                    Verified Organization &amp; Chief Expedition Directorate
                   </span>
                   <span className="text-[11px] text-slate-300">
                     Govt. Tour Operator Reg: <strong className="text-white">UT-TRV-2024-914</strong>
@@ -101,11 +101,11 @@ export default function AboutPage() {
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight" itemProp="name">
-                  Capt. Rajesh Negi &amp; KRADIND Expedition Leadership Directorate
+                  KRADIND Expedition Leadership Directorate
                 </h2>
 
                 <p className="text-xs sm:text-sm text-emerald-300 font-semibold" itemProp="jobTitle">
-                  Chief High-Altitude Expedition Leader &amp; Mountain Safety Director • NIM &amp; HMI Certified
+                  High-Altitude Mountain Safety &amp; Operations Directorate • NIM &amp; HMI Certified Team
                 </p>
 
                 <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] font-bold text-slate-200">
@@ -124,7 +124,7 @@ export default function AboutPage() {
                 </div>
 
                 <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed pt-2" itemProp="description">
-                  With over 12+ years of technical Himalayan expedition experience, Capt. Rajesh Negi directs route safety, high-altitude acclimatization protocols, and wilderness response for KRADIND Adventures. Leading small-batch alpine teams across Uttarakhand, Himachal Pradesh, Ladakh, and Nepal, our leadership maintains a verified zero-casualty track record across 14,000+ guided travelers.
+                  With over 12+ years of technical Himalayan expedition experience, the KRADIND Expedition Leadership Directorate directs route safety, high-altitude acclimatization protocols, and 24/7 wilderness emergency response for KRADIND Adventures. Leading small-batch alpine teams and holiday departures across Uttarakhand, Himachal Pradesh, Kashmir, Ladakh, and Nepal, our leadership maintains a verified zero-casualty safety record across 14,000+ guided travelers.
                 </p>
               </div>
             </div>

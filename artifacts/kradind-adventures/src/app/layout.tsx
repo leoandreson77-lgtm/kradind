@@ -101,12 +101,12 @@ const globalStructuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Person",
+      "@type": "Organization",
       "@id": "https://kradind.com/#author",
-      name: "Capt. Rajesh Negi & KRADIND Expedition Leadership Directorate",
-      jobTitle: "Chief High-Altitude Expedition Leader & Mountain Safety Director",
+      name: "KRADIND Expedition Leadership Directorate",
+      jobTitle: "Chief High-Altitude Expedition & Mountain Safety Directorate",
       description:
-        "Certified Chief Expedition Leader with 12+ years of Himalayan mountaineering experience, 60+ successful high-altitude summits, and zero casualty record across Uttarakhand and Himachal Pradesh circuits.",
+        "Official KRADIND Expedition Leadership Directorate with 12+ years of Himalayan mountaineering experience, 60+ successful high-altitude summits, and zero casualty record across Uttarakhand, Himachal Pradesh, Ladakh, and Nepal circuits.",
       url: "https://kradind.com/about",
       worksFor: {
         "@type": "Organization",
@@ -350,9 +350,9 @@ const globalStructuredData = {
       datePublished: "2026-01-01T00:00:00+05:30",
       dateModified: "2026-09-14T12:00:00+05:30",
       author: {
-        "@type": "Person",
+        "@type": "Organization",
         "@id": "https://kradind.com/#author",
-        name: "Capt. Rajesh Negi & KRADIND Expedition Leadership Directorate",
+        name: "KRADIND Expedition Leadership Directorate",
       },
       publisher: {
         "@type": "Organization",

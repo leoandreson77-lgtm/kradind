@@ -98,12 +98,12 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
 
                 {/* Author Name with Schema */}
                 <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight" itemProp="name">
-                  {config?.title || "Capt. Rajesh Negi & KRADIND Expedition Leadership Directorate"}
+                  {config?.title || "KRADIND Expedition Leadership Directorate"}
                 </h3>
                 
                 {/* Author Job Title & Affiliation with Schema */}
                 <p className="text-xs sm:text-sm text-emerald-300 font-semibold" itemProp="jobTitle">
-                  {config?.role || "Chief High-Altitude Expedition Leader • Mountain Safety & Search Directorate • NIM & HMI Certified"}
+                  {config?.role || "High-Altitude Mountain Safety & Operations Directorate • NIM & HMI Certified Team"}
                 </p>
 
                 {/* Author Credentials List */}
@@ -125,7 +125,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                 {/* Author Bio Paragraph with Schema Description */}
                 <p className="text-xs sm:text-[13px] text-slate-300 max-w-3xl leading-relaxed pt-1.5" itemProp="description">
                   {config?.description ||
-                    "With over 12+ years of Himalayan field leadership, Capt. Rajesh Negi and the KRADIND expedition leadership team personally inspect, verify, and lead high-altitude alpine routes across Uttarakhand, Himachal Pradesh, Ladakh, and Nepal. Having guided over 14,000+ trekkers safely with a verified zero-fatality safety record, our leadership integrates daily VHF mountain weather checks, high-altitude medical protocols, and certified Leave No Trace eco-care into every traveler departure."}
+                    "With over 12+ years of technical Himalayan expedition experience, the KRADIND expedition leadership team personally inspects, verifies, and leads high-altitude alpine routes across Uttarakhand, Himachal Pradesh, Ladakh, and Nepal. Having guided over 14,000+ trekkers safely with a verified zero-fatality safety record, our leadership integrates daily VHF mountain weather checks, high-altitude medical protocols, and certified Leave No Trace eco-care into every traveler departure."}
                 </p>
 
                 <div className="pt-1">
@@ -135,7 +135,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                     itemProp="url"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 hover:text-amber-200 transition"
                   >
-                    <span>Read Full Expedition Leader Bio, Author Credentials &amp; Safety Record</span>
+                    <span>Read Full Expedition Directorate Credentials &amp; Safety Record</span>
                     <span>→</span>
                   </Link>
                 </div>

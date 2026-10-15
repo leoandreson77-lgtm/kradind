@@ -445,6 +445,58 @@ export interface CustomerEmergencyContact {
   phone: string;
 }
 
+export interface CustomerPaymentInstallment {
+  id: string;
+  amount: number;
+  date: string;
+  method: "UPI" | "Net Banking" | "Credit/Debit Card" | "Cash" | "Razorpay" | "Bank Transfer";
+  transactionId?: string;
+  recordedBy: string;
+  notes?: string;
+  receiptNumber?: string;
+}
+
+export interface CustomerFinancials {
+  finalDealPrice: number; // Final kitne me deal finalize hui
+  totalPaid: number;      // Kitna payment receive ho chuka hai
+  balanceDue: number;     // Kitna balance bacha hai
+  paymentStatus: "Fully Paid" | "Partially Paid" | "Advance Received" | "Payment Due" | "Overdue";
+  currency: string;
+  installments: CustomerPaymentInstallment[];
+}
+
+export interface CustomerHotelBooking {
+  id: string;
+  hotelName: string;
+  city: string;
+  checkInDate: string;
+  checkOutDate: string;
+  totalNights: number;
+  roomType: string;
+  roomsCount: number;
+  mealPlan: "EP (Room Only)" | "CP (Breakfast Only)" | "MAP (Breakfast + Dinner)" | "AP (All Meals Included)";
+  voucherNumber?: string;
+  status: "Confirmed" | "Voucher Issued" | "Pending Confirmation" | "Waitlisted" | "Cancelled";
+  contactPerson?: string;
+  notes?: string;
+}
+
+export interface CustomerOperationStatus {
+  tourName: string;
+  startDate: string;
+  endDate: string;
+  totalDays: number;
+  currentDayNumber?: number; // e.g. Day 3 of 6
+  tripStatus: "Upcoming" | "Active / On Tour" | "Completed" | "Postponed" | "Cancelled";
+  currentLocationNote?: string;
+  pickupPoint?: string;
+  dropPoint?: string;
+  vehicleAssigned?: string;
+  driverContact?: string;
+  trekLeaderAssigned?: string;
+  hotelBookings: CustomerHotelBooking[];
+}
+
 export interface CustomerRecord {
   id: string;
   name: string;
@@ -471,6 +523,8 @@ export interface CustomerRecord {
   notesCount: number;
   lastContactDate?: string;
   nextFollowUpDate?: string;
+  financials?: CustomerFinancials;
+  operationStatus?: CustomerOperationStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -3136,6 +3190,81 @@ export function seedInitialCRM(
     notesCount: 4,
     lastContactDate: new Date(Date.now() - 86400000).toISOString(),
     nextFollowUpDate: new Date(Date.now() + 86400000 * 2).toISOString(),
+    financials: {
+      finalDealPrice: 84500,
+      totalPaid: 60000,
+      balanceDue: 24500,
+      paymentStatus: "Partially Paid",
+      currency: "INR",
+      installments: [
+        {
+          id: "INST-3001-1",
+          amount: 30000,
+          date: "2026-09-15T11:30:00.000Z",
+          method: "UPI",
+          transactionId: "UPI/625881029182/ICICI",
+          recordedBy: "Priya Sharma",
+          notes: "Booking Advance Token (35%)",
+          receiptNumber: "RCPT-KRAD-8812",
+        },
+        {
+          id: "INST-3001-2",
+          amount: 30000,
+          date: "2026-10-02T15:20:00.000Z",
+          method: "Net Banking",
+          transactionId: "HDFC-NEFT-991204812",
+          recordedBy: "Vikram Rawat",
+          notes: "2nd Installment for Hotel & Permits",
+          receiptNumber: "RCPT-KRAD-8904",
+        },
+      ],
+    },
+    operationStatus: {
+      tourName: "Kedarkantha Summit Expedition",
+      startDate: "2026-10-18",
+      endDate: "2026-10-23",
+      totalDays: 6,
+      currentDayNumber: 3,
+      tripStatus: "Active / On Tour",
+      currentLocationNote: "Juda Ka Talab to Kedarkantha Base Camp (Day 3 / 6)",
+      pickupPoint: "Dehradun ISBT / Railway Station (06:30 AM)",
+      dropPoint: "Dehradun Railway Station (07:00 PM)",
+      vehicleAssigned: "Force Tempo Traveller (UK07-PA-4421)",
+      driverContact: "Ramesh Negi (+91 98765 43210)",
+      trekLeaderAssigned: "Tashi Dorje (Senior Expedition Leader)",
+      hotelBookings: [
+        {
+          id: "HTL-3001-1",
+          hotelName: "Grand Alpine Resort & Base Camp",
+          city: "Sankri Base",
+          checkInDate: "2026-10-18",
+          checkOutDate: "2026-10-21",
+          totalNights: 3,
+          roomType: "Deluxe Mountain View Room (Double Sharing)",
+          roomsCount: 2,
+          mealPlan: "MAP (Breakfast + Dinner)",
+          voucherNumber: "VCHR-SANKRI-9901",
+          status: "Confirmed",
+          contactPerson: "Manager Harish (+91 94120 11992)",
+          notes: "Early check-in confirmed; heaters provided.",
+        },
+        {
+          id: "HTL-3001-2",
+          hotelName: "Hotel Pacific & Spa",
+          city: "Dehradun",
+          checkInDate: "2026-10-23",
+          checkOutDate: "2026-10-24",
+          totalNights: 1,
+          roomType: "Executive Suite",
+          roomsCount: 1,
+          mealPlan: "CP (Breakfast Only)",
+          voucherNumber: "VCHR-DDN-4412",
+          status: "Voucher Issued",
+          contactPerson: "Front Desk Dehradun",
+          notes: "Post-trek recovery night stay.",
+        },
+      ],
+    },
     createdAt: "2025-04-12T10:00:00.000Z",
     updatedAt: new Date().toISOString(),
   });

@@ -43,6 +43,19 @@ import {
   MapPin,
   User,
   RotateCcw,
+  CreditCard,
+  DollarSign,
+  Hotel,
+  Bed,
+  Lock,
+  Unlock,
+  Key,
+  Receipt,
+  Luggage,
+  Navigation,
+  CalendarDays,
+  ShieldCheck,
+  Percent,
 } from "lucide-react";
 import type {
   CustomerRecord,
@@ -56,6 +69,10 @@ import type {
   AdminRole,
   CustomerItineraryProposal,
   TrekData,
+  CustomerFinancials,
+  CustomerOperationStatus,
+  CustomerHotelBooking,
+  CustomerPaymentInstallment,
 } from "@/lib/cms-store";
 import { getPackageSection } from "@/lib/package-sections";
 import { ProposalVoucherModal } from "@/components/admin/crm/proposal-voucher-modal";
@@ -94,9 +111,127 @@ export default function AdminCRMPage() {
   // Customer 360 Full Popup Panel
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [isModalExpanded, setIsModalExpanded] = useState(false);
-  const [drawerTab, setDrawerTab] = useState<"timeline" | "collab" | "medical" | "edit">("timeline");
+  const [drawerTab, setDrawerTab] = useState<
+    "timeline" | "payments" | "operations" | "authorities" | "collab" | "medical" | "edit"
+  >("timeline");
   const [customerTimeline, setCustomerTimeline] = useState<CustomerTimelineEvent[]>([]);
   const [loadingTimeline, setLoadingTimeline] = useState(false);
+
+  // Super Admin Authorities & Delegation RBAC State
+  const [agentAuthorities, setAgentAuthorities] = useState<
+    Record<string, { canUpdatePayments: boolean; canManageOperations: boolean; canAuthorizeDiscounts: boolean; canDeleteRecords: boolean }>
+  >({
+    "Admin User": {
+      canUpdatePayments: true,
+      canManageOperations: true,
+      canAuthorizeDiscounts: true,
+      canDeleteRecords: true,
+    },
+    "Vikram Rawat": {
+      canUpdatePayments: true,
+      canManageOperations: true,
+      canAuthorizeDiscounts: false,
+      canDeleteRecords: false,
+    },
+    "Priya Sharma": {
+      canUpdatePayments: true,
+      canManageOperations: false,
+      canAuthorizeDiscounts: false,
+      canDeleteRecords: false,
+    },
+    "Tashi Dorje": {
+      canUpdatePayments: false,
+      canManageOperations: true,
+      canAuthorizeDiscounts: false,
+      canDeleteRecords: false,
+    },
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("kradind_agent_authorities");
+        if (saved) {
+          setAgentAuthorities((prev) => ({ ...prev, ...JSON.parse(saved) }));
+        }
+      } catch {}
+    }
+  }, []);
+
+  const saveAgentAuthorities = (updated: typeof agentAuthorities) => {
+    setAgentAuthorities(updated);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("kradind_agent_authorities", JSON.stringify(updated));
+      } catch {}
+    }
+  };
+
+  const toggleAgentAuthority = (
+    agentName: string,
+    key: "canUpdatePayments" | "canManageOperations" | "canAuthorizeDiscounts" | "canDeleteRecords"
+  ) => {
+    if (agentName === "Admin User" && (key === "canUpdatePayments" || key === "canManageOperations")) {
+      showToast("Cannot revoke core Super Admin authorities");
+      return;
+    }
+    const current = agentAuthorities[agentName] || {
+      canUpdatePayments: false,
+      canManageOperations: false,
+      canAuthorizeDiscounts: false,
+      canDeleteRecords: false,
+    };
+    const updated = {
+      ...agentAuthorities,
+      [agentName]: {
+        ...current,
+        [key]: !current[key],
+      },
+    };
+    saveAgentAuthorities(updated);
+    showToast(`Updated ${key} for ${agentName}: ${!current[key] ? "Enabled" : "Disabled"}`);
+  };
+
+  // Payment update state
+  const [editingFinalDeal, setEditingFinalDeal] = useState(false);
+  const [dealPriceInput, setDealPriceInput] = useState<number>(0);
+  const [submittingPayment, setSubmittingPayment] = useState(false);
+  const [newPaymentAmount, setNewPaymentAmount] = useState<number>(15000);
+  const [newPaymentMethod, setNewPaymentMethod] = useState<
+    "UPI" | "Net Banking" | "Credit/Debit Card" | "Cash" | "Razorpay" | "Bank Transfer"
+  >("UPI");
+  const [newPaymentTxnId, setNewPaymentTxnId] = useState("");
+  const [newPaymentNotes, setNewPaymentNotes] = useState("");
+  const [newPaymentDate, setNewPaymentDate] = useState(new Date().toISOString().split("T")[0]);
+
+  // Hotel Booking Form state
+  const [showAddHotelModal, setShowAddHotelModal] = useState(false);
+  const [submittingHotel, setSubmittingHotel] = useState(false);
+  const [newHotelForm, setNewHotelForm] = useState({
+    hotelName: "",
+    city: "",
+    checkInDate: "",
+    checkOutDate: "",
+    totalNights: 2,
+    roomType: "Deluxe Alpine Room (Double Sharing)",
+    roomsCount: 1,
+    mealPlan: "MAP (Breakfast + Dinner)" as const,
+    voucherNumber: "",
+    status: "Confirmed" as const,
+    contactPerson: "",
+    notes: "",
+  });
+
+  // Tour Schedule & Day update state
+  const [submittingOps, setSubmittingOps] = useState(false);
+  const [tourDayInput, setTourDayInput] = useState<number>(1);
+  const [tourStatusInput, setTourStatusInput] = useState<
+    "Upcoming" | "Active / On Tour" | "Completed" | "Postponed" | "Cancelled"
+  >("Upcoming");
+  const [tourLocationInput, setTourLocationInput] = useState("");
+  const [tourVehicleInput, setTourVehicleInput] = useState("");
+  const [tourDriverInput, setTourDriverInput] = useState("");
+  const [tourLeaderInput, setTourLeaderInput] = useState("");
 
   // Multi-Agent Collaboration & Handover state
   const [collabMessages, setCollabMessages] = useState<any[]>([]);
@@ -292,6 +427,51 @@ export default function AdminCRMPage() {
     const currentCustomer = customers.find((c) => c.id === selectedCustomerId);
     if (currentCustomer) {
       setEditFormData(currentCustomer);
+      const fin = currentCustomer.financials || {
+        finalDealPrice: currentCustomer.totalSpent || 18000,
+        totalPaid: currentCustomer.totalSpent || 0,
+        balanceDue: Math.max(0, (currentCustomer.totalSpent || 18000) - (currentCustomer.totalSpent || 0)),
+        paymentStatus: (currentCustomer.totalSpent ? "Fully Paid" : "Payment Due") as any,
+        currency: "INR",
+        installments: [],
+      };
+      setDealPriceInput(fin.finalDealPrice);
+
+      const ops = currentCustomer.operationStatus || {
+        tourName: "Himalayan Tour Expedition",
+        startDate: "2026-10-18",
+        endDate: "2026-10-23",
+        totalDays: 6,
+        currentDayNumber: 1,
+        tripStatus: "Upcoming" as const,
+        currentLocationNote: "Tour starting soon",
+        pickupPoint: "Dehradun ISBT / Railway Station (06:30 AM)",
+        dropPoint: "Dehradun Railway Station (07:00 PM)",
+        vehicleAssigned: "Force Tempo Traveller UK07",
+        driverContact: "Ramesh Negi (+91 98765 43210)",
+        trekLeaderAssigned: "Tashi Dorje",
+        hotelBookings: [],
+      };
+      setTourDayInput(ops.currentDayNumber || 1);
+      setTourStatusInput(ops.tripStatus || "Upcoming");
+      setTourLocationInput(ops.currentLocationNote || "");
+      setTourVehicleInput(ops.vehicleAssigned || "");
+      setTourDriverInput(ops.driverContact || "");
+      setTourLeaderInput(ops.trekLeaderAssigned || "");
+      setNewHotelForm({
+        hotelName: "",
+        city: currentCustomer.city || "Sankri Base",
+        checkInDate: ops.startDate || new Date().toISOString().split("T")[0],
+        checkOutDate: ops.endDate || new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0],
+        totalNights: 2,
+        roomType: "Deluxe Alpine Room (Double Sharing)",
+        roomsCount: 1,
+        mealPlan: "MAP (Breakfast + Dinner)" as const,
+        voucherNumber: `VCHR-KRAD-${Date.now().toString().slice(-4)}`,
+        status: "Confirmed" as const,
+        contactPerson: "",
+        notes: "",
+      });
     }
 
     const fetchTimeline = async () => {
@@ -343,6 +523,26 @@ export default function AdminCRMPage() {
   const selectedCustomer = useMemo(() => {
     return customers.find((c) => c.id === selectedCustomerId) || null;
   }, [customers, selectedCustomerId]);
+
+  // Current Speaking Persona's Authority & Permissions
+  const currentAgentAuthority = useMemo(() => {
+    if (collabPersona.role === "Super Admin" || collabPersona.name === "Admin User") {
+      return {
+        canUpdatePayments: true,
+        canManageOperations: true,
+        canAuthorizeDiscounts: true,
+        canDeleteRecords: true,
+      };
+    }
+    return (
+      agentAuthorities[collabPersona.name] || {
+        canUpdatePayments: false,
+        canManageOperations: false,
+        canAuthorizeDiscounts: false,
+        canDeleteRecords: false,
+      }
+    );
+  }, [collabPersona, agentAuthorities]);
 
   // Filtered Customers
   const filteredCustomers = useMemo(() => {
@@ -516,6 +716,435 @@ export default function AdminCRMPage() {
     } catch {
       alert("Failed to update proposal status");
     }
+  };
+
+  // -------------------------------------------------------------
+  // FINANCIALS & PAYMENT HANDLERS
+  // -------------------------------------------------------------
+  const handleSaveFinalDealPrice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCustomer) return;
+    if (!currentAgentAuthority.canUpdatePayments) {
+      alert("Permission Denied: Your role does not have authority to edit payment or deal pricing. Ask Super Admin to enable this authority.");
+      return;
+    }
+
+    const currentFin = selectedCustomer.financials || {
+      finalDealPrice: selectedCustomer.totalSpent || 18000,
+      totalPaid: selectedCustomer.totalSpent || 0,
+      balanceDue: 0,
+      paymentStatus: "Payment Due" as const,
+      currency: "INR",
+      installments: [],
+    };
+
+    const newDeal = Math.max(0, Number(dealPriceInput) || 0);
+    const newBal = Math.max(0, newDeal - currentFin.totalPaid);
+    const newStatus = newBal === 0 ? "Fully Paid" : currentFin.totalPaid > 0 ? "Partially Paid" : "Payment Due";
+
+    const updatedFinancials: CustomerFinancials = {
+      ...currentFin,
+      finalDealPrice: newDeal,
+      balanceDue: newBal,
+      paymentStatus: newStatus as any,
+    };
+
+    try {
+      const res = await fetch("/api/admin/crm/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedCustomer.id,
+          financials: updatedFinancials,
+          totalSpent: currentFin.totalPaid,
+        }),
+      });
+
+      if (res.ok) {
+        showToast(`Final deal price set to ₹${newDeal.toLocaleString("en-IN")}`);
+        setEditingFinalDeal(false);
+
+        await fetch("/api/admin/crm/timeline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId: selectedCustomer.id,
+            type: "note_added",
+            title: `Final Deal Agreed: ₹${newDeal.toLocaleString("en-IN")}`,
+            description: `Commercial agreement updated by ${collabPersona.name}. Outstanding balance: ₹${newBal.toLocaleString("en-IN")}.`,
+            author: collabPersona.name,
+          }),
+        });
+
+        fetchData();
+      } else {
+        alert("Failed to update deal price");
+      }
+    } catch {
+      alert("Error saving deal price");
+    }
+  };
+
+  const handleRecordPaymentInstallment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCustomer) return;
+    if (!currentAgentAuthority.canUpdatePayments) {
+      alert("Permission Denied: You do not have authority to record payments. Please contact Super Admin.");
+      return;
+    }
+
+    if (!newPaymentAmount || newPaymentAmount <= 0) {
+      alert("Please enter a valid payment amount");
+      return;
+    }
+
+    setSubmittingPayment(true);
+    try {
+      const currentFin = selectedCustomer.financials || {
+        finalDealPrice: selectedCustomer.totalSpent || 18000,
+        totalPaid: selectedCustomer.totalSpent || 0,
+        balanceDue: Math.max(0, (selectedCustomer.totalSpent || 18000) - (selectedCustomer.totalSpent || 0)),
+        paymentStatus: (selectedCustomer.totalSpent ? "Fully Paid" : "Payment Due") as any,
+        currency: "INR",
+        installments: [],
+      };
+
+      const newInstallment: CustomerPaymentInstallment = {
+        id: `INST-${Date.now().toString().slice(-5)}`,
+        amount: Number(newPaymentAmount),
+        date: newPaymentDate || new Date().toISOString(),
+        method: newPaymentMethod,
+        transactionId: newPaymentTxnId || `TXN-${Date.now().toString().slice(-6)}`,
+        recordedBy: collabPersona.name,
+        notes: newPaymentNotes || "Installment received and verified",
+        receiptNumber: `RCPT-KRAD-${Date.now().toString().slice(-5)}`,
+      };
+
+      const updatedInstallments = [newInstallment, ...(currentFin.installments || [])];
+      const updatedTotalPaid = currentFin.totalPaid + newInstallment.amount;
+      const updatedBalanceDue = Math.max(0, currentFin.finalDealPrice - updatedTotalPaid);
+      const updatedStatus = updatedBalanceDue === 0 ? "Fully Paid" : "Partially Paid";
+
+      const updatedFinancials: CustomerFinancials = {
+        ...currentFin,
+        totalPaid: updatedTotalPaid,
+        balanceDue: updatedBalanceDue,
+        paymentStatus: updatedStatus as any,
+        installments: updatedInstallments,
+      };
+
+      const res = await fetch("/api/admin/crm/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedCustomer.id,
+          totalSpent: updatedTotalPaid,
+          financials: updatedFinancials,
+        }),
+      });
+
+      if (res.ok) {
+        showToast(`Payment of ₹${newPaymentAmount.toLocaleString("en-IN")} recorded!`);
+        setNewPaymentTxnId("");
+        setNewPaymentNotes("");
+
+        await fetch("/api/admin/crm/timeline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId: selectedCustomer.id,
+            type: "payment_received",
+            title: `Payment Received: ₹${newPaymentAmount.toLocaleString("en-IN")} via ${newPaymentMethod}`,
+            description: `Receipt #${newInstallment.receiptNumber}. Remaining balance: ₹${updatedBalanceDue.toLocaleString("en-IN")}. Recorded by ${collabPersona.name}.`,
+            author: collabPersona.name,
+            metadata: {
+              amount: newPaymentAmount,
+              method: newPaymentMethod,
+              receipt: newInstallment.receiptNumber,
+            },
+          }),
+        });
+
+        fetchData();
+      } else {
+        alert("Failed to record payment");
+      }
+    } catch {
+      alert("Error processing payment installment");
+    } finally {
+      setSubmittingPayment(false);
+    }
+  };
+
+  const handleDeletePaymentInstallment = async (installmentId: string) => {
+    if (!selectedCustomer) return;
+    if (!currentAgentAuthority.canUpdatePayments) {
+      alert("Permission Denied: Only authorized agents can remove payment records.");
+      return;
+    }
+    if (!confirm("Are you sure you want to delete this payment record? This will adjust the balance due.")) {
+      return;
+    }
+
+    const currentFin = selectedCustomer.financials;
+    if (!currentFin) return;
+
+    const targetInst = currentFin.installments.find((i) => i.id === installmentId);
+    if (!targetInst) return;
+
+    const filtered = currentFin.installments.filter((i) => i.id !== installmentId);
+    const newTotalPaid = Math.max(0, currentFin.totalPaid - targetInst.amount);
+    const newBalanceDue = Math.max(0, currentFin.finalDealPrice - newTotalPaid);
+    const newStatus = newBalanceDue === 0 ? "Fully Paid" : newTotalPaid > 0 ? "Partially Paid" : "Payment Due";
+
+    const updatedFinancials: CustomerFinancials = {
+      ...currentFin,
+      totalPaid: newTotalPaid,
+      balanceDue: newBalanceDue,
+      paymentStatus: newStatus as any,
+      installments: filtered,
+    };
+
+    try {
+      const res = await fetch("/api/admin/crm/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedCustomer.id,
+          totalSpent: newTotalPaid,
+          financials: updatedFinancials,
+        }),
+      });
+
+      if (res.ok) {
+        showToast("Payment record removed and balance adjusted.");
+        fetchData();
+      }
+    } catch {
+      alert("Error removing payment installment");
+    }
+  };
+
+  // -------------------------------------------------------------
+  // OPERATIONS & HOTEL BOOKING HANDLERS
+  // -------------------------------------------------------------
+  const handleSaveTourOperations = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCustomer) return;
+    if (!currentAgentAuthority.canManageOperations) {
+      alert("Permission Denied: You do not have authority to edit tour operations and logistics. Ask Super Admin.");
+      return;
+    }
+
+    setSubmittingOps(true);
+    try {
+      const currentOps = selectedCustomer.operationStatus || {
+        tourName: "Himalayan Tour",
+        startDate: "2026-10-18",
+        endDate: "2026-10-23",
+        totalDays: 6,
+        currentDayNumber: 1,
+        tripStatus: "Upcoming" as const,
+        hotelBookings: [],
+      };
+
+      const updatedOps: CustomerOperationStatus = {
+        ...currentOps,
+        currentDayNumber: Number(tourDayInput) || 1,
+        tripStatus: tourStatusInput,
+        currentLocationNote: tourLocationInput,
+        vehicleAssigned: tourVehicleInput,
+        driverContact: tourDriverInput,
+        trekLeaderAssigned: tourLeaderInput,
+      };
+
+      const res = await fetch("/api/admin/crm/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedCustomer.id,
+          operationStatus: updatedOps,
+        }),
+      });
+
+      if (res.ok) {
+        showToast(`Tour logistics updated: Day ${tourDayInput} (${tourStatusInput})`);
+
+        await fetch("/api/admin/crm/timeline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId: selectedCustomer.id,
+            type: "stage_changed",
+            title: `Operations Update: Day ${tourDayInput} of ${updatedOps.totalDays}`,
+            description: `Tour Status: ${tourStatusInput}. Location: ${tourLocationInput || "On Schedule"}. Leader: ${tourLeaderInput || "Unassigned"}.`,
+            author: collabPersona.name,
+          }),
+        });
+
+        fetchData();
+      }
+    } catch {
+      alert("Error saving tour logistics");
+    } finally {
+      setSubmittingOps(false);
+    }
+  };
+
+  const handleAddHotelBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCustomer) return;
+    if (!currentAgentAuthority.canManageOperations) {
+      alert("Permission Denied: Only authorized operations staff can create hotel reservations.");
+      return;
+    }
+
+    if (!newHotelForm.hotelName.trim()) {
+      alert("Please provide the hotel name");
+      return;
+    }
+
+    setSubmittingHotel(true);
+    try {
+      const currentOps = selectedCustomer.operationStatus || {
+        tourName: "Himalayan Tour",
+        startDate: "2026-10-18",
+        endDate: "2026-10-23",
+        totalDays: 6,
+        currentDayNumber: 1,
+        tripStatus: "Upcoming" as const,
+        hotelBookings: [],
+      };
+
+      const newBooking: CustomerHotelBooking = {
+        id: `HTL-${Date.now().toString().slice(-4)}`,
+        hotelName: newHotelForm.hotelName.trim(),
+        city: newHotelForm.city.trim() || selectedCustomer.city || "Sankri",
+        checkInDate: newHotelForm.checkInDate || new Date().toISOString().split("T")[0],
+        checkOutDate: newHotelForm.checkOutDate || new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0],
+        totalNights: Number(newHotelForm.totalNights) || 2,
+        roomType: newHotelForm.roomType,
+        roomsCount: Number(newHotelForm.roomsCount) || 1,
+        mealPlan: newHotelForm.mealPlan,
+        voucherNumber: newHotelForm.voucherNumber || `VCHR-${Date.now().toString().slice(-5)}`,
+        status: newHotelForm.status,
+        contactPerson: newHotelForm.contactPerson || "",
+        notes: newHotelForm.notes || "",
+      };
+
+      const updatedHotelBookings = [newBooking, ...(currentOps.hotelBookings || [])];
+      const updatedOps: CustomerOperationStatus = {
+        ...currentOps,
+        hotelBookings: updatedHotelBookings,
+      };
+
+      const res = await fetch("/api/admin/crm/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedCustomer.id,
+          operationStatus: updatedOps,
+        }),
+      });
+
+      if (res.ok) {
+        showToast(`Hotel ${newBooking.hotelName} (${newBooking.totalNights} Nights) added!`);
+        setShowAddHotelModal(false);
+        setNewHotelForm({
+          hotelName: "",
+          city: selectedCustomer.city || "Sankri Base",
+          checkInDate: "",
+          checkOutDate: "",
+          totalNights: 2,
+          roomType: "Deluxe Alpine Room (Double Sharing)",
+          roomsCount: 1,
+          mealPlan: "MAP (Breakfast + Dinner)",
+          voucherNumber: `VCHR-KRAD-${Date.now().toString().slice(-4)}`,
+          status: "Confirmed",
+          contactPerson: "",
+          notes: "",
+        });
+
+        await fetch("/api/admin/crm/timeline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId: selectedCustomer.id,
+            type: "note_added",
+            title: `Hotel Confirmed: ${newBooking.hotelName} (${newBooking.totalNights} Nights)`,
+            description: `Room: ${newBooking.roomType} (${newBooking.mealPlan}). Voucher #${newBooking.voucherNumber}. Status: ${newBooking.status}.`,
+            author: collabPersona.name,
+          }),
+        });
+
+        fetchData();
+      }
+    } catch {
+      alert("Error adding hotel booking");
+    } finally {
+      setSubmittingHotel(false);
+    }
+  };
+
+  const handleDeleteHotelBooking = async (bookingId: string) => {
+    if (!selectedCustomer) return;
+    if (!currentAgentAuthority.canManageOperations) {
+      alert("Permission Denied: Only authorized operations staff can remove hotel reservations.");
+      return;
+    }
+    if (!confirm("Are you sure you want to remove this hotel reservation?")) return;
+
+    const currentOps = selectedCustomer.operationStatus;
+    if (!currentOps) return;
+
+    const updatedBookings = (currentOps.hotelBookings || []).filter((h) => h.id !== bookingId);
+    const updatedOps: CustomerOperationStatus = {
+      ...currentOps,
+      hotelBookings: updatedBookings,
+    };
+
+    try {
+      const res = await fetch("/api/admin/crm/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedCustomer.id,
+          operationStatus: updatedOps,
+        }),
+      });
+
+      if (res.ok) {
+        showToast("Hotel reservation removed.");
+        fetchData();
+      }
+    } catch {
+      alert("Error removing hotel booking");
+    }
+  };
+
+  // -------------------------------------------------------------
+  // WHATSAPP GENERATORS
+  // -------------------------------------------------------------
+  const handleSendPaymentReminderWhatsApp = () => {
+    if (!selectedCustomer) return;
+    const fin = selectedCustomer.financials || {
+      finalDealPrice: selectedCustomer.totalSpent || 18000,
+      totalPaid: selectedCustomer.totalSpent || 0,
+      balanceDue: Math.max(0, (selectedCustomer.totalSpent || 18000) - (selectedCustomer.totalSpent || 0)),
+      paymentStatus: "Payment Due",
+    };
+    const ops = selectedCustomer.operationStatus || { tourName: "Himalayan Expedition" };
+
+    const text = `Namaste ${selectedCustomer.name}! Greetings from KRADIND Adventures 🏔️\n\nHere is the official payment status for your upcoming tour *${ops.tourName}*:\n\n💰 *Final Agreed Deal Price:* ₹${fin.finalDealPrice.toLocaleString("en-IN")}\n🟢 *Amount Received So Far:* ₹${fin.totalPaid.toLocaleString("en-IN")}\n🔴 *Outstanding Balance Due:* ₹${fin.balanceDue.toLocaleString("en-IN")}\n🏷️ *Payment Status:* ${fin.paymentStatus}\n\nKindly clear the remaining balance before the departure date to ensure seamless hotel & logistics vouchers.\n\nBank / UPI: kradind@icici | Support: +91 97979 41414\nThank you for choosing KRADIND!`;
+
+    window.open(`https://wa.me/${cleanPhoneForWhatsApp(selectedCustomer.phone)}?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const handleSendHotelVoucherWhatsApp = (hotel: CustomerHotelBooking) => {
+    if (!selectedCustomer) return;
+    const text = `Namaste ${selectedCustomer.name}! 🏨\n\nYour Official Hotel Reservation Details for *${hotel.hotelName}* (${hotel.city}):\n\n📅 *Check-In:* ${hotel.checkInDate}\n📅 *Check-Out:* ${hotel.checkOutDate} (${hotel.totalNights} Nights Stay)\n🛏️ *Room Category:* ${hotel.roomType} (${hotel.roomsCount} Room(s))\n🍽️ *Meal Plan:* ${hotel.mealPlan}\n🎫 *Voucher ID:* ${hotel.voucherNumber}\n✅ *Status:* ${hotel.status}\n${hotel.contactPerson ? `📞 *Hotel Contact:* ${hotel.contactPerson}\n` : ""}We wish you a wonderful and comfortable stay!\n- KRADIND Operations Desk`;
+
+    window.open(`https://wa.me/${cleanPhoneForWhatsApp(selectedCustomer.phone)}?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const handleEditProposal = (proposal: CustomerItineraryProposal) => {
@@ -1531,14 +2160,56 @@ export default function AdminCRMPage() {
                           </div>
                         </td>
 
-                        {/* Spend & Trips */}
+                        {/* Spend & Trips with Live Balance & Tour Status */}
                         <td className={`${density === "compact" ? "py-2 px-3.5" : "py-3.5 px-3.5"} whitespace-nowrap`}>
-                          <div className="font-extrabold text-slate-900 text-xs sm:text-[13px]">
-                            {formatCurrency(cust.totalSpent)}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-extrabold text-slate-900 text-xs sm:text-[13px]">
+                              {cust.financials?.finalDealPrice
+                                ? formatCurrency(cust.financials.finalDealPrice)
+                                : formatCurrency(cust.totalSpent)}
+                            </span>
+                            {cust.financials && cust.financials.balanceDue > 0 ? (
+                              <span
+                                className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200"
+                                title="Remaining Payment Due (Bachi hui rashi)"
+                              >
+                                ₹{cust.financials.balanceDue.toLocaleString("en-IN")} Due
+                              </span>
+                            ) : cust.financials && cust.financials.totalPaid > 0 ? (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                Paid in Full
+                              </span>
+                            ) : null}
                           </div>
-                          <div className="text-[11px] text-slate-500 font-medium mt-0.5">
-                            {cust.totalTrips} {cust.totalTrips === 1 ? "trip" : "trips"}
+
+                          <div className="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center gap-1.5 flex-wrap">
+                            <span>
+                              {cust.totalTrips} {cust.totalTrips === 1 ? "trip" : "trips"}
+                            </span>
+                            {cust.financials?.totalPaid !== undefined && cust.financials.totalPaid > 0 && (
+                              <>
+                                <span className="text-slate-300">•</span>
+                                <span className="text-emerald-700 font-semibold text-[10px]">
+                                  Paid: {formatCurrency(cust.financials.totalPaid)}
+                                </span>
+                              </>
+                            )}
                           </div>
+
+                          {cust.operationStatus && (
+                            <div className="mt-1 flex flex-col gap-0.5">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-700 bg-indigo-50/80 px-1.5 py-0.5 rounded border border-indigo-200/60 max-w-fit">
+                                <Navigation className="w-2.5 h-2.5 text-indigo-600 shrink-0" />
+                                Day {cust.operationStatus.currentDayNumber}/{cust.operationStatus.totalDays} • {cust.operationStatus.tripStatus}
+                              </span>
+                              {cust.operationStatus.hotelBookings && cust.operationStatus.hotelBookings.length > 0 && (
+                                <span className="inline-flex items-center gap-1 text-[10px] text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200/60 max-w-fit">
+                                  <Hotel className="w-2.5 h-2.5 text-slate-500 shrink-0" />
+                                  {cust.operationStatus.hotelBookings[0].hotelName.slice(0, 14)}... ({cust.operationStatus.hotelBookings[0].totalNights}N)
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </td>
 
                         {/* Assigned Agent */}
@@ -2227,42 +2898,103 @@ export default function AdminCRMPage() {
               </div>
             </div>
 
-            {/* Key Stats Bar */}
+            {/* Key Stats Bar - Commercials, Operations, Balances, & Hotel Duration */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 bg-white border-b border-slate-200 text-xs shrink-0">
-              <div className="bg-amber-50/60 p-3 rounded-xl border border-amber-100 text-center">
-                <div className="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Total Spend</div>
-                <div className="font-extrabold text-amber-900 text-base mt-0.5">
-                  {formatCurrency(selectedCustomer.totalSpent)}
-                </div>
-              </div>
-              <div className="bg-emerald-50/60 p-3 rounded-xl border border-emerald-100 text-center">
-                <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Trips Taken</div>
-                <div className="font-extrabold text-emerald-900 text-base mt-0.5">
-                  {selectedCustomer.totalTrips} Treks
-                </div>
-              </div>
-              <div className="bg-blue-50/60 p-3 rounded-xl border border-blue-100 text-center">
-                <div className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">Touchpoints</div>
-                <div className="font-extrabold text-blue-900 text-base mt-0.5">
-                  {customerTimeline.length || selectedCustomer.notesCount || 0} Logs
-                </div>
-              </div>
-              <div className="bg-purple-50/60 p-3 rounded-xl border border-purple-100 text-center">
-                <div className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">Lead Source</div>
-                <div className="font-bold text-purple-900 text-xs truncate mt-1">
-                  {selectedCustomer.source || "Direct Entry"}
-                </div>
-              </div>
+              {/* Final Deal Price */}
               <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Assigned Agent</div>
-                <div className="font-bold text-slate-800 text-xs truncate mt-1">
-                  {selectedCustomer.assignedTo || "Unassigned"}
+                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <Receipt className="w-3 h-3 text-slate-400" />
+                  <span>Final Deal Price</span>
+                </div>
+                <div className="font-extrabold text-slate-900 text-sm sm:text-base mt-0.5">
+                  {formatCurrency(selectedCustomer.financials?.finalDealPrice ?? selectedCustomer.totalSpent)}
+                </div>
+                <div className="text-[10px] font-bold text-emerald-600 mt-0.5">
+                  {selectedCustomer.financials?.paymentStatus ?? (selectedCustomer.totalSpent ? "Fully Paid" : "Payment Due")}
                 </div>
               </div>
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dietary / Health</div>
-                <div className="font-bold text-slate-800 text-xs truncate mt-1">
-                  {selectedCustomer.dietaryPreference || "Standard"}
+
+              {/* Amount Paid */}
+              <div className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-100 text-center">
+                <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <CreditCard className="w-3 h-3 text-emerald-600" />
+                  <span>Total Received</span>
+                </div>
+                <div className="font-extrabold text-emerald-900 text-sm sm:text-base mt-0.5">
+                  {formatCurrency(selectedCustomer.financials?.totalPaid ?? selectedCustomer.totalSpent)}
+                </div>
+                <div className="text-[10px] font-semibold text-emerald-600 mt-0.5">
+                  {selectedCustomer.financials?.installments?.length || 0} Installment(s)
+                </div>
+              </div>
+
+              {/* Balance Due (Kitni Bachi) */}
+              <div
+                className={`p-3 rounded-xl border text-center ${
+                  (selectedCustomer.financials?.balanceDue ?? 0) > 0
+                    ? "bg-rose-50/80 border-rose-200 text-rose-900"
+                    : "bg-emerald-50/50 border-emerald-200 text-emerald-900"
+                }`}
+              >
+                <div className="text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+                  <DollarSign className="w-3 h-3" />
+                  <span>Payment Bachi Hai</span>
+                </div>
+                <div
+                  className={`font-extrabold text-sm sm:text-base mt-0.5 ${
+                    (selectedCustomer.financials?.balanceDue ?? 0) > 0 ? "text-rose-700" : "text-emerald-700"
+                  }`}
+                >
+                  {formatCurrency(selectedCustomer.financials?.balanceDue ?? 0)}
+                </div>
+                <div className="text-[10px] font-bold mt-0.5">
+                  {(selectedCustomer.financials?.balanceDue ?? 0) > 0 ? (
+                    <span className="text-rose-600 font-bold">Outstanding Balance</span>
+                  ) : (
+                    <span className="text-emerald-600 font-bold">100% Cleared</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Live Tour Day Progress */}
+              <div className="bg-indigo-50/70 p-3 rounded-xl border border-indigo-100 text-center">
+                <div className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <Navigation className="w-3 h-3 text-indigo-600" />
+                  <span>Tour Day Status</span>
+                </div>
+                <div className="font-extrabold text-indigo-950 text-sm sm:text-base mt-0.5">
+                  Day {selectedCustomer.operationStatus?.currentDayNumber ?? 1} of {selectedCustomer.operationStatus?.totalDays ?? 6}
+                </div>
+                <div className="text-[10px] font-bold text-indigo-700 truncate mt-0.5">
+                  {selectedCustomer.operationStatus?.tripStatus ?? "Upcoming"}
+                </div>
+              </div>
+
+              {/* Hotel Stay Duration */}
+              <div className="bg-amber-50/70 p-3 rounded-xl border border-amber-100 text-center">
+                <div className="text-[10px] font-bold text-amber-700 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <Hotel className="w-3 h-3 text-amber-600" />
+                  <span>Hotel Booked</span>
+                </div>
+                <div className="font-extrabold text-amber-950 text-sm sm:text-base mt-0.5">
+                  {selectedCustomer.operationStatus?.hotelBookings?.[0]?.totalNights ?? 0} Nights Stay
+                </div>
+                <div className="text-[10px] font-semibold text-amber-800 truncate mt-0.5" title={selectedCustomer.operationStatus?.hotelBookings?.[0]?.hotelName || "No hotel"}>
+                  {selectedCustomer.operationStatus?.hotelBookings?.[0]?.hotelName || "No Hotel Booked"}
+                </div>
+              </div>
+
+              {/* Super Admin Authority / Role Badge */}
+              <div className="bg-purple-50/70 p-3 rounded-xl border border-purple-100 text-center">
+                <div className="text-[10px] font-bold text-purple-700 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-purple-600" />
+                  <span>Your Authority</span>
+                </div>
+                <div className="font-bold text-purple-950 text-xs truncate mt-1">
+                  {collabPersona.name}
+                </div>
+                <div className="text-[9px] font-bold text-purple-700 mt-0.5">
+                  {currentAgentAuthority.canUpdatePayments ? "✓ Payments" : "✗ Pay"} • {currentAgentAuthority.canManageOperations ? "✓ Ops" : "✗ Ops"}
                 </div>
               </div>
             </div>
@@ -2272,14 +3004,14 @@ export default function AdminCRMPage() {
               <button
                 type="button"
                 onClick={() => setDrawerTab("timeline")}
-                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
+                className={`py-3.5 px-3.5 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "timeline"
                     ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
                 <Clock className="w-4 h-4" />
-                <span>Timeline History</span>
+                <span>Timeline</span>
                 <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700 font-mono">
                   {customerTimeline.length}
                 </span>
@@ -2287,15 +3019,69 @@ export default function AdminCRMPage() {
 
               <button
                 type="button"
+                onClick={() => setDrawerTab("payments")}
+                className={`py-3.5 px-3.5 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
+                  drawerTab === "payments"
+                    ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
+                    : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                <CreditCard className="w-4 h-4 text-emerald-600" />
+                <span>Payment & Deal Tracker</span>
+                {(selectedCustomer.financials?.balanceDue ?? 0) > 0 ? (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-rose-100 text-rose-800 font-bold">
+                    ₹{(selectedCustomer.financials?.balanceDue ?? 0).toLocaleString("en-IN")} Due
+                  </span>
+                ) : (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
+                    Cleared
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDrawerTab("operations")}
+                className={`py-3.5 px-3.5 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
+                  drawerTab === "operations"
+                    ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
+                    : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                <Luggage className="w-4 h-4 text-indigo-600" />
+                <span>Tour & Hotel Ops</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-indigo-100 text-indigo-800 font-bold">
+                  Day {selectedCustomer.operationStatus?.currentDayNumber ?? 1}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDrawerTab("authorities")}
+                className={`py-3.5 px-3.5 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
+                  drawerTab === "authorities"
+                    ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
+                    : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-purple-600" />
+                <span>Super Admin RBAC</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-purple-100 text-purple-800 font-bold">
+                  Delegation
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setDrawerTab("collab")}
-                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
+                className={`py-3.5 px-3.5 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "collab"
                     ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
                 <Users className="w-4 h-4" />
-                <span>Multi-Agent Notes & Handover</span>
+                <span>Multi-Agent Notes</span>
                 <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700 font-mono">
                   {collabMessages.length}
                 </span>
@@ -2304,27 +3090,27 @@ export default function AdminCRMPage() {
               <button
                 type="button"
                 onClick={() => setDrawerTab("medical")}
-                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
+                className={`py-3.5 px-3.5 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "medical"
                     ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
                 <HeartPulse className="w-4 h-4 text-rose-500" />
-                <span>Medical & Emergency Info</span>
+                <span>Medical Info</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setDrawerTab("edit")}
-                className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
+                className={`py-3.5 px-3.5 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap ${
                   drawerTab === "edit"
                     ? "border-emerald-600 text-emerald-800 bg-emerald-50/30"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
                 <Edit3 className="w-4 h-4 text-blue-500" />
-                <span>Profile & Lifecycle Settings</span>
+                <span>Profile Settings</span>
               </button>
             </div>
 
@@ -2907,6 +3693,909 @@ export default function AdminCRMPage() {
                   </div>
                 </div>
               )}
+
+              {/* ========================================================= */}
+              {/* SUBTAB 5: PAYMENT UPDATE SECTION (360 FINANCIAL LEDGER) */}
+              {/* ========================================================= */}
+              {drawerTab === "payments" && (
+                <div className="space-y-6">
+                  {/* Super Admin Authority Check Notice */}
+                  {!currentAgentAuthority.canUpdatePayments && (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
+                      <Lock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="font-bold text-amber-900 text-xs">
+                          Authority Restriction: Payments Locked for {collabPersona.name}
+                        </div>
+                        <div className="text-[11px] text-amber-700 mt-0.5">
+                          You do not have permission to modify final deal pricing or record payment installments. A Super Admin can enable your authority under the &quot;Super Admin RBAC&quot; tab.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Commercial Deal Header & Progress Bar */}
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                      <div>
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <Receipt className="w-4 h-4 text-emerald-600" />
+                          <span>Commercial Agreement & Final Deal</span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 flex-wrap">
+                          <div className="text-2xl font-black text-slate-900">
+                            {formatCurrency(selectedCustomer.financials?.finalDealPrice ?? selectedCustomer.totalSpent)}
+                          </div>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                              (selectedCustomer.financials?.balanceDue ?? 0) === 0
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : (selectedCustomer.financials?.totalPaid ?? 0) > 0
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                : "bg-rose-50 text-rose-700 border-rose-200"
+                            }`}
+                          >
+                            {(selectedCustomer.financials?.balanceDue ?? 0) === 0
+                              ? "Fully Paid (No Balance)"
+                              : (selectedCustomer.financials?.totalPaid ?? 0) > 0
+                              ? "Partially Paid"
+                              : "Payment Due"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {editingFinalDeal ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              min={0}
+                              value={dealPriceInput}
+                              onChange={(e) => setDealPriceInput(Number(e.target.value))}
+                              placeholder="Final deal price"
+                              className="w-36 bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleSaveFinalDealPrice}
+                              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs"
+                            >
+                              Save Deal
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setDealPriceInput(selectedCustomer.financials?.finalDealPrice ?? selectedCustomer.totalSpent);
+                                setEditingFinalDeal(false);
+                              }}
+                              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={!currentAgentAuthority.canUpdatePayments}
+                            onClick={() => {
+                              setDealPriceInput(selectedCustomer.financials?.finalDealPrice ?? selectedCustomer.totalSpent);
+                              setEditingFinalDeal(true);
+                            }}
+                            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-slate-600" />
+                            <span>Edit Final Deal Price</span>
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={handleSendPaymentReminderWhatsApp}
+                          className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs"
+                          title="Send balance reminder on WhatsApp"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5 text-white" />
+                          <span>WhatsApp Reminder</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar: Paid vs Remaining */}
+                    <div>
+                      {(() => {
+                        const finalDeal = selectedCustomer.financials?.finalDealPrice ?? selectedCustomer.totalSpent;
+                        const paid = selectedCustomer.financials?.totalPaid ?? selectedCustomer.totalSpent;
+                        const pct = finalDeal > 0 ? Math.min(100, Math.round((paid / finalDeal) * 100)) : 100;
+                        return (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-xs font-bold">
+                              <span className="text-emerald-700 flex items-center gap-1">
+                                <Check className="w-3.5 h-3.5" />
+                                Paid: {pct}% ({formatCurrency(paid)})
+                              </span>
+                              <span className="text-rose-600">
+                                Remaining Due: {100 - pct}% ({formatCurrency(Math.max(0, finalDeal - paid))})
+                              </span>
+                            </div>
+                            <div className="w-full h-3 bg-rose-100 rounded-full overflow-hidden flex">
+                              <div
+                                className="h-full bg-gradient-to-r from-emerald-500 to-teal-600 transition-all duration-300"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+
+                    {/* 3 Overview Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          Final Kitne Me Hui (Total Deal)
+                        </span>
+                        <div className="text-lg font-black text-slate-900 mt-1">
+                          {formatCurrency(selectedCustomer.financials?.finalDealPrice ?? selectedCustomer.totalSpent)}
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">
+                          Agreed package cost with inclusions
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200">
+                        <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">
+                          Ab Tak Kitna Aaya (Total Paid)
+                        </span>
+                        <div className="text-lg font-black text-emerald-900 mt-1">
+                          {formatCurrency(selectedCustomer.financials?.totalPaid ?? selectedCustomer.totalSpent)}
+                        </div>
+                        <div className="text-[10px] text-emerald-700 mt-0.5">
+                          {selectedCustomer.financials?.installments?.length || 0} verified installment(s)
+                        </div>
+                      </div>
+
+                      <div
+                        className={`p-4 rounded-xl border ${
+                          (selectedCustomer.financials?.balanceDue ?? 0) > 0
+                            ? "bg-rose-50 border-rose-200"
+                            : "bg-emerald-50/50 border-emerald-200"
+                        }`}
+                      >
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-wider block ${
+                            (selectedCustomer.financials?.balanceDue ?? 0) > 0
+                              ? "text-rose-800"
+                              : "text-emerald-800"
+                          }`}
+                        >
+                          Payment Kitni Bachi Hai (Balance)
+                        </span>
+                        <div
+                          className={`text-lg font-black mt-1 ${
+                            (selectedCustomer.financials?.balanceDue ?? 0) > 0
+                              ? "text-rose-700"
+                              : "text-emerald-700"
+                          }`}
+                        >
+                          {formatCurrency(selectedCustomer.financials?.balanceDue ?? 0)}
+                        </div>
+                        <div className="text-[10px] font-semibold mt-0.5">
+                          {(selectedCustomer.financials?.balanceDue ?? 0) > 0 ? (
+                            <span className="text-rose-600 font-bold">Pending collection from traveler</span>
+                          ) : (
+                            <span className="text-emerald-700 font-bold">Zero dues - Account settled</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Record Payment Installment Form */}
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                    <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-emerald-600" />
+                          <span>Record New Payment Installment</span>
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          Add received amounts via UPI, Cards, Bank Transfer, or Cash. Generates formal audit receipt.
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
+                        Acting as: {collabPersona.name}
+                      </span>
+                    </div>
+
+                    <form onSubmit={handleRecordPaymentInstallment} className="space-y-4 text-xs">
+                      <fieldset disabled={!currentAgentAuthority.canUpdatePayments} className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Amount (₹ INR) *
+                            </label>
+                            <div className="relative mt-1">
+                              <span className="absolute left-3 top-2.5 text-slate-400 font-bold">₹</span>
+                              <input
+                                type="number"
+                                required
+                                min={1}
+                                value={newPaymentAmount}
+                                onChange={(e) => setNewPaymentAmount(Number(e.target.value))}
+                                placeholder="15000"
+                                className="w-full pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-bold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Payment Date *
+                            </label>
+                            <input
+                              type="date"
+                              required
+                              value={newPaymentDate}
+                              onChange={(e) => setNewPaymentDate(e.target.value)}
+                              className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Payment Method *
+                            </label>
+                            <select
+                              value={newPaymentMethod}
+                              onChange={(e) => setNewPaymentMethod(e.target.value as any)}
+                              className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                            >
+                              <option value="UPI">UPI (GooglePay / PhonePe / Paytm)</option>
+                              <option value="Net Banking">Net Banking / NEFT / IMPS</option>
+                              <option value="Bank Transfer">Bank Transfer (Direct Account)</option>
+                              <option value="Credit/Debit Card">Credit / Debit Card</option>
+                              <option value="Razorpay">Razorpay Payment Link</option>
+                              <option value="Cash">Cash Deposit</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Transaction Ref / UTR
+                            </label>
+                            <input
+                              type="text"
+                              value={newPaymentTxnId}
+                              onChange={(e) => setNewPaymentTxnId(e.target.value)}
+                              placeholder="e.g. UPI/4289381923"
+                              className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                            Payment Purpose / Note
+                          </label>
+                          <input
+                            type="text"
+                            value={newPaymentNotes}
+                            onChange={(e) => setNewPaymentNotes(e.target.value)}
+                            placeholder="e.g. 50% Advance token for Kedarkantha trek batch confirmation"
+                            className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                          />
+                        </div>
+
+                        <div className="flex justify-end pt-2">
+                          <button
+                            type="submit"
+                            disabled={submittingPayment || !currentAgentAuthority.canUpdatePayments}
+                            className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+                          >
+                            <Check className="w-4 h-4" />
+                            <span>{submittingPayment ? "Recording Payment..." : "Record Payment & Issue Receipt"}</span>
+                          </button>
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+
+                  {/* Payment Installments Ledger Table */}
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+                      <div className="font-bold text-xs text-slate-900 flex items-center gap-2">
+                        <Receipt className="w-4 h-4 text-emerald-600" />
+                        <span>Installments Payment History Ledger</span>
+                      </div>
+                      <span className="text-[11px] text-slate-500 font-semibold">
+                        {selectedCustomer.financials?.installments?.length || 0} Transaction(s)
+                      </span>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+                          <tr>
+                            <th className="py-2.5 px-4">Receipt #</th>
+                            <th className="py-2.5 px-3">Date</th>
+                            <th className="py-2.5 px-3">Amount</th>
+                            <th className="py-2.5 px-3">Method</th>
+                            <th className="py-2.5 px-3">Txn Reference</th>
+                            <th className="py-2.5 px-3">Recorded By</th>
+                            <th className="py-2.5 px-3">Notes</th>
+                            <th className="py-2.5 px-4 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {!selectedCustomer.financials?.installments ||
+                          selectedCustomer.financials.installments.length === 0 ? (
+                            <tr>
+                              <td colSpan={8} className="py-8 text-center text-slate-400">
+                                No payment installments recorded yet. Use the form above to record receipt.
+                              </td>
+                            </tr>
+                          ) : (
+                            selectedCustomer.financials.installments.map((inst) => (
+                              <tr key={inst.id} className="hover:bg-slate-50 transition-colors">
+                                <td className="py-2.5 px-4 font-mono font-bold text-slate-700">
+                                  {inst.receiptNumber || inst.id}
+                                </td>
+                                <td className="py-2.5 px-3 text-slate-600 font-medium">
+                                  {inst.date ? inst.date.slice(0, 10) : "N/A"}
+                                </td>
+                                <td className="py-2.5 px-3 font-extrabold text-emerald-700 text-[13px]">
+                                  {formatCurrency(inst.amount)}
+                                </td>
+                                <td className="py-2.5 px-3">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-200">
+                                    {inst.method}
+                                  </span>
+                                </td>
+                                <td className="py-2.5 px-3 text-slate-500 font-mono text-[11px]">
+                                  {inst.transactionId || "—"}
+                                </td>
+                                <td className="py-2.5 px-3 text-slate-700 font-medium">
+                                  {inst.recordedBy}
+                                </td>
+                                <td className="py-2.5 px-3 text-slate-500 truncate max-w-[180px]" title={inst.notes}>
+                                  {inst.notes || "Standard payment"}
+                                </td>
+                                <td className="py-2.5 px-4 text-right">
+                                  <button
+                                    type="button"
+                                    disabled={!currentAgentAuthority.canUpdatePayments}
+                                    onClick={() => handleDeletePaymentInstallment(inst.id)}
+                                    title="Delete payment record"
+                                    className="p-1 rounded hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors disabled:opacity-30"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================= */}
+              {/* SUBTAB 6: TOUR & HOTEL OPERATIONS STATUS SECTION */}
+              {/* ========================================================= */}
+              {drawerTab === "operations" && (
+                <div className="space-y-6">
+                  {/* Authority Restriction Notice */}
+                  {!currentAgentAuthority.canManageOperations && (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
+                      <Lock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="font-bold text-amber-900 text-xs">
+                          Operations Locked for {collabPersona.name}
+                        </div>
+                        <div className="text-[11px] text-amber-700 mt-0.5">
+                          You lack authority to edit live tour schedules or hotel reservations. A Super Admin can grant this privilege in the Super Admin RBAC tab.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tour Live Schedule & Stepper */}
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
+                    <div className="border-b border-slate-100 pb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                      <div>
+                        <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                          <Navigation className="w-4 h-4 text-indigo-600" />
+                          <span>Tour Schedule & Live Day Tracking</span>
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          Track exactly what day of the expedition the traveler is on and update field logistics.
+                        </p>
+                      </div>
+
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                          (selectedCustomer.operationStatus?.tripStatus ?? "Upcoming") === "Active / On Tour"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : (selectedCustomer.operationStatus?.tripStatus ?? "Upcoming") === "Completed"
+                            ? "bg-purple-50 text-purple-700 border-purple-200"
+                            : "bg-blue-50 text-blue-700 border-blue-200"
+                        }`}
+                      >
+                        Status: {selectedCustomer.operationStatus?.tripStatus ?? "Upcoming"}
+                      </span>
+                    </div>
+
+                    {/* Visual Day Stepper */}
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-2 flex items-center justify-between">
+                        <span>
+                          Tour Timeline (
+                          {selectedCustomer.operationStatus?.totalDays ?? 6} Days Total Expedition)
+                        </span>
+                        <span className="text-indigo-600 font-extrabold">
+                          Currently on Day {selectedCustomer.operationStatus?.currentDayNumber ?? 1}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                        {Array.from({ length: selectedCustomer.operationStatus?.totalDays ?? 6 }).map((_, idx) => {
+                          const dayNum = idx + 1;
+                          const currentDay = selectedCustomer.operationStatus?.currentDayNumber ?? 1;
+                          const isDone = dayNum < currentDay;
+                          const isCurrent = dayNum === currentDay;
+
+                          return (
+                            <div
+                              key={dayNum}
+                              className={`p-3 rounded-xl border text-center transition-all ${
+                                isCurrent
+                                  ? "bg-indigo-600 text-white border-indigo-700 shadow-md ring-2 ring-indigo-300"
+                                  : isDone
+                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                  : "bg-slate-50 text-slate-500 border-slate-200"
+                              }`}
+                            >
+                              <div className="text-[10px] font-bold uppercase">Day {dayNum}</div>
+                              <div className="font-extrabold text-sm mt-0.5">
+                                {isCurrent ? "LIVE TODAY" : isDone ? "✓ Done" : "Upcoming"}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Live Tour Operations Update Form */}
+                    <form onSubmit={handleSaveTourOperations} className="space-y-4 text-xs pt-2">
+                      <fieldset disabled={!currentAgentAuthority.canManageOperations} className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Tour Konse Day Par Hai (Current Day) *
+                            </label>
+                            <select
+                              value={tourDayInput}
+                              onChange={(e) => setTourDayInput(Number(e.target.value))}
+                              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-bold focus:outline-none focus:border-indigo-600 focus:bg-white"
+                            >
+                              {Array.from({ length: selectedCustomer.operationStatus?.totalDays ?? 6 }).map(
+                                (_, idx) => (
+                                  <option key={idx + 1} value={idx + 1}>
+                                    Day {idx + 1} of {selectedCustomer.operationStatus?.totalDays ?? 6}
+                                  </option>
+                                )
+                              )}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Tour Operation Status *
+                            </label>
+                            <select
+                              value={tourStatusInput}
+                              onChange={(e) => setTourStatusInput(e.target.value as any)}
+                              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-bold focus:outline-none focus:border-indigo-600 focus:bg-white"
+                            >
+                              <option value="Upcoming">Upcoming (Pre-Departure)</option>
+                              <option value="Active / On Tour">Active / On Tour (Live Expedition)</option>
+                              <option value="Completed">Completed (Successfully Concluded)</option>
+                              <option value="Postponed">Postponed</option>
+                              <option value="Cancelled">Cancelled</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Trek Leader Assigned
+                            </label>
+                            <input
+                              type="text"
+                              value={tourLeaderInput}
+                              onChange={(e) => setTourLeaderInput(e.target.value)}
+                              placeholder="e.g. Tashi Dorje / Negi Ji"
+                              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Vehicle / Transport Details
+                            </label>
+                            <input
+                              type="text"
+                              value={tourVehicleInput}
+                              onChange={(e) => setTourVehicleInput(e.target.value)}
+                              placeholder="e.g. Force Tempo Traveller (UK 07 TA 4421)"
+                              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Driver Contact Info
+                            </label>
+                            <input
+                              type="text"
+                              value={tourDriverInput}
+                              onChange={(e) => setTourDriverInput(e.target.value)}
+                              placeholder="e.g. Ramesh Negi (+91 98765 43210)"
+                              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                              Live Route Location Note
+                            </label>
+                            <input
+                              type="text"
+                              value={tourLocationInput}
+                              onChange={(e) => setTourLocationInput(e.target.value)}
+                              placeholder="e.g. Camp 2 - Juda Ka Talab (9,100 ft)"
+                              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end pt-2">
+                          <button
+                            type="submit"
+                            disabled={submittingOps || !currentAgentAuthority.canManageOperations}
+                            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+                          >
+                            <Check className="w-4 h-4" />
+                            <span>{submittingOps ? "Saving Tour Updates..." : "Save Tour Day & Status"}</span>
+                          </button>
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+
+                  {/* Hotel Bookings & Night Stay Section */}
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                    <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                          <Hotel className="w-4 h-4 text-amber-600" />
+                          <span>Hotel & Accommodation Bookings (Kitne Din Book Hai)</span>
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          Manage reserved hotels, room night duration, vouchers, and meal plans for this customer.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        disabled={!currentAgentAuthority.canManageOperations}
+                        onClick={() => setShowAddHotelModal(true)}
+                        className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Book / Add Hotel</span>
+                      </button>
+                    </div>
+
+                    {/* Booked Hotels List */}
+                    <div className="space-y-3">
+                      {!selectedCustomer.operationStatus?.hotelBookings ||
+                      selectedCustomer.operationStatus.hotelBookings.length === 0 ? (
+                        <div className="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                          <Hotel className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <div>No hotels or resorts booked for this customer yet.</div>
+                          <button
+                            type="button"
+                            disabled={!currentAgentAuthority.canManageOperations}
+                            onClick={() => setShowAddHotelModal(true)}
+                            className="mt-3 px-4 py-1.5 bg-white border border-slate-300 text-slate-700 hover:text-slate-900 font-bold text-xs rounded-xl shadow-2xs"
+                          >
+                            + Add First Hotel Booking
+                          </button>
+                        </div>
+                      ) : (
+                        selectedCustomer.operationStatus.hotelBookings.map((hotel) => (
+                          <div
+                            key={hotel.id}
+                            className="p-4 rounded-xl border border-slate-200 hover:border-amber-300 transition-colors bg-gradient-to-r from-white via-amber-50/20 to-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs"
+                          >
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 className="font-extrabold text-slate-900 text-sm">{hotel.hotelName}</h4>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                  {hotel.totalNights} Nights / {hotel.totalNights + 1} Days Booked
+                                </span>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                    hotel.status === "Confirmed"
+                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                      : "bg-blue-50 text-blue-700 border-blue-200"
+                                  }`}
+                                >
+                                  {hotel.status}
+                                </span>
+                              </div>
+
+                              <div className="text-slate-500 flex items-center gap-3 flex-wrap text-[11px]">
+                                <span>City/Base: {hotel.city}</span>
+                                <span>•</span>
+                                <span>Check-In: {hotel.checkInDate}</span>
+                                <span>•</span>
+                                <span>Check-Out: {hotel.checkOutDate}</span>
+                                <span>•</span>
+                                <span className="font-mono text-slate-700 font-bold">
+                                  Voucher #{hotel.voucherNumber}
+                                </span>
+                              </div>
+
+                              <div className="text-slate-700 font-medium flex items-center gap-3 flex-wrap">
+                                <span>Room: {hotel.roomType} ({hotel.roomsCount} room)</span>
+                                <span>•</span>
+                                <span className="text-amber-800 font-semibold">Meal: {hotel.mealPlan}</span>
+                                {hotel.contactPerson && (
+                                  <>
+                                    <span>•</span>
+                                    <span>Contact: {hotel.contactPerson}</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 self-end sm:self-center">
+                              <button
+                                type="button"
+                                onClick={() => handleSendHotelVoucherWhatsApp(hotel)}
+                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1.5 shadow-2xs transition-colors"
+                                title="Send hotel voucher details to guest on WhatsApp"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                <span>Send Voucher</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={!currentAgentAuthority.canManageOperations}
+                                onClick={() => handleDeleteHotelBooking(hotel.id)}
+                                className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 disabled:opacity-30 transition-colors"
+                                title="Remove hotel booking"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================= */}
+              {/* SUBTAB 7: SUPER ADMIN RBAC & AUTHORITY DELEGATION */}
+              {/* ========================================================= */}
+              {drawerTab === "authorities" && (
+                <div className="space-y-6">
+                  {/* Super Admin Control Center Header */}
+                  <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 p-6 rounded-2xl text-white shadow-md">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/30 text-purple-200 border border-purple-400/30 text-[11px] font-bold uppercase tracking-wider mb-2">
+                          <ShieldCheck className="w-3.5 h-3.5" />
+                          <span>Super Admin Authority Matrix</span>
+                        </div>
+                        <h3 className="text-lg font-black tracking-tight">
+                          Agent Delegation & Privilege Management
+                        </h3>
+                        <p className="text-xs text-purple-200 mt-1 max-w-2xl leading-relaxed">
+                          Grant or revoke specific operational and financial capabilities for each staff member. Super Admin can enable/disable authorities like Payment Updates, Deal Pricing, Tour Logistics, and Hotel Reservations in real-time.
+                        </p>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <span className="text-[10px] uppercase font-bold text-purple-300 block">
+                          Current Persona
+                        </span>
+                        <div className="text-sm font-extrabold text-white mt-0.5">{collabPersona.name}</div>
+                        <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-white/20 text-purple-100">
+                          {collabPersona.role}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Persona Quick Switcher for Live Testing */}
+                    <div className="mt-5 pt-4 border-t border-white/10 flex items-center gap-2 flex-wrap text-xs">
+                      <span className="text-[11px] font-bold text-purple-300 mr-1">
+                        Switch Active Persona (Test Permissions):
+                      </span>
+                      {[
+                        { name: "Admin User", role: "Super Admin" as AdminRole },
+                        { name: "Vikram Rawat", role: "Senior Trek Consultant" as AdminRole },
+                        { name: "Priya Sharma", role: "Customer Success Lead" as AdminRole },
+                        { name: "Tashi Namgyal", role: "Expedition Logistics Lead" as AdminRole },
+                      ].map((persona) => (
+                        <button
+                          key={persona.name}
+                          type="button"
+                          onClick={() => {
+                            setCollabPersona({
+                              id: `persona-${persona.name.toLowerCase().replace(/\s+/g, "-")}`,
+                              name: persona.name,
+                              role: persona.role,
+                            });
+                            showToast(`Active persona switched to ${persona.name} (${persona.role})`);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl font-bold transition-all text-xs ${
+                            collabPersona.name === persona.name
+                              ? "bg-white text-purple-900 shadow-md ring-2 ring-purple-300"
+                              : "bg-white/10 hover:bg-white/20 text-white"
+                          }`}
+                        >
+                          {persona.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Staff Delegation Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {Object.entries(agentAuthorities).map(([agentName, auth]) => (
+                      <div
+                        key={agentName}
+                        className={`bg-white rounded-2xl border p-5 shadow-xs space-y-4 transition-all ${
+                          collabPersona.name === agentName
+                            ? "border-purple-300 ring-2 ring-purple-100"
+                            : "border-slate-200"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 text-white flex items-center justify-center font-bold text-sm">
+                              {agentName.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+                                <span>{agentName}</span>
+                                {agentName === "Admin User" && (
+                                  <span className="text-[10px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded-full">
+                                    Super Admin
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-medium">
+                                {agentName === "Vikram Rawat"
+                                  ? "Senior Trek Consultant"
+                                  : agentName === "Priya Sharma"
+                                  ? "Customer Success Lead"
+                                  : agentName === "Tashi Namgyal"
+                                  ? "Expedition Logistics Lead"
+                                  : "Master Admin"}
+                              </div>
+                            </div>
+                          </div>
+
+                          {collabPersona.name === agentName && (
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                              Active Persona
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Authority Switches */}
+                        <div className="space-y-3 text-xs">
+                          {/* Payment Updates */}
+                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                            <div>
+                              <div className="font-bold text-slate-800 flex items-center gap-1.5">
+                                <CreditCard className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>Record & Update Payments</span>
+                              </div>
+                              <div className="text-[10px] text-slate-400 mt-0.5">
+                                Allow entering installments and final deal pricing
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => toggleAgentAuthority(agentName, "canUpdatePayments")}
+                              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                                auth.canUpdatePayments ? "bg-emerald-600 justify-end" : "bg-slate-300 justify-start"
+                              }`}
+                            >
+                              <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                            </button>
+                          </div>
+
+                          {/* Operations & Hotels */}
+                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                            <div>
+                              <div className="font-bold text-slate-800 flex items-center gap-1.5">
+                                <Luggage className="w-3.5 h-3.5 text-indigo-600" />
+                                <span>Tour & Hotel Operations</span>
+                              </div>
+                              <div className="text-[10px] text-slate-400 mt-0.5">
+                                Allow changing live tour days and booking hotel rooms
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => toggleAgentAuthority(agentName, "canManageOperations")}
+                              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                                auth.canManageOperations ? "bg-indigo-600 justify-end" : "bg-slate-300 justify-start"
+                              }`}
+                            >
+                              <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                            </button>
+                          </div>
+
+                          {/* Authorize Discounts */}
+                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                            <div>
+                              <div className="font-bold text-slate-800 flex items-center gap-1.5">
+                                <Percent className="w-3.5 h-3.5 text-amber-600" />
+                                <span>Authorize Custom Discounts</span>
+                              </div>
+                              <div className="text-[10px] text-slate-400 mt-0.5">
+                                Allow reducing deal price below package floor
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => toggleAgentAuthority(agentName, "canAuthorizeDiscounts")}
+                              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                                auth.canAuthorizeDiscounts ? "bg-amber-500 justify-end" : "bg-slate-300 justify-start"
+                              }`}
+                            >
+                              <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                            </button>
+                          </div>
+
+                          {/* Delete Records */}
+                          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                            <div>
+                              <div className="font-bold text-slate-800 flex items-center gap-1.5">
+                                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                                <span>Delete Payment Entries</span>
+                              </div>
+                              <div className="text-[10px] text-slate-400 mt-0.5">
+                                Allow removing payment entries from historical ledger
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => toggleAgentAuthority(agentName, "canDeleteRecords")}
+                              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                                auth.canDeleteRecords ? "bg-rose-600 justify-end" : "bg-slate-300 justify-start"
+                              }`}
+                            >
+                              <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -3058,6 +4747,212 @@ export default function AdminCRMPage() {
                   className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Save & Open 360
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL: ADD / BOOK HOTEL RESERVATION */}
+      {/* ========================================================= */}
+      {showAddHotelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white border border-slate-200 w-full max-w-xl rounded-2xl p-6 shadow-2xl relative space-y-4 text-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Hotel className="w-4 h-4 text-amber-600" />
+                <span>Book Hotel / Resort for Customer</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAddHotelModal(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddHotelBooking} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Hotel / Resort Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. The Grand Shiva Alpine Resort"
+                    value={newHotelForm.hotelName}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, hotelName: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    City / Base Camp Location *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Sankri Base / Manali"
+                    value={newHotelForm.city}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, city: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Check-In Date *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={newHotelForm.checkInDate}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, checkInDate: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Check-Out Date *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={newHotelForm.checkOutDate}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, checkOutDate: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">
+                    Kitne Din / Nights Book Hai *
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    placeholder="2"
+                    value={newHotelForm.totalNights}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, totalNights: Number(e.target.value) })}
+                    className="w-full bg-amber-50/60 border border-amber-300 rounded-xl p-2 text-amber-950 font-black text-xs mt-1 focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Room Type
+                  </label>
+                  <select
+                    value={newHotelForm.roomType}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, roomType: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  >
+                    <option value="Deluxe Alpine Room (Double Sharing)">Deluxe Alpine Room (Double)</option>
+                    <option value="Super Deluxe Mountain View">Super Deluxe Mountain View</option>
+                    <option value="Premium Wooden Cottage">Premium Wooden Cottage</option>
+                    <option value="Luxury Alpine Tent">Luxury Alpine Tent</option>
+                    <option value="Standard Base Room">Standard Base Room</option>
+                    <option value="Dormitory Bunk Bed">Dormitory Bunk Bed</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Rooms Count
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={newHotelForm.roomsCount}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, roomsCount: Number(e.target.value) })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Meal Plan
+                  </label>
+                  <select
+                    value={newHotelForm.mealPlan}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, mealPlan: e.target.value as any })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  >
+                    <option value="EP (Room Only)">EP (Room Only)</option>
+                    <option value="CP (Breakfast Only)">CP (Breakfast Only)</option>
+                    <option value="MAP (Breakfast + Dinner)">MAP (Breakfast + Dinner)</option>
+                    <option value="AP (All Meals - B/L/D)">AP (All Meals Included)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Voucher Number
+                  </label>
+                  <input
+                    type="text"
+                    value={newHotelForm.voucherNumber}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, voucherNumber: e.target.value })}
+                    placeholder="VCHR-SANKRI-1002"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-mono font-bold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    Hotel Contact Person / Reception Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={newHotelForm.contactPerson}
+                    onChange={(e) => setNewHotelForm({ ...newHotelForm, contactPerson: e.target.value })}
+                    placeholder="Mr. Rawat (+91 94120 55112)"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-amber-600 focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                  Special Notes / Inclusions
+                </label>
+                <input
+                  type="text"
+                  value={newHotelForm.notes}
+                  onChange={(e) => setNewHotelForm({ ...newHotelForm, notes: e.target.value })}
+                  placeholder="e.g. Early check-in requested, heater included in room"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-800 text-xs mt-1 font-medium focus:outline-none focus:border-amber-600 focus:bg-white"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddHotelModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingHotel}
+                  className="px-5 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>{submittingHotel ? "Confirming..." : "Confirm Hotel Booking"}</span>
                 </button>
               </div>
             </form>

@@ -66,6 +66,8 @@ export interface ItineraryPdfProps {
   customEmail?: string;
   customCoordinator?: string;
   customOfficeLocation?: string;
+  isDraftProposal?: boolean;
+  showDraftWatermark?: boolean;
 }
 
 export type CustomSectionStyle =
@@ -191,6 +193,8 @@ export function ItineraryPdfModal({
   customEmail,
   customCoordinator,
   customOfficeLocation,
+  isDraftProposal = false,
+  showDraftWatermark,
 }: ItineraryPdfProps) {
   // If a custom client name was specified by sales/admin, consider it sales mode (no gate needed)
   const isSalesMode = Boolean(customClientName && customClientName !== "Valued Traveler");
@@ -199,6 +203,9 @@ export function ItineraryPdfModal({
   const [paxCount, setPaxCount] = useState(customPax);
   const [pricePerPerson, setPricePerPerson] = useState<number>(
     customPrice !== undefined ? customPrice : tour?.price || 9999
+  );
+  const [isDraftWatermarkActive, setIsDraftWatermarkActive] = useState<boolean>(
+    showDraftWatermark !== undefined ? showDraftWatermark : isDraftProposal || false
   );
   const [copiedLink, setCopiedLink] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
@@ -715,6 +722,20 @@ export function ItineraryPdfModal({
 
             <button
               type="button"
+              onClick={() => setIsDraftWatermarkActive(!isDraftWatermarkActive)}
+              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border shadow-2xs ${
+                isDraftWatermarkActive
+                  ? "bg-amber-400 text-slate-950 border-amber-500 font-extrabold ring-2 ring-amber-400/40"
+                  : "bg-white text-slate-700 hover:bg-slate-100 border-slate-300"
+              }`}
+              title="Toggle prominent DRAFT watermark & status tag across PDF"
+            >
+              <FileText className={`w-3.5 h-3.5 ${isDraftWatermarkActive ? "text-slate-950" : "text-amber-600"}`} />
+              <span>{isDraftWatermarkActive ? "📝 Draft Watermark (ON)" : "Draft Watermark (OFF)"}</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setIsEditingContact(true)}
               className="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border bg-white text-slate-800 hover:bg-slate-100 border-slate-300 shadow-2xs"
               title="Edit Helpline, WhatsApp, Email & Coordinator"
@@ -965,6 +986,23 @@ export function ItineraryPdfModal({
             ))}
           </div>
 
+          {/* DRAFT WATERMARK OVERLAY (WHEN IN DRAFT MODE) */}
+          {isDraftWatermarkActive && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-20 overflow-hidden flex flex-col justify-around select-none opacity-[0.08] print:opacity-[0.10]"
+            >
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={`draft-wm-${i}`}
+                  className="transform -rotate-25 whitespace-nowrap text-center text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-widest text-amber-900"
+                >
+                  DRAFT PROPOSAL • CONFIDENTIAL • ESTIMATE ONLY
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="relative z-10 space-y-7">
             {/* 1. DOCUMENT HEADER WITH OFFICIAL LOGO & CONTACT INFO */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b-2 border-emerald-900/20">
@@ -1002,6 +1040,23 @@ export function ItineraryPdfModal({
               </div>
             </div>
 
+            {/* DRAFT PROPOSAL STATUS BANNER (PRINT & SCREEN) */}
+            {isDraftWatermarkActive && (
+              <div className="bg-amber-50/90 border-2 border-dashed border-amber-400 rounded-2xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs text-amber-950 shadow-2xs">
+                <div className="flex items-center gap-2.5">
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-wider shadow-2xs">
+                    DRAFT PROPOSAL
+                  </span>
+                  <span className="font-semibold text-amber-950">
+                    Preliminary estimate for trip planning. Subject to real-time seat availability &amp; advance confirmation.
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono font-bold text-amber-900 bg-white/90 px-2 py-0.5 rounded-md border border-amber-300 shrink-0">
+                  ESTIMATE ONLY • NOT A TAX INVOICE
+                </span>
+              </div>
+            )}
+
             {/* DYNAMIC ORDER OF REORDERABLE / DRAGGABLE SECTIONS */}
             {sections.map((sec, secIdx) => {
               if (!sec.visible) return null;
@@ -1014,7 +1069,11 @@ export function ItineraryPdfModal({
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
                     </div>
-                    <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                    <div className={`rounded-2xl p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs ${
+                      isDraftWatermarkActive
+                        ? "bg-amber-50/40 border-2 border-amber-300/80"
+                        : "bg-slate-50 border border-slate-200/90"
+                    }`}>
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Specially Prepared For</span>
                         <strong className="text-[#0F3A2E] text-sm sm:text-base font-extrabold block truncate">{clientName || "Valued Traveler"}</strong>
@@ -1022,7 +1081,14 @@ export function ItineraryPdfModal({
                       </div>
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tour Reference &amp; Date</span>
-                        <strong className="text-slate-800 text-xs sm:text-sm font-bold block font-mono">{quoteRefId}</strong>
+                        <div className="flex items-center gap-1.5">
+                          <strong className="text-slate-800 text-xs sm:text-sm font-bold block font-mono">{quoteRefId}</strong>
+                          {isDraftWatermarkActive && (
+                            <span className="px-1.5 py-0.2 rounded bg-amber-200 text-amber-950 font-extrabold text-[9px] uppercase border border-amber-300">
+                              DRAFT
+                            </span>
+                          )}
+                        </div>
                         <span className="text-slate-500 text-[11px]">Issued: {issueDate}</span>
                       </div>
                       <div>

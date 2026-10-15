@@ -6619,6 +6619,16 @@
   ],
   "auditLogs": [
     {
+      "id": "AUD-1792013544098-52gr",
+      "actorName": "Head of Expeditions",
+      "actorEmail": "admin@kradind.com",
+      "action": "Moved Proposal to Recycle Bin",
+      "targetEntity": "Customer",
+      "targetId": "KRAD-PROP-2026-1089",
+      "details": "Itinerary proposal \"Chopta Tungnath Chandrashila Summit Trek\" moved to recycle bin.",
+      "timestamp": "2026-10-14T21:32:24.099Z"
+    },
+    {
       "id": "AUD-1",
       "actorName": "Head of Expeditions",
       "actorEmail": "admin@kradind.com",
@@ -6772,6 +6782,73 @@
   ],
   "customerProposals": [
     {
+      "id": "KRAD-PROP-2026-1089",
+      "customerId": "cust-2",
+      "customerName": "Rahul Sharma",
+      "customerPhone": "+91 9718876543",
+      "customerEmail": "rahul.sharma@techcorp.in",
+      "customerCity": "Chandigarh",
+      "packageTitle": "Chopta Tungnath Chandrashila Summit Trek",
+      "basePackageSlug": "chopta-tungnath-chandrashila",
+      "destination": "Rudraprayag, Uttarakhand",
+      "duration": "3 Days / 2 Nights",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-20",
+      "adultsCount": 3,
+      "childrenCount": 0,
+      "pickupLocation": "Rishikesh Natraj Chowk",
+      "dropLocation": "Rishikesh Railway Station",
+      "hotelCategory": "Alpine Swiss Tents & Camps",
+      "vehicleType": "Private AC SUV (Innova / Ertiga)",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Rishikesh to Chopta Alpine Meadows via Devprayag",
+          "description": "Scenic mountain drive along the holy Ganga and Alaknanda rivers. Halt at Devprayag Sangam. Arrive in Chopta and check in to alpine Swiss tents.",
+          "stay": "Alpine Swiss Tents Chopta",
+          "meal": "Dinner",
+          "distance": "190 km"
+        },
+        {
+          "day": 2,
+          "title": "Tungnath Temple Darshan & Chandrashila Summit Climb",
+          "description": "Early morning trek to Tungnath Shiva temple (12,073 ft) and continue steep climb to Chandrashila summit (13,100 ft) for 360° views of Chaukhamba and Nanda Devi peaks.",
+          "stay": "Alpine Swiss Tents Chopta",
+          "meal": "Breakfast, Trail Lunch & Dinner",
+          "distance": "10 km trek"
+        },
+        {
+          "day": 3,
+          "title": "Deoria Tal Trek & Return Drive to Rishikesh",
+          "description": "Morning hike to emerald Deoria Tal lake with reflection of Chaukhamba massif. Drive back to Rishikesh for evening drop-off.",
+          "stay": "Departure",
+          "meal": "Breakfast & Packed Lunch",
+          "distance": "195 km"
+        }
+      ],
+      "inclusions": [
+        "2 nights stay in comfortable Swiss alpine tents with attached washrooms",
+        "All nutritious mountain meals from Day 1 dinner to Day 3 lunch",
+        "Private Ertiga SUV for Rishikesh - Chopta - Rishikesh transfers",
+        "Certified NIM/IMF mountain trek lead and local trail guide",
+        "Forest permits, camping fees, medical first-aid kit with portable oxygen"
+      ],
+      "exclusions": [
+        "Travel to/from Rishikesh",
+        "Mule or porter charges for personal luggage offloading",
+        "Personal trekking gear and warm clothing"
+      ],
+      "basePricePerPerson": 5499,
+      "totalQuotedPrice": 16497,
+      "advanceDepositRequired": 5000,
+      "validUntil": "2026-10-12",
+      "specialNotes": "Small private batch with customized early morning summit departure.",
+      "status": "Draft",
+      "author": "Vikram Rawat (Mountain Lead)",
+      "createdAt": "2026-10-10T10:26:39.753Z",
+      "updatedAt": "2026-10-14T21:32:28.580Z"
+    },
+    {
       "id": "KRAD-PROP-2026-1042",
       "customerId": "cust-1",
       "customerName": "Ananya Verma",
@@ -6861,73 +6938,6 @@
       "author": "Priya Sharma (Sales Lead)",
       "createdAt": "2026-10-10T10:26:39.753Z",
       "updatedAt": "2026-10-10T10:26:39.753Z"
-    },
-    {
-      "id": "KRAD-PROP-2026-1089",
-      "customerId": "cust-2",
-      "customerName": "Rahul Sharma",
-      "customerPhone": "+91 9718876543",
-      "customerEmail": "rahul.sharma@techcorp.in",
-      "customerCity": "Chandigarh",
-      "packageTitle": "Chopta Tungnath Chandrashila Summit Trek",
-      "basePackageSlug": "chopta-tungnath-chandrashila",
-      "destination": "Rudraprayag, Uttarakhand",
-      "duration": "3 Days / 2 Nights",
-      "startDate": "2026-10-18",
-      "endDate": "2026-10-20",
-      "adultsCount": 3,
-      "childrenCount": 0,
-      "pickupLocation": "Rishikesh Natraj Chowk",
-      "dropLocation": "Rishikesh Railway Station",
-      "hotelCategory": "Alpine Swiss Tents & Camps",
-      "vehicleType": "Private AC SUV (Innova / Ertiga)",
-      "itinerary": [
-        {
-          "day": 1,
-          "title": "Rishikesh to Chopta Alpine Meadows via Devprayag",
-          "description": "Scenic mountain drive along the holy Ganga and Alaknanda rivers. Halt at Devprayag Sangam. Arrive in Chopta and check in to alpine Swiss tents.",
-          "stay": "Alpine Swiss Tents Chopta",
-          "meal": "Dinner",
-          "distance": "190 km"
-        },
-        {
-          "day": 2,
-          "title": "Tungnath Temple Darshan & Chandrashila Summit Climb",
-          "description": "Early morning trek to Tungnath Shiva temple (12,073 ft) and continue steep climb to Chandrashila summit (13,100 ft) for 360° views of Chaukhamba and Nanda Devi peaks.",
-          "stay": "Alpine Swiss Tents Chopta",
-          "meal": "Breakfast, Trail Lunch & Dinner",
-          "distance": "10 km trek"
-        },
-        {
-          "day": 3,
-          "title": "Deoria Tal Trek & Return Drive to Rishikesh",
-          "description": "Morning hike to emerald Deoria Tal lake with reflection of Chaukhamba massif. Drive back to Rishikesh for evening drop-off.",
-          "stay": "Departure",
-          "meal": "Breakfast & Packed Lunch",
-          "distance": "195 km"
-        }
-      ],
-      "inclusions": [
-        "2 nights stay in comfortable Swiss alpine tents with attached washrooms",
-        "All nutritious mountain meals from Day 1 dinner to Day 3 lunch",
-        "Private Ertiga SUV for Rishikesh - Chopta - Rishikesh transfers",
-        "Certified NIM/IMF mountain trek lead and local trail guide",
-        "Forest permits, camping fees, medical first-aid kit with portable oxygen"
-      ],
-      "exclusions": [
-        "Travel to/from Rishikesh",
-        "Mule or porter charges for personal luggage offloading",
-        "Personal trekking gear and warm clothing"
-      ],
-      "basePricePerPerson": 5499,
-      "totalQuotedPrice": 16497,
-      "advanceDepositRequired": 5000,
-      "validUntil": "2026-10-12",
-      "specialNotes": "Small private batch with customized early morning summit departure.",
-      "status": "Accepted",
-      "author": "Vikram Rawat (Mountain Lead)",
-      "createdAt": "2026-10-10T10:26:39.753Z",
-      "updatedAt": "2026-10-10T10:26:39.753Z"
     }
   ],
   "studioOptions": {
@@ -6962,5 +6972,6 @@
     "customHotels": [],
     "customInclusions": [],
     "customExclusions": []
-  }
+  },
+  "recycledProposals": []
 }

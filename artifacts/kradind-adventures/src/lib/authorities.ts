@@ -5,6 +5,8 @@ export interface AuthorityItem {
   label: string;
   desc: string;
   category: string;
+  tag: string;
+  accentColor: string;
 }
 
 export const SYSTEM_AUTHORITIES: AuthorityItem[] = [
@@ -13,48 +15,64 @@ export const SYSTEM_AUTHORITIES: AuthorityItem[] = [
     label: "View All Reports (Company-Wide Sabka)",
     desc: "View company-wide sales, operations, and all agents' leads (Super Admin view). If disabled, user only sees their own assigned records.",
     category: "Reports & Visibility",
+    tag: "Sabka Dashboard",
+    accentColor: "indigo",
   },
   {
     key: "manage_sales",
     label: "Sales & Bookings Management",
     desc: "Create bookings, manage customer orders, and convert commercial proposals.",
     category: "Sales & Commercials",
+    tag: "Orders & Deals",
+    accentColor: "emerald",
   },
   {
     key: "manage_payments",
     label: "Payment Updates & Proof Verification",
     desc: "Update payment status (Paid, Partial, Under Verification), enter UTR, and attach/view proof documents.",
     category: "Financials & Payments",
+    tag: "Bank Proofs",
+    accentColor: "blue",
   },
   {
     key: "manage_operations",
     label: "Operations, Guides & Fleet",
     desc: "Assign trek leaders, dispatch chauffeur/vehicles, inspect equipment kits, and update trail progress.",
     category: "Ground Operations",
+    tag: "Field Expeditions",
+    accentColor: "amber",
   },
   {
     key: "manage_leads",
     label: "Inbound Leads & Interaction Logging",
     desc: "View leads, log interactions (Call, WhatsApp, Email, Notes), and track engagement frequency.",
     category: "CRM & Leads",
+    tag: "Client Touchpoints",
+    accentColor: "rose",
   },
   {
     key: "itinerary_studio",
     label: "Itinerary Studio & PDF Builder",
     desc: "Build custom day-by-day itineraries, generate branded PDF vouchers, and share WhatsApp quotes.",
     category: "Itineraries",
+    tag: "Custom Itineraries",
+    accentColor: "cyan",
   },
   {
     key: "cms_editor",
     label: "CMS & Adventure Packages",
     desc: "Create, edit and publish trek packages, itineraries, hero banners, and seasonal specials.",
     category: "Content Management",
+    tag: "Website Pages",
+    accentColor: "teal",
   },
   {
     key: "user_management",
     label: "Staff Accounts & Login Control",
     desc: "Create staff users, configure authority permissions, activate/suspend logins, and reset passwords.",
     category: "System Admin",
+    tag: "Security & Login",
+    accentColor: "purple",
   },
 ];
 

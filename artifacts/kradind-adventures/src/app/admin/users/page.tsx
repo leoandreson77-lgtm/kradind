@@ -24,8 +24,207 @@ import {
   SYSTEM_AUTHORITIES,
   DEFAULT_PERMISSIONS_BY_ROLE,
   normalizeUserPermissions,
+  AuthorityItem,
 } from "@/lib/authorities";
 export { SYSTEM_AUTHORITIES, DEFAULT_PERMISSIONS_BY_ROLE, normalizeUserPermissions };
+
+const renderAuthorityIcon = (key: string, isEnabled: boolean) => {
+  const iconClass = `w-4 h-4 transition-colors ${isEnabled ? "text-emerald-700" : "text-slate-500"}`;
+  switch (key) {
+    case "view_all_reports":
+      return <Compass className={iconClass} />;
+    case "manage_sales":
+      return <KeyRound className={iconClass} />;
+    case "manage_payments":
+      return <ShieldCheck className={iconClass} />;
+    case "manage_operations":
+      return <Sliders className={iconClass} />;
+    case "manage_leads":
+      return <Headphones className={iconClass} />;
+    case "itinerary_studio":
+      return <Edit2 className={iconClass} />;
+    case "cms_editor":
+      return <Shield className={iconClass} />;
+    case "user_management":
+      return <Users className={iconClass} />;
+    default:
+      return <ShieldCheck className={iconClass} />;
+  }
+};
+
+function AuthoritySwitchSection({
+  title = "Authority & Permissions (Enable / Disable)",
+  subtitle = "Enable or disable individual system capabilities for this staff member.",
+  selectedKeys,
+  assignedRole,
+  onChange,
+}: {
+  title?: string;
+  subtitle?: string;
+  selectedKeys: string[];
+  assignedRole: AdminRole;
+  onChange: (keys: string[]) => void;
+}) {
+  const enabledCount = SYSTEM_AUTHORITIES.filter((a) => selectedKeys.includes(a.key)).length;
+  const pct = Math.round((enabledCount / SYSTEM_AUTHORITIES.length) * 100);
+
+  const handleToggle = (key: string) => {
+    if (selectedKeys.includes(key)) {
+      onChange(selectedKeys.filter((k) => k !== key));
+    } else {
+      onChange([...selectedKeys, key]);
+    }
+  };
+
+  const handleEnableAll = () => {
+    onChange(SYSTEM_AUTHORITIES.map((a) => a.key));
+  };
+
+  const handleDisableAll = () => {
+    onChange([]);
+  };
+
+  const handleResetDefault = () => {
+    onChange(DEFAULT_PERMISSIONS_BY_ROLE[assignedRole] || []);
+  };
+
+  return (
+    <div className="space-y-3 pt-3 border-t border-slate-200">
+      {/* Section Header with Quick Presets */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="w-4.5 h-4.5 text-emerald-600" />
+              <span>{title}</span>
+            </span>
+            <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+              {enabledCount} of {SYSTEM_AUTHORITIES.length} Enabled ({pct}%)
+            </span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            {subtitle}
+          </p>
+        </div>
+
+        {/* Quick Presets */}
+        <div className="flex items-center gap-1.5 flex-wrap shrink-0">
+          <button
+            type="button"
+            onClick={handleEnableAll}
+            className="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 transition-colors cursor-pointer"
+          >
+            ✓ Enable All (8)
+          </button>
+          <button
+            type="button"
+            onClick={handleDisableAll}
+            className="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 border border-slate-300 transition-colors cursor-pointer"
+          >
+            ✕ Disable All
+          </button>
+          <button
+            type="button"
+            onClick={handleResetDefault}
+            className="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-900 border border-blue-300 transition-colors cursor-pointer"
+          >
+            ↺ Role Default
+          </button>
+        </div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden border border-slate-200">
+        <div
+          className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+
+      {/* Grid of Authority Cards with iOS Toggle Switches */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        {SYSTEM_AUTHORITIES.map((auth) => {
+          const isEnabled = selectedKeys.includes(auth.key);
+          return (
+            <div
+              key={auth.key}
+              onClick={() => handleToggle(auth.key)}
+              className={`p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-3.5 cursor-pointer select-none ${
+                isEnabled
+                  ? "bg-emerald-50/70 border-emerald-500 shadow-2xs ring-1 ring-emerald-500/30"
+                  : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 opacity-75 hover:opacity-100"
+              }`}
+            >
+              <div className="flex items-start gap-3 min-w-0 flex-1">
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                    isEnabled
+                      ? "bg-emerald-100 border border-emerald-300 text-emerald-800 shadow-2xs"
+                      : "bg-slate-100 border border-slate-200 text-slate-500"
+                  }`}
+                >
+                  {renderAuthorityIcon(auth.key, isEnabled)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span
+                      className={`text-xs leading-tight ${
+                        isEnabled ? "font-bold text-emerald-950" : "font-semibold text-slate-700"
+                      }`}
+                    >
+                      {auth.label}
+                    </span>
+                    <span
+                      className={`text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider ${
+                        isEnabled
+                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          : "bg-slate-100 text-slate-500 border border-slate-200"
+                      }`}
+                    >
+                      {auth.tag}
+                    </span>
+                  </div>
+                  <p
+                    className={`text-[10.5px] mt-0.5 leading-snug line-clamp-2 ${
+                      isEnabled ? "text-emerald-900/80 font-medium" : "text-slate-400"
+                    }`}
+                  >
+                    {auth.desc}
+                  </p>
+                </div>
+              </div>
+
+              {/* iOS Toggle Switch + Explicit Text Badge */}
+              <div className="flex items-center gap-2.5 shrink-0">
+                <span
+                  className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md transition-colors ${
+                    isEnabled
+                      ? "bg-emerald-600 text-white shadow-2xs"
+                      : "bg-slate-200 text-slate-600"
+                  }`}
+                >
+                  {isEnabled ? "✓ ENABLED" : "✕ DISABLED"}
+                </span>
+
+                <div
+                  className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex items-center p-0.5 ${
+                    isEnabled ? "bg-emerald-600 shadow-2xs" : "bg-slate-300"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 transform ${
+                      isEnabled ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -34,9 +233,10 @@ export default function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState("All");
   const [toastMessage, setToastMessage] = useState("");
 
-  // Modals
+  // Modals & Inline form
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showInlineAdd, setShowInlineAdd] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
 
   // New user form state
@@ -100,6 +300,7 @@ export default function AdminUsersPage() {
         const created = await res.json();
         showToast(`Staff member ${created.name} invited!`);
         setShowAddModal(false);
+        setShowInlineAdd(false);
         setNewUser({
           name: "",
           email: "",
@@ -265,14 +466,179 @@ export default function AdminUsersPage() {
             <RefreshCw className={`w-4 h-4 text-slate-600 ${loading ? "animate-spin" : ""}`} />
           </button>
           <button
-            onClick={() => setShowAddModal(true)}
-            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-2"
+            type="button"
+            onClick={() => setShowInlineAdd((prev) => !prev)}
+            className={`px-4 py-2.5 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 border cursor-pointer ${
+              showInlineAdd
+                ? "bg-slate-900 text-white border-slate-900"
+                : "bg-white hover:bg-slate-50 text-slate-800 border-slate-200"
+            }`}
           >
-            <UserPlus className="w-4 h-4" />
-            <span>+ Add Team Member</span>
+            <UserPlus className="w-4 h-4 text-emerald-600" />
+            <span>{showInlineAdd ? "✕ Close On-Page Form" : "+ Create Staff On-Page"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>+ Add Staff (Modal)</span>
           </button>
         </div>
       </div>
+
+      {/* ========================================================= */}
+      {/* DIRECT ON-PAGE STAFF CREATOR (NO MODAL NEEDED) */}
+      {/* ========================================================= */}
+      {showInlineAdd && (
+        <div className="bg-white rounded-3xl p-6 sm:p-7 border-2 border-emerald-500 shadow-xl space-y-5 animate-fade-in">
+          <div className="flex items-start justify-between pb-4 border-b border-slate-200 gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  Direct On-Page Creator
+                </span>
+                <span className="text-xs text-slate-400 font-semibold">• Full-Width &amp; Uncramped</span>
+              </div>
+              <h2 className="text-xl font-black text-slate-900 mt-1">
+                Create New Staff Member &amp; Authorize System Access
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Quickly provision an administrative staff login, configure role presets, and toggle individual feature authorities.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowInlineAdd(false)}
+              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors shrink-0 cursor-pointer"
+              title="Close form"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <form onSubmit={handleCreateUser} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Vikram Negi"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
+                  Staff Work Email *
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="vikram@kradind.com"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
+                  Temporary Password *
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••••••"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
+                  Assigned Role
+                </label>
+                <select
+                  value={newUser.role}
+                  onChange={(e) => {
+                    const newRole = e.target.value as AdminRole;
+                    setNewUser({
+                      ...newUser,
+                      role: newRole,
+                      permissions: DEFAULT_PERMISSIONS_BY_ROLE[newRole] || [],
+                    });
+                  }}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                >
+                  <option value="Sales / CRM Agent">Sales / CRM Agent</option>
+                  <option value="Operations Manager">Operations Manager</option>
+                  <option value="Expedition Leader">Expedition Leader</option>
+                  <option value="Super Admin">Super Admin</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
+                  Department
+                </label>
+                <input
+                  type="text"
+                  value={newUser.department}
+                  onChange={(e) => setNewUser({ ...newUser, department: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
+                  Phone / WhatsApp (Optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="+91 98765 43210"
+                  value={newUser.phone}
+                  onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                />
+              </div>
+            </div>
+
+            {/* Authority Switch Section with iOS Sliders */}
+            <AuthoritySwitchSection
+              title="Individual System Permissions (Enable / Disable)"
+              subtitle="Click any card or toggle slider to activate/deactivate capabilities for this user."
+              selectedKeys={newUser.permissions}
+              assignedRole={newUser.role}
+              onChange={(keys) => setNewUser({ ...newUser, permissions: keys })}
+            />
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setShowInlineAdd(false)}
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Save &amp; Create Staff Account</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Role Architecture Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -449,15 +815,30 @@ export default function AdminUsersPage() {
 
                     {/* Permissions */}
                     <td className="py-3.5 px-4">
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {(user.permissions || ["all"]).map((p, idx) => (
-                          <span
-                            key={idx}
-                            className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200"
-                          >
-                            {p}
+                      <div className="flex flex-col gap-1.5 max-w-xs">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            {(user.permissions || []).length} / {SYSTEM_AUTHORITIES.length} Enabled
                           </span>
-                        ))}
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {SYSTEM_AUTHORITIES.map((auth) => {
+                            const isEnabled = (user.permissions || []).includes(auth.key);
+                            return (
+                              <span
+                                key={auth.key}
+                                title={`${auth.label}: ${isEnabled ? "ENABLED" : "DISABLED"}`}
+                                className={`text-[9px] font-bold px-1.5 py-0.5 rounded border transition-colors ${
+                                  isEnabled
+                                    ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                    : "bg-slate-100 text-slate-400 border-slate-200 line-through opacity-60"
+                                }`}
+                              >
+                                {auth.tag}
+                              </span>
+                            );
+                          })}
+                        </div>
                       </div>
                     </td>
 
@@ -583,27 +964,32 @@ export default function AdminUsersPage() {
       {/* ========================================================= */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] rounded-2xl shadow-2xl relative flex flex-col text-slate-800 overflow-hidden">
+          <div className="bg-white border border-slate-200 w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl relative flex flex-col text-slate-800 overflow-hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 shrink-0 bg-white">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <UserPlus className="w-4 h-4 text-emerald-600" />
-                <span>Invite New Staff Member</span>
-              </h3>
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-emerald-600" />
+                  <span>Invite New Staff Member</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Provision new team credentials and grant custom module permissions.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Scrollable Form Body */}
             <form onSubmit={handleCreateUser} className="flex flex-col flex-1 min-h-0">
-              <div className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
+              <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 text-xs">
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Full Name *</label>
+                  <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">Full Name *</label>
                   <input
                     type="text"
                     required
@@ -614,9 +1000,9 @@ export default function AdminUsersPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">
                       Staff Work Email *
                     </label>
                     <input
@@ -630,7 +1016,7 @@ export default function AdminUsersPage() {
                   </div>
 
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">
                       Temporary Password *
                     </label>
                     <input
@@ -644,9 +1030,9 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Assigned Role</label>
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">Assigned Role</label>
                     <select
                       value={newUser.role}
                       onChange={(e) => {
@@ -667,7 +1053,7 @@ export default function AdminUsersPage() {
                   </div>
 
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Department</label>
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">Department</label>
                     <input
                       type="text"
                       value={newUser.department}
@@ -675,76 +1061,27 @@ export default function AdminUsersPage() {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
                     />
                   </div>
-                </div>
 
-                {/* Authority Enable / Disable Section */}
-                <div className="pt-3 border-t border-slate-200">
-                  <div className="flex items-center justify-between mb-2.5">
-                    <div>
-                      <span className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        <span>Authority &amp; Permissions (Enable / Disable)</span>
-                      </span>
-                      <p className="text-[11px] text-slate-500">
-                        Enable or disable individual system capabilities for this staff member.
-                      </p>
-                    </div>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
-                      {SYSTEM_AUTHORITIES.filter((a) => newUser.permissions.includes(a.key)).length} of {SYSTEM_AUTHORITIES.length} Enabled
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1.5 bg-slate-50/80 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
-                    {SYSTEM_AUTHORITIES.map((auth) => {
-                      const isEnabled = newUser.permissions.includes(auth.key);
-                      return (
-                        <button
-                          key={auth.key}
-                          type="button"
-                          onClick={() => {
-                            setNewUser((prev) => ({
-                              ...prev,
-                              permissions: isEnabled
-                                ? prev.permissions.filter((p) => p !== auth.key)
-                                : [...prev.permissions, auth.key],
-                            }));
-                          }}
-                          className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
-                            isEnabled
-                              ? "bg-emerald-50/80 border-emerald-500 shadow-2xs ring-1 ring-emerald-500/30"
-                              : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80"
-                          }`}
-                        >
-                          <div
-                            className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
-                              isEnabled
-                                ? "bg-emerald-600 text-white border border-emerald-600"
-                                : "border-2 border-slate-300 bg-white"
-                            }`}
-                          >
-                            {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <span
-                              className={`text-xs block leading-tight ${
-                                isEnabled ? "font-bold text-emerald-950" : "font-semibold text-slate-700"
-                              }`}
-                            >
-                              {auth.label}
-                            </span>
-                            <span
-                              className={`text-[10px] block line-clamp-2 mt-0.5 leading-normal ${
-                                isEnabled ? "text-emerald-800/80" : "text-slate-400"
-                              }`}
-                            >
-                              {auth.desc}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
+                  <div>
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">Phone / WhatsApp</label>
+                    <input
+                      type="text"
+                      placeholder="+91 98765 43210"
+                      value={newUser.phone}
+                      onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    />
                   </div>
                 </div>
+
+                {/* Authority Enable / Disable Section with iOS Sliders */}
+                <AuthoritySwitchSection
+                  title="Authority & Permissions (Enable / Disable)"
+                  subtitle="Enable or disable individual system capabilities for this staff member."
+                  selectedKeys={newUser.permissions}
+                  assignedRole={newUser.role}
+                  onChange={(keys) => setNewUser({ ...newUser, permissions: keys })}
+                />
               </div>
 
               {/* Sticky / Pinned Footer */}
@@ -773,30 +1110,35 @@ export default function AdminUsersPage() {
       {/* ========================================================= */}
       {showEditModal && editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] rounded-2xl shadow-2xl relative flex flex-col text-slate-800 overflow-hidden">
+          <div className="bg-white border border-slate-200 w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl relative flex flex-col text-slate-800 overflow-hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 shrink-0 bg-white">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Edit2 className="w-4 h-4 text-emerald-600" />
-                <span>Edit Staff Permissions: {editingUser.name}</span>
-              </h3>
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                  <Edit2 className="w-5 h-5 text-emerald-600" />
+                  <span>Edit Staff Permissions: {editingUser.name}</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Update role assignment, account status, and individual system permission toggles.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingUser(null);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Scrollable Form Body */}
             <form onSubmit={handleUpdateUser} className="flex flex-col flex-1 min-h-0">
-              <div className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
+              <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 text-xs">
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Full Name</label>
+                  <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">Full Name</label>
                   <input
                     type="text"
                     value={editingUser.name}
@@ -805,9 +1147,9 @@ export default function AdminUsersPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Role</label>
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">Role</label>
                     <select
                       value={editingUser.role}
                       onChange={(e) => {
@@ -828,7 +1170,7 @@ export default function AdminUsersPage() {
                   </div>
 
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Department</label>
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">Department</label>
                     <input
                       type="text"
                       value={editingUser.department || ""}
@@ -836,89 +1178,30 @@ export default function AdminUsersPage() {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 focus:outline-none focus:border-emerald-600 focus:bg-white"
                     />
                   </div>
-                </div>
 
-                <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                    Account Status
-                  </label>
-                  <select
-                    value={editingUser.status || "Active"}
-                    onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value as any })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
-                  >
-                    <option value="Active">Active (Login Allowed)</option>
-                    <option value="Suspended">Suspended (Login Blocked)</option>
-                  </select>
-                </div>
-
-                {/* Authority Enable / Disable Section in Edit Modal */}
-                <div className="pt-3 border-t border-slate-200">
-                  <div className="flex items-center justify-between mb-2.5">
-                    <div>
-                      <span className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        <span>Authority &amp; Permissions (Enable / Disable)</span>
-                      </span>
-                      <p className="text-[11px] text-slate-500">
-                        Configure granular module access for {editingUser.name}.
-                      </p>
-                    </div>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
-                      {SYSTEM_AUTHORITIES.filter((a) => (editingUser.permissions || []).includes(a.key)).length} of {SYSTEM_AUTHORITIES.length} Enabled
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1.5 bg-slate-50/80 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
-                    {SYSTEM_AUTHORITIES.map((auth) => {
-                      const currentPerms = editingUser.permissions || [];
-                      const isEnabled = currentPerms.includes(auth.key);
-                      return (
-                        <button
-                          key={auth.key}
-                          type="button"
-                          onClick={() => {
-                            const updatedPerms = isEnabled
-                              ? currentPerms.filter((p) => p !== auth.key)
-                              : [...currentPerms, auth.key];
-                            setEditingUser({ ...editingUser, permissions: updatedPerms });
-                          }}
-                          className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
-                            isEnabled
-                              ? "bg-emerald-50/80 border-emerald-500 shadow-2xs ring-1 ring-emerald-500/30"
-                              : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80"
-                          }`}
-                        >
-                          <div
-                            className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
-                              isEnabled
-                                ? "bg-emerald-600 text-white border border-emerald-600"
-                                : "border-2 border-slate-300 bg-white"
-                            }`}
-                          >
-                            {isEnabled && <Check className="w-3 h-3 stroke-[3]" />}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <span
-                              className={`text-xs block leading-tight ${
-                                isEnabled ? "font-bold text-emerald-950" : "font-semibold text-slate-700"
-                              }`}
-                            >
-                              {auth.label}
-                            </span>
-                            <span
-                              className={`text-[10px] block line-clamp-2 mt-0.5 leading-normal ${
-                                isEnabled ? "text-emerald-800/80" : "text-slate-400"
-                              }`}
-                            >
-                              {auth.desc}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
+                  <div>
+                    <label className="text-[11px] text-slate-600 font-bold uppercase tracking-wider">
+                      Account Status
+                    </label>
+                    <select
+                      value={editingUser.status || "Active"}
+                      onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value as any })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 text-xs mt-1 font-semibold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                    >
+                      <option value="Active">Active (Login Allowed)</option>
+                      <option value="Suspended">Suspended (Login Blocked)</option>
+                    </select>
                   </div>
                 </div>
+
+                {/* Authority Enable / Disable Section with iOS Sliders */}
+                <AuthoritySwitchSection
+                  title={`Authority & Permissions: ${editingUser.name}`}
+                  subtitle={`Configure granular module access for ${editingUser.name}.`}
+                  selectedKeys={editingUser.permissions || []}
+                  assignedRole={editingUser.role || "Sales / CRM Agent"}
+                  onChange={(keys) => setEditingUser({ ...editingUser, permissions: keys })}
+                />
               </div>
 
               {/* Sticky / Pinned Footer */}

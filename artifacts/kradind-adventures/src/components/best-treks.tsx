@@ -135,9 +135,11 @@ export function BestTreks({
       </div>
 
       {/* Simplified, Easy-to-Use Category Switcher Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 mb-8">
+      <div role="tablist" aria-label="Tour and Trek Categories" className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 mb-8">
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === "all"}
           onClick={() => setActiveTab("all")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "all"
@@ -154,6 +156,8 @@ export function BestTreks({
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === "treks"}
           onClick={() => setActiveTab("treks")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "treks"
@@ -170,6 +174,8 @@ export function BestTreks({
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === "domestic"}
           onClick={() => setActiveTab("domestic")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "domestic"
@@ -186,6 +192,8 @@ export function BestTreks({
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === "international"}
           onClick={() => setActiveTab("international")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "international"
@@ -202,6 +210,8 @@ export function BestTreks({
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === "weekend"}
           onClick={() => setActiveTab("weekend")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "weekend"

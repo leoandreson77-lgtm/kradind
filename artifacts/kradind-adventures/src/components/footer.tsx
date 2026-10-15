@@ -361,7 +361,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
               Follow our official social community for trail photos, expedition reels &amp; live batch updates.
             </p>
 
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-2.5 pt-1">
               {socialLinks.map((s) => {
                 const Icon = s.icon;
                 return (
@@ -370,11 +370,11 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                     href={s.url}
                     target="_blank"
                     rel="me nofollow noopener noreferrer"
-                    aria-label={s.name}
+                    aria-label={`Follow KRAD Global on ${s.name}`}
                     title={s.name}
-                    className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm ${s.bg} ${s.color}`}
+                    className={`min-w-[38px] min-h-[38px] w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm ${s.bg} ${s.color}`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
+                    <Icon className="w-4 h-4" />
                   </a>
                 );
               })}

@@ -70,7 +70,8 @@ export function MountainAtmosphere({
       sparklePhase: number;
     }
 
-    const snowCount = Math.min(140, Math.floor((width * height) / 8000));
+    const isMobile = width < 768;
+    const snowCount = isMobile ? 18 : Math.min(140, Math.floor((width * height) / 8000));
     const snowflakes: SnowflakeParticle[] = Array.from({ length: snowCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -105,7 +106,7 @@ export function MountainAtmosphere({
       opacity: number;
     }
 
-    const rainCount = Math.min(160, Math.floor((width * height) / 7000));
+    const rainCount = isMobile ? 22 : Math.min(160, Math.floor((width * height) / 7000));
     const raindrops: RainParticle[] = Array.from({ length: rainCount }, () => ({
       x: Math.random() * (width + 200) - 100,
       y: Math.random() * height,
@@ -133,7 +134,7 @@ export function MountainAtmosphere({
       color: string;
     }
 
-    const sunMoteCount = Math.min(45, Math.floor((width * height) / 16000));
+    const sunMoteCount = isMobile ? 12 : Math.min(45, Math.floor((width * height) / 16000));
     const warmMotePalette = [
       "rgba(255, 243, 196,",
       "rgba(255, 214, 138,",
@@ -161,10 +162,30 @@ export function MountainAtmosphere({
     ];
 
     let isVisible = true;
+    let isInView = true;
     const handleVisibility = () => {
       isVisible = !document.hidden;
     };
     document.addEventListener("visibilitychange", handleVisibility);
+
+    let observer: IntersectionObserver | null = null;
+    if (typeof window !== "undefined" && "IntersectionObserver" in window && canvas) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const nowInView = entry.isIntersecting;
+            if (nowInView && !isInView) {
+              isInView = true;
+              if (!animId) animId = requestAnimationFrame(render);
+            } else if (!nowInView && isInView) {
+              isInView = false;
+            }
+          });
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(canvas);
+    }
 
     let startTimestamp = performance.now();
 
@@ -178,8 +199,8 @@ export function MountainAtmosphere({
     // MAIN RENDERING LOOP
     // ==========================================
     const render = (now: number) => {
-      if (!isVisible) {
-        animId = requestAnimationFrame(render);
+      if (!isVisible || !isInView) {
+        animId = 0;
         return;
       }
 
@@ -430,11 +451,17 @@ export function MountainAtmosphere({
       animId = requestAnimationFrame(render);
     };
 
-    animId = requestAnimationFrame(render);
+    const startTimer = setTimeout(() => {
+      if (isInView && isVisible) {
+        animId = requestAnimationFrame(render);
+      }
+    }, 250);
 
     return () => {
-      cancelAnimationFrame(animId);
+      if (animId) cancelAnimationFrame(animId);
       if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      if (startTimer) clearTimeout(startTimer);
+      if (observer) observer.disconnect();
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibility);
     };

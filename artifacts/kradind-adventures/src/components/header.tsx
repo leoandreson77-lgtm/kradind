@@ -810,9 +810,12 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
           {/* Mobile Menu Toggle Button */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-700 hover:text-[#0F3A2E] hover:bg-slate-100 rounded-xl transition shrink-0 ml-1"
-            aria-label="Toggle Menu"
+            className="lg:hidden p-2 text-slate-700 hover:text-[#0F3A2E] hover:bg-slate-100 rounded-xl transition shrink-0 ml-1 cursor-pointer"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation-drawer"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -821,7 +824,7 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-8 space-y-3 max-h-[85vh] overflow-y-auto">
+        <div id="mobile-navigation-drawer" className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-8 space-y-3 max-h-[85vh] overflow-y-auto">
           {onBookClick && (
             <button
               type="button"

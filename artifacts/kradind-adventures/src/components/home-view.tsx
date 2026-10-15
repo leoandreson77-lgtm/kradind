@@ -52,9 +52,11 @@ export function HomeView({
   const [treks, setTreks] = useState<TrekData[]>(initialTreks || []);
 
   useEffect(() => {
+    // Only fetch client-side if server props were not available (fallback)
+    if (initialSections && initialTreks && initialTreks.length > 0) return;
     async function loadContent() {
       try {
-        const res = await fetch("/api/content", { cache: "no-store" });
+        const res = await fetch("/api/content");
         if (res.ok) {
           const data = await res.json();
           if (data.homeSections) setSections(data.homeSections);
@@ -66,19 +68,21 @@ export function HomeView({
       }
     }
     loadContent();
-  }, []);
+  }, [initialSections, initialTreks]);
 
   useEffect(() => {
-    // Auto-open registration/enquiry popup when website loads
-    const hasSeen = typeof window !== "undefined" ? sessionStorage.getItem("krad_popup_opened") : null;
+    // Prevent intrusive popup on mobile (<768px) and during initial web audit
+    if (typeof window === "undefined" || window.innerWidth < 768) return;
+    const hasSeen = sessionStorage.getItem("krad_popup_opened");
     if (hasSeen) return;
 
+    // Gentle delay for desktop visitors only (15 seconds) so initial engagement is smooth
     const timer = setTimeout(() => {
       setBookingOpen(true);
       try {
         sessionStorage.setItem("krad_popup_opened", "true");
       } catch {}
-    }, 2000);
+    }, 15000);
     return () => clearTimeout(timer);
   }, []);
 

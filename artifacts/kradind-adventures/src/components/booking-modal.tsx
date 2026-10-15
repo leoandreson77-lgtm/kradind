@@ -88,8 +88,10 @@ export function BookingModal({
         
         {/* Close Button */}
         <button
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full p-1.5 transition z-10"
+          aria-label="Close booking modal"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full p-1.5 transition z-10 cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>

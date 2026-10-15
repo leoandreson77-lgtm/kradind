@@ -488,6 +488,7 @@ export function SeasonalTreksCarousel({
                     <button
                       type="button"
                       onClick={(e) => toggleFavorite(trek.slug, e)}
+                      aria-label={isFav ? `Remove ${trek.name} from wishlist` : `Add ${trek.name} to wishlist`}
                       className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-xs flex items-center justify-center shadow-md hover:bg-white transition cursor-pointer"
                       title={isFav ? "Remove from wishlist" : "Add to wishlist"}
                     >

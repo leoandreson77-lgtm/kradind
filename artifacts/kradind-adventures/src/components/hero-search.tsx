@@ -173,6 +173,7 @@ export function HeroSearch({
       <button
         type="button"
         onClick={handlePrevSlide}
+        aria-label="Previous photo slide"
         className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/50 hover:bg-slate-950/80 backdrop-blur-md border border-white/20 text-white items-center justify-center transition shadow-xl cursor-pointer hover:scale-105 opacity-0 group-hover:opacity-100"
         title="Previous Photo Slide"
       >
@@ -182,6 +183,7 @@ export function HeroSearch({
       <button
         type="button"
         onClick={handleNextSlide}
+        aria-label="Next photo slide"
         className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/50 hover:bg-slate-950/80 backdrop-blur-md border border-white/20 text-white items-center justify-center transition shadow-xl cursor-pointer hover:scale-105 opacity-0 group-hover:opacity-100"
         title="Next Photo Slide"
       >
@@ -219,12 +221,17 @@ export function HeroSearch({
           >
             {/* 1. Destination / Trek input */}
             <div className="flex-1 flex items-center gap-2.5 px-3 py-1.5 w-full sm:w-auto">
+              <label htmlFor="hero-destination-search" className="sr-only">
+                Search destination or trek name
+              </label>
               <Search className="w-5 h-5 text-emerald-700 shrink-0" />
               <input
+                id="hero-destination-search"
                 type="text"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="Where to? (e.g. Kedarkantha, Kerala, Goa, Bali)..."
+                aria-label="Search destination or trek name"
                 className="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none"
               />
             </div>
@@ -234,9 +241,14 @@ export function HeroSearch({
 
             {/* 2. Category Dropdown */}
             <div className="w-full sm:w-48 px-3 py-1.5 flex items-center">
+              <label htmlFor="hero-trip-type" className="sr-only">
+                Filter by trip category
+              </label>
               <select
+                id="hero-trip-type"
                 value={tripType}
                 onChange={(e) => setTripType(e.target.value)}
+                aria-label="Filter by trip category"
                 className="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 outline-none cursor-pointer"
               >
                 <option value="All">All Categories</option>
@@ -250,6 +262,7 @@ export function HeroSearch({
             {/* 3. Search Button */}
             <button
               type="submit"
+              aria-label="Explore Trips and search catalog"
               className="w-full sm:w-auto px-7 py-3.5 bg-[#FF6B35] hover:bg-[#e8590c] text-white text-xs sm:text-sm font-extrabold rounded-xl sm:rounded-full shadow-lg hover:shadow-orange-500/25 transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
             >
               <span>Explore Trips</span>

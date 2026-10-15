@@ -31,7 +31,6 @@ import {
   normalizeUserPermissions,
   AuthorityItem,
 } from "@/lib/authorities";
-export { SYSTEM_AUTHORITIES, DEFAULT_PERMISSIONS_BY_ROLE, normalizeUserPermissions };
 
 const renderAuthorityIcon = (key: string, isEnabled: boolean) => {
   const iconClass = `w-4 h-4 transition-colors ${isEnabled ? "text-emerald-700" : "text-slate-500"}`;

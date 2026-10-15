@@ -42,6 +42,7 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
   const [selectedReport, setSelectedReport] = useState<TrailRadarReport | null>(null);
 
   useEffect(() => {
+    if (initialReports && initialReports.length > 0) return;
     async function fetchRadar() {
       try {
         const res = await fetch("/api/radar");
@@ -54,7 +55,7 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
       }
     }
     fetchRadar();
-  }, []);
+  }, [initialReports]);
 
   // Close modal on Escape key press
   useEffect(() => {

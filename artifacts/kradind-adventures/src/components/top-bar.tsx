@@ -89,8 +89,9 @@ export function TopBar({
           <div className="text-slate-400 flex items-center gap-1 border-l border-white/10 pl-3">
             <button
               onClick={() => setCurrency(currency === "INR" ? "USD" : "INR")}
-              className="text-white font-bold hover:bg-white/20 bg-white/10 px-2 py-0.5 rounded text-[10px] sm:text-xs transition"
+              className="text-white font-bold hover:bg-white/20 bg-white/10 px-2 py-0.5 rounded text-[10px] sm:text-xs transition cursor-pointer"
               title="Switch Currency"
+              aria-label="Switch Currency between INR and USD"
             >
               {currency === "INR" ? "₹ INR" : "$ USD"}
             </button>

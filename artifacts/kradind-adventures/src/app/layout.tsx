@@ -331,6 +331,7 @@ export default function RootLayout({
         {/* AI Discoverability / GEO Index */}
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Content Index" />
         <link rel="help" type="text/plain" href="/llms.txt" title="AI Agent Documentation" />
+        <link rel="llms-txt" href="/llms.txt" />
 
         {/* Preconnect to external image CDN for fast mobile LCP */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />

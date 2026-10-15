@@ -6,31 +6,7 @@ import { FaWhatsapp } from "react-icons/fa";
 
 export function FloatingWhatsApp() {
   const pathname = usePathname();
-  const [whatsappUrl, setWhatsappUrl] = useState("https://wa.me/919797941414?text=Hello%20KRADIND%20Adventures!");
-
-  useEffect(() => {
-    let isMounted = true;
-    fetch("/api/content")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!isMounted || !data) return;
-        const link = data?.contactAndFooter?.whatsappLink;
-        const num = data?.topBar?.whatsappNumber;
-        if (link && typeof link === "string" && (link.startsWith("http://") || link.startsWith("https://"))) {
-          setWhatsappUrl(link);
-        } else if (num && typeof num === "string") {
-          const clean = num.replace(/\D/g, "");
-          if (clean) {
-            setWhatsappUrl(`https://wa.me/${clean}?text=Hello%20KRADIND%20Adventures!`);
-          }
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const whatsappUrl = "https://wa.me/919797941414?text=Hello%20KRADIND%20Adventures!";
 
   // Hide WhatsApp floating button on Admin CMS pages
   if (pathname?.startsWith("/admin")) {

@@ -358,7 +358,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#FF6B35]">
               Connect With Us
             </h4>
-            <p className="text-[11px] text-slate-400 leading-snug">
+            <p className="text-xs text-slate-300 leading-relaxed">
               Follow our official social community for trail photos, expedition reels &amp; live batch updates.
             </p>
 
@@ -373,9 +373,9 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                     rel="me nofollow noopener noreferrer"
                     aria-label={`Follow KRAD Global on ${s.name}`}
                     title={s.name}
-                    className={`min-w-[38px] min-h-[38px] w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm ${s.bg} ${s.color}`}
+                    className={`min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm ${s.bg} ${s.color}`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-5 h-5" />
                   </a>
                 );
               })}
@@ -384,7 +384,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
             <div className="pt-2">
               <Link
                 href="/connect"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-900/60 hover:bg-[#0F3A2E] text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-bold transition shadow-xs group"
+                className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-emerald-900/60 hover:bg-[#0F3A2E] text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-bold transition shadow-xs group"
                 title="Scan QR Code & Connect Across All Channels"
               >
                 <QrCode className="w-4 h-4 text-emerald-400 group-hover:scale-110 group-hover:rotate-6 transition-transform" />
@@ -405,7 +405,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
               <span className="block text-xs font-bold text-white">
                 Wilderness First Aid (WFA) Certified
               </span>
-              <span className="text-[10px] text-slate-400">
+              <span className="text-xs text-slate-300">
                 High-altitude emergency medical &amp; oxygen support
               </span>
             </div>
@@ -419,7 +419,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
               <span className="block text-xs font-bold text-white">
                 Strict Leave No Trace (LNT)
               </span>
-              <span className="text-[10px] text-slate-400">
+              <span className="text-xs text-slate-300">
                 Eco-clean trails with zero single-use plastic disposal
               </span>
             </div>
@@ -433,7 +433,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
               <span className="block text-xs font-bold text-white">
                 Eco-Conscious Standards
               </span>
-              <span className="text-[10px] text-slate-400">
+              <span className="text-xs text-slate-300">
                 Transparent pricing with verified alpine stays
               </span>
             </div>
@@ -451,19 +451,19 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
               <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
                 <AlertTriangle className="w-4 h-4" />
               </div>
-              <div className="space-y-2 text-[11px] text-slate-300 leading-relaxed">
+              <div className="space-y-2 text-xs text-slate-200 leading-relaxed">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-bold text-amber-300 uppercase tracking-wider text-[10px]">
+                  <span className="font-bold text-amber-300 uppercase tracking-wider text-[11px]">
                     Official YMYL Medical &amp; Alpine Safety Advisory
                   </span>
-                  <span className="text-slate-500">•</span>
-                  <span className="text-[10px] text-slate-400">Govt. Reg. UT-TRV-2024-914</span>
+                  <span className="text-slate-400">•</span>
+                  <span className="text-xs text-slate-300 font-semibold">Govt. Reg. UT-TRV-2024-914</span>
                 </div>
                 <p>
                   <strong className="text-white">Medical &amp; Fitness Notice:</strong> High-altitude trekking above 8,000 ft carries inherent physiological risks including Acute Mountain Sickness (AMS), High-Altitude Pulmonary Edema (HAPE), and sudden alpine weather changes. All training schedules, fitness guidelines, and altitude advisories on this website are curated by NIM-certified wilderness leaders for informational and planning purposes only and do not constitute formal medical diagnosis or advice. Trekkers with cardiovascular, pulmonary, or chronic conditions must consult a registered physician before departure. Valid high-altitude travel insurance is strictly recommended.
                 </p>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-[11px] text-slate-400">
-                  <Link href="/website-disclaimer" className="text-amber-400 hover:text-amber-300 underline underline-offset-2">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs text-slate-300 font-medium">
+                  <Link href="/website-disclaimer" className="text-amber-300 hover:text-amber-200 underline underline-offset-2">
                     Official Website Disclaimer
                   </Link>
                   <Link href="/editorial-policy" className="hover:text-white underline underline-offset-2">
@@ -485,11 +485,11 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
         </aside>
 
         {/* 5. CLEAN BOTTOM COPYRIGHT BAR */}
-        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-slate-400 text-center sm:text-left">
-          <p className="text-slate-300 font-medium">
+        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-300 text-center sm:text-left">
+          <p className="text-slate-200 font-medium">
             {config?.copyrightText || "© 2026 KRADIND Adventures / KRAD Global. All rights reserved."}
           </p>
-          <p className="text-slate-500 text-[10px]">
+          <p className="text-slate-400 text-xs font-medium">
             Govt. Registered Adventure Tour Operator (UT-TRV-2024-914) • Dehradun, Uttarakhand, India
           </p>
         </div>

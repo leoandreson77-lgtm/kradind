@@ -307,9 +307,13 @@ export default function TravelServicesPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                    <label htmlFor="service-email" className="block text-xs font-semibold text-slate-300 mb-1 cursor-pointer">
+                      Email Address
+                    </label>
                     <input
+                      id="service-email"
                       type="email"
+                      aria-label="Email Address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email address"
@@ -317,11 +321,16 @@ export default function TravelServicesPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Service Required</label>
+                    <label htmlFor="service-type-select" className="block text-xs font-semibold text-slate-300 mb-1 cursor-pointer">
+                      Service Required
+                    </label>
                     <select
+                      id="service-type-select"
+                      name="serviceType"
+                      aria-label="Service Required"
                       value={serviceType}
                       onChange={(e) => setServiceType(e.target.value)}
-                      className="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
                     >
                       <option value="Customized Tour">Customized Tour & Holiday</option>
                       <option value="Hotels & Resorts">Hotels & Camps Booking</option>

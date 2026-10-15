@@ -958,6 +958,7 @@ export function ItineraryPdfModal({
                       type="button"
                       onClick={() => moveSection(index, index - 1)}
                       disabled={index === 0}
+                      aria-label={`Move ${sec.label} section up`}
                       className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-700 disabled:opacity-20 cursor-pointer"
                       title="Move Up"
                     >
@@ -967,6 +968,7 @@ export function ItineraryPdfModal({
                       type="button"
                       onClick={() => moveSection(index, index + 1)}
                       disabled={index === sections.length - 1}
+                      aria-label={`Move ${sec.label} section down`}
                       className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-700 disabled:opacity-20 cursor-pointer"
                       title="Move Down"
                     >
@@ -975,6 +977,7 @@ export function ItineraryPdfModal({
                     <button
                       type="button"
                       onClick={() => toggleSectionVisibility(sec.id)}
+                      aria-label={sec.visible ? `Hide ${sec.label} section in PDF` : `Show ${sec.label} section in PDF`}
                       className={`p-1 rounded transition-colors cursor-pointer ${
                         sec.visible
                           ? "text-emerald-400 hover:bg-emerald-500/20"
@@ -1172,8 +1175,8 @@ export function ItineraryPdfModal({
                   <div key={sec.id} className="relative group page-break-inside-avoid">
                     <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
                       <span className="font-bold text-slate-700">Client Info</span>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move client info up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move client info down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
                     </div>
                     <div className={`rounded-2xl p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs ${
                       isDraftWatermarkActive
@@ -1253,6 +1256,7 @@ export function ItineraryPdfModal({
                         disabled={secIdx === 0}
                         className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"
                         title="Move Up 1 step"
+                        aria-label="Move pricing section up 1 step"
                       >
                         <ChevronUp className="w-3 h-3" />
                       </button>
@@ -1262,6 +1266,7 @@ export function ItineraryPdfModal({
                         disabled={secIdx === sections.length - 1}
                         className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"
                         title="Move Down 1 step"
+                        aria-label="Move pricing section down 1 step"
                       >
                         <ChevronDown className="w-3 h-3" />
                       </button>
@@ -1376,8 +1381,8 @@ export function ItineraryPdfModal({
                   <div key={sec.id} className="relative group space-y-2">
                     <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
                       <span className="font-bold text-slate-700">Overview</span>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move overview section up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move overview section down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300">
@@ -1409,8 +1414,8 @@ export function ItineraryPdfModal({
                   <div key={sec.id} className="relative group page-break-inside-avoid">
                     <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
                       <span className="font-bold text-slate-700">Stats</span>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move stats section up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move stats section down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
@@ -1477,8 +1482,8 @@ export function ItineraryPdfModal({
                   <div key={sec.id} className="pt-1 page-break-inside-avoid relative group">
                     <div className="no-print absolute top-0 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
                       <span className="font-bold text-slate-700">Route Map</span>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move route map section up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move route map section down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
                     </div>
                     <ItineraryRouteMap
                       itinerary={pdfDays}
@@ -1710,9 +1715,9 @@ export function ItineraryPdfModal({
                     {/* Screen Only: Move Controls & Quick Edit */}
                     <div className="no-print absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
                       <span className="font-bold text-slate-700">Cancellation Policy</span>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => setIsEditingPolicy(true)} className="p-0.5 text-emerald-700 hover:text-emerald-900 ml-1 cursor-pointer flex items-center gap-0.5" title="Edit Cancellation Policy Terms">
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up" aria-label="Move cancellation policy up"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down" aria-label="Move cancellation policy down"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => setIsEditingPolicy(true)} className="p-0.5 text-emerald-700 hover:text-emerald-900 ml-1 cursor-pointer flex items-center gap-0.5" title="Edit Cancellation Policy Terms" aria-label="Edit cancellation policy terms">
                         <Edit3 className="w-3 h-3" />
                         <span>Edit</span>
                       </button>
@@ -1790,13 +1795,13 @@ export function ItineraryPdfModal({
                     {/* Screen Only: Move, Edit & Delete Controls */}
                     <div className="no-print absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2.5 py-0.5 rounded-full border border-slate-300 shadow-sm z-20 text-[10px]">
                       <span className="font-bold text-slate-700">{sec.label}</span>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
-                      <button type="button" onClick={() => handleEditCustomSection(sec)} className="p-0.5 text-blue-600 hover:text-blue-800 ml-1 cursor-pointer flex items-center gap-0.5" title="Edit this custom section">
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up" aria-label={`Move ${sec.label} up`}><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down" aria-label={`Move ${sec.label} down`}><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => handleEditCustomSection(sec)} className="p-0.5 text-blue-600 hover:text-blue-800 ml-1 cursor-pointer flex items-center gap-0.5" title="Edit this custom section" aria-label={`Edit ${sec.label}`}>
                         <Edit3 className="w-3 h-3" />
                         <span>Edit</span>
                       </button>
-                      <button type="button" onClick={() => handleDeleteCustomSection(sec.id)} className="p-0.5 text-rose-600 hover:text-rose-800 cursor-pointer" title="Delete section">
+                      <button type="button" onClick={() => handleDeleteCustomSection(sec.id)} className="p-0.5 text-rose-600 hover:text-rose-800 cursor-pointer" title="Delete section" aria-label={`Delete ${sec.label}`}>
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>

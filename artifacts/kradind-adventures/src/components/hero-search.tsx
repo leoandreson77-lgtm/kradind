@@ -283,6 +283,7 @@ export function HeroSearch({
               <button
                 key={tag.label}
                 type="button"
+                aria-label={`Discover ${tag.label}`}
                 onClick={() => {
                   if (tag.isType) {
                     router.push(`/treks?type=${encodeURIComponent(tag.query)}`);
@@ -290,27 +291,31 @@ export function HeroSearch({
                     router.push(`/treks?search=${encodeURIComponent(tag.query)}`);
                   }
                 }}
-                className="px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white font-medium text-xs transition transform hover:scale-105 cursor-pointer shadow-xs"
+                className="px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white font-semibold text-xs transition transform hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
               >
                 {tag.label}
               </button>
             ))}
           </div>
 
-          {/* Subtle Carousel Dots Indicator */}
-          <div className="mt-5 flex items-center justify-center gap-2">
+          {/* Subtle Carousel Dots Indicator (Accessible 44px Touch Targets) */}
+          <div className="mt-5 flex items-center justify-center gap-1">
             {CAROUSEL_SLIDES.map((slide, idx) => (
               <button
                 key={slide.id}
                 type="button"
                 onClick={() => handleSelectSlide(idx)}
-                className={`transition-all duration-300 rounded-full cursor-pointer ${
-                  slideIndex === idx
-                    ? "w-8 h-2 bg-white"
-                    : "w-2 h-2 bg-white/40 hover:bg-white/70"
-                }`}
-                aria-label={`Slide ${idx + 1}: ${slide.title}`}
-              />
+                className="p-2 sm:p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer group"
+                aria-label={`Go to slide ${idx + 1}: ${slide.title}`}
+              >
+                <span
+                  className={`block transition-all duration-300 rounded-full ${
+                    slideIndex === idx
+                      ? "w-8 h-2.5 bg-white shadow-sm"
+                      : "w-2.5 h-2.5 bg-white/50 group-hover:bg-white/80"
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

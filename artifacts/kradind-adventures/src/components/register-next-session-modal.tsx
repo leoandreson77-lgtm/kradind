@@ -288,13 +288,16 @@ export function RegisterNextSessionModal({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">
+                  <label htmlFor="register-session-window" className="text-[10px] font-bold text-slate-700 uppercase tracking-wider cursor-pointer">
                     Preferred Session Window
                   </label>
                   <select
+                    id="register-session-window"
+                    name="preferredSession"
+                    aria-label="Preferred Session Window"
                     value={preferredSession}
                     onChange={(e) => setPreferredSession(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#0F3A2E] focus:bg-white transition"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#0F3A2E] focus:bg-white transition cursor-pointer"
                   >
                     <option value="Next Upcoming Batch (Early Bird)">🌟 Next Upcoming Batch (First Priority)</option>
                     <option value="Winter Snow Season (Dec - Feb)">❄️ Winter Snow Season (Dec - Feb)</option>
@@ -308,17 +311,18 @@ export function RegisterNextSessionModal({
 
               {/* Group Size (Pax) */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
                   <span>Number of Trekkers (Estimated Group Size)</span>
-                  <span className="text-slate-400 font-normal">Can be adjusted later</span>
+                  <span className="text-slate-500 font-normal">Can be adjusted later</span>
                 </label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {["Solo (1)", "2 Explorers", "3 - 5 Friends", "6+ Group"].map((opt) => (
                     <button
                       key={opt}
                       type="button"
                       onClick={() => setPax(opt)}
-                      className={`py-1.5 px-2 rounded-xl text-center text-[11px] font-bold border transition ${
+                      aria-label={`Select group size: ${opt}`}
+                      className={`min-h-[44px] py-2 px-2.5 rounded-xl text-center text-xs font-bold border transition cursor-pointer ${
                         pax === opt
                           ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-2xs"
                           : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"

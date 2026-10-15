@@ -395,16 +395,23 @@ export function TrekDetailClient({
     setTrek(initialTrek);
   }, [initialTrek]);
 
-  // Adjust sticky sidebar behavior dynamically based on viewport height
+  // Adjust sticky sidebar behavior dynamically based on viewport height (RAF throttled to avoid forced reflow)
   useEffect(() => {
+    let rafId: number | null = null;
     const checkHeight = () => {
-      if (sidebarRef.current) {
-        setIsTallerThanScreen(sidebarRef.current.offsetHeight > window.innerHeight - 110);
-      }
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (sidebarRef.current) {
+          setIsTallerThanScreen(sidebarRef.current.offsetHeight > window.innerHeight - 110);
+        }
+      });
     };
     checkHeight();
-    window.addEventListener("resize", checkHeight);
-    return () => window.removeEventListener("resize", checkHeight);
+    window.addEventListener("resize", checkHeight, { passive: true });
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", checkHeight);
+    };
   }, [trek]);
 
   const scrollToSection = (id: string, tab: "itinerary" | "highlights" | "inclusions" | "tips" | "faqs") => {

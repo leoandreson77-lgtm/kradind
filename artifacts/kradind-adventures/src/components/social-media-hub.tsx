@@ -466,10 +466,11 @@ END:VCARD`;
                 <button
                   key={tab.id}
                   onClick={() => setQrTarget(tab.id as any)}
-                  className={`py-1.5 px-1 rounded-lg transition text-center cursor-pointer ${
+                  aria-label={`Select ${tab.label} QR Code`}
+                  className={`py-2 px-2 min-h-[44px] rounded-lg transition text-center cursor-pointer flex items-center justify-center ${
                     qrTarget === tab.id
                       ? "bg-emerald-600 text-white shadow-xs font-black"
-                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                      : "text-slate-300 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   {tab.label}

@@ -613,8 +613,9 @@ export function VoiceAssistant() {
                 <button
                   type="button"
                   onClick={() => setSoundEnabled(!soundEnabled)}
-                  className="p-1.5 text-slate-300 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer"
+                  className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-300 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer"
                   title={soundEnabled ? "Mute audio response" : "Enable voice response"}
+                  aria-label={soundEnabled ? "Mute audio response" : "Enable voice response"}
                 >
                   {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-300" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
                 </button>
@@ -624,8 +625,8 @@ export function VoiceAssistant() {
                     stopListening();
                     setIsOpen(false);
                   }}
-                  className="p-1.5 text-slate-300 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer"
-                  aria-label="Close"
+                  className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-300 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer"
+                  aria-label="Close voice assistant modal"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -648,6 +649,13 @@ export function VoiceAssistant() {
                   type="button"
                   onClick={handleToggleListening}
                   disabled={isRequestingPermission}
+                  aria-label={
+                    isListening
+                      ? "Stop listening"
+                      : micPermissionDenied
+                      ? "Microphone blocked - tap to request permission"
+                      : "Start voice search"
+                  }
                   className={`relative z-10 w-18 h-18 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform active:scale-95 cursor-pointer disabled:opacity-75 ${
                     isListening
                       ? "bg-rose-500 hover:bg-rose-600 text-white ring-4 ring-rose-300"
@@ -801,19 +809,25 @@ export function VoiceAssistant() {
               {/* Manual Input Fallback */}
               <form onSubmit={handleManualSubmit} className="pt-2 flex items-center gap-2">
                 <div className="relative flex-1">
+                  <label htmlFor="voice-manual-search-input" className="sr-only">
+                    Type travel search command
+                  </label>
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     ref={inputRef}
+                    id="voice-manual-search-input"
                     type="text"
+                    aria-label="Type travel search command"
                     value={manualText}
                     onChange={(e) => setManualText(e.target.value)}
                     placeholder="Or type a command: 'goa', 'manali', 'honeymoon'..."
-                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="px-3.5 py-2 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition cursor-pointer"
+                  aria-label="Submit voice command search"
+                  className="px-4 py-2.5 min-h-[42px] bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition cursor-pointer"
                 >
                   Go
                 </button>

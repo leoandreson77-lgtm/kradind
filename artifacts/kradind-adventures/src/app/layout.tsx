@@ -6,18 +6,16 @@ import { FloatingWhatsApp } from "@/components/floating-whatsapp";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
   variable: "--font-brand",
   display: "swap",
-  preload: true,
+  adjustFontFallback: true,
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
-  preload: true,
+  adjustFontFallback: true,
 });
 
 export const viewport: Viewport = {
@@ -394,8 +392,6 @@ export default function RootLayout({
         {/* Preconnect to external image CDN for fast mobile LCP */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        {/* Preload initial hero LCP image (optimized modern WebP) for instant discovery */}
-        <link rel="preload" as="image" href="/ocean-sunrise.webp" fetchPriority="high" type="image/webp" />
         {/* Global JSON-LD Schema (Organization & WebSite with SearchAction) */}
         <script
           type="application/ld+json"

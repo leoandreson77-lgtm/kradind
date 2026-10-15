@@ -33,24 +33,28 @@ export function MountainAtmosphere({
     if (!ctx) return;
 
     let animId: number;
-    const parent = canvas.parentElement;
-    let width = parent?.clientWidth || window.innerWidth;
-    let height = parent?.clientHeight || window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-
     let resizeRaf: number | null = null;
+    let width = 1200;
+    let height = 600;
+
+    const updateDimensions = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const newW = canvas.parentElement.clientWidth || window.innerWidth;
+      const newH = canvas.parentElement.clientHeight || window.innerHeight;
+      if (newW !== width || newH !== height) {
+        width = canvas.width = newW;
+        height = canvas.height = newH;
+      }
+    };
+
+    // Use requestAnimationFrame to measure after initial render phase completes, preventing forced reflow
+    resizeRaf = requestAnimationFrame(() => {
+      updateDimensions();
+    });
+
     const handleResize = () => {
       if (resizeRaf) cancelAnimationFrame(resizeRaf);
-      resizeRaf = requestAnimationFrame(() => {
-        if (!canvas.parentElement) return;
-        const newW = canvas.parentElement.clientWidth;
-        const newH = canvas.parentElement.clientHeight;
-        if (newW !== width || newH !== height) {
-          width = canvas.width = newW;
-          height = canvas.height = newH;
-        }
-      });
+      resizeRaf = requestAnimationFrame(updateDimensions);
     };
     window.addEventListener("resize", handleResize, { passive: true });
 
@@ -506,6 +510,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("sunrise")}
               title="Ocean Sunrise (Real Ocean Photo)"
+              aria-label="Switch atmosphere to Ocean Sunrise"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "sunrise"
                   ? "bg-amber-500/80 text-white shadow-sm border border-amber-300/40"
@@ -520,6 +525,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("snow")}
               title="Snowfall (Himalayan Snow Peaks)"
+              aria-label="Switch atmosphere to Himalayan Snowfall"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "snow"
                   ? "bg-sky-500/80 text-white shadow-sm border border-sky-300/40"
@@ -534,6 +540,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("rain")}
               title="Monsoon Rain (Stormy Mountain Clouds)"
+              aria-label="Switch atmosphere to Monsoon Rain"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "rain"
                   ? "bg-teal-600/80 text-white shadow-sm border border-teal-300/40"
@@ -548,6 +555,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("clear")}
               title="Clear Tropical Skies (Backwaters & Palms)"
+              aria-label="Switch atmosphere to Clear Tropical Skies"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "clear"
                   ? "bg-emerald-600/80 text-white shadow-sm border border-emerald-300/40"
@@ -564,6 +572,7 @@ export function MountainAtmosphere({
                 type="button"
                 onClick={onToggleLoop}
                 title={autoLoop ? "Loop Active (Click to Pause)" : "Resume Loop Cycle"}
+                aria-label={autoLoop ? "Pause atmosphere loop cycle" : "Resume atmosphere loop cycle"}
                 className={`relative overflow-hidden flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all cursor-pointer text-[11px] font-bold border ${
                   autoLoop
                     ? "bg-emerald-950/80 border-emerald-400/50 text-emerald-300"

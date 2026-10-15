@@ -170,14 +170,15 @@ export function GoogleMapLocator({ className = "", showTitle = true }: GoogleMap
         {/* Right Map View (7 cols) */}
         <div className="lg:col-span-7 relative min-h-[380px] sm:min-h-[460px] bg-slate-100 flex flex-col">
           {/* Map Controls Floating Bar */}
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 bg-white/95 backdrop-blur-md px-2 py-1.5 rounded-xl shadow-lg border border-slate-200 text-xs font-semibold">
+          <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1.5 rounded-xl shadow-lg border border-slate-200 text-xs font-semibold">
             <button
               type="button"
               onClick={() => setActiveTab("map")}
-              className={`px-3 py-1 rounded-lg transition ${
+              aria-label="Switch to map road view"
+              className={`px-3.5 py-2 min-h-[40px] rounded-lg transition cursor-pointer ${
                 activeTab === "map"
-                  ? "bg-[#0F3A2E] text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#0F3A2E] text-white shadow-xs font-bold"
+                  : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
               Map
@@ -185,10 +186,11 @@ export function GoogleMapLocator({ className = "", showTitle = true }: GoogleMap
             <button
               type="button"
               onClick={() => setActiveTab("satellite")}
-              className={`px-3 py-1 rounded-lg transition ${
+              aria-label="Switch to satellite terrain view"
+              className={`px-3.5 py-2 min-h-[40px] rounded-lg transition cursor-pointer ${
                 activeTab === "satellite"
-                  ? "bg-[#0F3A2E] text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#0F3A2E] text-white shadow-xs font-bold"
+                  : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
               Satellite

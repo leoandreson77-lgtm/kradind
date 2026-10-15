@@ -384,13 +384,16 @@ export default function LandingPageRoute({
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                          <label htmlFor="lp-travelers-count" className="block text-[11px] font-bold text-slate-300 mb-1 cursor-pointer">
                             No. of People
                           </label>
                           <select
+                            id="lp-travelers-count"
+                            name="travelersCount"
+                            aria-label="Number of people"
                             value={leadTravelers}
                             onChange={(e) => setLeadTravelers(e.target.value)}
-                            className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500"
+                            className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
                           >
                             <option value="1">1 Person (Solo)</option>
                             <option value="2">2 Persons (Couple/Friends)</option>

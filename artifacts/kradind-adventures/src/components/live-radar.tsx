@@ -82,8 +82,8 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
               Live Trail Ground Radar & Base Camp Updates
             </h3>
           </div>
-          <div className="flex items-center gap-2 text-[11px] sm:text-xs text-slate-400">
-            <Radio className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+          <div className="flex items-center gap-2 text-[11px] sm:text-xs text-slate-600">
+            <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
             <span>Updated in real-time by Expedition Leaders • Click any card for details</span>
           </div>
         </div>
@@ -93,12 +93,12 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
           {reports.map((r) => {
             const statusConfig =
               r.status === "open"
-                ? { label: "🟢 Open", bg: "bg-emerald-50 text-emerald-700 border-emerald-200/80" }
+                ? { label: "🟢 Open", bg: "bg-emerald-50 text-emerald-800 border-emerald-300 font-bold" }
                 : r.status === "active"
-                ? { label: "🌧️ Active", bg: "bg-teal-50 text-teal-700 border-teal-200/80" }
+                ? { label: "🌧️ Active", bg: "bg-teal-50 text-teal-800 border-teal-300 font-bold" }
                 : r.status === "caution"
-                ? { label: "🟡 Caution", bg: "bg-amber-50 text-amber-700 border-amber-200/80" }
-                : { label: "🔴 Closed", bg: "bg-rose-50 text-rose-700 border-rose-200/80" };
+                ? { label: "🟡 Caution", bg: "bg-amber-50 text-amber-800 border-amber-300 font-bold" }
+                : { label: "🔴 Closed", bg: "bg-rose-50 text-rose-800 border-rose-300 font-bold" };
 
             return (
               <div
@@ -112,14 +112,14 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
                     setSelectedReport(r);
                   }
                 }}
-                className="group relative p-4 bg-slate-50 hover:bg-white rounded-xl border border-slate-200/80 hover:border-[#0F3A2E]/60 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between gap-3 text-left outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                className="group relative p-4 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 hover:border-[#0F3A2E]/60 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between gap-3 text-left outline-none focus:ring-2 focus:ring-[#0F3A2E]"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <strong className="block text-slate-900 font-bold text-sm group-hover:text-[#0F3A2E] transition-colors">
                       {r.trail}
                     </strong>
-                    <span className="text-slate-500 text-[11px] block mt-0.5">
+                    <span className="text-slate-600 text-[11px] font-medium block mt-0.5">
                       {r.weather} • {r.temperature}
                     </span>
                   </div>
@@ -130,11 +130,11 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] pt-2 border-t border-slate-200/50 text-slate-400 group-hover:text-slate-600">
+                <div className="flex items-center justify-between text-[11px] pt-2 border-t border-slate-200/50 text-slate-600 group-hover:text-slate-800 font-medium">
                   <span className="truncate max-w-[180px]">
                     {r.region || "Verified by Expedition Lead"}
                   </span>
-                  <span className="text-[#0F3A2E] font-semibold flex items-center gap-1 group-hover:text-[#FF6B35] transition-colors shrink-0">
+                  <span className="text-[#0F3A2E] font-bold flex items-center gap-1 group-hover:text-[#FF6B35] transition-colors shrink-0">
                     <span>Advisory</span>
                     <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                   </span>
@@ -144,7 +144,7 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
           })}
 
           {reports.length === 0 && (
-            <div className="col-span-3 text-center py-6 text-slate-400 text-xs">
+            <div className="col-span-3 text-center py-6 text-slate-600 text-xs font-medium">
               Live trail ground radar syncing with mountain base camps...
             </div>
           )}
@@ -229,7 +229,7 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
               {/* Environmental Metrics */}
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 text-[11px] font-semibold flex items-center gap-1">
+                  <span className="text-slate-600 text-[11px] font-semibold flex items-center gap-1">
                     <CloudSun className="w-3.5 h-3.5 text-[#FF6B35]" />
                     Weather Condition
                   </span>
@@ -237,7 +237,7 @@ export function LiveRadar({ initialReports }: { initialReports?: TrailRadarRepor
                 </div>
 
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 text-[11px] font-semibold flex items-center gap-1">
+                  <span className="text-slate-600 text-[11px] font-semibold flex items-center gap-1">
                     <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
                     Ambient Temperature
                   </span>

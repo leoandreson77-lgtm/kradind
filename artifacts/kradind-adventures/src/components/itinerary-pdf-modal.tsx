@@ -28,6 +28,13 @@ import {
   MessageCircle,
   Loader2,
   ArrowRight,
+  GripVertical,
+  ChevronUp,
+  ChevronDown,
+  RotateCcw,
+  Eye,
+  EyeOff,
+  MoveVertical,
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { parseInlineFormatting } from "@/components/formatted-text";
@@ -47,6 +54,36 @@ export interface ItineraryPdfProps {
   customNotes?: string;
   customDays?: TrekItineraryDay[];
 }
+
+export type PdfSectionKey =
+  | "metadata_bar"
+  | "title_summary"
+  | "stats_grid"
+  | "custom_notes"
+  | "route_map"
+  | "itinerary_days"
+  | "inclusions_exclusions"
+  | "gear_checklist"
+  | "banking_details";
+
+export interface PdfSectionItem {
+  id: PdfSectionKey;
+  label: string;
+  shortTag: string;
+  visible: boolean;
+}
+
+const DEFAULT_PDF_SECTIONS: PdfSectionItem[] = [
+  { id: "metadata_bar", label: "Quotation & Rates", shortTag: "Rates & Info", visible: true },
+  { id: "title_summary", label: "Tour Title & Overview", shortTag: "Title & Summary", visible: true },
+  { id: "stats_grid", label: "Expedition Stats Grid", shortTag: "Stats Grid", visible: true },
+  { id: "custom_notes", label: "Seasonal Custom Notes", shortTag: "Advisory Note", visible: true },
+  { id: "route_map", label: "Route Flow Diagram", shortTag: "Route Flow Map", visible: true },
+  { id: "itinerary_days", label: "Day-by-Day Expedition Schedule", shortTag: "Daily Itinerary", visible: true },
+  { id: "inclusions_exclusions", label: "Inclusions & Exclusions Table", shortTag: "Inclusions", visible: true },
+  { id: "gear_checklist", label: "Safety Protocol & Packing Essentials", shortTag: "Gear Checklist", visible: true },
+  { id: "banking_details", label: "Official Bank Account, QR & Socials", shortTag: "Bank & QR Code", visible: true },
+];
 
 export function ItineraryPdfModal({
   isOpen,
@@ -70,6 +107,47 @@ export function ItineraryPdfModal({
   const [copiedLink, setCopiedLink] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const printAreaRef = useRef<HTMLDivElement>(null);
+
+  // Draggable Items & Sections state
+  const [sections, setSections] = useState<PdfSectionItem[]>(DEFAULT_PDF_SECTIONS);
+  const [pdfDays, setPdfDays] = useState<TrekItineraryDay[]>([]);
+  const [isDragTrayOpen, setIsDragTrayOpen] = useState(false);
+  const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null);
+  const [draggedDayIndex, setDraggedDayIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const raw = customDays && customDays.length > 0 ? customDays : tour?.itinerary || [];
+    setPdfDays(JSON.parse(JSON.stringify(raw)));
+  }, [tour, customDays]);
+
+  const moveSection = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= sections.length) return;
+    const updated = [...sections];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+    setSections(updated);
+  };
+
+  const toggleSectionVisibility = (id: PdfSectionKey) => {
+    setSections((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, visible: !s.visible } : s))
+    );
+  };
+
+  const moveDay = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= pdfDays.length) return;
+    const updated = [...pdfDays];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+    const renumbered = updated.map((d, i) => ({ ...d, day: i + 1 }));
+    setPdfDays(renumbered);
+  };
+
+  const handleResetLayout = () => {
+    setSections(DEFAULT_PDF_SECTIONS);
+    const raw = customDays && customDays.length > 0 ? customDays : tour?.itinerary || [];
+    setPdfDays(JSON.parse(JSON.stringify(raw)));
+  };
 
   const handleDownloadDirectPdf = async () => {
     if (!printAreaRef.current || !tour) return;
@@ -405,8 +483,121 @@ export function ItineraryPdfModal({
                 className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-900 w-24 text-center focus:ring-1 focus:ring-[#0F3A2E]"
               />
             </div>
+
+            <button
+              type="button"
+              onClick={() => setIsDragTrayOpen(!isDragTrayOpen)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                isDragTrayOpen
+                  ? "bg-slate-900 text-white border-slate-900 shadow-inner"
+                  : "bg-white text-emerald-950 hover:bg-emerald-100 border-emerald-300"
+              }`}
+            >
+              <MoveVertical className="w-3.5 h-3.5 text-[#FF6B35]" />
+              <span>{isDragTrayOpen ? "Close Drag Layout" : "⇄ Drag / Reorder Sections"}</span>
+            </button>
           </div>
         </div>
+
+        {/* ========================================================================= */}
+        {/* DRAG & REORDER SECTIONS TRAY (SCREEN ONLY) */}
+        {/* ========================================================================= */}
+        {isDragTrayOpen && (
+          <div className="no-print bg-slate-900 text-white p-4 sm:p-5 border-b border-slate-800 space-y-3.5 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <MoveVertical className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+                    <span>Drag &amp; Reorder PDF Sections</span>
+                    <span className="px-2 py-0.2 rounded-full text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Live Layout Builder
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    Drag items or click ↑ ↓ to rearrange sections in the final PDF. Toggle the eye icon to show/hide.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleResetLayout}
+                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700 cursor-pointer self-start sm:self-auto"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset Layout</span>
+              </button>
+            </div>
+
+            {/* Draggable Sections Chips List */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 pt-1">
+              {sections.map((sec, index) => (
+                <div
+                  key={sec.id}
+                  draggable
+                  onDragStart={() => setDraggedSectionIndex(index)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => {
+                    if (draggedSectionIndex !== null && draggedSectionIndex !== index) {
+                      moveSection(draggedSectionIndex, index);
+                      setDraggedSectionIndex(null);
+                    }
+                  }}
+                  onDragEnd={() => setDraggedSectionIndex(null)}
+                  className={`p-2.5 rounded-xl border flex items-center justify-between gap-1.5 select-none cursor-grab active:cursor-grabbing transition-all ${
+                    sec.visible
+                      ? "bg-slate-800/90 border-slate-700 hover:border-emerald-500 text-slate-100"
+                      : "bg-slate-950/60 border-slate-800 text-slate-500 opacity-60"
+                  } ${draggedSectionIndex === index ? "opacity-40 border-emerald-400 border-dashed" : ""}`}
+                >
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <GripVertical className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold shrink-0">
+                      #{index + 1}
+                    </span>
+                    <span className="text-xs font-bold truncate">{sec.shortTag}</span>
+                  </div>
+
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => moveSection(index, index - 1)}
+                      disabled={index === 0}
+                      className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-700 disabled:opacity-20 cursor-pointer"
+                      title="Move Up"
+                    >
+                      <ChevronUp className="w-3 h-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveSection(index, index + 1)}
+                      disabled={index === sections.length - 1}
+                      className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-700 disabled:opacity-20 cursor-pointer"
+                      title="Move Down"
+                    >
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleSectionVisibility(sec.id)}
+                      className={`p-1 rounded transition-colors cursor-pointer ${
+                        sec.visible
+                          ? "text-emerald-400 hover:bg-emerald-500/20"
+                          : "text-slate-500 hover:bg-slate-800"
+                      }`}
+                      title={sec.visible ? "Hide section in PDF" : "Show section in PDF"}
+                    >
+                      {sec.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ========================================================================= */}
         {/* PRINTABLE DOCUMENT BODY (A4 READY) */}
@@ -466,307 +657,387 @@ export function ItineraryPdfModal({
               </div>
             </div>
 
-            {/* 2. CLIENT QUOTATION & METADATA BAR */}
-            <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs page-break-inside-avoid">
-              <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Specially Prepared For
-                </span>
-                <strong className="text-[#0F3A2E] text-sm sm:text-base font-extrabold block truncate">
-                  {clientName || "Valued Traveler"}
-                </strong>
-                <span className="text-slate-500 text-[11px]">
-                  Group Size: {paxCount} {paxCount === 1 ? "Person" : "Persons"}
-                </span>
-              </div>
+            {/* DYNAMIC ORDER OF REORDERABLE / DRAGGABLE SECTIONS */}
+            {sections.map((sec, secIdx) => {
+              if (!sec.visible) return null;
 
-              <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Tour Reference & Date
-                </span>
-                <strong className="text-slate-800 text-xs sm:text-sm font-bold block font-mono">
-                  {quoteRefId}
-                </strong>
-                <span className="text-slate-500 text-[11px]">Issued: {issueDate}</span>
-              </div>
-
-              <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Travel Season / Batch
-                </span>
-                <strong className="text-slate-800 text-xs sm:text-sm font-bold block">
-                  {customSeason}
-                </strong>
-                <span className="text-emerald-700 text-[11px] font-semibold">
-                  Valid for 15 Days
-                </span>
-              </div>
-
-              <div className="text-left sm:text-right">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Commercial Quotation
-                </span>
-                <strong className="text-[#FF6B35] text-base sm:text-lg font-extrabold block">
-                  ₹{totalPrice.toLocaleString("en-IN")}
-                </strong>
-                <span className="text-slate-500 text-[10px]">
-                  (₹{pricePerPerson.toLocaleString("en-IN")} / Person all-inclusive)
-                </span>
-              </div>
-            </div>
-
-            {/* 3. TOUR TITLE & EXECUTIVE SUMMARY */}
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300">
-                  {tour.category || "Himalayan Expedition"}
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                  Grade: {tour.difficulty || "Moderate"}
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                  {tour.badge || "Verified Route"}
-                </span>
-              </div>
-
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F3A2E] tracking-tight">
-                {tour.name}
-              </h1>
-
-              {tour.tagline && (
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
-                  &ldquo;{tour.tagline}&rdquo;
-                </p>
-              )}
-            </div>
-
-            {/* 4. EXPEDITION STATS GRID */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 page-break-inside-avoid">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-                  <Clock className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 font-semibold block uppercase">Duration</span>
-                  <strong className="text-xs font-bold text-slate-900">{tour.duration}</strong>
-                </div>
-              </div>
-
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-                  <Mountain className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 font-semibold block uppercase">Max Altitude</span>
-                  <strong className="text-xs font-bold text-slate-900">{tour.altitude}</strong>
-                </div>
-              </div>
-
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 font-semibold block uppercase">Region</span>
-                  <strong className="text-xs font-bold text-slate-900">{tour.region}</strong>
-                </div>
-              </div>
-
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-                  <Award className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 font-semibold block uppercase">Pickup & Drop</span>
-                  <strong className="text-xs font-bold text-slate-900 truncate block max-w-[130px]">
-                    {tour.pickupPoint || tour.location}
-                  </strong>
-                </div>
-              </div>
-            </div>
-
-            {/* Optional Seasonal Custom Notes */}
-            {customNotes && (
-              <div className="p-3.5 bg-amber-50/80 rounded-xl border border-amber-200 text-xs text-amber-950 flex items-start gap-2.5 page-break-inside-avoid">
-                <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="block font-bold">Seasonal Custom Advisory & Inclusions:</strong>
-                  <span className="mt-0.5 block leading-relaxed">{customNotes}</span>
-                </div>
-              </div>
-            )}
-
-            {/* 4.5 ITINERARY ROUTE FLOW MAP */}
-            <div className="pt-1 page-break-inside-avoid">
-              <ItineraryRouteMap
-                itinerary={effectiveDays}
-                destination={tour.name}
-                pickupLocation={tour.pickupPoint || tour.pickupDrop}
-                dropLocation={tour.pickupPoint || tour.pickupDrop}
-              />
-            </div>
-
-            {/* 5. DAY BY DAY ITINERARY TABLE */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <h2 className="text-sm sm:text-base font-extrabold text-[#0F3A2E] flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-[#FF6B35]" />
-                  <span>Comprehensive Day-by-Day Expedition Schedule</span>
-                </h2>
-                <span className="text-xs font-bold text-slate-500">
-                  {effectiveDays.length} Scheduled Days
-                </span>
-              </div>
-
-              <div className="space-y-3.5">
-                {effectiveDays.map((dayItem: TrekItineraryDay) => (
-                  <div
-                    key={dayItem.day}
-                    className="p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2 page-break-inside-avoid text-xs"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1.5 border-b border-slate-200/60">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shrink-0 border border-white ring-1 ring-[#0F3A2E]/20 shadow-xs select-none">
-                          <span className="text-[7px] font-bold uppercase leading-none">Day</span>
-                          <span className="text-[11px] font-black leading-none mt-0.5">{dayItem.day}</span>
-                        </div>
-                        <strong className="text-xs sm:text-sm font-extrabold text-slate-900">
-                          {dayItem.title}
-                        </strong>
-                      </div>
-
-                      {/* Day Stats Pills */}
-                      <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-600 sm:justify-end">
-                        {dayItem.distance && (
-                          <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-medium">
-                            📏 {dayItem.distance}
-                          </span>
-                        )}
-                        {dayItem.altitude && (
-                          <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-medium">
-                            🏔️ {dayItem.altitude}
-                          </span>
-                        )}
-                        {dayItem.stay && (
-                          <span className="bg-emerald-50 text-emerald-900 border border-emerald-200 px-2 py-0.5 rounded-md font-medium">
-                            ⛺ {dayItem.stay}
-                          </span>
-                        )}
-                        {dayItem.meal && (
-                          <span className="bg-amber-50 text-amber-900 border border-amber-200 px-2 py-0.5 rounded-md font-medium">
-                            🍽️ {dayItem.meal}
-                          </span>
-                        )}
-                      </div>
+              if (sec.id === "metadata_bar") {
+                return (
+                  <div key={sec.id} className="relative group page-break-inside-avoid">
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                      <span className="font-bold text-slate-700">Rates</span>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
                     </div>
-
-                    <div className="text-slate-600 leading-relaxed text-xs">
-                      {parseInlineFormatting(dayItem.description)}
+                    <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Specially Prepared For</span>
+                        <strong className="text-[#0F3A2E] text-sm sm:text-base font-extrabold block truncate">{clientName || "Valued Traveler"}</strong>
+                        <span className="text-slate-500 text-[11px]">Group Size: {paxCount} {paxCount === 1 ? "Person" : "Persons"}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tour Reference &amp; Date</span>
+                        <strong className="text-slate-800 text-xs sm:text-sm font-bold block font-mono">{quoteRefId}</strong>
+                        <span className="text-slate-500 text-[11px]">Issued: {issueDate}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Travel Season / Batch</span>
+                        <strong className="text-slate-800 text-xs sm:text-sm font-bold block">{customSeason}</strong>
+                        <span className="text-emerald-700 text-[11px] font-semibold">Valid for 15 Days</span>
+                      </div>
+                      <div className="text-left sm:text-right">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Commercial Quotation</span>
+                        <strong className="text-[#FF6B35] text-base sm:text-lg font-extrabold block">₹{totalPrice.toLocaleString("en-IN")}</strong>
+                        <span className="text-slate-500 text-[10px]">(₹{pricePerPerson.toLocaleString("en-IN")} / Person all-inclusive)</span>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
+                );
+              }
 
-            {/* 6. INCLUSIONS & EXCLUSIONS 2-COLUMN TABLE */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 page-break-inside-avoid">
-              {/* Inclusions */}
-              <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 space-y-2.5">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900 border-b border-emerald-200 pb-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-                  <span>Package Inclusions</span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] text-slate-700">
-                  {tour.inclusions && tour.inclusions.length > 0 ? (
-                    tour.inclusions.map((inc: string, i: number) => (
-                      <li key={i} className="flex items-start gap-1.5">
-                        <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                        <span className="flex-1 leading-relaxed">{parseInlineFormatting(inc)}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                        <span>Certified Expedition Leader & Experienced Local Mountain Guides</span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                        <span>All meals during expedition (nutritious vegetarian & egg dishes)</span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                        <span>Dome tents, sub-zero sleeping bags & insulated foam mattresses</span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                        <span>Forest permits, camping fees & environmental entry taxes</span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                        <span>Medical kit, pulse oximeter, and emergency oxygen cylinder</span>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
+              if (sec.id === "title_summary") {
+                return (
+                  <div key={sec.id} className="relative group space-y-2">
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                      <span className="font-bold text-slate-700">Overview</span>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300">
+                        {tour.category || "Himalayan Expedition"}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                        Grade: {tour.difficulty || "Moderate"}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                        {tour.badge || "Verified Route"}
+                      </span>
+                    </div>
 
-              {/* Exclusions */}
-              <div className="bg-rose-50/40 border border-rose-200 rounded-xl p-4 space-y-2.5">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-rose-900 border-b border-rose-200 pb-1.5">
-                  <XCircle className="w-4 h-4 text-rose-600" />
-                  <span>Package Exclusions</span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] text-slate-700">
-                  {tour.exclusions && tour.exclusions.length > 0 ? (
-                    tour.exclusions.map((exc: string, i: number) => (
-                      <li key={i} className="flex items-start gap-1.5">
-                        <span className="text-rose-600 font-bold shrink-0">✕</span>
-                        <span className="flex-1 leading-relaxed">{parseInlineFormatting(exc)}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-rose-600 font-bold shrink-0">✕</span>
-                        <span>Personal trekking gear (backpack, shoes, thermals, gloves)</span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-rose-600 font-bold shrink-0">✕</span>
-                        <span>Personal offloading charges for luggage / mule support</span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-rose-600 font-bold shrink-0">✕</span>
-                        <span>Any personal insurance or medical emergency evacuation costs</span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <span className="text-rose-600 font-bold shrink-0">✕</span>
-                        <span>Any expenses arising from unforeseen weather delays or road blocks</span>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
-            </div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F3A2E] tracking-tight">
+                      {tour.name}
+                    </h1>
 
-            {/* 7. MANDATORY GEAR CHECKLIST & TERMS */}
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2 page-break-inside-avoid">
-              <div className="flex items-center gap-1.5 font-bold text-[#0F3A2E]">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                <span>Safety Protocol & Packing Essentials Checklist</span>
-              </div>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                Trekking shoes with high ankle support & deep grip, warm down jacket (-5°C rating),
-                moisture-wicking base layers, waterproof rain poncho, UV sunglasses (Cat 3/4), personal
-                first-aid kit, 2x reusable water bottles, headlamp with fresh batteries, government ID
-                original, and medical fitness self-declaration.
-              </p>
-            </div>
+                    {tour.tagline && (
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
+                        &ldquo;{tour.tagline}&rdquo;
+                      </p>
+                    )}
+                  </div>
+                );
+              }
 
-            {/* 8. OFFICIAL BANK ACCOUNT, QR CODE & SOCIAL CHANNELS */}
-            <div className="my-6 page-break-inside-avoid">
-              <ItineraryBankingDetails showSocials={true} />
-            </div>
+              if (sec.id === "stats_grid") {
+                return (
+                  <div key={sec.id} className="relative group page-break-inside-avoid">
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                      <span className="font-bold text-slate-700">Stats</span>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                          <Clock className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-semibold block uppercase">Duration</span>
+                          <strong className="text-xs font-bold text-slate-900">{tour.duration}</strong>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                          <Mountain className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-semibold block uppercase">Max Altitude</span>
+                          <strong className="text-xs font-bold text-slate-900">{tour.altitude}</strong>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                          <MapPin className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-semibold block uppercase">Region</span>
+                          <strong className="text-xs font-bold text-slate-900">{tour.region}</strong>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                          <Award className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-semibold block uppercase">Pickup &amp; Drop</span>
+                          <strong className="text-xs font-bold text-slate-900 truncate block max-w-[130px]">
+                            {tour.pickupPoint || tour.location}
+                          </strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (sec.id === "custom_notes") {
+                if (!customNotes) return null;
+                return (
+                  <div key={sec.id} className="p-3.5 bg-amber-50/80 rounded-xl border border-amber-200 text-xs text-amber-950 flex items-start gap-2.5 page-break-inside-avoid relative group">
+                    <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <strong className="block font-bold">Seasonal Custom Advisory &amp; Inclusions:</strong>
+                      <span className="mt-0.5 block leading-relaxed">{customNotes}</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (sec.id === "route_map") {
+                return (
+                  <div key={sec.id} className="pt-1 page-break-inside-avoid relative group">
+                    <div className="no-print absolute top-0 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                      <span className="font-bold text-slate-700">Route Map</span>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="w-3 h-3" /></button>
+                    </div>
+                    <ItineraryRouteMap
+                      itinerary={pdfDays}
+                      destination={tour.name}
+                      pickupLocation={tour.pickupPoint || tour.pickupDrop}
+                      dropLocation={tour.pickupPoint || tour.pickupDrop}
+                    />
+                  </div>
+                );
+              }
+
+              if (sec.id === "itinerary_days") {
+                return (
+                  <div key={sec.id} className="space-y-3 pt-2 relative group">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                      <h2 className="text-sm sm:text-base font-extrabold text-[#0F3A2E] flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-[#FF6B35]" />
+                        <span>Comprehensive Day-by-Day Expedition Schedule</span>
+                      </h2>
+                      <div className="flex items-center gap-2">
+                        <span className="no-print text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200 flex items-center gap-1">
+                          <GripVertical className="w-3 h-3 text-emerald-600" />
+                          <span>Drag cards to reorder days</span>
+                        </span>
+                        <span className="text-xs font-bold text-slate-500">
+                          {pdfDays.length} Scheduled Days
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3.5">
+                      {pdfDays.map((dayItem: TrekItineraryDay, index: number) => (
+                        <div
+                          key={dayItem.day || index}
+                          draggable
+                          onDragStart={() => setDraggedDayIndex(index)}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={() => {
+                            if (draggedDayIndex !== null && draggedDayIndex !== index) {
+                              moveDay(draggedDayIndex, index);
+                              setDraggedDayIndex(null);
+                            }
+                          }}
+                          onDragEnd={() => setDraggedDayIndex(null)}
+                          className={`p-3.5 sm:p-4 rounded-xl border transition-all page-break-inside-avoid text-xs relative group ${
+                            draggedDayIndex === index
+                              ? "opacity-40 border-emerald-500 bg-emerald-50/50 border-dashed ring-2 ring-emerald-500/30"
+                              : "border-slate-200 bg-slate-50/50 hover:border-slate-300"
+                          }`}
+                        >
+                          {/* Screen Only: Drag Handle & Move Controls */}
+                          <div className="no-print absolute top-2.5 right-2.5 flex items-center gap-1 bg-white/95 shadow-2xs border border-slate-200 rounded-lg p-0.5 z-10 opacity-70 group-hover:opacity-100 transition-opacity">
+                            <button
+                              type="button"
+                              onClick={() => moveDay(index, index - 1)}
+                              disabled={index === 0}
+                              title="Move Day Earlier"
+                              className="p-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-20 cursor-pointer"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveDay(index, index + 1)}
+                              disabled={index === pdfDays.length - 1}
+                              title="Move Day Later"
+                              className="p-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-20 cursor-pointer"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                            <div
+                              title="Drag to reorder day"
+                              className="p-1 text-slate-400 hover:text-emerald-700 cursor-grab active:cursor-grabbing rounded hover:bg-slate-100 transition-colors"
+                            >
+                              <GripVertical className="w-4 h-4" />
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1.5 border-b border-slate-200/60 pr-20 sm:pr-24">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shrink-0 border border-white ring-1 ring-[#0F3A2E]/20 shadow-xs select-none">
+                                <span className="text-[7px] font-bold uppercase leading-none">Day</span>
+                                <span className="text-[11px] font-black leading-none mt-0.5">{dayItem.day}</span>
+                              </div>
+                              <strong className="text-xs sm:text-sm font-extrabold text-slate-900">
+                                {dayItem.title}
+                              </strong>
+                            </div>
+
+                            {/* Day Stats Pills */}
+                            <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-600 sm:justify-end">
+                              {dayItem.distance && (
+                                <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-medium">
+                                  📏 {dayItem.distance}
+                                </span>
+                              )}
+                              {dayItem.altitude && (
+                                <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-medium">
+                                  🏔️ {dayItem.altitude}
+                                </span>
+                              )}
+                              {dayItem.stay && (
+                                <span className="bg-emerald-50 text-emerald-900 border border-emerald-200 px-2 py-0.5 rounded-md font-medium">
+                                  ⛺ {dayItem.stay}
+                                </span>
+                              )}
+                              {dayItem.meal && (
+                                <span className="bg-amber-50 text-amber-900 border border-amber-200 px-2 py-0.5 rounded-md font-medium">
+                                  🍽️ {dayItem.meal}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="text-slate-600 leading-relaxed text-xs">
+                            {parseInlineFormatting(dayItem.description)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              if (sec.id === "inclusions_exclusions") {
+                return (
+                  <div key={sec.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 page-break-inside-avoid relative group">
+                    {/* Inclusions */}
+                    <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 space-y-2.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900 border-b border-emerald-200 pb-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                        <span>Package Inclusions</span>
+                      </div>
+                      <ul className="space-y-1.5 text-[11px] text-slate-700">
+                        {tour.inclusions && tour.inclusions.length > 0 ? (
+                          tour.inclusions.map((inc: string, i: number) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                              <span className="flex-1 leading-relaxed">{parseInlineFormatting(inc)}</span>
+                            </li>
+                          ))
+                        ) : (
+                          <>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                              <span>Certified Expedition Leader &amp; Experienced Local Mountain Guides</span>
+                            </li>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                              <span>All meals during expedition (nutritious vegetarian &amp; egg dishes)</span>
+                            </li>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                              <span>Dome tents, sub-zero sleeping bags &amp; insulated foam mattresses</span>
+                            </li>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                              <span>Forest permits, camping fees &amp; environmental entry taxes</span>
+                            </li>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                              <span>Medical kit, pulse oximeter, and emergency oxygen cylinder</span>
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+
+                    {/* Exclusions */}
+                    <div className="bg-rose-50/40 border border-rose-200 rounded-xl p-4 space-y-2.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-rose-900 border-b border-rose-200 pb-1.5">
+                        <XCircle className="w-4 h-4 text-rose-600" />
+                        <span>Package Exclusions</span>
+                      </div>
+                      <ul className="space-y-1.5 text-[11px] text-slate-700">
+                        {tour.exclusions && tour.exclusions.length > 0 ? (
+                          tour.exclusions.map((exc: string, i: number) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-rose-600 font-bold shrink-0">✕</span>
+                              <span className="flex-1 leading-relaxed">{parseInlineFormatting(exc)}</span>
+                            </li>
+                          ))
+                        ) : (
+                          <>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-rose-600 font-bold shrink-0">✕</span>
+                              <span>Personal trekking gear (backpack, shoes, thermals, gloves)</span>
+                            </li>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-rose-600 font-bold shrink-0">✕</span>
+                              <span>Personal offloading charges for luggage / mule support</span>
+                            </li>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-rose-600 font-bold shrink-0">✕</span>
+                              <span>Any personal insurance or medical emergency evacuation costs</span>
+                            </li>
+                            <li className="flex items-start gap-1.5">
+                              <span className="text-rose-600 font-bold shrink-0">✕</span>
+                              <span>Any expenses arising from unforeseen weather delays or road blocks</span>
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (sec.id === "gear_checklist") {
+                return (
+                  <div key={sec.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2 page-break-inside-avoid relative group">
+                    <div className="flex items-center gap-1.5 font-bold text-[#0F3A2E]">
+                      <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                      <span>Safety Protocol &amp; Packing Essentials Checklist</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Trekking shoes with high ankle support &amp; deep grip, warm down jacket (-5°C rating),
+                      moisture-wicking base layers, waterproof rain poncho, UV sunglasses (Cat 3/4), personal
+                      first-aid kit, 2x reusable water bottles, headlamp with fresh batteries, government ID
+                      original, and medical fitness self-declaration.
+                    </p>
+                  </div>
+                );
+              }
+
+              if (sec.id === "banking_details") {
+                return (
+                  <div key={sec.id} className="my-6 page-break-inside-avoid relative group">
+                    <ItineraryBankingDetails showSocials={true} />
+                  </div>
+                );
+              }
+
+              return null;
+            })}
 
             {/* 9. FOOTER WITH AUTHORIZED SIGNATORY STAMP & CONTACT */}
             <div className="pt-6 border-t-2 border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs page-break-inside-avoid">

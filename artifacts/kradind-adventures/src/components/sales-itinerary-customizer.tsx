@@ -26,6 +26,7 @@ import {
   Printer,
   ChevronDown,
   ChevronUp,
+  GripVertical,
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
@@ -173,6 +174,37 @@ export function SalesItineraryCustomizer({
     const filtered = days.filter((_, i) => i !== index);
     const renumbered = filtered.map((d, i) => ({ ...d, day: i + 1 }));
     setDays(renumbered);
+  };
+
+  const [draggedDayIndex, setDraggedDayIndex] = useState<number | null>(null);
+
+  const moveDay = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= days.length) return;
+    const reordered = [...days];
+    const [moved] = reordered.splice(index, 1);
+    reordered.splice(targetIndex, 0, moved);
+    setDays(reordered.map((d, i) => ({ ...d, day: i + 1 })));
+  };
+
+  const handleDragDayStart = (e: React.DragEvent, index: number) => {
+    setDraggedDayIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragDayOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDropDay = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedDayIndex === null || draggedDayIndex === dropIndex) return;
+    const reordered = [...days];
+    const [moved] = reordered.splice(draggedDayIndex, 1);
+    reordered.splice(dropIndex, 0, moved);
+    setDays(reordered.map((d, i) => ({ ...d, day: i + 1 })));
+    setDraggedDayIndex(null);
   };
 
   const handleResetDays = () => {
@@ -519,13 +551,60 @@ export function SalesItineraryCustomizer({
                   </div>
                 </div>
 
+                <div className="flex items-center justify-between text-[11px] text-slate-500 bg-emerald-50/60 border border-emerald-100 rounded-xl px-3 py-1.5">
+                  <span className="flex items-center gap-1.5 font-medium text-emerald-800">
+                    <GripVertical className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Drag items to reorder days or use ↑ / ↓ buttons (Day numbers auto-update)</span>
+                  </span>
+                  <span className="font-semibold text-emerald-700">{days.length} Days</span>
+                </div>
+
                 <div className="space-y-3">
                   {days.map((d, index) => (
                     <div
                       key={index}
-                      className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 bg-slate-50/60 space-y-3"
+                      draggable
+                      onDragStart={(e) => handleDragDayStart(e, index)}
+                      onDragOver={(e) => handleDragDayOver(e, index)}
+                      onDrop={(e) => handleDropDay(e, index)}
+                      onDragEnd={() => setDraggedDayIndex(null)}
+                      className={`p-3.5 sm:p-4 rounded-2xl border transition-all space-y-3 ${
+                        draggedDayIndex === index
+                          ? "border-emerald-500 bg-emerald-50/50 opacity-60 shadow-md ring-2 ring-emerald-500/30"
+                          : "border-slate-200 bg-slate-50/60 hover:border-slate-300"
+                      }`}
                     >
                       <div className="flex items-center justify-between gap-2">
+                        {/* Drag Handle */}
+                        <div
+                          className="p-1.5 text-slate-400 hover:text-slate-700 cursor-grab active:cursor-grabbing hover:bg-slate-200/60 rounded-lg transition shrink-0"
+                          title="Drag to reorder day"
+                        >
+                          <GripVertical className="w-4 h-4" />
+                        </div>
+
+                        {/* Move Up/Down Controls */}
+                        <div className="flex flex-col -space-y-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => moveDay(index, "up")}
+                            disabled={index === 0}
+                            title="Move Day Up"
+                            className="p-0.5 text-slate-400 hover:text-emerald-700 disabled:opacity-20 disabled:hover:text-slate-400 transition cursor-pointer"
+                          >
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveDay(index, "down")}
+                            disabled={index === days.length - 1}
+                            title="Move Day Down"
+                            className="p-0.5 text-slate-400 hover:text-emerald-700 disabled:opacity-20 disabled:hover:text-slate-400 transition cursor-pointer"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
                         <div className="flex items-center gap-2 flex-1">
                           <div className="w-10 h-10 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shrink-0 border border-white ring-2 ring-[#0F3A2E]/20 shadow-xs select-none">
                             <span className="text-[8px] font-bold uppercase leading-none">Day</span>

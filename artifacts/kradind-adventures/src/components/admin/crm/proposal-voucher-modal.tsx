@@ -26,6 +26,10 @@ import {
   DoorClosed,
   Download,
   Loader2,
+  GripVertical,
+  ChevronUp,
+  ChevronDown,
+  RotateCcw,
 } from "lucide-react";
 import { CustomerItineraryProposal } from "@/lib/cms-store";
 import { ItineraryRouteMap } from "@/components/itinerary-route-map";
@@ -46,7 +50,50 @@ export function ProposalVoucherModal({
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [itineraryDays, setItineraryDays] = useState<any[]>([]);
+  const [draggedDayIdx, setDraggedDayIdx] = useState<number | null>(null);
   const printAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (proposal?.itinerary) {
+      setItineraryDays(proposal.itinerary);
+    }
+  }, [proposal]);
+
+  const moveProposalDay = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= itineraryDays.length) return;
+    const reordered = [...itineraryDays];
+    const [moved] = reordered.splice(index, 1);
+    reordered.splice(targetIndex, 0, moved);
+    setItineraryDays(reordered.map((d, i) => ({ ...d, day: i + 1 })));
+  };
+
+  const handleDragDayStart = (e: React.DragEvent, index: number) => {
+    setDraggedDayIdx(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragDayOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDropDay = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedDayIdx === null || draggedDayIdx === dropIndex) return;
+    const reordered = [...itineraryDays];
+    const [moved] = reordered.splice(draggedDayIdx, 1);
+    reordered.splice(dropIndex, 0, moved);
+    setItineraryDays(reordered.map((d, i) => ({ ...d, day: i + 1 })));
+    setDraggedDayIdx(null);
+  };
+
+  const handleResetDays = () => {
+    if (proposal?.itinerary) {
+      setItineraryDays(proposal.itinerary);
+    }
+  };
 
   const handleDownloadPdf = async () => {
     if (!printAreaRef.current || !proposal) return;
@@ -475,7 +522,7 @@ KRADIND Adventures | Himalayas & Beyond
           {/* Itinerary Route Flow Map */}
           <div className="mb-6 page-break-avoid">
             <ItineraryRouteMap
-              itinerary={proposal.itinerary || []}
+              itinerary={itineraryDays.length > 0 ? itineraryDays : (proposal.itinerary || [])}
               destination={proposal.destination}
               pickupLocation={proposal.pickupLocation}
               dropLocation={proposal.dropLocation}
@@ -485,20 +532,75 @@ KRADIND Adventures | Himalayas & Beyond
           {/* Detailed Day-by-Day Itinerary */}
           <div className="mb-8">
             <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-900 pb-2 mb-4 border-b border-slate-200 flex items-center justify-between page-break-avoid">
-              <span>Day-by-Day Customized Itinerary</span>
-              <span className="text-xs font-semibold text-slate-500">
-                {proposal.itinerary?.length || 0} Scheduled Days
+              <span className="flex items-center gap-2">
+                <span>Day-by-Day Customized Itinerary</span>
+                <span className="no-print text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <GripVertical className="w-3 h-3" />
+                  Drag items to reorder
+                </span>
               </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-slate-500">
+                  {itineraryDays.length} Scheduled Days
+                </span>
+                <button
+                  type="button"
+                  onClick={handleResetDays}
+                  className="no-print p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition cursor-pointer"
+                  title="Reset to Original Days Order"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </h2>
 
             <div className="space-y-4">
-              {proposal.itinerary?.map((day, idx) => (
+              {itineraryDays.map((day, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 transition-colors shadow-2xs page-break-avoid print:border-slate-300"
+                  draggable
+                  onDragStart={(e) => handleDragDayStart(e, idx)}
+                  onDragOver={(e) => handleDragDayOver(e, idx)}
+                  onDrop={(e) => handleDropDay(e, idx)}
+                  onDragEnd={() => setDraggedDayIdx(null)}
+                  className={`p-4 rounded-2xl border transition-all shadow-2xs page-break-avoid ${
+                    draggedDayIdx === idx
+                      ? "border-emerald-500 bg-emerald-50/50 opacity-60 shadow-md ring-2 ring-emerald-500/30"
+                      : "border-slate-200 bg-white hover:border-slate-300 print:border-slate-300"
+                  }`}
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2.5">
+                      {/* Drag Handle & Move Buttons (Screen Only) */}
+                      <div className="no-print flex items-center gap-0.5">
+                        <div
+                          className="p-1 text-slate-400 hover:text-slate-700 cursor-grab active:cursor-grabbing hover:bg-slate-100 rounded-md transition"
+                          title="Drag to reorder day"
+                        >
+                          <GripVertical className="w-4 h-4" />
+                        </div>
+                        <div className="flex flex-col -space-y-1">
+                          <button
+                            type="button"
+                            onClick={() => moveProposalDay(idx, "up")}
+                            disabled={idx === 0}
+                            title="Move Day Up"
+                            className="p-0.5 text-slate-400 hover:text-emerald-700 disabled:opacity-20 transition cursor-pointer"
+                          >
+                            <ChevronUp className="w-3 h-3" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveProposalDay(idx, "down")}
+                            disabled={idx === itineraryDays.length - 1}
+                            title="Move Day Down"
+                            className="p-0.5 text-slate-400 hover:text-emerald-700 disabled:opacity-20 transition cursor-pointer"
+                          >
+                            <ChevronDown className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
                       <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-extrabold text-xs flex items-center justify-center shrink-0 print:bg-slate-900 print:text-white">
                         D{day.day || idx + 1}
                       </span>

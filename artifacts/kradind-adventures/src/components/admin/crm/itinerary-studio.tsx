@@ -38,6 +38,7 @@ import {
   X,
   Shield,
   Download,
+  GripVertical,
 } from "lucide-react";
 import type {
   CustomerItineraryProposal,
@@ -185,6 +186,7 @@ export function ItineraryStudio({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
   const [newInclusion, setNewInclusion] = useState("");
   const [newExclusion, setNewExclusion] = useState("");
+  const [draggedStudioDayIdx, setDraggedStudioDayIdx] = useState<number | null>(null);
 
   // Accommodation, Room Category & Vehicle Type dynamic lists
   const [accommodationCategories, setAccommodationCategories] = useState<string[]>([
@@ -1937,12 +1939,39 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
               {formData.itinerary.map((day, idx) => (
                 <div
                   key={idx}
-                  className="bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:shadow-md transition duration-300 overflow-hidden"
+                  draggable
+                  onDragStart={(e) => {
+                    setDraggedStudioDayIdx(idx);
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (draggedStudioDayIdx !== null && draggedStudioDayIdx !== idx) {
+                      handleMoveDay(draggedStudioDayIdx, idx);
+                    }
+                    setDraggedStudioDayIdx(null);
+                  }}
+                  onDragEnd={() => setDraggedStudioDayIdx(null)}
+                  className={`bg-white border rounded-2xl shadow-xs transition duration-300 overflow-hidden ${
+                    draggedStudioDayIdx === idx
+                      ? "border-emerald-500 bg-emerald-50/50 opacity-60 shadow-md ring-2 ring-emerald-500/30"
+                      : "border-slate-200/90 hover:shadow-md"
+                  }`}
                 >
                   <div className="p-5 sm:p-6 space-y-4">
                     {/* Top Header: Day Badge & Action Controls */}
                     <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
                       <div className="flex items-center gap-2">
+                        <div
+                          className="p-1 text-slate-400 hover:text-slate-700 cursor-grab active:cursor-grabbing hover:bg-slate-100 rounded-md transition"
+                          title="Drag to reorder day"
+                        >
+                          <GripVertical className="w-4 h-4" />
+                        </div>
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
                           <Calendar className="w-3.5 h-3.5 text-emerald-600" />
                           Day {day.day || idx + 1} Schedule

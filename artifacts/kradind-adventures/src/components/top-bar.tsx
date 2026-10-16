@@ -99,6 +99,7 @@ export function TopBar({
               className="text-white font-bold hover:bg-white/20 bg-white/10 px-2 py-0.5 rounded text-[10px] sm:text-xs transition cursor-pointer"
               title="Switch Currency"
               aria-label="Switch Currency between INR and USD"
+              suppressHydrationWarning
             >
               {currency === "INR" ? "₹ INR" : "$ USD"}
             </button>

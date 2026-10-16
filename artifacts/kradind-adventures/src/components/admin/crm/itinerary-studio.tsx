@@ -39,6 +39,7 @@ import {
   Shield,
   Download,
   GripVertical,
+  Edit3,
 } from "lucide-react";
 import type {
   CustomerItineraryProposal,
@@ -65,6 +66,50 @@ export function cleanAsterisks(text?: string): string {
     .replace(/(^|\n)\s*\*\s+/g, "$1• ")
     .replace(/\*/g, "")
     .trim();
+}
+
+/**
+ * Route transit extractor from title (e.g. "Rishikesh to Chopta" -> { from: "Rishikesh", to: "Chopta" })
+ */
+function parseTransitRoute(title: string): { from: string; to: string } | null {
+  const transitMatch = (title || "").match(/^(.+?)\s+(?:to|➔|->|–)\s+(.+?)(?:\s*\|.*)?$/i);
+  if (transitMatch && transitMatch[1].length < 35 && transitMatch[2].length < 35) {
+    return { from: transitMatch[1].trim(), to: transitMatch[2].trim() };
+  }
+  return null;
+}
+
+/**
+ * Auto-detect experience & terrain tags for rich client view
+ */
+function getTerrainTags(title: string, desc: string) {
+  const combined = ((title || "") + " " + (desc || "")).toLowerCase();
+  const tags: { label: string; icon: string; bg: string; text: string }[] = [];
+  if (combined.includes("flower") || combined.includes("flora") || combined.includes("rhododendron")) {
+    tags.push({ label: "Alpine Wildflowers", icon: "🌸", bg: "bg-rose-50 border-rose-200", text: "text-rose-800" });
+  }
+  if (combined.includes("stream") || combined.includes("river") || combined.includes("crossing")) {
+    tags.push({ label: "Glacial Streams", icon: "🌊", bg: "bg-cyan-50 border-cyan-200", text: "text-cyan-800" });
+  }
+  if (combined.includes("pass") || combined.includes("summit") || combined.includes("peak") || combined.includes("crest")) {
+    tags.push({ label: "High Mountain Pass", icon: "🏔️", bg: "bg-indigo-50 border-indigo-200", text: "text-indigo-800" });
+  }
+  if (combined.includes("meadow") || combined.includes("bugyal") || combined.includes("valley")) {
+    tags.push({ label: "Alpine Meadows", icon: "🌿", bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-800" });
+  }
+  if (combined.includes("rock") || combined.includes("boulder") || combined.includes("moraine")) {
+    tags.push({ label: "Moraine Trail", icon: "🪨", bg: "bg-amber-50 border-amber-200", text: "text-amber-800" });
+  }
+  if (combined.includes("lake") || combined.includes("tarn") || combined.includes("chandratal")) {
+    tags.push({ label: "Glacial Lake", icon: "💎", bg: "bg-blue-50 border-blue-200", text: "text-blue-800" });
+  }
+  if (combined.includes("drive") || combined.includes("transit") || combined.includes("road")) {
+    tags.push({ label: "Mountain Transit", icon: "🚙", bg: "bg-teal-50 border-teal-200", text: "text-teal-800" });
+  }
+  if (combined.includes("camp") || combined.includes("tent") || combined.includes("campsite")) {
+    tags.push({ label: "Wilderness Camp", icon: "⛺", bg: "bg-purple-50 border-purple-200", text: "text-purple-800" });
+  }
+  return tags.slice(0, 4);
 }
 
 export const POPULAR_HOTEL_DIRECTORY = [
@@ -227,6 +272,7 @@ export function ItineraryStudio({
   const [isEditingAccommodation, setIsEditingAccommodation] = useState(false);
   const [isEditingRoom, setIsEditingRoom] = useState(false);
   const [isEditingVehicle, setIsEditingVehicle] = useState(false);
+  const [studioViewMode, setStudioViewMode] = useState<"edit" | "preview">("edit");
 
   // Modal / prompt for adding custom item to backend
   const [showAddOptionModal, setShowAddOptionModal] = useState<
@@ -1913,43 +1959,82 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
               </p>
             </div>
 
-            {/* Quick Duration Trimmer / Extender Toolbar */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-bold text-slate-500 mr-1">Quick Duration:</span>
-              {[3, 4, 5, 6, 7, 8].map((daysCount) => (
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* View Mode Toggle: Edit Mode vs Live Client View */}
+              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
                 <button
-                  key={daysCount}
                   type="button"
-                  onClick={() => handleTrimOrExtendDays(daysCount)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer border ${
-                    formData.itinerary.length === daysCount
-                      ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
-                      : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+                  onClick={() => setStudioViewMode("edit")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    studioViewMode === "edit"
+                      ? "bg-white text-emerald-800 shadow-xs border border-slate-200"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
-                  title={`Adjust schedule to ${daysCount} Days`}
                 >
-                  {daysCount}D
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>✏️ Day Editor</span>
                 </button>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => setStudioViewMode("preview")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    studioViewMode === "preview"
+                      ? "bg-[#0F3A2E] text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>👁️ Live Client View</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onPreview(formData)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-xs hover:from-emerald-700 hover:to-teal-800 active:scale-95"
+                  title="Generate & Download Official Domestic PDF Itinerary (Same as Domestic Packages)"
+                >
+                  <FileText className="w-3.5 h-3.5 text-emerald-200" />
+                  <span>📄 Domestic PDF</span>
+                </button>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => handleTrimOrExtendDays(Math.max(1, formData.itinerary.length - 1))}
-                disabled={formData.itinerary.length <= 1}
-                className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 disabled:opacity-30 text-rose-700 text-xs font-bold border border-rose-200 transition cursor-pointer"
-                title="Trim last day (- 1 Day)"
-              >
-                - 1D
-              </button>
-              <button
-                type="button"
-                onClick={handleAddDay}
-                className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
-                title="Add day (+ 1 Day)"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>+ 1D</span>
-              </button>
+              {/* Quick Duration Trimmer / Extender Toolbar */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] font-bold text-slate-500 mr-1">Quick Duration:</span>
+                {[3, 4, 5, 6, 7, 8].map((daysCount) => (
+                  <button
+                    key={daysCount}
+                    type="button"
+                    onClick={() => handleTrimOrExtendDays(daysCount)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer border ${
+                      formData.itinerary.length === daysCount
+                        ? "bg-[#0F3A2E] text-white border-[#0F3A2E] shadow-xs"
+                        : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+                    }`}
+                    title={`Adjust schedule to ${daysCount} Days`}
+                  >
+                    {daysCount}D
+                  </button>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => handleTrimOrExtendDays(Math.max(1, formData.itinerary.length - 1))}
+                  disabled={formData.itinerary.length <= 1}
+                  className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 disabled:opacity-30 text-rose-700 text-xs font-bold border border-rose-200 transition cursor-pointer"
+                  title="Trim last day (- 1 Day)"
+                >
+                  - 1D
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddDay}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                  title="Add day (+ 1 Day)"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ 1D</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1968,6 +2053,153 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
               <Calendar className="w-8 h-8 mx-auto text-slate-300" />
               <p className="font-semibold text-slate-500">No itinerary days added yet.</p>
               <p className="text-slate-400">Choose a package template above or click &ldquo;Add Day&rdquo; below to start building.</p>
+            </div>
+          ) : studioViewMode === "preview" ? (
+            /* Live Client View - Exactly Matches Client Detail Page Timeline */
+            <div className="relative space-y-6 before:absolute before:inset-0 before:left-[23px] sm:before:left-[27px] before:w-[3px] before:bg-gradient-to-b before:from-emerald-500 before:via-[#0F3A2E] before:to-emerald-400 before:rounded-full before:opacity-30 pt-2 pb-2">
+              {formData.itinerary.map((d, idx) => {
+                const transit = parseTransitRoute(d.title);
+                const tags = getTerrainTags(d.title, d.description);
+                const hotelDisplayName = d.hotelName || d.stay;
+
+                return (
+                  <div key={idx} className="relative flex items-start gap-4 sm:gap-6 group">
+                    {/* Circular Day Badge Centered on Vertical Line */}
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shadow-md border-2 border-white ring-4 ring-[#0F3A2E]/15 shrink-0 z-10 select-none">
+                      <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider leading-none">
+                        Day
+                      </span>
+                      <span className="text-sm sm:text-base font-black leading-none mt-0.5">
+                        {d.day}
+                      </span>
+                    </div>
+
+                    {/* Day Content Card */}
+                    <div className="flex-1 min-w-0 bg-white border border-slate-200/90 rounded-2xl shadow-xs p-5 sm:p-6 space-y-3.5 hover:shadow-md transition duration-300">
+                      {/* Top Header: Day Badge & Route Transit */}
+                      <div className="flex flex-wrap items-center justify-between gap-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
+                            <Calendar className="w-3 h-3 text-emerald-600" />
+                            Day {d.day} Schedule
+                          </span>
+                          {transit && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/80">
+                              <span>{transit.from}</span>
+                              <ArrowRight className="w-3 h-3 text-slate-400" />
+                              <span className="font-bold text-slate-900">{transit.to}</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          {hotelDisplayName && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-800 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200/80">
+                              <Building2 className="w-3 h-3 text-blue-600" />
+                              <span>{hotelDisplayName}</span>
+                              {d.roomType && <span className="text-blue-500 font-normal">({d.roomType})</span>}
+                              {d.mealPlan && (
+                                <span className="bg-blue-200/70 text-blue-900 text-[9px] px-1.5 py-0.5 rounded font-black ml-1">
+                                  {d.mealPlan}
+                                </span>
+                              )}
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setStudioViewMode("edit")}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition border border-slate-200 cursor-pointer"
+                            title="Switch to editor to customize this day"
+                          >
+                            <Edit3 className="w-3 h-3" />
+                            <span>Edit Day</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="text-base sm:text-lg font-extrabold text-slate-900 brand-font leading-snug">
+                        {d.title}
+                      </h4>
+
+                      {/* 4-Item Metric Ribbon */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 pt-1">
+                        {/* Duration */}
+                        <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                            <Clock className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block text-[10px] font-bold uppercase tracking-wider text-amber-600">Duration</span>
+                            <span className="block text-xs sm:text-sm font-extrabold text-amber-950 truncate">
+                              {d.duration || "Day Activity"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Distance */}
+                        <div className="bg-purple-50/80 border border-purple-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                            <Milestone className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block text-[10px] font-bold uppercase tracking-wider text-purple-600">Distance</span>
+                            <span className="block text-xs sm:text-sm font-extrabold text-purple-950 truncate">
+                              {d.distance || "Scenic Route"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Altitude */}
+                        <div className="bg-sky-50/80 border border-sky-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
+                            <Mountain className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block text-[10px] font-bold uppercase tracking-wider text-sky-600">Elevation</span>
+                            <span className="block text-xs sm:text-sm font-extrabold text-sky-950 truncate">
+                              {d.altitude || "Alpine Trail"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Meals */}
+                        <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <Utensils className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-600">Meals</span>
+                            <span className="block text-xs sm:text-sm font-extrabold text-emerald-950 truncate">
+                              {d.meal || "Included"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Experience Tags */}
+                      {tags.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                          {tags.map((tag, tIdx) => (
+                            <span
+                              key={tIdx}
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${tag.bg} ${tag.text}`}
+                            >
+                              <span>{tag.icon}</span>
+                              <span>{tag.label}</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Description */}
+                      <div className="text-slate-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line pt-1">
+                        {d.description}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="space-y-4">
@@ -2556,10 +2788,11 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
               <button
                 type="button"
                 onClick={() => onPreview(formData)}
-                className="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-extrabold flex items-center gap-2 transition-colors shadow-xs"
+                className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-white text-xs font-black flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+                title="Preview & Download Official Domestic Tour Itinerary PDF (Same as Website Domestic Trips)"
               >
-                <Printer className="w-4 h-4 text-[#FF6B35]" />
-                <span>Printable Voucher</span>
+                <Download className="w-4 h-4 text-emerald-300" />
+                <span>📄 Domestic PDF Itinerary</span>
               </button>
 
               <button

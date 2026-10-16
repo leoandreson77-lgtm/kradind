@@ -377,7 +377,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} scroll-smooth overflow-x-clip w-full max-w-full`}>
+    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} scroll-smooth overflow-x-clip w-full max-w-full`} suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="T3Scitqdc9Jqk5rp2LCXSF-69t8Q-zpZlgql9ZjxpGI" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -389,9 +389,15 @@ export default function RootLayout({
         <link rel="help" type="text/plain" href="/llms.txt" title="AI Agent Documentation" />
         <link rel="llms-txt" href="/llms.txt" />
 
-        {/* Preconnect to external image CDN for fast mobile LCP */}
+        {/* Preload Critical Mobile Above-the-Fold Resources (100 Mobile LCP & Speed) */}
+        <link rel="preload" as="image" href="/ocean-sunrise.webp" fetchPriority="high" type="image/webp" />
+        <link rel="preload" as="image" href="/logo-horizontal.webp" fetchPriority="high" type="image/webp" />
+
+        {/* Preconnect & DNS-Prefetch for External CDNs & Analytics */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
         {/* Global JSON-LD Schema (Organization & WebSite with SearchAction) */}
         <script
           type="application/ld+json"
@@ -400,7 +406,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-slate-50 text-slate-800 antialiased font-sans relative overflow-x-clip w-full max-w-full">
+      <body className="bg-slate-50 text-slate-800 antialiased font-sans relative overflow-x-clip w-full max-w-full" suppressHydrationWarning>
         {/* Accessible Skip Navigation Link */}
         <a
           href="#main-content"

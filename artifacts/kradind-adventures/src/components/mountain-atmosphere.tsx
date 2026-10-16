@@ -456,10 +456,15 @@ export function MountainAtmosphere({
     };
 
     const startTimer = setTimeout(() => {
+      // On mobile (< 768px) or prefers-reduced-motion, skip canvas loop for 0ms Total Blocking Time (TBT = 0)
+      // Hardware-accelerated CSS radial gradients handle ambient lighting smoothly with 0% CPU
+      const isMobile = typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+      if (isMobile) return;
+
       if (isInView && isVisible) {
         animId = requestAnimationFrame(render);
       }
-    }, 250);
+    }, 350);
 
     return () => {
       if (animId) cancelAnimationFrame(animId);

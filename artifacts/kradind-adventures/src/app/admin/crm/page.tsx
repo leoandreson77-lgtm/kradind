@@ -75,7 +75,7 @@ import type {
   CustomerPaymentInstallment,
 } from "@/lib/cms-store";
 import { getPackageSection } from "@/lib/package-sections";
-import { ProposalVoucherModal } from "@/components/admin/crm/proposal-voucher-modal";
+import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 import { ItineraryStudio } from "@/components/admin/crm/itinerary-studio";
 import { SavedProposalsArchive } from "@/components/admin/crm/saved-proposals-archive";
 import { DraftsArchive } from "@/components/admin/crm/drafts-archive";
@@ -5058,12 +5058,61 @@ export default function AdminCRMPage() {
         </div>
       )}
 
-      {/* Printable Branded Proposal Voucher Modal */}
-      <ProposalVoucherModal
-        isOpen={showPreviewModal}
-        onClose={() => setShowPreviewModal(false)}
-        proposal={previewProposal}
-      />
+      {/* Client Itinerary PDF Modal with Logo & Watermark (Same as Domestic & Treks) */}
+      {showPreviewModal && previewProposal && (
+        <ItineraryPdfModal
+          isOpen={showPreviewModal}
+          onClose={() => {
+            setShowPreviewModal(false);
+            setPreviewProposal(null);
+          }}
+          tour={{
+            id: previewProposal.id,
+            name: previewProposal.packageTitle || `${previewProposal.destination || "Holiday"} Tour Circuit`,
+            slug: previewProposal.basePackageSlug || (previewProposal.destination || "custom-package").toLowerCase().replace(/\s+/g, "-"),
+            duration: previewProposal.duration || `${previewProposal.itinerary?.length || 1} Days`,
+            difficulty: "Easy to Moderate",
+            location: previewProposal.destination ? `${previewProposal.destination}, India` : "India",
+            region: previewProposal.destination || "Domestic",
+            pickupPoint: previewProposal.pickupLocation || "Airport / Station Pickup",
+            dropPoint: previewProposal.dropLocation || "Airport / Station Drop",
+            price: previewProposal.totalQuotedPrice || previewProposal.basePricePerPerson || 0,
+            originalPrice: Math.round((previewProposal.totalQuotedPrice || 12000) * 1.25),
+            category: previewProposal.packageType || "Domestic",
+            tagline: `Exclusive Customized Tour Itinerary for ${previewProposal.customerName}`,
+            overview: previewProposal.specialNotes || `Personalized travel itinerary prepared for ${previewProposal.customerName} (${previewProposal.adultsCount} Travelers) by KRADIND Adventures.`,
+            itinerary: (previewProposal.itinerary || []).map((d: any) => ({
+              day: d.day,
+              title: d.title,
+              description: d.description,
+              duration: d.duration || "Full Day",
+              distance: d.distance || "",
+              altitude: d.altitude || "",
+              meal: d.mealPlan ? `${d.mealPlan} (${d.meal || "Included"})` : d.meal || "Included",
+              stay: d.hotelName || d.stay || previewProposal.hotelCategory || "3-Star Hotel",
+            })),
+            inclusions: previewProposal.inclusions || [],
+            exclusions: previewProposal.exclusions || [],
+          }}
+          customClientName={previewProposal.customerName}
+          customPax={previewProposal.adultsCount}
+          customPrice={previewProposal.totalQuotedPrice}
+          customCoordinator={previewProposal.author || "Sales Advisor"}
+          customNotes={previewProposal.specialNotes}
+          customDays={(previewProposal.itinerary || []).map((d: any) => ({
+            day: d.day,
+            title: d.title,
+            description: d.description,
+            duration: d.duration || "Full Day",
+            distance: d.distance || "",
+            altitude: d.altitude || "",
+            meal: d.mealPlan ? `${d.mealPlan} (${d.meal || "Included"})` : d.meal || "Included",
+            stay: d.hotelName || d.stay || previewProposal.hotelCategory || "3-Star Hotel",
+          }))}
+          isDraftProposal={previewProposal.status === "Draft"}
+          showDraftWatermark={false}
+        />
+      )}
     </div>
   );
 }

@@ -36,10 +36,60 @@ import {
   ShieldCheck,
   Eye,
   Share2,
+  Utensils,
+  Milestone,
+  ArrowRight,
+  Edit3,
+  Building2,
+  AlertTriangle,
 } from "lucide-react";
 import { TrekData, TrekItineraryDay } from "@/lib/cms-store";
 import { ItineraryPdfModal } from "@/components/itinerary-pdf-modal";
 import { ItineraryBankingDetails } from "@/components/itinerary-banking-details";
+
+/**
+ * Route transit extractor from title (e.g. "Rishikesh to Chopta" -> { from: "Rishikesh", to: "Chopta" })
+ */
+function parseTransitRoute(title: string): { from: string; to: string } | null {
+  const transitMatch = (title || "").match(/^(.+?)\s+(?:to|➔|->|–)\s+(.+?)(?:\s*\|.*)?$/i);
+  if (transitMatch && transitMatch[1].length < 35 && transitMatch[2].length < 35) {
+    return { from: transitMatch[1].trim(), to: transitMatch[2].trim() };
+  }
+  return null;
+}
+
+/**
+ * Auto-detect experience & terrain tags for rich client view
+ */
+function getTerrainTags(title: string, desc: string) {
+  const combined = ((title || "") + " " + (desc || "")).toLowerCase();
+  const tags: { label: string; icon: string; bg: string; text: string }[] = [];
+  if (combined.includes("flower") || combined.includes("flora") || combined.includes("rhododendron")) {
+    tags.push({ label: "Alpine Wildflowers", icon: "🌸", bg: "bg-rose-50 border-rose-200", text: "text-rose-800" });
+  }
+  if (combined.includes("stream") || combined.includes("river") || combined.includes("crossing")) {
+    tags.push({ label: "Glacial Streams", icon: "🌊", bg: "bg-cyan-50 border-cyan-200", text: "text-cyan-800" });
+  }
+  if (combined.includes("pass") || combined.includes("summit") || combined.includes("peak") || combined.includes("crest")) {
+    tags.push({ label: "High Mountain Pass", icon: "🏔️", bg: "bg-indigo-50 border-indigo-200", text: "text-indigo-800" });
+  }
+  if (combined.includes("meadow") || combined.includes("bugyal") || combined.includes("valley")) {
+    tags.push({ label: "Alpine Meadows", icon: "🌿", bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-800" });
+  }
+  if (combined.includes("rock") || combined.includes("boulder") || combined.includes("moraine")) {
+    tags.push({ label: "Moraine Trail", icon: "🪨", bg: "bg-amber-50 border-amber-200", text: "text-amber-800" });
+  }
+  if (combined.includes("lake") || combined.includes("tarn") || combined.includes("chandratal")) {
+    tags.push({ label: "Glacial Lake", icon: "💎", bg: "bg-blue-50 border-blue-200", text: "text-blue-800" });
+  }
+  if (combined.includes("drive") || combined.includes("transit") || combined.includes("road")) {
+    tags.push({ label: "Mountain Transit", icon: "🚙", bg: "bg-teal-50 border-teal-200", text: "text-teal-800" });
+  }
+  if (combined.includes("camp") || combined.includes("tent") || combined.includes("campsite")) {
+    tags.push({ label: "Wilderness Camp", icon: "⛺", bg: "bg-purple-50 border-purple-200", text: "text-purple-800" });
+  }
+  return tags.slice(0, 4);
+}
 
 export interface SalesCustomizerDraft {
   id: string;
@@ -151,6 +201,7 @@ export function SalesItineraryCustomizer({
   const [isPdfModalOpen, setIsPdfModalOpen] = useState<boolean>(false);
   const [copiedPitch, setCopiedPitch] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"details" | "itinerary" | "export" | "drafts">("details");
+  const [itineraryViewMode, setItineraryViewMode] = useState<"edit" | "preview">("edit");
 
   // Drafts & CRM Integration State
   const [showDraftWatermark, setShowDraftWatermark] = useState<boolean>(true);
@@ -477,6 +528,7 @@ export function SalesItineraryCustomizer({
       day: nextDayNum,
       title: `Day ${nextDayNum}: Scenic Exploration / Acclimatization`,
       description: "Exploration of the alpine vicinity, photography points, and acclimatization walk. Hot local lunch and overnight stay in camp.",
+      duration: "4-5 Hours",
       distance: "4 km",
       altitude: "9,500 Ft",
       stay: "Alpine Tents / Eco Resort",
@@ -1057,25 +1109,54 @@ export function SalesItineraryCustomizer({
               </div>
             )}
 
-            {/* TAB 2: DAY BY DAY EDITOR */}
+            {/* TAB 2: DAY BY DAY EDITOR & LIVE CLIENT VIEW */}
             {activeTab === "itinerary" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
                   <div>
                     <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                       <Calendar className="w-4 h-4 text-[#0F3A2E]" />
                       <span>Customizable Scheduled Itinerary</span>
                     </h3>
                     <p className="text-[11px] text-slate-500 mt-0.5">
-                      Add, remove, or modify daily stops, altitude gains, stays, or sightseeing for this client.
+                      Jaise client ke liye website pe itinerary aati hai, waise hi agent customize &amp; live preview kar sake.
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {/* View Mode Toggle: Edit Mode vs Live Client View */}
+                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => setItineraryViewMode("edit")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                          itineraryViewMode === "edit"
+                            ? "bg-[#0F3A2E] text-white shadow-xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>✏️ Edit Mode</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setItineraryViewMode("preview")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                          itineraryViewMode === "preview"
+                            ? "bg-[#0F3A2E] text-white shadow-xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        <Eye className="w-3.5 h-3.5 text-amber-300" />
+                        <span>👁️ Live Client View</span>
+                      </button>
+                    </div>
+
                     <button
                       type="button"
                       onClick={handleResetDays}
                       className="px-2.5 py-1.5 border border-slate-200 text-slate-600 rounded-xl text-xs font-semibold hover:bg-slate-100 transition flex items-center gap-1 cursor-pointer"
+                      title="Reset to default tour schedule"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Reset</span>
@@ -1083,149 +1164,354 @@ export function SalesItineraryCustomizer({
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-500 bg-emerald-50/60 border border-emerald-100 rounded-xl px-3 py-1.5">
-                  <span className="flex items-center gap-1.5 font-medium text-emerald-800">
-                    <GripVertical className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Drag items to reorder days or use ↑ / ↓ buttons (Day numbers auto-update)</span>
-                  </span>
-                  <span className="font-semibold text-emerald-700">{days.length} Days</span>
-                </div>
-
-                <div className="space-y-3">
-                  {days.map((d, index) => (
-                    <div
-                      key={index}
-                      draggable
-                      onDragStart={(e) => handleDragDayStart(e, index)}
-                      onDragOver={(e) => handleDragDayOver(e, index)}
-                      onDrop={(e) => handleDropDay(e, index)}
-                      onDragEnd={() => setDraggedDayIndex(null)}
-                      className={`p-3.5 sm:p-4 rounded-2xl border transition-all space-y-3 ${
-                        draggedDayIndex === index
-                          ? "border-emerald-500 bg-emerald-50/50 opacity-60 shadow-md ring-2 ring-emerald-500/30"
-                          : "border-slate-200 bg-slate-50/60 hover:border-slate-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        {/* Drag Handle */}
-                        <div
-                          className="p-1.5 text-slate-400 hover:text-slate-700 cursor-grab active:cursor-grabbing hover:bg-slate-200/60 rounded-lg transition shrink-0"
-                          title="Drag to reorder day"
-                        >
-                          <GripVertical className="w-4 h-4" />
-                        </div>
-
-                        {/* Move Up/Down Controls */}
-                        <div className="flex flex-col -space-y-1 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => moveDay(index, "up")}
-                            disabled={index === 0}
-                            title="Move Day Up"
-                            aria-label={`Move Day ${d.day} Up`}
-                            className="p-0.5 text-slate-400 hover:text-emerald-700 disabled:opacity-20 disabled:hover:text-slate-400 transition cursor-pointer"
-                          >
-                            <ChevronUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => moveDay(index, "down")}
-                            disabled={index === days.length - 1}
-                            title="Move Day Down"
-                            aria-label={`Move Day ${d.day} Down`}
-                            className="p-0.5 text-slate-400 hover:text-emerald-700 disabled:opacity-20 disabled:hover:text-slate-400 transition cursor-pointer"
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-
-                        <div className="flex items-center gap-2 flex-1">
-                          <div className="w-10 h-10 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shrink-0 border border-white ring-2 ring-[#0F3A2E]/20 shadow-xs select-none">
-                            <span className="text-[8px] font-bold uppercase leading-none">Day</span>
-                            <span className="text-xs font-black leading-none mt-0.5">{d.day}</span>
-                          </div>
-                          <input
-                            type="text"
-                            value={d.title}
-                            onChange={(e) => handleUpdateDay(index, "title", e.target.value)}
-                            aria-label={`Day ${d.day} title`}
-                            className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
-                            placeholder="Day title"
-                          />
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteDay(index)}
-                          className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
-                          title="Delete Day"
-                          aria-label={`Delete Day ${d.day}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <input
-                          type="text"
-                          value={d.distance || ""}
-                          onChange={(e) => handleUpdateDay(index, "distance", e.target.value)}
-                          placeholder="Distance: e.g. 5 km"
-                          aria-label={`Day ${d.day} distance`}
-                          className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700"
-                        />
-                        <input
-                          type="text"
-                          value={d.altitude || ""}
-                          onChange={(e) => handleUpdateDay(index, "altitude", e.target.value)}
-                          placeholder="Altitude: e.g. 11,200 Ft"
-                          aria-label={`Day ${d.day} altitude`}
-                          className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700"
-                        />
-                        <input
-                          type="text"
-                          value={d.stay || ""}
-                          onChange={(e) => handleUpdateDay(index, "stay", e.target.value)}
-                          placeholder="Stay: e.g. Alpine Camps"
-                          aria-label={`Day ${d.day} stay`}
-                          className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700"
-                        />
-                        <input
-                          type="text"
-                          value={d.meal || ""}
-                          onChange={(e) => handleUpdateDay(index, "meal", e.target.value)}
-                          placeholder="Meal: e.g. All Meals"
-                          aria-label={`Day ${d.day} meal`}
-                          className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700"
-                        />
-                      </div>
-
-                      <textarea
-                        rows={2}
-                        value={d.description}
-                        onChange={(e) => handleUpdateDay(index, "description", e.target.value)}
-                        placeholder="Day route highlights & activities description..."
-                        aria-label={`Day ${d.day} description`}
-                        className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-600 leading-relaxed"
-                      />
+                {itineraryViewMode === "edit" ? (
+                  <>
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 bg-emerald-50/60 border border-emerald-100 rounded-xl px-3 py-1.5">
+                      <span className="flex items-center gap-1.5 font-medium text-emerald-800">
+                        <GripVertical className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Drag cards to reorder days or use ↑ / ↓ buttons (Day numbers auto-update)</span>
+                      </span>
+                      <span className="font-semibold text-emerald-700">{days.length} Days</span>
                     </div>
-                  ))}
-                </div>
 
-                {/* Add Day / Activity Button - At the Bottom */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-200 mt-2">
-                  <span className="text-xs text-slate-500 font-semibold">
-                    Total {days.length} Days / Activities configured
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleAddDay}
-                    className="px-5 py-2.5 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 self-end"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>+ Add Day / Activity {days.length + 1}</span>
-                  </button>
-                </div>
+                    <div className="space-y-4">
+                      {days.map((d, index) => {
+                        const transit = parseTransitRoute(d.title);
+                        return (
+                          <div
+                            key={index}
+                            draggable
+                            onDragStart={(e) => handleDragDayStart(e, index)}
+                            onDragOver={(e) => handleDragDayOver(e, index)}
+                            onDrop={(e) => handleDropDay(e, index)}
+                            onDragEnd={() => setDraggedDayIndex(null)}
+                            className={`p-4 rounded-2xl border transition-all space-y-3.5 ${
+                              draggedDayIndex === index
+                                ? "border-emerald-500 bg-emerald-50/50 opacity-60 shadow-md ring-2 ring-emerald-500/30"
+                                : "border-slate-200 bg-white hover:border-slate-300 shadow-2xs"
+                            }`}
+                          >
+                            {/* Day Card Header */}
+                            <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="p-1 text-slate-400 hover:text-slate-700 cursor-grab active:cursor-grabbing hover:bg-slate-100 rounded-lg transition shrink-0"
+                                  title="Drag to reorder day"
+                                >
+                                  <GripVertical className="w-4 h-4" />
+                                </div>
+                                <div className="w-9 h-9 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shrink-0 border border-white ring-2 ring-[#0F3A2E]/20 shadow-xs select-none">
+                                  <span className="text-[8px] font-bold uppercase leading-none">Day</span>
+                                  <span className="text-xs font-black leading-none mt-0.5">{d.day}</span>
+                                </div>
+                                <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
+                                  Day {d.day} Schedule
+                                </span>
+                                {transit && (
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                                    <span>{transit.from}</span>
+                                    <ArrowRight className="w-3 h-3 text-slate-400" />
+                                    <span className="font-bold text-slate-900">{transit.to}</span>
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => moveDay(index, "up")}
+                                  disabled={index === 0}
+                                  title="Move Day Up"
+                                  className="p-1 rounded-md text-slate-400 hover:text-emerald-700 hover:bg-slate-100 disabled:opacity-20 transition cursor-pointer"
+                                >
+                                  <ChevronUp className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => moveDay(index, "down")}
+                                  disabled={index === days.length - 1}
+                                  title="Move Day Down"
+                                  className="p-1 rounded-md text-slate-400 hover:text-emerald-700 hover:bg-slate-100 disabled:opacity-20 transition cursor-pointer"
+                                >
+                                  <ChevronDown className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteDay(index)}
+                                  className="p-1 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition cursor-pointer"
+                                  title="Delete Day"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Title Input */}
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                                Day Title (e.g. Scenic Himalayan Drive from Rishikesh to Chopta Basecamp)
+                              </label>
+                              <input
+                                type="text"
+                                value={d.title}
+                                onChange={(e) => handleUpdateDay(index, "title", e.target.value)}
+                                placeholder="Day title..."
+                                className="w-full px-3 py-2 bg-slate-50/70 border border-slate-200 rounded-xl text-xs sm:text-sm font-extrabold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                              />
+                            </div>
+
+                            {/* 5-Item Metric Ribbon Inputs */}
+                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-0.5">
+                              {/* Duration */}
+                              <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2 flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                                  <Clock className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[9px] font-bold uppercase tracking-wider text-amber-600">Duration</span>
+                                  <input
+                                    type="text"
+                                    value={d.duration || ""}
+                                    onChange={(e) => handleUpdateDay(index, "duration", e.target.value)}
+                                    placeholder="5-6 Hours"
+                                    className="w-full bg-transparent text-[11px] font-bold text-amber-950 focus:outline-none placeholder-amber-400/70"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Distance */}
+                              <div className="bg-purple-50/80 border border-purple-200/80 rounded-xl p-2 flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                                  <Milestone className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[9px] font-bold uppercase tracking-wider text-purple-600">Distance</span>
+                                  <input
+                                    type="text"
+                                    value={d.distance || ""}
+                                    onChange={(e) => handleUpdateDay(index, "distance", e.target.value)}
+                                    placeholder="6 km Trek"
+                                    className="w-full bg-transparent text-[11px] font-bold text-purple-950 focus:outline-none placeholder-purple-400/70"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Altitude */}
+                              <div className="bg-sky-50/80 border border-sky-200/80 rounded-xl p-2 flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
+                                  <Mountain className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[9px] font-bold uppercase tracking-wider text-sky-600">Altitude</span>
+                                  <input
+                                    type="text"
+                                    value={d.altitude || ""}
+                                    onChange={(e) => handleUpdateDay(index, "altitude", e.target.value)}
+                                    placeholder="10,500 Ft"
+                                    className="w-full bg-transparent text-[11px] font-bold text-sky-950 focus:outline-none placeholder-sky-400/70"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Meals */}
+                              <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-2 flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                  <Utensils className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[9px] font-bold uppercase tracking-wider text-emerald-600">Meals</span>
+                                  <input
+                                    type="text"
+                                    value={d.meal || ""}
+                                    onChange={(e) => handleUpdateDay(index, "meal", e.target.value)}
+                                    placeholder="B, L, D"
+                                    className="w-full bg-transparent text-[11px] font-bold text-emerald-950 focus:outline-none placeholder-emerald-400/70"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Stay / Hotel */}
+                              <div className="bg-blue-50/80 border border-blue-200/80 rounded-xl p-2 flex items-center gap-2 col-span-2 sm:col-span-1">
+                                <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                                  <Building2 className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <span className="block text-[9px] font-bold uppercase tracking-wider text-blue-600">Stay / Camp</span>
+                                  <input
+                                    type="text"
+                                    value={d.stay || ""}
+                                    onChange={(e) => handleUpdateDay(index, "stay", e.target.value)}
+                                    placeholder="Swiss Camps"
+                                    className="w-full bg-transparent text-[11px] font-bold text-blue-950 focus:outline-none placeholder-blue-400/70"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Narrative Description */}
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                                Day Narrative, Viewpoints &amp; Activities
+                              </label>
+                              <textarea
+                                rows={3}
+                                value={d.description}
+                                onChange={(e) => handleUpdateDay(index, "description", e.target.value)}
+                                placeholder="Detailed activities, viewpoints, mountain trail terrain, resting points, and highlights..."
+                                className="w-full px-3 py-2 bg-slate-50/70 border border-slate-200 rounded-xl text-xs text-slate-700 leading-relaxed focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F3A2E]"
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Add Day / Activity Button */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-slate-200 mt-2">
+                      <span className="text-xs text-slate-500 font-semibold">
+                        Total {days.length} Days / Activities configured
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleAddDay}
+                        className="px-5 py-2.5 bg-[#0F3A2E] text-white rounded-xl text-xs font-bold hover:bg-[#164e3f] transition flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 self-end"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>+ Add Day / Activity {days.length + 1}</span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  /* Mode 2: Live Client View Timeline (Exact match of what client sees on the website!) */
+                  <div className="relative space-y-6 pt-4 pb-2 px-2 sm:px-4 bg-slate-50/70 rounded-2xl border border-slate-200 p-4">
+                    {/* Continuous Vertical Timeline Line */}
+                    <div className="absolute left-[29px] sm:left-[35px] top-6 bottom-8 w-[2px] sm:w-[3px] bg-gradient-to-b from-[#0F3A2E] via-emerald-600/35 to-emerald-600/15 rounded-full" />
+
+                    {days.map((d) => {
+                      const transit = parseTransitRoute(d.title);
+                      const tags = getTerrainTags(d.title, d.description);
+                      return (
+                        <div key={d.day} className="relative flex items-start gap-3.5 sm:gap-5 group">
+                          {/* Circular Day Badge Centered on Vertical Line */}
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0F3A2E] text-white flex flex-col items-center justify-center font-sans shadow-md border-2 border-white ring-4 ring-[#0F3A2E]/15 shrink-0 z-10 select-none">
+                            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider leading-none">
+                              Day
+                            </span>
+                            <span className="text-sm sm:text-base font-black leading-none mt-0.5">
+                              {d.day}
+                            </span>
+                          </div>
+
+                          {/* Day Content Card */}
+                          <div className="flex-1 min-w-0 bg-white border border-slate-200/90 rounded-2xl shadow-xs p-5 sm:p-6 space-y-3.5">
+                            {/* Top Header: Day Badge & Route Transit */}
+                            <div className="flex flex-wrap items-center justify-between gap-2.5">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
+                                  <Calendar className="w-3 h-3 text-emerald-600" />
+                                  Day {d.day} Schedule
+                                </span>
+                                {transit && (
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/80">
+                                    <span>{transit.from}</span>
+                                    <ArrowRight className="w-3 h-3 text-slate-400" />
+                                    <span className="font-bold text-slate-900">{transit.to}</span>
+                                  </span>
+                                )}
+                              </div>
+                              {d.stay && (
+                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-800 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200/80">
+                                  <Building2 className="w-3 h-3 text-blue-600" />
+                                  <span>{d.stay}</span>
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Title */}
+                            <h4 className="text-base sm:text-lg font-extrabold text-slate-900 brand-font leading-snug">
+                              {d.title}
+                            </h4>
+
+                            {/* 4-Item Metric Ribbon */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 pt-1">
+                              {/* Duration */}
+                              <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                                  <Clock className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-amber-600">Duration</span>
+                                  <span className="block text-xs sm:text-sm font-extrabold text-amber-950 truncate">
+                                    {d.duration || "Day Activity"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Distance */}
+                              <div className="bg-purple-50/80 border border-purple-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                                  <Milestone className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-purple-600">Distance</span>
+                                  <span className="block text-xs sm:text-sm font-extrabold text-purple-950 truncate">
+                                    {d.distance || "Scenic Route"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Altitude */}
+                              <div className="bg-sky-50/80 border border-sky-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
+                                  <Mountain className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-sky-600">Elevation</span>
+                                  <span className="block text-xs sm:text-sm font-extrabold text-sky-950 truncate">
+                                    {d.altitude || "Alpine Trail"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Meals */}
+                              <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-2.5 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                  <Utensils className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0">
+                                  <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-600">Meals</span>
+                                  <span className="block text-xs sm:text-sm font-extrabold text-emerald-950 truncate">
+                                    {d.meal || "Included"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Experience Tags */}
+                            {tags.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                {tags.map((tag, tIdx) => (
+                                  <span
+                                    key={tIdx}
+                                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${tag.bg} ${tag.text}`}
+                                  >
+                                    <span>{tag.icon}</span>
+                                    <span>{tag.label}</span>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Description */}
+                            <div className="text-slate-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line pt-1">
+                              {d.description}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
 

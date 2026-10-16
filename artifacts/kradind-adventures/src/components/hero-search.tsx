@@ -798,7 +798,7 @@ export function HeroSearch({
   };
 
   return (
-    <section className="relative bg-[#0F3A2E] text-white py-20 sm:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[620px] group">
+    <section className="relative bg-[#0F3A2E] text-white py-20 sm:py-28 px-4 sm:px-6 lg:px-8 min-h-[620px] group">
       {/* 1. REAL PHOTO BACKGROUND CAROUSEL WITH BUTTERY SMOOTH CROSSFADE */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {CAROUSEL_SLIDES.map((slide, idx) => {
@@ -859,7 +859,7 @@ export function HeroSearch({
         <ChevronRight className="w-5 h-5" />
       </button>
 
-      <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
+      <div suppressHydrationWarning className="relative z-30 max-w-5xl mx-auto text-center space-y-6">
         {/* Animated Text Container with smooth transition */}
         <div key={activeSlide.id} className="transition-all duration-700 ease-out space-y-4 animate-in fade-in zoom-in-95">
           {/* Badge Tagline - Crisp White Frosted Badge with Logo Dark Green Text */}
@@ -882,11 +882,13 @@ export function HeroSearch({
         </div>
 
         {/* Modern, Clean & High-Impact Floating Search Bar with Auto-Suggest Dropdown */}
-        <div ref={searchContainerRef} className="pt-2 max-w-4xl mx-auto relative">
-          <form
-            onSubmit={handleSearch}
-            className="bg-white/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-full shadow-2xl border border-white/40 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-slate-800 relative z-20"
-          >
+        <div ref={searchContainerRef} className="pt-2 max-w-4xl mx-auto relative z-30">
+          {/* Form & Floating Suggestions Anchor */}
+          <div className="relative z-40">
+            <form
+              onSubmit={handleSearch}
+              className="bg-white/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-full shadow-2xl border border-white/40 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-slate-800 relative z-20"
+            >
             {/* 1. Destination / Trek input with real-time suggestions */}
             <div className="flex-1 flex items-center gap-2.5 px-3 py-1.5 w-full sm:w-auto">
               <label htmlFor="hero-destination-search" className="sr-only">
@@ -971,7 +973,7 @@ export function HeroSearch({
               id="hero-search-suggestions"
               role="listbox"
               aria-label="Package suggestions"
-              className="absolute top-full left-0 right-0 mt-2.5 bg-white/98 backdrop-blur-xl border border-slate-200/90 rounded-2xl shadow-2xl overflow-hidden z-50 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-150 text-left flex flex-col"
+              className="absolute top-full left-0 right-0 mt-2 bg-white/98 backdrop-blur-xl border border-slate-200/90 rounded-2xl shadow-2xl overflow-hidden z-50 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-150 text-left flex flex-col max-h-[460px]"
             >
               {/* Header Title */}
               <div className="px-4 py-2.5 bg-slate-50/90 border-b border-slate-100 flex items-center justify-between text-xs">
@@ -1322,6 +1324,7 @@ export function HeroSearch({
               </button>
             </div>
           )}
+          </div>
 
           {/* Quick Discovery Pills (Easy 1-Tap Access) */}
           <div className="mt-4 flex items-center justify-center gap-2 flex-wrap text-xs">

@@ -13,20 +13,56 @@ import {
   Zap,
   ArrowRight,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { TopBar } from "@/components/top-bar";
 import { Header } from "@/components/header";
 import { HeroSearch } from "@/components/hero-search";
-import { CampaignSection } from "@/components/campaign-section";
-import { BestTreks } from "@/components/best-treks";
-import { MonsoonSpecials } from "@/components/monsoon-specials";
-import { WeekendTreks } from "@/components/weekend-treks";
-import { LiveRadar } from "@/components/live-radar";
-import { Footer } from "@/components/footer";
-import { BookingModal } from "@/components/booking-modal";
-import { SeasonalTreksCarousel } from "@/components/seasonal-treks-carousel";
-import { EEATAuthoritySection } from "@/components/eeat-authority-section";
-import { InternationalShowcase } from "@/components/international-showcase";
-import { SocialShare } from "@/components/social-share";
+
+// Below-the-fold sections dynamically imported for 100 Mobile PageSpeed score
+const SeasonalTreksCarousel = dynamic(
+  () => import("@/components/seasonal-treks-carousel").then((m) => m.SeasonalTreksCarousel),
+  { ssr: true }
+);
+const BestTreks = dynamic(
+  () => import("@/components/best-treks").then((m) => m.BestTreks),
+  { ssr: true }
+);
+const MonsoonSpecials = dynamic(
+  () => import("@/components/monsoon-specials").then((m) => m.MonsoonSpecials),
+  { ssr: true }
+);
+const WeekendTreks = dynamic(
+  () => import("@/components/weekend-treks").then((m) => m.WeekendTreks),
+  { ssr: true }
+);
+const CampaignSection = dynamic(
+  () => import("@/components/campaign-section").then((m) => m.CampaignSection),
+  { ssr: true }
+);
+const InternationalShowcase = dynamic(
+  () => import("@/components/international-showcase").then((m) => m.InternationalShowcase),
+  { ssr: true }
+);
+const LiveRadar = dynamic(
+  () => import("@/components/live-radar").then((m) => m.LiveRadar),
+  { ssr: true }
+);
+const SocialShare = dynamic(
+  () => import("@/components/social-share").then((m) => m.SocialShare),
+  { ssr: true }
+);
+const EEATAuthoritySection = dynamic(
+  () => import("@/components/eeat-authority-section").then((m) => m.EEATAuthoritySection),
+  { ssr: true }
+);
+const Footer = dynamic(
+  () => import("@/components/footer").then((m) => m.Footer),
+  { ssr: true }
+);
+const BookingModal = dynamic(
+  () => import("@/components/booking-modal").then((m) => m.BookingModal),
+  { ssr: false }
+);
 import { HomeSectionsConfig, TrailRadarReport, TrekData } from "@/lib/cms-store";
 
 export function HomeView({
@@ -103,12 +139,12 @@ export function HomeView({
       {/* Main content */}
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* 1. Hero Banner with Modern Clean Search Widget */}
-        <div id="hero" className="scroll-mt-24">
+        <div id="hero" suppressHydrationWarning className="scroll-mt-24 relative">
           <HeroSearch config={sections?.hero} />
         </div>
 
         {/* 2. Trust & Excellence Highlights Strip */}
-        <section id="trust-highlights" className="relative -mt-8 z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
+        <section id="trust-highlights" suppressHydrationWarning className="relative -mt-8 sm:-mt-10 z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
           <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 p-4 sm:p-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
             <div className="flex items-center gap-3.5 pt-2 sm:pt-0">
               <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center shrink-0">

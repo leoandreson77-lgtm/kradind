@@ -387,32 +387,10 @@ export function TrekDetailClient({
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [activeTab, setActiveTab] = useState<"itinerary" | "highlights" | "inclusions" | "tips" | "faqs">("itinerary");
 
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const [isTallerThanScreen, setIsTallerThanScreen] = useState(false);
-
   // Sync state if initialTrek changes
   useEffect(() => {
     setTrek(initialTrek);
   }, [initialTrek]);
-
-  // Adjust sticky sidebar behavior dynamically based on viewport height (RAF throttled to avoid forced reflow)
-  useEffect(() => {
-    let rafId: number | null = null;
-    const checkHeight = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        if (sidebarRef.current) {
-          setIsTallerThanScreen(sidebarRef.current.offsetHeight > window.innerHeight - 110);
-        }
-      });
-    };
-    checkHeight();
-    window.addEventListener("resize", checkHeight, { passive: true });
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", checkHeight);
-    };
-  }, [trek]);
 
   const scrollToSection = (id: string, tab: "itinerary" | "highlights" | "inclusions" | "tips" | "faqs") => {
     setActiveTab(tab);
@@ -960,16 +938,11 @@ export function TrekDetailClient({
 
         </div>
 
-        {/* Right Smart-Sticky Booking Sidebar */}
+        {/* Right Fixed / Sticky Booking Sidebar */}
         <aside
-          ref={sidebarRef}
-          className={`lg:col-span-1 space-y-6 h-fit transition-all duration-300 ${
-            isTallerThanScreen
-              ? "lg:sticky lg:bottom-6"
-              : "lg:sticky lg:top-[96px]"
-          }`}
+          className="lg:col-span-1 space-y-6 h-fit lg:sticky lg:top-24 xl:top-28 self-start transition-all duration-200 z-20"
         >
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xl space-y-5 lg:max-h-[calc(100vh-48px)] overflow-y-auto scrollbar-none">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xl space-y-5 lg:max-h-[calc(100vh-120px)] overflow-y-auto overscroll-contain pr-1 scrollbar-thin">
             
             {/* Price Header */}
             <div>

@@ -298,7 +298,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 1. PRIVACY POLICY */}
             {/* ========================================================================= */}
             {activeTab === "privacy" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <Shield className="w-4 h-4 text-emerald-600" />
@@ -740,7 +740,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 2. TERMS & CONDITIONS */}
             {/* ========================================================================= */}
             {activeTab === "terms" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <FileText className="w-4 h-4 text-emerald-600" />
@@ -903,7 +903,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 3. CANCELLATION & REFUND POLICY */}
             {/* ========================================================================= */}
             {activeTab === "cancellation" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <RefreshCw className="w-4 h-4 text-emerald-600" />
@@ -1020,7 +1020,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 4. BOOKING & PAYMENT POLICY */}
             {/* ========================================================================= */}
             {activeTab === "booking" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <CreditCard className="w-4 h-4 text-emerald-600" />
@@ -1106,7 +1106,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 5. COOKIE POLICY */}
             {/* ========================================================================= */}
             {activeTab === "cookie" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <Cookie className="w-4 h-4 text-emerald-600" />
@@ -1180,7 +1180,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 6. VISA & INTERNATIONAL TRAVEL DISCLAIMER */}
             {/* ========================================================================= */}
             {activeTab === "visa" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <Plane className="w-4 h-4 text-emerald-600" />
@@ -1252,7 +1252,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 7. WEBSITE DISCLAIMER */}
             {/* ========================================================================= */}
             {activeTab === "disclaimer" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <AlertTriangle className="w-4 h-4 text-emerald-600" />
@@ -1328,7 +1328,7 @@ export function LegalPoliciesView({ defaultTab = "privacy" }: LegalPoliciesViewP
             {/* 8. EDITORIAL & SAFETY POLICY (E-E-A-T STANDARDS) */}
             {/* ========================================================================= */}
             {activeTab === "editorial" && (
-              <div className="space-y-8 prose prose-slate max-w-none text-slate-700">
+              <div className="space-y-8 text-slate-700 leading-relaxed">
                 <div className="border-b border-slate-200 pb-6 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-widest">
                     <Shield className="w-4 h-4 text-emerald-600" />

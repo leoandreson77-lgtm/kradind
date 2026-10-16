@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   compress: true,
   experimental: {
     optimizePackageImports: ["lucide-react", "react-icons/fa", "react-icons/fa6"],
+    inlineCss: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],

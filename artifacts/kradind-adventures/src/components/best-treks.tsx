@@ -6,6 +6,7 @@ import { Star, MapPin, Clock, ArrowRight, Mountain, Car, Sparkles, Compass, Glob
 import { treks as defaultTreks } from "@/lib/travel-data";
 import { getImageAlt } from "@/lib/image-alt";
 import { HomeSectionsConfig, TrekData } from "@/lib/cms-store";
+import { getOptimizedImageUrl } from "@/lib/utils";
 
 function getTopTrekAlt(trek: any) {
   return getImageAlt(trek, "trekking");
@@ -72,10 +73,10 @@ export function BestTreks({
 
   // Curated list based on active tab
   const displayedTreks = useMemo(() => {
-    if (activeTab === "treks") return trekList;
-    if (activeTab === "domestic") return domesticList.slice(0, 12);
-    if (activeTab === "international") return internationalList.slice(0, 12);
-    if (activeTab === "weekend") return weekendList.slice(0, 12);
+    if (activeTab === "treks") return trekList.slice(0, 6);
+    if (activeTab === "domestic") return domesticList.slice(0, 6);
+    if (activeTab === "international") return internationalList.slice(0, 6);
+    if (activeTab === "weekend") return weekendList.slice(0, 6);
 
     // "all": Default flagship picks + all new / custom packages added via Admin CMS
     const flagshipSlugs = [
@@ -101,10 +102,10 @@ export function BestTreks({
     // Priority: New/Custom admin packages first, followed by flagship journeys
     const combined = [...customOrNewTreks, ...matchedFlagships];
     if (combined.length > 0) {
-      return combined.slice(0, 12);
+      return combined.slice(0, 6);
     }
 
-    return [...trekList.slice(0, 6), ...domesticList.slice(0, 6)];
+    return [...trekList.slice(0, 3), ...domesticList.slice(0, 3)];
   }, [activeTab, availableTreks, trekList, domesticList, weekendList, internationalList]);
 
   return (
@@ -134,12 +135,11 @@ export function BestTreks({
         </Link>
       </div>
 
-      {/* Simplified, Easy-to-Use Category Switcher Tabs */}
-      <div role="tablist" aria-label="Tour and Trek Categories" className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 mb-8">
+      {/* Simplified, Easy-to-Use Category Switcher */}
+      <div role="group" aria-label="Tour and Trek Categories" className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 mb-8">
         <button
           type="button"
-          role="tab"
-          aria-selected={activeTab === "all"}
+          aria-pressed={activeTab === "all"}
           onClick={() => setActiveTab("all")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "all"
@@ -150,14 +150,13 @@ export function BestTreks({
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           <span>All Top Picks</span>
           <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${activeTab === "all" ? "bg-emerald-950 text-emerald-300" : "bg-slate-100 text-slate-600"}`}>
-            {Math.min(availableTreks.length, 8)}
+            {Math.min(availableTreks.length, 6)}
           </span>
         </button>
 
         <button
           type="button"
-          role="tab"
-          aria-selected={activeTab === "treks"}
+          aria-pressed={activeTab === "treks"}
           onClick={() => setActiveTab("treks")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "treks"
@@ -174,8 +173,7 @@ export function BestTreks({
 
         <button
           type="button"
-          role="tab"
-          aria-selected={activeTab === "domestic"}
+          aria-pressed={activeTab === "domestic"}
           onClick={() => setActiveTab("domestic")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "domestic"
@@ -192,8 +190,7 @@ export function BestTreks({
 
         <button
           type="button"
-          role="tab"
-          aria-selected={activeTab === "international"}
+          aria-pressed={activeTab === "international"}
           onClick={() => setActiveTab("international")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "international"
@@ -210,8 +207,7 @@ export function BestTreks({
 
         <button
           type="button"
-          role="tab"
-          aria-selected={activeTab === "weekend"}
+          aria-pressed={activeTab === "weekend"}
           onClick={() => setActiveTab("weekend")}
           className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
             activeTab === "weekend"
@@ -227,7 +223,7 @@ export function BestTreks({
       </div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayedTreks.map((trek: any) => {
           if (!trek) return null;
           const isDom = isDomesticPackage(trek);
@@ -243,10 +239,10 @@ export function BestTreks({
                 {/* Photo Thumbnail */}
                 <div className="relative h-48 sm:h-52 overflow-hidden bg-slate-900">
                   <img
-                    src={trek.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"}
+                    src={getOptimizedImageUrl(trek.image, 480, 70) || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=480&q=70"}
                     alt={trek.imageAlt || getTopTrekAlt(trek)}
-                    width={600}
-                    height={400}
+                    width={480}
+                    height={320}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -256,23 +252,8 @@ export function BestTreks({
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
 
                   {/* Category Type Badge */}
-                  <span className="absolute top-3 left-3 bg-[#0F3A2E]/95 backdrop-blur-md text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
-                    {isInter ? (
-                      <>
-                        <Globe className="w-3 h-3 text-blue-400" />
-                        <span>International</span>
-                      </>
-                    ) : isDom ? (
-                      <>
-                        <Car className="w-3 h-3 text-amber-400" />
-                        <span>Domestic Tour</span>
-                      </>
-                    ) : (
-                      <>
-                        <Mountain className="w-3 h-3 text-emerald-400" />
-                        <span>Himalayan Trek</span>
-                      </>
-                    )}
+                  <span className="absolute top-3 left-3 bg-[#0F3A2E]/95 backdrop-blur-md text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                    {isInter ? "International" : isDom ? "Domestic Tour" : "Himalayan Trek"}
                   </span>
 
                   {/* Rating Badge */}
@@ -290,13 +271,13 @@ export function BestTreks({
 
                 {/* Card Body */}
                 <div className="p-4 sm:p-5 space-y-2.5">
-                  <div className="text-[11px] text-slate-500 font-semibold flex items-center gap-2">
-                    <span className="flex items-center gap-1 text-emerald-700">
+                  <div className="text-[11px] text-slate-600 font-bold flex items-center gap-2">
+                    <span className="flex items-center gap-1 text-emerald-800">
                       <Clock className="w-3 h-3" />
                       <span>{trek.duration}</span>
                     </span>
                     <span>•</span>
-                    <span className="text-slate-600 truncate">{trek.altitude || "Scenic Circuit"}</span>
+                    <span className="text-slate-700 truncate">{trek.altitude || "Scenic Circuit"}</span>
                   </div>
 
                   <h3 className="text-base font-extrabold text-slate-900 leading-snug group-hover:text-[#0F3A2E] transition line-clamp-1">
@@ -312,7 +293,7 @@ export function BestTreks({
               {/* Price & Action */}
               <div className="p-4 sm:p-5 pt-0 border-t border-slate-100 flex items-center justify-between mt-2">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Starting Price</span>
+                  <span className="text-[10px] text-slate-600 block uppercase font-bold tracking-wider">Starting Price</span>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-base sm:text-lg font-extrabold text-[#0F3A2E]">
                       ₹{trek.price?.toLocaleString("en-IN") || "5,499"}
@@ -345,7 +326,7 @@ export function BestTreks({
             <h4 className="text-xs sm:text-sm font-bold text-slate-900">
               Need a custom itinerary or couple/family package?
             </h4>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-[11px] text-slate-600 mt-0.5">
               We personalize hotels, private vehicles, meal plans, and trekking gear for any group size.
             </p>
           </div>

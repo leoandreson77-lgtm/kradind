@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Globe, ArrowRight, Plane, Clock, ShieldCheck, Star } from "lucide-react";
 import { DestinationData, HomeSectionsConfig } from "@/lib/cms-store";
 import { FormattedText } from "@/components/formatted-text";
+import { getOptimizedImageUrl } from "@/lib/utils";
 
 export function InternationalShowcase({
   config,
@@ -99,10 +100,10 @@ export function InternationalShowcase({
               {/* Photo Banner with Flag Emoji */}
               <div className="relative aspect-[16/10] bg-slate-950 overflow-hidden">
                 <img
-                  src={dest.image}
+                  src={getOptimizedImageUrl(dest.image, 480, 70)}
                   alt={dest.name}
-                  width={600}
-                  height={375}
+                  width={480}
+                  height={300}
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -146,7 +147,7 @@ export function InternationalShowcase({
                 <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition line-clamp-1">
                   {dest.name}
                 </h3>
-                <div className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                <div className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed">
                   <FormattedText text={dest.tagline || `Explore customized international holidays in ${dest.name}.`} />
                 </div>
 
@@ -168,8 +169,8 @@ export function InternationalShowcase({
 
             {/* Bottom Bar */}
             <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="text-[11px] text-slate-600 font-semibold flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 <span>Visa Support</span>
               </span>
               <span className="font-bold text-blue-700 group-hover:text-blue-900 flex items-center gap-1 transition">

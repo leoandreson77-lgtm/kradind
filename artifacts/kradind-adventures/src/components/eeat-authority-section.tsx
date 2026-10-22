@@ -30,23 +30,23 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
   const defaultFaqs = [
     {
       q: "How does KRADIND Adventures verify high-altitude trail safety and weather?",
-      a: "Our certified expedition leaders maintain direct VHF radio and satellite communication with base camps across Uttarakhand, Himachal Pradesh, and Ladakh. Every 24 hours, our ground coordinators inspect ridge stability, avalanche risks, and fresh snow levels before batch movements. When conditions change, updates are posted immediately to our Live Ground Radar.",
+      a: "Our certified expedition leaders stay in daily radio contact with base camps across Uttarakhand, Himachal Pradesh, and Ladakh. Every morning, ground teams inspect ridge stability, trail safety, and fresh snow levels before groups move. If weather changes, updates go live right away on our Live Ground Radar.",
     },
     {
       q: "What medical and safety equipment is carried on Himalayan treks?",
-      a: "Every departure carries high-altitude medical oxygen cylinders, pulse oximeters, automated first-aid trauma kits, and Gamow hyperbaric emergency protocols. All expedition directors are graduates of the Nehru Institute of Mountaineering (NIM) and hold Wilderness First Aid (WFA) certification to manage Acute Mountain Sickness (AMS) and high-altitude emergencies.",
+      a: "Every team carries medical oxygen cylinders, pulse oximeters, and complete first-aid kits. Our leaders graduated from the Nehru Institute of Mountaineering (NIM). They hold Wilderness First Aid (WFA) certifications to manage Acute Mountain Sickness (AMS) and high-altitude emergencies safely.",
     },
     {
       q: "What is your batch size policy and Leave No Trace (LNT) standard?",
-      a: "We operate with a strict cap of 15 trekkers per batch to preserve trail silence, minimize alpine degradation, and provide 1:5 guide-to-trekker safety ratios. Under our Leave No Trace protocol, our teams collect and pack back all non-biodegradable waste from camps and mountain ridges for certified recycling in Dehradun.",
+      a: "We cap each group at 15 trekkers. This keeps trails peaceful, protects nature, and ensures one guide for every five trekkers. Under our Leave No Trace policy, our staff brings all non-biodegradable waste back to basecamps for responsible recycling in Dehradun.",
     },
     {
       q: "Why choose KRAD Global as your tour and travel company in Dehradun?",
-      a: "KRAD Global is a trusted Dehradun-based tour and travel company offering domestic and international tour packages, customized holidays, Himalayan treks, and complete travel planning. We provide local Himalayan expertise, verified accommodations, licensed wilderness leaders, and 24/7 ground assistance.",
+      a: "KRAD Global is a trusted Dehradun travel company. We offer domestic holidays, international tours, Himalayan treks, and custom itineraries. You get verified hotels, certified guides, and 24/7 ground assistance from our local team.",
     },
     {
       q: "How can beginner trekkers prepare for their first Himalayan summit?",
-      a: "We recommend four to six weeks of cardiovascular conditioning, including stair climbing, brisk walking, and core strengthening. Our trek desk provides customized training guides, gear rental checklists, and personalized consultations to ensure you have the correct footwear, layered clothing, and physical stamina before your departure.",
+      a: "We suggest four to six weeks of simple workouts, like stair climbing, brisk walking, and core exercises. Our team sends you training guides, gear packing lists, and gear rental options. This makes sure you have the right warm clothes, sturdy boots, and good fitness before your trip.",
     },
   ];
 
@@ -125,7 +125,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                 {/* Author Bio Paragraph with Schema Description */}
                 <p className="text-xs sm:text-[13px] text-slate-300 max-w-3xl leading-relaxed pt-1.5" itemProp="description">
                   {config?.description ||
-                    "With over 12+ years of technical Himalayan expedition experience, the KRADIND expedition leadership team personally inspects, verifies, and leads high-altitude alpine routes across Uttarakhand, Himachal Pradesh, Ladakh, and Nepal. Having guided over 14,000+ trekkers safely with a verified zero-fatality safety record, our leadership integrates daily VHF mountain weather checks, high-altitude medical protocols, and certified Leave No Trace eco-care into every traveler departure."}
+                    "Our leadership team brings over 12 years of Himalayan expedition experience. We personally inspect, verify, and lead high-altitude mountain routes across Uttarakhand, Himachal Pradesh, Ladakh, and Nepal. Over 14,000 trekkers have completed journeys with us with a verified zero-fatality safety record. Every trip includes daily mountain weather checks, medical safety protocols, and Leave No Trace eco-care."}
                 </p>
 
                 <div className="pt-1">
@@ -186,10 +186,10 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
               itemType="https://schema.org/AggregateRating"
               itemProp="aggregateRating"
             >
-              <meta itemProp="ratingValue" content="4.9" />
-              <meta itemProp="reviewCount" content="2480" />
-              <meta itemProp="bestRating" content="5" />
-              <meta itemProp="worstRating" content="1" />
+              <span itemProp="ratingValue" className="hidden">4.9</span>
+              <span itemProp="reviewCount" className="hidden">2480</span>
+              <span itemProp="bestRating" className="hidden">5</span>
+              <span itemProp="worstRating" className="hidden">1</span>
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
                   <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
@@ -291,7 +291,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                 <span>🩺</span> Medical &amp; Altitude Health Advisory
               </span>
               <p className="text-slate-700 leading-relaxed text-[11px] sm:text-xs">
-                High-altitude Himalayan trekking (8,000 ft to 16,000+ ft) demands vigorous physical stamina and carries inherent physiological risks, including Acute Mountain Sickness (AMS), HAPE, and HACE. Trekkers are strictly advised to consult a certified physician before departure and disclose any pre-existing health conditions. While KRADIND teams carry emergency oxygen and first-aid kits, participation is voluntary and at the traveler's own informed discretion.
+                High-altitude trekking (8,000 ft to 16,000+ ft) requires good fitness. It carries natural mountain risks, including altitude sickness (AMS). Please speak with your doctor before booking and share any health conditions with our team. We carry emergency oxygen and first-aid kits on every trek. Travelers join at their own informed choice.
               </p>
             </div>
 
@@ -301,7 +301,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                 <span>🏔️</span> Weather &amp; Force Majeure Trail Safety
               </span>
               <p className="text-slate-700 leading-relaxed text-[11px] sm:text-xs">
-                Himalayan mountain weather conditions, sudden blizzards, landslides, or state government route closures are beyond operator control. In the interest of participant safety, certified expedition leaders reserve the right to alter route schedules, campsites, or terminate ascents. Alternate safe routes or credit vouchers are provided in accordance with our official booking terms.
+                Mountain weather, blizzards, landslides, or state road closures can happen quickly in the Himalayas. For your safety, our certified trek leaders may adjust routes, campsites, or turn back. If a route closes, we provide alternate safe trails or trip credit vouchers per our booking terms.
               </p>
             </div>
 
@@ -311,7 +311,7 @@ export function EEATAuthoritySection({ config }: { config?: HomeSectionsConfig["
                 <span>💳</span> Booking, Pricing &amp; Legal Terms
               </span>
               <p className="text-slate-700 leading-relaxed text-[11px] sm:text-xs">
-                Tour package rates, seasonal batch dates, and inclusions are subject to official verification. All token deposits and payment transactions are safeguarded under our official Cancellation, Rescheduling &amp; Refund Policy. KRAD Global is a legally registered corporate travel operator headquartered in Dehradun, Uttarakhand.
+                Package rates, batch dates, and inclusions are verified before booking. Your advance deposits are protected under our official Cancellation, Rescheduling, and Refund Policy. KRAD Global is a registered travel operator based in Dehradun, Uttarakhand.
               </p>
             </div>
           </div>

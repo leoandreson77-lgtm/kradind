@@ -215,10 +215,10 @@ export function HomeView({
               className="group relative rounded-2xl overflow-hidden h-44 sm:h-52 p-5 flex flex-col justify-end text-white shadow-md hover:shadow-xl transition duration-300 hover:-translate-y-1"
             >
               <img
-                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=70"
                 alt="Himalayan Treks"
-                width={600}
-                height={400}
+                width={400}
+                height={260}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
@@ -243,10 +243,10 @@ export function HomeView({
               className="group relative rounded-2xl overflow-hidden h-44 sm:h-52 p-5 flex flex-col justify-end text-white shadow-md hover:shadow-xl transition duration-300 hover:-translate-y-1"
             >
               <img
-                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=400&q=70"
                 alt="Domestic Tours"
-                width={600}
-                height={400}
+                width={400}
+                height={260}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
@@ -271,10 +271,10 @@ export function HomeView({
               className="group relative rounded-2xl overflow-hidden h-44 sm:h-52 p-5 flex flex-col justify-end text-white shadow-md hover:shadow-xl transition duration-300 hover:-translate-y-1"
             >
               <img
-                src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&q=70"
                 alt="International Holidays"
-                width={600}
-                height={400}
+                width={400}
+                height={260}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
@@ -299,10 +299,10 @@ export function HomeView({
               className="group relative rounded-2xl overflow-hidden h-44 sm:h-52 p-5 flex flex-col justify-end text-white shadow-md hover:shadow-xl transition duration-300 hover:-translate-y-1"
             >
               <img
-                src="https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=400&q=70"
                 alt="Weekend Getaways"
-                width={600}
-                height={400}
+                width={400}
+                height={260}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700"
@@ -430,9 +430,9 @@ export function HomeView({
       </main>
 
       {/* Footer */}
-      <footer id="footer" className="scroll-mt-24">
+      <div id="footer" className="scroll-mt-24">
         <Footer config={sections?.contactAndFooter} />
-      </footer>
+      </div>
 
       {/* Interactive Booking Modal */}
       <BookingModal

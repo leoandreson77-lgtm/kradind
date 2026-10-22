@@ -17,6 +17,7 @@ import {
 import { LandingPageData } from "@/lib/cms-store";
 import { getImageAlt } from "@/lib/image-alt";
 import { FormattedText } from "@/components/formatted-text";
+import { getOptimizedImageUrl } from "@/lib/utils";
 
 function getCampaignAlt(camp: any) {
   return camp.heroImageAlt || camp.imageAlt || getImageAlt(camp, "trekking");
@@ -85,7 +86,7 @@ export function CampaignSection({
 
         {/* Campaign Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {campaigns.map((camp) => (
+          {campaigns.slice(0, 2).map((camp) => (
             <Link
               key={camp.id}
               href={`/lp/${camp.slug}`}
@@ -94,7 +95,7 @@ export function CampaignSection({
               {/* Card Image */}
               <div className="relative h-64 sm:h-72 w-full overflow-hidden">
                 <img
-                  src={camp.heroImage}
+                  src={getOptimizedImageUrl(camp.heroImage, 600, 75) || camp.heroImage}
                   alt={getCampaignAlt(camp)}
                   width={600}
                   height={400}

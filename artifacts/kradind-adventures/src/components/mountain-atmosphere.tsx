@@ -32,31 +32,28 @@ export function MountainAtmosphere({
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
+    const isMobileDevice = typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+    if (isMobileDevice) return;
+
     let animId: number;
-    let resizeRaf: number | null = null;
     let width = 1200;
     let height = 600;
 
-    const updateDimensions = () => {
-      if (!canvas || !canvas.parentElement) return;
-      const newW = canvas.parentElement.clientWidth || window.innerWidth;
-      const newH = canvas.parentElement.clientHeight || window.innerHeight;
-      if (newW !== width || newH !== height) {
-        width = canvas.width = newW;
-        height = canvas.height = newH;
-      }
-    };
-
-    // Use requestAnimationFrame to measure after initial render phase completes, preventing forced reflow
-    resizeRaf = requestAnimationFrame(() => {
-      updateDimensions();
-    });
-
-    const handleResize = () => {
-      if (resizeRaf) cancelAnimationFrame(resizeRaf);
-      resizeRaf = requestAnimationFrame(updateDimensions);
-    };
-    window.addEventListener("resize", handleResize, { passive: true });
+    // Use ResizeObserver for zero forced-reflow layout calculations
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && canvas.parentElement) {
+      resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const newW = Math.floor(entry.contentRect.width);
+          const newH = Math.floor(entry.contentRect.height);
+          if (newW > 0 && newH > 0 && (newW !== width || newH !== height)) {
+            width = canvas.width = newW;
+            height = canvas.height = newH;
+          }
+        }
+      });
+      resizeObserver.observe(canvas.parentElement);
+    }
 
     // ==========================================
     // 1. SNOW PARTICLES (Barf Gir Rahi Hai)
@@ -456,23 +453,13 @@ export function MountainAtmosphere({
     };
 
     const startTimer = setTimeout(() => {
-      // On mobile (< 768px) or prefers-reduced-motion, skip canvas loop for 0ms Total Blocking Time (TBT = 0)
-      // Hardware-accelerated CSS radial gradients handle ambient lighting smoothly with 0% CPU
-      const isMobile = typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
-      if (isMobile) return;
-
-      if (isInView && isVisible) {
-        animId = requestAnimationFrame(render);
-      }
+      animId = requestAnimationFrame(render);
     }, 350);
 
     return () => {
       if (animId) cancelAnimationFrame(animId);
-      if (resizeRaf) cancelAnimationFrame(resizeRaf);
       if (startTimer) clearTimeout(startTimer);
-      if (observer) observer.disconnect();
-      window.removeEventListener("resize", handleResize);
-      document.removeEventListener("visibilitychange", handleVisibility);
+      if (resizeObserver) resizeObserver.disconnect();
     };
   }, []);
 
@@ -515,7 +502,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("sunrise")}
               title="Ocean Sunrise (Real Ocean Photo)"
-              aria-label="Switch atmosphere to Ocean Sunrise"
+              aria-label="Ocean Sunrise atmosphere"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "sunrise"
                   ? "bg-amber-500/80 text-white shadow-sm border border-amber-300/40"
@@ -530,7 +517,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("snow")}
               title="Snowfall (Himalayan Snow Peaks)"
-              aria-label="Switch atmosphere to Himalayan Snowfall"
+              aria-label="Snow atmosphere"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "snow"
                   ? "bg-sky-500/80 text-white shadow-sm border border-sky-300/40"
@@ -545,7 +532,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("rain")}
               title="Monsoon Rain (Stormy Mountain Clouds)"
-              aria-label="Switch atmosphere to Monsoon Rain"
+              aria-label="Rain atmosphere"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "rain"
                   ? "bg-teal-600/80 text-white shadow-sm border border-teal-300/40"
@@ -560,7 +547,7 @@ export function MountainAtmosphere({
               type="button"
               onClick={() => onSelectMode?.("clear")}
               title="Clear Tropical Skies (Backwaters & Palms)"
-              aria-label="Switch atmosphere to Clear Tropical Skies"
+              aria-label="Clear atmosphere"
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
                 currentMode === "clear"
                   ? "bg-emerald-600/80 text-white shadow-sm border border-emerald-300/40"

@@ -31,18 +31,18 @@ export function Header({ onBookClick }: { onBookClick?: () => void }) {
         {/* Brand Logo */}
         <Link
           href="/"
-          aria-label="KRADIND Adventures - Explore, Trek, Travel Homepage"
+          aria-label="KRAD Global Tour & Travel Homepage"
           className="flex items-center gap-2 shrink-0 group py-1"
         >
           <img
             src="/logo-horizontal.webp"
-            alt="KRAD Global tour and travel company logo"
+            alt="KRAD Global Tour & Travel Homepage"
             width={195}
             height={50}
             className="h-9 sm:h-10 xl:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
             fetchPriority="high"
           />
-          <span className="sr-only">KRADIND Adventures Homepage</span>
+          <span className="sr-only">KRAD Global Tour & Travel Homepage</span>
         </Link>
 
         {/* Desktop Navigation (Spacious, Adaptive, Clean, Single-Line, Zero Wrapping) */}

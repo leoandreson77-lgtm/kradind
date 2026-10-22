@@ -12,6 +12,7 @@ function getWeekendAlt(trek: any) {
 }
 
 import { HomeSectionsConfig } from "@/lib/cms-store";
+import { getOptimizedImageUrl } from "@/lib/utils";
 
 export function WeekendTreks({
   treks: treksProp,
@@ -82,10 +83,10 @@ export function WeekendTreks({
               <div>
                 <div className="relative h-40 w-full overflow-hidden bg-slate-100">
                   <img
-                    src={trek.image}
+                    src={getOptimizedImageUrl(trek.image, 480, 70)}
                     alt={trek.imageAlt || getWeekendAlt(trek)}
-                    width={500}
-                    height={320}
+                    width={480}
+                    height={300}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -93,12 +94,12 @@ export function WeekendTreks({
                 </div>
 
                 <div className="p-5 space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold">
+                  <div className="flex items-center justify-between text-[11px] text-slate-600 font-bold">
                     <span className="flex items-center gap-1 truncate">
-                      <MapPin className="w-3 h-3 text-emerald-600 shrink-0" />
+                      <MapPin className="w-3 h-3 text-emerald-700 shrink-0" />
                       <span className="truncate">{trek.location}</span>
                     </span>
-                    <span className="bg-amber-50 text-amber-700 font-bold px-2 py-0.5 rounded text-[10px]">
+                    <span className="bg-amber-100 text-amber-950 font-black px-2 py-0.5 rounded text-[10px]">
                       {trek.duration}
                     </span>
                   </div>
@@ -115,7 +116,7 @@ export function WeekendTreks({
 
               <div className="p-5 pt-0 mt-2 border-t border-slate-100 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase font-semibold">From</span>
+                  <span className="text-[10px] text-slate-600 block uppercase font-bold tracking-wider">From</span>
                   <span className="text-sm sm:text-base font-extrabold text-slate-900 brand-font">
                     ₹{trek.price.toLocaleString("en-IN")}
                   </span>

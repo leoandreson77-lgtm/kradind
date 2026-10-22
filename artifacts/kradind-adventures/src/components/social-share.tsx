@@ -37,7 +37,7 @@ export function SocialShare({
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Share on WhatsApp"
+            aria-label="WhatsApp - Share on WhatsApp"
             className="flex items-center gap-1.5 px-3.5 py-2.5 min-h-[42px] rounded-full bg-[#25D366]/15 hover:bg-[#25D366] text-[#075E54] hover:text-white border border-[#25D366]/40 font-bold transition text-xs"
           >
             <FaWhatsapp className="w-4 h-4" />
@@ -49,7 +49,7 @@ export function SocialShare({
             href="https://whatsapp.com/channel/0029Vb8H9BNKmCPWGI94Ro34"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Join WhatsApp Community"
+            aria-label="Join Community - Official WhatsApp Channel"
             className="flex items-center gap-1.5 px-3.5 py-2.5 min-h-[42px] rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold transition shadow-sm text-xs"
           >
             <FaWhatsapp className="w-4 h-4" />
@@ -63,7 +63,7 @@ export function SocialShare({
             )}&text=${encodeURIComponent(shareTitle)}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Share on X (Twitter)"
+            aria-label="X / Twitter - Share on X"
             className="flex items-center gap-1.5 px-3.5 py-2.5 min-h-[42px] rounded-full bg-slate-200 hover:bg-slate-900 text-slate-900 hover:text-white border border-slate-300 font-bold transition text-xs"
           >
             <FaXTwitter className="w-4 h-4" />
@@ -77,7 +77,7 @@ export function SocialShare({
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Share on Facebook"
+            aria-label="Facebook - Share on Facebook"
             className="flex items-center gap-1.5 px-3.5 py-2.5 min-h-[42px] rounded-full bg-[#1877F2]/10 hover:bg-[#1877F2] text-[#0d5ac1] hover:text-white border border-[#1877F2]/30 font-bold transition text-xs"
           >
             <FaFacebookF className="w-4 h-4" />
@@ -91,7 +91,7 @@ export function SocialShare({
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Share on LinkedIn"
+            aria-label="LinkedIn - Share on LinkedIn"
             className="flex items-center gap-1.5 px-3.5 py-2.5 min-h-[42px] rounded-full bg-[#0A66C2]/10 hover:bg-[#0A66C2] text-[#004182] hover:text-white border border-[#0A66C2]/30 font-bold transition text-xs"
           >
             <FaLinkedinIn className="w-4 h-4" />

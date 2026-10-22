@@ -56,7 +56,7 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
   },
   {
     id: "himalayan-snow",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=85",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1080&q=70",
     badge: "❄️ Alpine Snow • Kedarkantha & Chopta",
     title: "Himalayan Snow Peaks",
     tagline: "High-altitude frosty alpine summits & certified winter mountaineering",
@@ -74,7 +74,7 @@ const CAROUSEL_SLIDES: CarouselSlide[] = [
   },
   {
     id: "kerala-backwaters",
-    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=85",
+    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1080&q=70",
     badge: "🌴 Clear Skies • Alleppey & Munnar",
     title: "Backwaters & Palms",
     tagline: "Peaceful houseboat cruises, sunny palm groves & clear emerald tea gardens",
@@ -815,10 +815,10 @@ export function HeroSearch({
               <img
                 src={slide.image}
                 alt={config?.imageAlt || slide.altText || "Domestic and international tour packages by KRAD Global in Dehradun"}
-                width={1376}
-                height={768}
+                width={1080}
+                height={600}
                 className="w-full h-full object-cover object-center"
-                loading={idx === 0 ? "eager" : "lazy"}
+                loading={idx < 2 ? "eager" : "lazy"}
                 fetchPriority={idx === 0 ? "high" : "low"}
                 decoding={idx === 0 ? "sync" : "async"}
               />
@@ -909,6 +909,7 @@ export function HeroSearch({
                 onKeyDown={handleKeyDown}
                 placeholder="Where to? (e.g. Kedarkantha, Kerala, Goa, Bali, Manali)..."
                 aria-label="Search destination or trek name"
+                role="combobox"
                 aria-autocomplete="list"
                 aria-controls="hero-search-suggestions"
                 aria-expanded={showSuggestions}

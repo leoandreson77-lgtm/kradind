@@ -18,6 +18,7 @@ import { TrekData, HomeSectionsConfig } from "@/lib/cms-store";
 import { TrekDatesModal } from "@/components/trek-dates-modal";
 import { RegisterNextSessionModal } from "@/components/register-next-session-modal";
 import { isDomesticPackage, isInternationalPackage } from "@/lib/package-sections";
+import { getOptimizedImageUrl } from "@/lib/utils";
 
 export interface SeasonPreset {
   id: string;
@@ -303,7 +304,7 @@ export function SeasonalTreksCarousel({
       }
     });
 
-    return isAllSeason ? ordered.slice(0, 10) : ordered.slice(0, 8);
+    return isAllSeason ? ordered.slice(0, 6) : ordered.slice(0, 5);
   }, [allTreks, currentSeason]);
 
   const handleScroll = (direction: "left" | "right") => {
@@ -402,7 +403,7 @@ export function SeasonalTreksCarousel({
                   className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full ${
                     isSelected
                       ? "bg-amber-400 text-slate-950"
-                      : "bg-amber-100 text-amber-800"
+                      : "bg-amber-100 text-amber-950 font-bold"
                   }`}
                 >
                   Coming Soon
@@ -459,12 +460,12 @@ export function SeasonalTreksCarousel({
                   <div className="relative h-44 sm:h-48 overflow-hidden bg-slate-900 group/img">
                     <img
                       src={
-                        trek.image ||
-                        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
+                        getOptimizedImageUrl(trek.image, 480, 70) ||
+                        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=480&q=70"
                       }
                       alt={trek.imageAlt || trek.name}
-                      width={600}
-                      height={400}
+                      width={480}
+                      height={320}
                       loading="lazy"
                       className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500"
                     />
@@ -507,12 +508,12 @@ export function SeasonalTreksCarousel({
 
                   {/* Card Content */}
                   <div className="p-4 sm:p-5 space-y-2.5">
-                    {/* Meta info string: "3 Days ■ Moderate ■ 13,000 Ft" */}
-                    <div className="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-1.5 flex-wrap">
+                    {/* Meta info string: "3 Days ■ Moderate ■ 13,000 Ft" with WCAG AA passing contrast */}
+                    <div className="text-[11px] sm:text-xs font-bold text-slate-600 flex items-center gap-1.5 flex-wrap">
                       <span>{durationPart}</span>
-                      <span className="text-[#F59E0B] text-[8px]">■</span>
+                      <span className="text-amber-800 text-[8px]" aria-hidden="true">■</span>
                       <span>{difficultyPart}</span>
-                      <span className="text-[#F59E0B] text-[8px]">■</span>
+                      <span className="text-amber-800 text-[8px]" aria-hidden="true">■</span>
                       <span>{altitudePart}</span>
                     </div>
 
@@ -586,8 +587,8 @@ export function SeasonalTreksCarousel({
                     <button
                       type="button"
                       onClick={(e) => handleOpenRegisterNextSession(trek, e)}
+                      aria-label={`Register Next Session for ${trek.name}`}
                       className="w-full py-2.5 px-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-[11px] font-black text-center transition shadow-md flex items-center justify-center gap-1 cursor-pointer"
-                      title="Session ended or upcoming window - Register for next batch priority"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-slate-950 shrink-0" />
                       <span className="truncate">Register Next Session</span>

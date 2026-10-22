@@ -90,11 +90,24 @@ export default async function HomePage() {
       gallery: [],
       categories: t.categories,
       status: t.status,
-      batches: t.batches || [],
+      batches: [],
       itinerary: [],
     }));
 
-    const publishedCampaigns = (campaigns || []).filter((c) => c.status === "Published");
+    const publishedCampaigns = (campaigns || [])
+      .filter((c) => c.status === "Published")
+      .slice(0, 2)
+      .map((c: any) => ({
+        id: c.id,
+        slug: c.slug,
+        heroImage: c.heroImage,
+        heroImageAlt: c.heroImageAlt || c.imageAlt || "",
+        badge: c.badge || "",
+        promoOffer: c.promoOffer ? { code: c.promoOffer.code, discountText: c.promoOffer.discountText } : null,
+        title: c.title || "",
+        subtitle: c.subtitle || "",
+        highlights: (c.highlights || []).slice(0, 2),
+      }));
 
     return (
       <HomeView
@@ -128,15 +141,30 @@ export default async function HomePage() {
       gallery: [],
       categories: t.categories,
       status: t.status,
-      batches: t.batches || [],
+      batches: [],
       itinerary: [],
     }));
+
+    const publishedCampaigns = (store.landingPages || [])
+      .filter((c: any) => c.status === "Published")
+      .slice(0, 2)
+      .map((c: any) => ({
+        id: c.id,
+        slug: c.slug,
+        heroImage: c.heroImage,
+        heroImageAlt: c.heroImageAlt || c.imageAlt || "",
+        badge: c.badge || "",
+        promoOffer: c.promoOffer ? { code: c.promoOffer.code, discountText: c.promoOffer.discountText } : null,
+        title: c.title || "",
+        subtitle: c.subtitle || "",
+        highlights: (c.highlights || []).slice(0, 2),
+      }));
 
     return (
       <HomeView
         initialSections={store.homeSections}
         initialReports={store.trailReports}
-        initialCampaigns={store.landingPages}
+        initialCampaigns={publishedCampaigns}
         initialTreks={lightweightHomeTreks}
       />
     );

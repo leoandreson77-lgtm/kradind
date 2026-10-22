@@ -215,10 +215,10 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                 href={addressGoogleLink}
                 target="_blank"
                 rel="nofollow noopener noreferrer"
-                className="flex items-start gap-2.5 text-slate-400 hover:text-emerald-300 transition group"
+                className="flex items-start gap-2.5 text-slate-300 hover:text-emerald-300 transition group"
                 title="View KRAD Global location on Google Maps / Search"
               >
-                <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition shrink-0 mt-0.5">
+                <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 group-hover:bg-emerald-500 group-hover:text-white transition shrink-0 mt-0.5">
                   <MapPin className="w-3.5 h-3.5 text-emerald-400 group-hover:text-white" />
                 </div>
                 <span className="leading-relaxed text-[11px] sm:text-xs">
@@ -395,51 +395,6 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
 
         </div>
 
-        {/* 3. SAFETY, ENVIRONMENT & QUALITY BADGES */}
-        <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="block text-xs font-bold text-white">
-                Wilderness First Aid (WFA) Certified
-              </span>
-              <span className="text-xs text-slate-300">
-                High-altitude emergency medical &amp; oxygen support
-              </span>
-            </div>
-          </div>
-
-          <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-              <HeartHandshake className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="block text-xs font-bold text-white">
-                Strict Leave No Trace (LNT)
-              </span>
-              <span className="text-xs text-slate-300">
-                Eco-clean trails with zero single-use plastic disposal
-              </span>
-            </div>
-          </div>
-
-          <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
-              <Compass className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="block text-xs font-bold text-white">
-                Eco-Conscious Standards
-              </span>
-              <span className="text-xs text-slate-300">
-                Transparent pricing with verified alpine stays
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* 4. VISIBLE YMYL & SAFETY DISCLAIMERS STRIP (Satisfies sitewide E-E-A-T validation) */}
         <aside
           role="complementary"
@@ -460,7 +415,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
                   <span className="text-xs text-slate-300 font-semibold">Govt. Reg. UT-TRV-2024-914</span>
                 </div>
                 <p>
-                  <strong className="text-white">Medical &amp; Fitness Notice:</strong> High-altitude trekking above 8,000 ft carries inherent physiological risks including Acute Mountain Sickness (AMS), High-Altitude Pulmonary Edema (HAPE), and sudden alpine weather changes. All training schedules, fitness guidelines, and altitude advisories on this website are curated by NIM-certified wilderness leaders for informational and planning purposes only and do not constitute formal medical diagnosis or advice. Trekkers with cardiovascular, pulmonary, or chronic conditions must consult a registered physician before departure. Valid high-altitude travel insurance is strictly recommended.
+                  <strong className="text-white">Medical &amp; Fitness Notice:</strong> High-altitude trekking above 8,000 ft carries natural mountain risks, including altitude sickness (AMS). Information on this website is prepared by certified leaders for trip planning and does not replace medical advice. Trekkers should speak with a doctor before travel. High-altitude travel insurance is strongly recommended.
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs text-slate-300 font-medium">
                   <Link href="/website-disclaimer" className="text-amber-300 hover:text-amber-200 underline underline-offset-2">
@@ -489,7 +444,7 @@ export function Footer({ config }: { config?: HomeSectionsConfig["contactAndFoot
           <p className="text-slate-200 font-medium">
             {config?.copyrightText || "© 2026 KRADIND Adventures / KRAD Global. All rights reserved."}
           </p>
-          <p className="text-slate-400 text-xs font-medium">
+          <p className="text-slate-300 text-xs font-medium">
             Govt. Registered Adventure Tour Operator (UT-TRV-2024-914) • Dehradun, Uttarakhand, India
           </p>
         </div>

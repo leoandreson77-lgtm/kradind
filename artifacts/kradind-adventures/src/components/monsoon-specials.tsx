@@ -78,10 +78,10 @@ export function MonsoonSpecials({
           >
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
               <img
-                src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?auto=format&fit=crop&w=400&q=70"
                 alt="Popular India holiday destination featured by KRAD Global"
-                width={600}
-                height={350}
+                width={400}
+                height={240}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -102,7 +102,7 @@ export function MonsoonSpecials({
               </div>
               <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
                 <div>
-                  <span className="text-[11px] text-slate-400 line-through">₹21,499</span>
+                  <span className="text-[11px] text-slate-300 line-through">₹21,499</span>
                   <span className="text-base font-extrabold text-emerald-300 ml-1">₹16,999</span>
                 </div>
                 <span
@@ -145,7 +145,7 @@ export function MonsoonSpecials({
               </div>
               <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
                 <div>
-                  <span className="text-[11px] text-slate-400 line-through">₹12,999</span>
+                  <span className="text-[11px] text-slate-300 line-through">₹12,999</span>
                   <span className="text-base font-extrabold text-emerald-300 ml-1">₹9,999</span>
                 </div>
                 <span
@@ -164,10 +164,10 @@ export function MonsoonSpecials({
           >
             <div className="relative h-44 w-full overflow-hidden bg-slate-950">
               <img
-                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=400&q=70"
                 alt="Customized holiday package by KRAD Global"
-                width={600}
-                height={350}
+                width={400}
+                height={240}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -188,7 +188,7 @@ export function MonsoonSpecials({
               </div>
               <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
                 <div>
-                  <span className="text-[11px] text-slate-400 line-through">₹23,999</span>
+                  <span className="text-[11px] text-slate-300 line-through">₹23,999</span>
                   <span className="text-base font-extrabold text-emerald-300 ml-1">₹18,499</span>
                 </div>
                 <span

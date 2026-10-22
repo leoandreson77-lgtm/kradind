@@ -2,9 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { readStore, writeStore, LeadRecord } from "@/lib/cms-store";
 import { getAdminSession } from "@/lib/admin-auth";
 import { getDb } from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+function getMongoIdFilter(id: string) {
+  const cleanId = String(id).trim();
+  const filters: any[] = [{ id: cleanId }];
+  if (ObjectId.isValid(cleanId) && cleanId.length === 24) {
+    try {
+      filters.push({ _id: new ObjectId(cleanId) });
+    } catch {}
+  }
+  return { $or: filters };
+}
 
 export async function GET(request: NextRequest) {
   const session = await getAdminSession(request);
@@ -18,7 +30,10 @@ export async function GET(request: NextRequest) {
     if (docs && docs.length > 0) {
       const cleanLeads = docs.map((doc: any) => {
         const { _id, ...rest } = doc;
-        return rest as LeadRecord;
+        return {
+          ...rest,
+          id: rest.id || String(_id),
+        } as LeadRecord;
       });
       return NextResponse.json(cleanLeads, {
         headers: {
@@ -51,15 +66,35 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Lead ID is required" }, { status: 400 });
     }
 
+    const cleanId = String(id).trim();
+
+    // 1. Check local store
     const store = readStore();
     if (!store.leads) store.leads = [];
+    const localIndex = store.leads.findIndex((l) => String(l.id).trim() === cleanId);
 
-    const index = store.leads.findIndex((l) => l.id === id);
-    if (index === -1) {
+    // 2. Check MongoDB
+    let mongoLead: LeadRecord | null = null;
+    let dbInstance: any = null;
+    try {
+      dbInstance = await getDb();
+      const doc = await dbInstance.collection("kradind_leads").findOne(getMongoIdFilter(cleanId));
+      if (doc) {
+        const { _id, ...rest } = doc;
+        mongoLead = {
+          ...rest,
+          id: rest.id || String(_id),
+        } as LeadRecord;
+      }
+    } catch (mongoErr) {
+      console.warn("MongoDB lead find warning:", mongoErr);
+    }
+
+    const current = (localIndex !== -1 ? store.leads[localIndex] : null) || mongoLead;
+    if (!current) {
       return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     }
 
-    const current = store.leads[index];
     const existingInteractions = Array.isArray(current.interactions) ? [...current.interactions] : [];
 
     // If a new interaction is being logged
@@ -78,6 +113,7 @@ export async function PUT(request: NextRequest) {
 
     const updated: LeadRecord = {
       ...current,
+      id: cleanId,
       ...(body.status !== undefined && { status: body.status }),
       ...(body.assignedTo !== undefined && { assignedTo: body.assignedTo }),
       ...(body.assignedToId !== undefined && { assignedToId: body.assignedToId }),
@@ -89,12 +125,20 @@ export async function PUT(request: NextRequest) {
       lastInteractedAt: body.newInteraction ? new Date().toISOString() : (body.lastInteractedAt || current.lastInteractedAt),
     };
 
-    store.leads[index] = updated;
+    if (localIndex !== -1) {
+      store.leads[localIndex] = updated;
+    } else {
+      store.leads.unshift(updated);
+    }
     writeStore(store);
 
     try {
-      const db = await getDb();
-      await db.collection("kradind_leads").updateOne({ id }, { $set: updated }, { upsert: true });
+      const db = dbInstance || (await getDb());
+      await db.collection("kradind_leads").updateOne(
+        getMongoIdFilter(cleanId),
+        { $set: updated },
+        { upsert: true }
+      );
     } catch (mongoErr) {
       console.warn("MongoDB lead update warning:", mongoErr);
     }
@@ -120,15 +164,17 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Missing lead id" }, { status: 400 });
     }
 
+    const cleanId = String(id).trim();
+
     const store = readStore();
     if (!store.leads) store.leads = [];
 
-    store.leads = store.leads.filter((l) => l.id !== id);
+    store.leads = store.leads.filter((l) => String(l.id).trim() !== cleanId);
     writeStore(store);
 
     try {
       const db = await getDb();
-      await db.collection("kradind_leads").deleteOne({ id });
+      await db.collection("kradind_leads").deleteOne(getMongoIdFilter(cleanId));
     } catch (mongoErr) {
       console.warn("MongoDB lead delete warning:", mongoErr);
     }

@@ -2,9 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { readStore, writeStore, BookingRecord } from "@/lib/cms-store";
 import { getAdminSession } from "@/lib/admin-auth";
 import { getDb } from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+function getMongoIdFilter(id: string) {
+  const cleanId = String(id).trim();
+  const filters: any[] = [{ id: cleanId }];
+  if (ObjectId.isValid(cleanId) && cleanId.length === 24) {
+    try {
+      filters.push({ _id: new ObjectId(cleanId) });
+    } catch {}
+  }
+  return { $or: filters };
+}
 
 export async function GET(request: NextRequest) {
   const session = await getAdminSession(request);
@@ -18,7 +30,10 @@ export async function GET(request: NextRequest) {
     if (docs && docs.length > 0) {
       const cleanBookings = docs.map((doc: any) => {
         const { _id, ...rest } = doc;
-        return rest as BookingRecord;
+        return {
+          ...rest,
+          id: rest.id || String(_id),
+        } as BookingRecord;
       });
       return NextResponse.json(cleanBookings, {
         headers: {
@@ -51,18 +66,40 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Booking ID is required" }, { status: 400 });
     }
 
+    const cleanId = String(id).trim();
+
+    // 1. Check local store
     const store = readStore();
     if (!store.bookings) store.bookings = [];
+    const localIndex = store.bookings.findIndex((b) => String(b.id).trim() === cleanId);
 
-    const index = store.bookings.findIndex((b) => b.id === id);
-    if (index === -1) {
+    // 2. Check MongoDB
+    let mongoBooking: BookingRecord | null = null;
+    let dbInstance: any = null;
+    try {
+      dbInstance = await getDb();
+      const doc = await dbInstance.collection("kradind_bookings").findOne(getMongoIdFilter(cleanId));
+      if (doc) {
+        const { _id, ...rest } = doc;
+        mongoBooking = {
+          ...rest,
+          id: rest.id || String(_id),
+        } as BookingRecord;
+      }
+    } catch (mongoErr) {
+      console.warn("MongoDB booking find warning:", mongoErr);
+    }
+
+    // 3. Resolve existing booking from either store or MongoDB
+    const existing = (localIndex !== -1 ? store.bookings[localIndex] : null) || mongoBooking;
+    if (!existing) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Merge updated fields
-    const current = store.bookings[index];
+    // 4. Merge updated fields
     const updated: BookingRecord = {
-      ...current,
+      ...existing,
+      id: cleanId,
       ...(body.status !== undefined && { status: body.status }),
       ...(body.paymentStatus !== undefined && { paymentStatus: body.paymentStatus }),
       ...(body.amountPaid !== undefined && { amountPaid: Number(body.amountPaid) }),
@@ -81,12 +118,22 @@ export async function PUT(request: NextRequest) {
       ...(body.vehicleAssigned !== undefined && { vehicleAssigned: body.vehicleAssigned }),
     };
 
-    store.bookings[index] = updated;
+    // 5. Update local store
+    if (localIndex !== -1) {
+      store.bookings[localIndex] = updated;
+    } else {
+      store.bookings.unshift(updated);
+    }
     writeStore(store);
 
+    // 6. Update MongoDB with upsert
     try {
-      const db = await getDb();
-      await db.collection("kradind_bookings").updateOne({ id }, { $set: updated }, { upsert: true });
+      const db = dbInstance || (await getDb());
+      await db.collection("kradind_bookings").updateOne(
+        getMongoIdFilter(cleanId),
+        { $set: updated },
+        { upsert: true }
+      );
     } catch (mongoErr) {
       console.warn("MongoDB booking update warning:", mongoErr);
     }
@@ -112,14 +159,16 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Missing booking id" }, { status: 400 });
     }
 
+    const cleanId = String(id).trim();
+
     const store = readStore();
     if (!store.bookings) store.bookings = [];
-    store.bookings = store.bookings.filter((b) => b.id !== id);
+    store.bookings = store.bookings.filter((b) => String(b.id).trim() !== cleanId);
     writeStore(store);
 
     try {
       const db = await getDb();
-      await db.collection("kradind_bookings").deleteOne({ id });
+      await db.collection("kradind_bookings").deleteOne(getMongoIdFilter(cleanId));
     } catch (mongoErr) {
       console.warn("MongoDB booking delete warning:", mongoErr);
     }

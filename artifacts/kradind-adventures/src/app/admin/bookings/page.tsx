@@ -17,9 +17,22 @@ export default function AdminBookingsPage() {
     setTimeout(() => setToastMessage(""), 3000);
   };
 
+  const getAuthHeaders = () => {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    const savedToken = typeof window !== "undefined" ? localStorage.getItem("kradind_admin_token") : null;
+    if (savedToken) {
+      headers["x-admin-token"] = savedToken;
+      headers["Authorization"] = `Bearer ${savedToken}`;
+    }
+    return headers;
+  };
+
   const fetchBookings = async () => {
     try {
-      const res = await fetch("/api/admin/bookings");
+      const res = await fetch("/api/admin/bookings", {
+        headers: getAuthHeaders(),
+        credentials: "include",
+      });
       if (res.ok) {
         setBookings(await res.json());
       }
@@ -38,7 +51,8 @@ export default function AdminBookingsPage() {
     try {
       const res = await fetch("/api/admin/bookings", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders(),
+        credentials: "include",
         body: JSON.stringify({ id, status: newStatus }),
       });
 
@@ -53,7 +67,11 @@ export default function AdminBookingsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/admin/bookings?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/bookings?id=${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+        credentials: "include",
+      });
       if (res.ok) {
         showToast("Booking record removed");
         setDeleteConfirmId(null);

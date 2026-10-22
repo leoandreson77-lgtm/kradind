@@ -289,12 +289,18 @@ export default function AdminDashboardPage() {
 
     setSavingPayment(true);
     try {
+      const bookingId = paymentModalBooking.id || (paymentModalBooking as any)._id;
+      if (!bookingId) {
+        alert("Booking ID is missing from this record");
+        return;
+      }
+
       const total = paymentModalBooking.totalAmount || 0;
       const amtPaid = Number(paymentForm.amountPaid) || 0;
       const bal = Math.max(0, total - amtPaid);
 
       const payload = {
-        id: paymentModalBooking.id,
+        id: bookingId,
         paymentStatus: paymentForm.paymentStatus,
         amountPaid: amtPaid,
         advancePaid: Number(paymentForm.advancePaid) || amtPaid,
@@ -307,9 +313,17 @@ export default function AdminDashboardPage() {
         status: amtPaid > 0 ? "Confirmed" : paymentModalBooking.status,
       };
 
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const savedToken = typeof window !== "undefined" ? localStorage.getItem("kradind_admin_token") : null;
+      if (savedToken) {
+        headers["x-admin-token"] = savedToken;
+        headers["Authorization"] = `Bearer ${savedToken}`;
+      }
+
       const res = await fetch("/api/admin/bookings", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers,
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 
@@ -423,21 +437,35 @@ export default function AdminDashboardPage() {
 
     setSavingOps(true);
     try {
+      const bookingId = opsModalBooking.id || (opsModalBooking as any)._id;
+      if (!bookingId) {
+        alert("Booking ID is missing from this record");
+        return;
+      }
+
       const payload = {
-        id: opsModalBooking.id,
+        id: bookingId,
         operationStatus: opsForm.operationStatus,
         trekLeader: opsForm.trekLeader,
         vehicleAssigned: opsForm.vehicleAssigned,
       };
 
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const savedToken = typeof window !== "undefined" ? localStorage.getItem("kradind_admin_token") : null;
+      if (savedToken) {
+        headers["x-admin-token"] = savedToken;
+        headers["Authorization"] = `Bearer ${savedToken}`;
+      }
+
       const res = await fetch("/api/admin/bookings", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers,
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 
       if (res.ok) {
-        showToast(`Operations assigned for booking #${opsModalBooking.id}!`);
+        showToast(`Operations assigned for booking #${bookingId}!`);
         setOpsModalBooking(null);
         fetchDashboardData();
       } else {

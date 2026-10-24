@@ -5076,11 +5076,23 @@ export default function AdminCRMPage() {
             region: previewProposal.destination || "Domestic",
             pickupPoint: previewProposal.pickupLocation || "Airport / Station Pickup",
             dropPoint: previewProposal.dropLocation || "Airport / Station Drop",
-            price: previewProposal.totalQuotedPrice || previewProposal.basePricePerPerson || 0,
-            originalPrice: Math.round((previewProposal.totalQuotedPrice || 12000) * 1.25),
+            price:
+              previewProposal.basePricePerPerson ||
+              (previewProposal.totalQuotedPrice && previewProposal.adultsCount
+                ? Math.round(previewProposal.totalQuotedPrice / previewProposal.adultsCount)
+                : previewProposal.totalQuotedPrice || 9999),
+            originalPrice:
+              previewProposal.originalCatalogPrice ||
+              Math.round(
+                (previewProposal.basePricePerPerson ||
+                  (previewProposal.totalQuotedPrice / (previewProposal.adultsCount || 1)) ||
+                  12000) * 1.25
+              ),
             category: previewProposal.packageType || "Domestic",
             tagline: `Exclusive Customized Tour Itinerary for ${previewProposal.customerName}`,
-            overview: previewProposal.specialNotes || `Personalized travel itinerary prepared for ${previewProposal.customerName} (${previewProposal.adultsCount} Travelers) by KRADIND Adventures.`,
+            overview:
+              previewProposal.specialNotes ||
+              `Personalized travel itinerary prepared for ${previewProposal.customerName} (${previewProposal.adultsCount} Travelers) by KRADIND Adventures.`,
             itinerary: (previewProposal.itinerary || []).map((d: any) => ({
               day: d.day,
               title: d.title,
@@ -5096,7 +5108,29 @@ export default function AdminCRMPage() {
           }}
           customClientName={previewProposal.customerName}
           customPax={previewProposal.adultsCount}
-          customPrice={previewProposal.totalQuotedPrice}
+          customPrice={
+            previewProposal.basePricePerPerson ||
+            (previewProposal.totalQuotedPrice && previewProposal.adultsCount
+              ? Math.round(previewProposal.totalQuotedPrice / previewProposal.adultsCount)
+              : previewProposal.totalQuotedPrice || 9999)
+          }
+          originalPrice={
+            previewProposal.originalCatalogPrice ||
+            Math.round(
+              (previewProposal.basePricePerPerson ||
+                (previewProposal.totalQuotedPrice / (previewProposal.adultsCount || 1)) ||
+                12000) * 1.25
+            )
+          }
+          discountAmount={previewProposal.discountAmount}
+          promoOfferBadge={previewProposal.promoOfferBadge}
+          customDiscount={
+            previewProposal.specialDiscountNote ||
+            (previewProposal.discountAmount
+              ? `₹${previewProposal.discountAmount.toLocaleString("en-IN")} Special Additional Discount Applied`
+              : undefined)
+          }
+          offerValidUntil={previewProposal.validUntil}
           customCoordinator={previewProposal.author || "Sales Advisor"}
           customNotes={previewProposal.specialNotes}
           customDays={(previewProposal.itinerary || []).map((d: any) => ({

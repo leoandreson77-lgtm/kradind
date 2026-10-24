@@ -671,6 +671,10 @@ export interface CustomerItineraryProposal {
   exclusions: string[];
   basePricePerPerson: number;
   totalQuotedPrice: number;
+  originalCatalogPrice?: number;
+  discountAmount?: number;
+  specialDiscountNote?: string;
+  promoOfferBadge?: string;
   advanceDepositRequired?: number;
   validUntil?: string;
   specialNotes?: string;

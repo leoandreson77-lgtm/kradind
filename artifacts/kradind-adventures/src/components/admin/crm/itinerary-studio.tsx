@@ -221,6 +221,10 @@ export function ItineraryStudio({
       exclusions: [],
       basePricePerPerson: 0,
       totalQuotedPrice: 0,
+      originalCatalogPrice: 0,
+      discountAmount: 0,
+      specialDiscountNote: "",
+      promoOfferBadge: "SPECIAL ADDITIONAL DISCOUNT APPLIED",
       advanceDepositRequired: 0,
       validUntil: "",
       specialNotes: "",
@@ -633,13 +637,52 @@ export function ItineraryStudio({
   const handlePaxOrPriceChange = (basePrice: number, adults: number) => {
     const total = basePrice * Math.max(1, adults);
     const deposit = Math.round(total * 0.3);
+    setFormData((prev) => {
+      const catalog = prev.originalCatalogPrice || Math.round(basePrice * 1.25);
+      const discount = Math.max(0, catalog - basePrice);
+      return {
+        ...prev,
+        basePricePerPerson: basePrice,
+        originalCatalogPrice: catalog,
+        discountAmount: discount,
+        adultsCount: adults,
+        totalQuotedPrice: total,
+        advanceDepositRequired: deposit,
+      };
+    });
+  };
+
+  // Recompute pricing from catalog price and discount
+  const handlePricingUpdate = (catalogRate: number, discount: number, adults: number) => {
+    const netRatePerPax = Math.max(0, catalogRate - discount);
+    const total = netRatePerPax * Math.max(1, adults);
+    const deposit = Math.round(total * 0.3);
     setFormData((prev) => ({
       ...prev,
-      basePricePerPerson: basePrice,
+      originalCatalogPrice: catalogRate,
+      discountAmount: discount,
+      basePricePerPerson: netRatePerPax,
       adultsCount: adults,
       totalQuotedPrice: total,
       advanceDepositRequired: deposit,
+      specialDiscountNote:
+        discount > 0
+          ? `Special Deal: ₹${(discount * adults).toLocaleString("en-IN")} Total Additional Discount Applied`
+          : prev.specialDiscountNote,
     }));
+  };
+
+  const applyQuickDiscount = (type: "1000" | "2500" | "5000" | "10%" | "15%" | "20%") => {
+    const catalog = formData.originalCatalogPrice || Math.round((formData.basePricePerPerson || 10000) * 1.25);
+    let discount = 0;
+    if (type === "1000") discount = 1000;
+    else if (type === "2500") discount = 2500;
+    else if (type === "5000") discount = 5000;
+    else if (type === "10%") discount = Math.round(catalog * 0.10);
+    else if (type === "15%") discount = Math.round(catalog * 0.15);
+    else if (type === "20%") discount = Math.round(catalog * 0.20);
+
+    handlePricingUpdate(catalog, discount, formData.adultsCount || 2);
   };
 
   // Load existing package template (stripping any raw asterisks)
@@ -685,6 +728,8 @@ export function ItineraryStudio({
       ];
 
     const basePrice = pkg.price || 9999;
+    const catalogPrice = pkg.originalPrice || Math.round(basePrice * 1.25);
+    const discountAmt = Math.max(0, catalogPrice - basePrice);
     const adults = formData.adultsCount || 2;
     const total = basePrice * adults;
     const deposit = Math.round(total * 0.3);
@@ -696,6 +741,10 @@ export function ItineraryStudio({
       destination: cleanAsterisks(pkg.location || pkg.region || "Uttarakhand, Himalayas"),
       duration: cleanAsterisks(pkg.duration || `${mappedItinerary.length || 5} Days`),
       basePricePerPerson: basePrice,
+      originalCatalogPrice: catalogPrice,
+      discountAmount: discountAmt,
+      specialDiscountNote: `Special Group Deal: ₹${(discountAmt * adults).toLocaleString("en-IN")} Additional Discount Applied`,
+      promoOfferBadge: "SPECIAL ADDITIONAL DISCOUNT APPLIED",
       totalQuotedPrice: total,
       advanceDepositRequired: deposit,
       itinerary: mappedItinerary,
@@ -792,6 +841,111 @@ export function ItineraryStudio({
         ...prev,
         itinerary: renumbered,
         duration: `${renumbered.length} Days / ${Math.max(1, renumbered.length - 1)} Nights`,
+      };
+    });
+  };
+
+  // 1-Click Smart Day Templates (Arrival, Sightseeing, Summit, Transit, Adventure, Departure)
+  const handleAddSmartTemplateDay = (
+    type: "arrival" | "sightseeing" | "summit" | "transit" | "adventure" | "departure"
+  ) => {
+    setFormData((prev) => {
+      const nextDayNum = prev.itinerary.length + 1;
+      const dest = prev.destination || "Destination";
+      let dayData: Partial<ItineraryProposalDay> = {};
+
+      if (type === "arrival") {
+        dayData = {
+          title: `Day ${nextDayNum} - Arrival at ${dest}, Chauffeur Meet & Hotel Check-in`,
+          description: `Warm traditional welcome upon arrival at Airport/Railway Station. Private scenic drive to hotel/resort, seamless check-in, orientation briefing with expedition leader, evening leisure walk through local markets, and welcome dinner.`,
+          stay: prev.hotelCategory || "3-Star Deluxe Hotel",
+          roomType: prev.roomCategory || "Standard Room",
+          mealPlan: "MAP",
+          meal: "Welcome Drinks & Buffet Dinner",
+          distance: "25 km / 1 Hour Drive",
+          duration: "Afternoon & Evening Leisure",
+          altitude: "Base Hub Elevation",
+        };
+      } else if (type === "sightseeing") {
+        dayData = {
+          title: `Day ${nextDayNum} - Full Day Iconic Sightseeing, Viewpoints & Heritage Exploration`,
+          description: `Buffet breakfast at hotel. Full-day private guided sightseeing covering top heritage monuments, scenic panoramic viewpoints, riverbanks, photography stops, authentic local lunch break, and picturesque sunset.`,
+          stay: prev.hotelCategory || "Same Hotel / Resort",
+          roomType: prev.roomCategory || "Standard Room",
+          mealPlan: "MAP",
+          meal: "Wholesome Breakfast & Dinner",
+          distance: "40 km Sightseeing Circuit",
+          duration: "Full Day (8 Hours)",
+          altitude: "Scenic Valley",
+        };
+      } else if (type === "summit") {
+        dayData = {
+          title: `Day ${nextDayNum} - Early Morning Alpine Ascent to Panoramic Summit Ridge`,
+          description: `Dawn start with hot tea and energizing snacks. Trek through fragrant rhododendron and pine forests up to the high pass/summit ridge. Marvel at 360-degree snow-capped Himalayan panoramas, packed summit lunch, and scenic descent to campsite.`,
+          stay: "Alpine Dome Tents / Mountain Lodge",
+          roomType: "Alpine Tents with Insulated Mats",
+          mealPlan: "AP",
+          meal: "Hot Breakfast, Packed Lunch & Campfire Dinner",
+          distance: "8-10 km Trek",
+          duration: "6-7 Hours Alpine Trek",
+          altitude: "12,500 Ft Summit Pass",
+        };
+      } else if (type === "transit") {
+        dayData = {
+          title: `Day ${nextDayNum} - Scenic Mountain Highway Drive & Valley Transfer`,
+          description: `Hearty breakfast followed by smooth checkout. Spectacular drive across mountain passes, winding river gorges, and terraced valley viewpoints. En-route photo stops and roadside tea breaks before checking in at destination.`,
+          stay: prev.hotelCategory || "Destination Hotel / Resort",
+          roomType: prev.roomCategory || "Standard Room",
+          mealPlan: "MAP",
+          meal: "Breakfast & Dinner",
+          distance: "120 km / 4.5 Hours Drive",
+          duration: "Scenic Half-Day Transit",
+          altitude: "Transit Elevation",
+        };
+      } else if (type === "adventure") {
+        dayData = {
+          title: `Day ${nextDayNum} - Action-Packed Whitewater Adventure & Riverside Campfire`,
+          description: `Morning briefing on safety protocols with certified outdoor instructors. Thrilling whitewater river rafting, cliff jumping, and kayaking, followed by hot riverside snacks. Evening musical campfire with barbecue under the starlit sky.`,
+          stay: "Riverside Luxury Camp / Resort",
+          roomType: "Swiss AC Tents / Cottage",
+          mealPlan: "AP",
+          meal: "Breakfast, Lunch & Barbecue Dinner",
+          distance: "16 km River Circuit",
+          duration: "Full Day Adventure Activities",
+          altitude: "Riverside Camp",
+        };
+      } else if (type === "departure") {
+        dayData = {
+          title: `Day ${nextDayNum} - Leisure Morning, Souvenir Shopping & Departure Drop`,
+          description: `Delicious breakfast overlooking the hills. Packing and checkout. Quick stop at local organic handicraft emporium for souvenirs. Timely transfer to Airport/Railway Station for onward journey with unforgettable memories.`,
+          stay: "Tour Concludes • Safe Return Journey",
+          roomType: "N/A",
+          mealPlan: "CP",
+          meal: "Farewell Breakfast Included",
+          distance: "Airport / Station Transfer",
+          duration: "Morning Activity & Final Drop",
+          altitude: "Transit Hub",
+        };
+      }
+
+      const newDay: ItineraryProposalDay = {
+        day: nextDayNum,
+        title: dayData.title || `Day ${nextDayNum} - Exploration & Scenic Route`,
+        description: dayData.description || "Enjoy scheduled tour activities and scenic mountain trails.",
+        stay: dayData.stay || "Standard Hotel",
+        roomType: dayData.roomType || "Standard Room",
+        mealPlan: dayData.mealPlan || "MAP",
+        meal: dayData.meal || "Breakfast & Dinner",
+        distance: dayData.distance || "Day Activity",
+        duration: dayData.duration || "Full Day",
+        altitude: dayData.altitude || "Scenic Level",
+      };
+
+      const updatedItinerary = [...prev.itinerary, newDay];
+      return {
+        ...prev,
+        itinerary: updatedItinerary,
+        duration: `${updatedItinerary.length} Days / ${Math.max(1, updatedItinerary.length - 1)} Nights`,
       };
     });
   };
@@ -2038,6 +2192,79 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
             </div>
           </div>
 
+          {/* 1-Click Smart Day Templates Toolbar (Instant Day Creation) */}
+          <div className="bg-gradient-to-r from-emerald-50/90 via-slate-50 to-amber-50/70 p-3 sm:p-3.5 rounded-xl border border-emerald-200/80 flex flex-wrap items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                ⚡
+              </span>
+              <div>
+                <span className="text-xs font-black text-[#0F3A2E] block">
+                  1-Click Day Templates (Instant Creation):
+                </span>
+                <span className="text-[10px] text-slate-500">
+                  Click any template to instantly add a fully written day without typing!
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => handleAddSmartTemplateDay("arrival")}
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-emerald-50 text-emerald-950 font-bold text-xs border border-emerald-300 shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                title="Add Arrival, Chauffeur Pickup & Check-in Day"
+              >
+                <span>🛬 + Arrival &amp; Check-in</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleAddSmartTemplateDay("sightseeing")}
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-blue-50 text-blue-950 font-bold text-xs border border-blue-300 shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                title="Add Full Day Sightseeing Circuit"
+              >
+                <span>🏛️ + Sightseeing</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleAddSmartTemplateDay("summit")}
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-purple-50 text-purple-950 font-bold text-xs border border-purple-300 shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                title="Add Mountain Summit & High Altitude Trek Day"
+              >
+                <span>🏔️ + Summit Trek</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleAddSmartTemplateDay("transit")}
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-teal-50 text-teal-950 font-bold text-xs border border-teal-300 shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                title="Add Scenic Highway Valley Transit Drive"
+              >
+                <span>🚙 + Scenic Transit</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleAddSmartTemplateDay("adventure")}
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-cyan-50 text-cyan-950 font-bold text-xs border border-cyan-300 shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                title="Add Whitewater Rafting & Outdoor Adventure Day"
+              >
+                <span>🌊 + Adventure / Camp</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleAddSmartTemplateDay("departure")}
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-amber-50 text-amber-950 font-bold text-xs border border-amber-300 shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                title="Add Departure, Shopping & Station/Airport Drop Day"
+              >
+                <span>🛫 + Departure &amp; Drop</span>
+              </button>
+            </div>
+          </div>
+
           {/* Visual Route Flow Map */}
           {formData.itinerary.length > 0 && (
             <ItineraryRouteMap
@@ -2697,6 +2924,150 @@ ${formData.exclusions.map((exc) => `✗ ${exc}`).join("\n")}
 
         {/* Section 5: Commercials, Status & Action Ribbon */}
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-lg space-y-6">
+          {/* SPECIAL OFFER PROPOSAL & ADDITIONAL DISCOUNT CONTROLS */}
+          <div className="bg-gradient-to-br from-amber-50/80 via-white to-emerald-50/60 p-4 sm:p-5 rounded-2xl border-2 border-amber-300 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-amber-200">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-sm shadow-2xs">
+                  🎁
+                </span>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-black text-[#0F3A2E] flex items-center gap-2">
+                    <span>Special Offer Proposal &amp; Additional Discount Settings</span>
+                    <span className="px-2 py-0.2 rounded-full text-[9px] font-black uppercase bg-amber-400 text-slate-950">
+                      Top PDF Banner
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-slate-500">
+                    Controls the prominent Offer Proposal &amp; Additional Discount banner rendered at the top of the client PDF.
+                  </p>
+                </div>
+              </div>
+
+              {/* 1-Click Discount Presets */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-bold text-slate-500 mr-1">Quick Presets:</span>
+                {(["1000", "2500", "5000", "10%", "15%", "20%"] as const).map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => applyQuickDiscount(preset)}
+                    className="px-2 py-1 rounded-md bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[10px] shadow-2xs transition active:scale-95 cursor-pointer"
+                  >
+                    -{preset.includes("%") ? preset : `₹${preset}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3.5 text-xs">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                  Catalog Rate / Pax (₹)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.originalCatalogPrice || Math.round((formData.basePricePerPerson || 10000) * 1.25)}
+                  onChange={(e) => {
+                    const cat = parseFloat(e.target.value) || 0;
+                    handlePricingUpdate(cat, formData.discountAmount || 0, formData.adultsCount);
+                  }}
+                  className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-sm font-bold text-slate-700 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                  placeholder="e.g. 15000"
+                />
+                <span className="text-[10px] text-slate-400 mt-0.5 block">Catalog Brochure Strikethrough</span>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block mb-1">
+                  Additional Discount / Pax (₹)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.discountAmount || 0}
+                  onChange={(e) => {
+                    const disc = parseFloat(e.target.value) || 0;
+                    const cat = formData.originalCatalogPrice || Math.round((formData.basePricePerPerson || 10000) * 1.25);
+                    handlePricingUpdate(cat, disc, formData.adultsCount);
+                  }}
+                  className="w-full bg-white border-2 border-amber-400 rounded-xl p-2.5 text-sm font-black text-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40"
+                  placeholder="e.g. 2500"
+                />
+                <span className="text-[10px] text-amber-800 font-semibold mt-0.5 block">
+                  Total Savings: ₹{((formData.discountAmount || 0) * (formData.adultsCount || 2)).toLocaleString("en-IN")}
+                </span>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-emerald-900 uppercase tracking-wider block mb-1">
+                  Net Quoted Rate / Pax (₹)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.basePricePerPerson || 0}
+                  onChange={(e) => {
+                    const base = parseFloat(e.target.value) || 0;
+                    handlePaxOrPriceChange(base, formData.adultsCount);
+                  }}
+                  className="w-full bg-white border-2 border-emerald-600 rounded-xl p-2.5 text-sm font-black text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                  placeholder="e.g. 12500"
+                />
+                <span className="text-[10px] text-emerald-700 font-bold mt-0.5 block">
+                  Total: ₹{((formData.basePricePerPerson || 0) * (formData.adultsCount || 2)).toLocaleString("en-IN")}
+                </span>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-blue-900 uppercase tracking-wider block mb-1">
+                  Token Advance (30%) (₹)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.advanceDepositRequired || Math.round((formData.totalQuotedPrice || 0) * 0.3)}
+                  onChange={(e) => setFormData({ ...formData, advanceDepositRequired: parseFloat(e.target.value) || 0 })}
+                  className="w-full bg-white border border-blue-300 rounded-xl p-2.5 text-sm font-black text-blue-700 focus:outline-none focus:border-blue-500"
+                />
+                <span className="text-[10px] text-blue-600 font-medium mt-0.5 block">Immediate Seat Reservation</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+              <div>
+                <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block mb-1">
+                  Special Offer Proposal / Deal Note (Top PDF Banner)
+                </label>
+                <input
+                  type="text"
+                  value={formData.specialDiscountNote || ""}
+                  onChange={(e) => setFormData({ ...formData, specialDiscountNote: e.target.value })}
+                  placeholder="e.g. Special Group Pricing: ₹2,500 Additional Discount per person + Complimentary Campfire Night"
+                  className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block mb-1">
+                  Promo Offer Badge Text
+                </label>
+                <select
+                  value={formData.promoOfferBadge || "SPECIAL ADDITIONAL DISCOUNT APPLIED"}
+                  onChange={(e) => setFormData({ ...formData, promoOfferBadge: e.target.value })}
+                  className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-[#0F3A2E] focus:outline-none focus:border-amber-500 cursor-pointer"
+                >
+                  <option value="SPECIAL ADDITIONAL DISCOUNT APPLIED">SPECIAL ADDITIONAL DISCOUNT APPLIED</option>
+                  <option value="EXCLUSIVE VIP CORPORATE PRIVILEGE">EXCLUSIVE VIP CORPORATE PRIVILEGE</option>
+                  <option value="EARLY-BIRD EXPEDITION DEAL">EARLY-BIRD EXPEDITION DEAL</option>
+                  <option value="SEASONAL FESTIVE DISCOUNT">SEASONAL FESTIVE DISCOUNT</option>
+                  <option value="LIMITED SEATS PRICE LOCK OFFER">LIMITED SEATS PRICE LOCK OFFER</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-4 border-b border-slate-100 text-xs">
             <div>
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">

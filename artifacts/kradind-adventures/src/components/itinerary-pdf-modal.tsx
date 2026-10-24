@@ -70,6 +70,10 @@ export interface ItineraryPdfProps {
   isDraftProposal?: boolean;
   showDraftWatermark?: boolean;
   customDiscount?: string;
+  originalPrice?: number;
+  discountAmount?: number;
+  promoOfferBadge?: string;
+  offerValidUntil?: string;
   initialPricePosition?: "top" | "middle" | "bottom";
 }
 
@@ -200,6 +204,10 @@ export function ItineraryPdfModal({
   isDraftProposal = false,
   showDraftWatermark,
   customDiscount,
+  originalPrice,
+  discountAmount,
+  promoOfferBadge,
+  offerValidUntil,
   initialPricePosition,
 }: ItineraryPdfProps) {
   // If a custom client name was specified by sales/admin, consider it sales mode (no gate needed)
@@ -509,6 +517,35 @@ export function ItineraryPdfModal({
     1000 + Math.random() * 9000
   )}`;
 
+  // Commercial Pricing & Top Offer Proposal Banner Calculations
+  const displayPricePerPax = pricePerPerson;
+  const displayNetTotal = displayPricePerPax * paxCount;
+  const catalogRatePerPax = originalPrice || tour?.originalPrice || Math.round(displayPricePerPax * 1.25);
+  const displayOriginalTotal = catalogRatePerPax * paxCount;
+  const displaySavings = Math.max(
+    discountAmount ? discountAmount * paxCount : 0,
+    displayOriginalTotal - displayNetTotal
+  );
+  const displaySavingsPercent =
+    displayOriginalTotal > 0
+      ? Math.max(5, Math.min(60, Math.round((displaySavings / displayOriginalTotal) * 100)))
+      : 20;
+  const displayAdvance = Math.round(displayNetTotal * 0.3);
+  const displayOfferBadge = promoOfferBadge || "SPECIAL ADDITIONAL DISCOUNT APPLIED";
+  const displayValidUntil =
+    offerValidUntil ||
+    (() => {
+      const d = new Date();
+      d.setDate(d.getDate() + 7);
+      return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    })();
+  const displayOfferNote =
+    customDiscount ||
+    tour?.discountNote ||
+    (discountAmount
+      ? `₹${(discountAmount * paxCount).toLocaleString("en-IN")} Special Additional Discount applied for ${clientName || "Valued Traveler"}`
+      : `Special Additional Discount & Price Lock Proposal prepared for ${clientName || "Valued Traveler"}. All permits, mountain transport, accommodation & taxes included.`);
+
   const handlePrint = () => {
     // If client has not submitted lead query yet, intercept and prompt lead form
     if (!hasCapturedQuery) {
@@ -608,7 +645,7 @@ export function ItineraryPdfModal({
 
   return (
     <div className="fixed inset-0 z-[9999] overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-start justify-center p-2 sm:p-4 md:p-6 print:p-0 print:bg-white print:static print:overflow-visible">
-      {/* Printable Styles Injection */}
+      {/* Printable & Direct PDF Generation Styles Injection */}
       <style jsx global>{`
         @media print {
           body {
@@ -626,6 +663,11 @@ export function ItineraryPdfModal({
           .no-print,
           button,
           .floating-whatsapp,
+          .drag-handle,
+          .reorder-controls,
+          .reorder-btn,
+          .interactive-ctrl,
+          [data-pdf-ignore="true"],
           aside {
             display: none !important;
           }
@@ -653,6 +695,17 @@ export function ItineraryPdfModal({
             transition: none !important;
             animation: none !important;
           }
+        }
+
+        /* Applied during direct client PDF rendering via html2canvas */
+        .is-generating-pdf .no-print,
+        .is-generating-pdf button,
+        .is-generating-pdf .drag-handle,
+        .is-generating-pdf .reorder-controls,
+        .is-generating-pdf .reorder-btn,
+        .is-generating-pdf .interactive-ctrl,
+        .is-generating-pdf [data-pdf-ignore="true"] {
+          display: none !important;
         }
       `}</style>
 
@@ -1149,6 +1202,120 @@ export function ItineraryPdfModal({
               </div>
             </div>
 
+            {/* ========================================================================= */}
+            {/* TOP SPECIAL OFFER PROPOSAL & ADDITIONAL DISCOUNT BANNER */}
+            {/* ========================================================================= */}
+            <div className="rounded-2xl overflow-hidden border-2 border-amber-400 bg-gradient-to-br from-amber-500/10 via-emerald-900/[0.03] to-amber-500/15 p-4 sm:p-5 shadow-xs page-break-inside-avoid relative">
+              {/* Luxury Offer Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-amber-300/70">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-400 text-slate-950 flex items-center justify-center font-black shadow-xs shrink-0 ring-2 ring-amber-400/40">
+                    <Sparkles className="w-5 h-5 text-slate-950" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-2xs">
+                        🎁 EXCLUSIVE OFFER PROPOSAL
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-[#0F3A2E] text-amber-300 border border-emerald-500/40 shadow-2xs">
+                        {displayOfferBadge}
+                      </span>
+                    </div>
+                    <h2 className="text-sm sm:text-base font-black text-[#0F3A2E] tracking-tight mt-1 flex items-center gap-1.5">
+                      <span>Special Additional Discount &amp; Price Lock Proposal</span>
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="text-left sm:text-right shrink-0">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                    Offer Guarantee
+                  </span>
+                  <span className="text-xs font-black text-emerald-900 bg-emerald-100/90 px-2.5 py-1 rounded-lg border border-emerald-300 inline-flex items-center gap-1 mt-0.5 shadow-2xs">
+                    <Lock className="w-3 h-3 text-emerald-700" />
+                    <span>Price Lock Valid: {displayValidUntil}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* 4-Card Offer Comparison Strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 mt-3 text-xs">
+                {/* 1. Catalog / Standard Brochure Price */}
+                <div className="bg-white/95 p-3 rounded-xl border border-slate-200/90 shadow-2xs">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">
+                    Standard Catalog Rate
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="text-base sm:text-lg font-bold text-slate-400 line-through">
+                      ₹{displayOriginalTotal.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block">
+                    (₹{catalogRatePerPax.toLocaleString("en-IN")} / Person)
+                  </span>
+                </div>
+
+                {/* 2. Special Deal Rate */}
+                <div className="bg-emerald-50/95 p-3 rounded-xl border-2 border-emerald-600 shadow-2xs">
+                  <span className="text-[10px] font-black text-emerald-900 uppercase tracking-wider block truncate flex items-center gap-1">
+                    <span>Special Deal Rate</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <strong className="text-lg sm:text-xl font-black text-[#0F3A2E]">
+                      ₹{displayNetTotal.toLocaleString("en-IN")}
+                    </strong>
+                  </div>
+                  <span className="text-[10px] font-extrabold text-emerald-800 block">
+                    ₹{displayPricePerPax.toLocaleString("en-IN")} / Person ({paxCount} {paxCount === 1 ? "Pax" : "Pax"})
+                  </span>
+                </div>
+
+                {/* 3. Instant Savings */}
+                <div className="bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-amber-500/5 p-3 rounded-xl border border-amber-300 shadow-2xs">
+                  <span className="text-[10px] font-black text-amber-950 uppercase tracking-wider block truncate">
+                    You Save Instantly
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <strong className="text-base sm:text-lg font-black text-amber-900">
+                      🎉 ₹{displaySavings.toLocaleString("en-IN")} OFF
+                    </strong>
+                  </div>
+                  <span className="text-[10px] font-extrabold text-amber-950 block">
+                    {displaySavingsPercent}% Privilege Discount
+                  </span>
+                </div>
+
+                {/* 4. Token Advance */}
+                <div className="bg-white/95 p-3 rounded-xl border border-blue-200 shadow-2xs text-left sm:text-right">
+                  <span className="text-[10px] font-bold text-blue-900 uppercase tracking-wider block truncate">
+                    Token Seat Lock (30%)
+                  </span>
+                  <strong className="text-base sm:text-lg font-black text-blue-700 block mt-0.5">
+                    ₹{displayAdvance.toLocaleString("en-IN")}
+                  </strong>
+                  <span className="text-[10px] text-blue-600 font-semibold block">
+                    Immediate Reservation
+                  </span>
+                </div>
+              </div>
+
+              {/* Deal Note Callout */}
+              <div className="mt-3 pt-2.5 border-t border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px]">
+                <div className="flex items-start sm:items-center gap-2 text-slate-700">
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 sm:mt-0">
+                    ✓
+                  </span>
+                  <span className="leading-snug">
+                    <strong className="text-[#0F3A2E]">Privilege Note:</strong> {displayOfferNote}
+                  </span>
+                </div>
+                <span className="font-extrabold text-[#0F3A2E] bg-white px-2.5 py-0.5 rounded-md border border-amber-300 text-[10px] shrink-0 self-start sm:self-auto shadow-2xs">
+                  ⭐ 100% Date Flexibility Included
+                </span>
+              </div>
+            </div>
+
             {/* DRAFT PROPOSAL STATUS BANNER (PRINT & SCREEN) */}
             {isDraftWatermarkActive && (
               <div className="bg-amber-50/90 border-2 border-dashed border-amber-400 rounded-2xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs text-amber-950 shadow-2xs">
@@ -1173,7 +1340,7 @@ export function ItineraryPdfModal({
               if (sec.id === "metadata_bar") {
                 return (
                   <div key={sec.id} className="relative group page-break-inside-avoid">
-                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]" data-pdf-ignore="true">
                       <span className="font-bold text-slate-700">Client Info</span>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move client info up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move client info down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
@@ -1219,7 +1386,7 @@ export function ItineraryPdfModal({
                 return (
                   <div key={sec.id} className="relative group page-break-inside-avoid space-y-3">
                     {/* Floating Controls with Move to Top, Middle, Bottom */}
-                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-300 shadow-md z-20 text-[10px]">
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-300 shadow-md z-20 text-[10px]" data-pdf-ignore="true">
                       <span className="font-extrabold text-[#0F3A2E] flex items-center gap-1">
                         <DollarSign className="w-3 h-3 text-[#FF6B35]" />
                         <span>Price Section</span>
@@ -1379,7 +1546,7 @@ export function ItineraryPdfModal({
               if (sec.id === "title_summary") {
                 return (
                   <div key={sec.id} className="relative group space-y-2">
-                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]" data-pdf-ignore="true">
                       <span className="font-bold text-slate-700">Overview</span>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move overview section up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move overview section down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
@@ -1412,7 +1579,7 @@ export function ItineraryPdfModal({
               if (sec.id === "stats_grid") {
                 return (
                   <div key={sec.id} className="relative group page-break-inside-avoid">
-                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                    <div className="no-print absolute -top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]" data-pdf-ignore="true">
                       <span className="font-bold text-slate-700">Stats</span>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move stats section up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move stats section down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
@@ -1480,7 +1647,7 @@ export function ItineraryPdfModal({
               if (sec.id === "route_map") {
                 return (
                   <div key={sec.id} className="pt-1 page-break-inside-avoid relative group">
-                    <div className="no-print absolute top-0 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                    <div className="no-print absolute top-0 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]" data-pdf-ignore="true">
                       <span className="font-bold text-slate-700">Route Map</span>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move route map section up" title="Move Up"><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" aria-label="Move route map section down" title="Move Down"><ChevronDown className="w-3 h-3" /></button>
@@ -1504,7 +1671,7 @@ export function ItineraryPdfModal({
                         <span>Comprehensive Day-by-Day Expedition Schedule</span>
                       </h2>
                       <div className="flex items-center gap-2">
-                        <span className="no-print text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200 flex items-center gap-1">
+                        <span className="no-print text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200 flex items-center gap-1" data-pdf-ignore="true">
                           <GripVertical className="w-3 h-3 text-emerald-600" />
                           <span>Drag cards to reorder days</span>
                         </span>
@@ -1535,7 +1702,7 @@ export function ItineraryPdfModal({
                           }`}
                         >
                           {/* Screen Only: Drag Handle & Move Controls */}
-                          <div className="no-print absolute top-2.5 right-2.5 flex items-center gap-1 bg-white/95 shadow-2xs border border-slate-200 rounded-lg p-0.5 z-10 opacity-70 group-hover:opacity-100 transition-opacity">
+                          <div className="no-print absolute top-2.5 right-2.5 flex items-center gap-1 bg-white/95 shadow-2xs border border-slate-200 rounded-lg p-0.5 z-10 opacity-70 group-hover:opacity-100 transition-opacity" data-pdf-ignore="true">
                             <button
                               type="button"
                               onClick={() => moveDay(index, index - 1)}
@@ -1713,7 +1880,7 @@ export function ItineraryPdfModal({
                 return (
                   <div key={sec.id} className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white space-y-3.5 page-break-inside-avoid relative group shadow-2xs">
                     {/* Screen Only: Move Controls & Quick Edit */}
-                    <div className="no-print absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]">
+                    <div className="no-print absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-slate-300 shadow-2xs z-20 text-[10px]" data-pdf-ignore="true">
                       <span className="font-bold text-slate-700">Cancellation Policy</span>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up" aria-label="Move cancellation policy up"><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down" aria-label="Move cancellation policy down"><ChevronDown className="w-3 h-3" /></button>
@@ -1793,7 +1960,7 @@ export function ItineraryPdfModal({
                 return (
                   <div key={sec.id} className="relative group page-break-inside-avoid">
                     {/* Screen Only: Move, Edit & Delete Controls */}
-                    <div className="no-print absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2.5 py-0.5 rounded-full border border-slate-300 shadow-sm z-20 text-[10px]">
+                    <div className="no-print absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-white px-2.5 py-0.5 rounded-full border border-slate-300 shadow-sm z-20 text-[10px]" data-pdf-ignore="true">
                       <span className="font-bold text-slate-700">{sec.label}</span>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx - 1)} disabled={secIdx === 0} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Up" aria-label={`Move ${sec.label} up`}><ChevronUp className="w-3 h-3" /></button>
                       <button type="button" onClick={() => moveSection(secIdx, secIdx + 1)} disabled={secIdx === sections.length - 1} className="p-0.5 hover:text-slate-900 disabled:opacity-20 cursor-pointer" title="Move Down" aria-label={`Move ${sec.label} down`}><ChevronDown className="w-3 h-3" /></button>
